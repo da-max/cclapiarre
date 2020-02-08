@@ -1,0 +1,11 @@
+Vous venez de commander des agrumes sur le site cclapiarre.deblan.fr. Voici donc un récapitulatif de votre commande.\
+
+>Email : {{ email }}, prénom : {{ first_name }}
+
+
+{% for product, metadata in command_sommary.items %}
+    {{ product }} .............................. {{ metadata.quantity }}, {{ metadata.price }}
+{% endfor %}
+
+
+Ce mail a été envoyé automatiquement, si vous avez des questions ou si vous souhaitez modifier votre commande, vous pouvez répondre directement à ce mail.

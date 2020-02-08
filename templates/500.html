@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Erreur 500 {% endblock %}
+{% load static %}
+{% block content %}
+	<div class="uk-position-relative uk-margin-auto uk-position-bottom uk-width-3-5 uk-box-shadow-large uk-padding uk-margin-medium-top uk-margin-small-bottom uk-background-default">
+		<h1>Erreur interne</h1>
+		<p>Une erreur est survenue, il semblerait que <span  class="uk-text-bold" >cette partie du site ne fonctionne pas</span> :( Merci de réessayer ultérieurement, ou de me contacter à l'adresse : benhassenm@tutamail.com</p>
+		<img src="{% static 'Images/500.jpg' %}">
+	</div>
+{% endblock %}

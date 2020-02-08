@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Créer un carousel{% endblock %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+	<li><a href="{% url 'list_carousel' %}">Liste des carousels</a></li>
+	<li><span>Nouveau carsousel</span></li>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+	<div class="uk-width-4-5 uk-margin-auto">
+	<form method="post" action="" enctype="multipart/form-data">
+		{% csrf_token %}
+		{{ form.media }}
+		{{ form.as_p }}
+	    <p><input type="submit" class="uk-button uk-button-secondary uk-margin-top uk-margin-bottom uk-position-center uk-position-relative" value="Créer le carousel"></p>
+	</form>
+</div>
+{% endblock %}

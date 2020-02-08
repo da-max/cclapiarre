@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier une origine{% endblock title %}
+
+{% block header %}<h1  class="uk-text-center uk-margin-large-top">Modifier une origine</h1>{% endblock header %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+    <li class="uk-disabled"><a href="#">Café</a></li>
+	<li><a href="{% url 'list_origin' %}">Liste des cafés</a></li>
+    <li><span>Modifier une origine</span></li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    <div class="uk-width-1-5@m uk-width-3-5@s uk-margin-auto uk-padding-small">
+        <form method="post" action="#">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="uk-text-right">
+            <button class="uk-button uk-button-primary">Modifier l'origine</button>
+            <div>
+        </form>
+    </div>
+{% endblock content %}

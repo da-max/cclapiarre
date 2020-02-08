@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier un café{% endblock title %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+    <li class="uk-disabled"><a href="#">Café</a></li>
+	<li><a href="{% url 'list_coffee' %}">Liste des cafés</a></li>
+    <li><span>Modifier un café</span></li>
+{% endblock breadcrumb %}
+
+{% block content%}
+        <div class="uk-width-3-5 uk-margin-auto">
+        <h1 class='uk-text-center'>Modifier un café</h1>
+        <br><br>
+        <p class="uk-text-warning uk-text-bold uk-text-center uk-text-large">Attention, chaque champ ne doit pas compter plus de 200 caractères.</p>
+        <br>
+        <form method="post" action="">
+        {% csrf_token %}
+        {{ form.media }}
+        <fieldset class="uk-fieldset" class="uk-grid-small" uk-grid>
+            <legend class="uk-legend uk-width-1-1">Informations générales</legend>
+            <div class="uk-width-1-3@s">
+                {{ form.origin.label }}
+                {{ form.origin}}
+            </div>
+            <div class="uk-width-1-3@s">
+                {{ form.farm_coop.label }}
+                {{ form.farm_coop }}
+            </div>
+            <div class="uk-width-1-3@s">
+                {{ form.region.label }}
+                {{ form.region }}
+            </div>
+        </fieldset>
+        <br>
+        <div class="uk-width-4-5@s uk-margin-auto">
+            {{ form.description.label }}
+            {{ form.description}}<br>
+            <span class="uk-text-muted">{{ form.description.help_text }}</span>
+        </div>
+        <br>
+        <hr class="uk-divider-icon" />
+        <br>
+        <fieldset class="uk-fieldset" class="uk-grid-small" uk-grid>
+            <legend class="uk-legend">Informations sur la fabrication</legend>
+            <div class="uk-width-1-2@s">
+                {{ form.process.label }}
+                {{ form.process }}
+            </div>
+            <div class="uk-width-1-2@s">
+                {{ form.variety.label }}
+                {{ form.variety }}
+            </div>
+        </fieldset>
+        
+        <br>
+        <hr class="uk-divider-icon" />
+        <br>
+        <fieldset class="uk-fieldset" class="uk-grid-small" uk-grid>
+            <legend class="uk-legend">Prix</legend>
+            <div class="uk-width-1-2@s">
+                {{ form.two_hundred_gram_price.label }}
+                {{ form.two_hundred_gram_price }}
+            </div>
+            <div class="uk-width-1-2@s">
+                {{ form.kilogram_price.label }}
+                {{ form.kilogram_price }}
+            </div>
+        </fieldset>
+        <br>
+        <hr class="uk-divider-icon" />
+        <br>
+        <fieldset class="uk-fieldset" class="uk-grid-small" uk-grid>
+            <legend class="uk-legend">Informations pour l'affichage</legend>
+            <div class="uk-width-1-2@s uk-text-center">
+                {{ form.display.label }}<br>
+                {{ form.display }}<br>
+                <p class="uk-text-muted">{{ form.display.help_text }}</p>
+            </div>
+            <div class="uk-width-1-2@s">
+                {{ form.maximum.label }}
+                {{ form.maximum }}
+            </div>
+            <div class="uk-width-1-1">
+                {{ form.available_type.label }}
+                {{ form.available_type }}
+            </div>
+        </fieldset>
+        <br>
+        <div class="uk-width-1-1">
+        <p><input class="uk-button uk-button-secondary uk-margin-large-top uk-margin-bottom uk-position-center uk-position-relative" value="Modifier le café" type="submit"></p>
+        </div>
+        </form>
+    </div>
+{% endblock %}

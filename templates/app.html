@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}Commander
+{% endblock title %}
+
+{% block content %}
+<div id="app">
+
+</div>
+{% render_bundle 'app' %}
+{% endblock content %}
+

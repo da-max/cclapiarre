@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load cache %}
+
+{% block title %}Liste des utilisateurs{% endblock title %}
+
+{% block header %}<h1 class="uk-text-center uk-margin-large-top">Liste des adhérents</h1>
+{% endblock header %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+	<li class="uk-disabled"><a href="#">{{ request.user.username }}</a></li>
+    <li><span>Liste des utilisateurs</span></li>
+{% endblock breadcrumb %}
+
+{% block content %}
+	{% cache 60 * 120 %}
+	<section class="uk-width-3-5 uk-margin-auto uk-card uk-card-default uk-padding-large uk-margin-large-top" uk-scrollspy="cls: uk-animation-scale-down; delay: 100;">
+		<table class="uk-table uk-table-large uk-table-divider uk-table-striped uk-table-hover uk-table uk-text-center">
+			<thead>
+				<tr>
+					<th class="uk-text-center">Nom</th>
+					<th class="uk-text-center">Prénom</th>
+					<th class="uk-text-center">Email</th>
+					<th class="uk-text-center">Numéro de téléphone</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for information in informations %}
+					  <tr>
+					    <td>{{ information.user.last_name|upper|default:"Non renseigné" }}</td>
+					    <td>{{ information.user.first_name|default:"Non renseigné" }}</td>
+					    <td>{{ information.user.email|default:"Non renseigné" }}</td>
+						<td>{{ information.phone_number|default:"Non renseigné" }}</td>
+					  </tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		<br>
+		<p  class="uk-margin uk-text-justify uk-text-bold" >Vous pouvez changer de mot de passe en cliquant <a href="{% url 'change_password' %}" class='uk-link'>Ici</a>. Si vous voyez une erreur, merci de me la signaler en envoyant un mail à benhassenm@tutamail.com</p>
+	</section>
+	{% endcache %}
+{% endblock %}

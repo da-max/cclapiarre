@@ -1,0 +1,21 @@
+{% load cache %}
+{% cache 60 * 60 carousel %}
+		<div uk-slideshow="animation: slide; autoplay: true; autoplay-interval: 6000; ratio: 7:3; max-height: 700" class="uk-position-relative uk-visible-toggle" tabindex="-1">
+			    <ul class="uk-slideshow-items">
+				{% for carousel in carousels %}	
+			        <li>
+			            <img src="{{ carousel.image.url }}" alt="" uk-cover>
+			            <div class="uk-overlay uk-overlay-primary uk-position-left uk-text-center uk-transition-slide-left uk-width-large">
+			                <h3 class="uk-margin-remove">{{ carousel.title }}</h3>
+			                <p class="uk-margin-remove">{{ carousel.description|safe }}</p>
+			            </div>
+			        </li>
+					{% endfor %}
+			    </ul>
+			<div class="uk-light">
+				<a class="uk-position-center-left uk-position-small uk-slidenav-large" href="#" uk-slidenav-previous uk-slideshow-item="previous"></a>
+				<a class="uk-position-center-right uk-position-small uk-slidenav-large" href="#" uk-slidenav-next uk-slideshow-item="next"></a>
+    		</div>
+			<ul class="uk-slideshow-nav uk-dotnav uk-flex-center uk-margin"></ul>
+		</div>
+{% endcache %}

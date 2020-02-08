@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Récapitulatif de la commande{% endblock title %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+	<li class="uk-disabled"><a>Café</a></li>
+	<li class="uk-disabled"><a>Commande</a></li>
+    <li><span>Commande globale de café</span></li>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+    <div class="uk-width-4-5 uk-margin-auto">
+        <h1 class="uk-text-center">Récapitulatif de la commande</h1>
+        <a type="button" href="{% url 'pdf_global_command' %}" uk-scrollspy="cls:uk-animation-fade; delay: 600;" class="uk-button uk-button-secondary uk-margin-large uk-position-relative uk-position-bottom-center uk-padding-small">Télécharger le tableau au format PDF</a>
+        <table  class="uk-table uk-table-divider uk-table-striped uk-table-hover uk-table-middle" uk-scrollspy="cls: uk-animation-fade; target: > tbody > tr, thead > tr; delay: 100; repeat: false">
+            <thead>
+                <tr>
+                    <th>Nom du café</th>
+                    <th>Poids du café</th>
+                    <th>Type du café</th>
+                    <th>Quantité commandé</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for coffee, quantity in coffees_quantity.items %}
+                    <tr>
+                        <td>{{ coffee.0.farm_coop }}</td>
+                        <td>{{ coffee.2 }}</td>
+                        <td>{{ coffee.1.name }}</td>
+                        <td>{{ quantity }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}

@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Commande globale de pâtes</title>
+    <style>
+    @page{
+    	size: a4 landscape;
+    	margin: 1cm;
+    }
+    table
+	{/* Les bordures du tableau seront collées (plus joli) */
+	    text-align : center;
+	    font-size: 11px;
+	}
+	td, th
+	{
+		height 50px;
+	    border: 1px solid black;
+	}
+    </style>
+</head>
+<body>
+	<table class="tableau">
+            <thead>
+                <tr>
+                    <th>Nom du produit</th>
+                    <th>Poids du produit</th>
+                    <th>Quantité commandé</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product, amount in products_amounts.items %}
+                    <tr>
+                        <td>{{ product.0 }}</td>
+                        <td>{{ product.1 }}</td>
+                        <td>{{ amount }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+	</table>
+</body>
+</html>

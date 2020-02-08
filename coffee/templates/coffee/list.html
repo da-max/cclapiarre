@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des cafés{% endblock title %}
+
+{% block header %} <h1 class="uk-text-center uk-margin-large-top">Liste des cafés enregistrés</h1>{% endblock header %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+    <li class="uk-disabled"><a href="#">Café</a></li>
+	<li><span>Liste des cafés</span></li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="uk-width-4-5 uk-margin-auto uk-child-width-1-2@l uk-grid-large uk-grid-match" uk-grid uk-scrollspy="target: > div > .uk-card; cls:uk-animation-fade">
+    {% for coffee in coffees %}
+    <div>
+        <div id="a{{ coffee.id }}" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                <h2 class="uk-modal-title">Supprimer ?</h2>
+                <p>Êtes-vous sûr de vouloir supprimer ce café, aucun retour en arrière ne sera possible !</p>
+                <p  class="uk-text-right">
+                    <button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
+                    <a class="uk-button uk-button-primary" href="{% url 'delete_coffee' id_coffee=coffee.id %}">Supprimer</a>
+                </p>
+            </div>
+        </div>
+        <div class="uk-text-center uk-card uk-card-default uk-padding-large">
+            <h2>{{ coffee.region }} de {{ coffee.origin.name}}</h2>
+            <div class="uk-padding-small">
+                Café produit par {{ coffee.farm_coop }}. <br>
+                Procédé de fabrication : {{ coffee.process }}. <br>
+                Disponible en :<br>
+                    <ul>
+                    {% for type in coffee.available_type.all %}
+                        <li>{{ type.name }}</li>
+                    {% endfor %}
+                    </ul>
+            </div>
+            <p class="uk-position-relative uk-position">
+                <a class="uk-button uk-button-danger" uk-toggle href="#a{{ coffee.id }}">Supprimer</a>
+                <a class="uk-button uk-button-secondary uk-margin-left" href="{% url 'update_coffee' id_coffee=coffee.id %}">Modifier</a>
+            </p>
+        </div>
+    </div>
+    {% empty %}
+        <p>Aucun café n'a été crée, cliquez <a href="{% url 'create_coffee' %}">Ici</a> pour en créer un.</p>
+    {% endfor %}
+</div>
+{% endblock content %}

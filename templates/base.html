@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" style="padding : 0; margin : 0; height : 100%;">
+	<head>
+		<meta charset="UTF-8">
+		<title>{% block title %}Accueil{% endblock %} | CC La Piarre</title>
+		<link rel="icon" type="image/ico" href="{% static 'Images/favicon.ico' %}">
+		<link rel="stylesheet" href="{% static 'CSS/style.css' %}">
+		{% block style %}{% endblock style %}
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.26/css/uikit.min.css" />
+	</head>
+	<body>
+{% block nav %}
+	{% include 'partials/nav.html' %}
+{% endblock %}
+		<header>
+			{% block header %}{% endblock %}
+		</header>
+		<section class="uk-margin-large-top uk-margin-xlarge-left uk-text-large uk-text-bold">
+			<ul class="uk-breadcrumb">
+				{% block breadcrumb %}{% endblock breadcrumb %}
+			</ul>
+		</section>
+		{% if request.is_access == False %}
+			<div id="not_access" class="uk-flex-top" uk-modal="bg-close: false; esc-clode: false;">
+				<div class="uk-modal-dialog uk-margin-auto-vertical">
+					<div class="uk-modal-header">
+						<h2 class="uk-modal-title uk-text-primary">Vous êtes en avance (ou en retard) !</h2>
+					</div>
+					<div class="uk-modal-body">
+						<p>
+						Cette partie du site n'est pas encore ouverte, ou est fermée temporairement. Merci de repasser plus tard ou de contacter un gérant du site
+						si vous rencontrez un problème.
+						</p>
+					</div>
+					<div class="uk-modal-footer uk-text-right">
+						<a class="uk-button uk-button-primary" href="{% url 'home' %}">Retour à l'accueil</a>
+					</div>
+				</div>
+			</div>
+		{% endif %}
+		<section class="uk-margin uk-margin-medium-top uk-margin-xlarge-bottom">
+			<header>
+				{% block second_header %}
+				{% endblock second_header %}
+			</header>
+			<div uk-scrollspy="target: > div; cls: uk-animation-scale-down; delay: 100;">
+		        <div class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-medium uk-box-shadow-hover-small" id="messagesJS"></div>
+				{% if messages %}
+					{% for message in messages %}
+					<div class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-medium uk-box-shadow-hover-small" id="messages">
+						{% if message.tags == 'error' %}
+							<div class="uk-alert-danger" uk-alert>
+								<a class="uk-alert-close" uk-close></a>
+								{{ message|safe }}
+								<hr>
+								<span class="uk-text-bold">Si vous rencontrez un problème merci de me contacter par mail : benhassenm@tutamail.com</span>
+							</div>
+						{% elif message.tags == "info" %}
+							<div class="uk-alert-primary" uk-alert>
+								<a class="uk-alert-close" uk-close></a>
+								{{ message|safe }}
+								<hr>
+								<span class="uk-text-bold">Si vous rencontrez un problème merci de me contacter par mail : benhassenm@tutamail.com</span>
+							</div>
+						{% else %}
+							<div class="uk-alert-{{ message.tags }}" uk-alert>
+								<a class="uk-alert-close" uk-close></a>
+								{{ message|safe }}
+								<hr>
+								<span class="uk-text-bold">Si vous rencontrez un problème merci de me contacter par mail : benhassenm@tutamail.com</span>
+							</div>
+						{% endif %}
+					</div>
+					{% endfor %}
+				{% endif %}
+			</div>
+			{% block content %}{% endblock %}
+		</section>
+{% block footer %}
+		<footer uk-scrollspy="cls: uk-animation-scale-up; delay: 100" class="uk-box-shadow-large uk-box-shadow-top uk-padding uk-padding-large-top uk-padding-medium-bottom uk-margin-xlarge-top uk-background-muted uk-position-bottom uk-position-relative">
+			<ul class="uk-child-width-expand@s uk-grid-large uk-text-center uk-padding uk-padding-bottom" uk-grid>
+				<li><a class="uk-button uk-button-text" href="https://www.court-circuit-05.com/">Lien vers Court Circuit buëch</a></li>
+		    	<li><a class="uk-button uk-button-text" href="{% url 'a_propos' %}">A propos du site</a></li>
+		    	<li><a class="uk-button uk-button-text" href="mailto:da-max@tutanota.com">Contacter Court-circuit La Piarre : <br>da-max@tutanota.com</a></li>
+		    </ul>
+			<p class='uk-text-center uk-padding-large-top'>Ce site est gracieusement hébergé par <a href='https://deblan.fr' class='uk-link'>Deblan.fr</a>.</p>
+		</footer>
+{% endblock %}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.26/js/uikit.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.26/js/uikit-icons.min.js"></script>
+	<script src="{% static 'JS/app.js' %}"></script>
+		{% block script %}{% endblock %}
+	</body>
+</html>

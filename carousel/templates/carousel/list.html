@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Liste des carousels{% endblock %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+	<li><span>Liste des carousels</span></li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="uk-width-4-5 uk-margin-auto">
+	{% for carousel in carousels %}
+	<div id="a{{ carousel.id }}" uk-modal>
+		<div class="uk-modal-dialog uk-modal-body">
+			<h2 class="uk-modal-title">Supprimer ?</h2>
+			<p>Êtes-vous sur de vouloir supprimer ce carousel, aucun retour en arrière ne sera possible !</p>
+			<p class="uk-text-right">
+				<button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
+				<a class="uk-button uk-button-primary" type="link" href="{% url 'delete_carousel' id_carousel=carousel.id %}">Supprimer</a>
+			</p>
+		</div>
+	</div>
+		<article uk-scrollspy="cls:uk-animation-fade">
+			<h2>{{ carousel.title }}</h2>
+				<div class="uk-padding-small">{{ carousel.description|safe }}</div>
+				<a class="uk-button uk-button-danger" uk-toggle href='#a{{ carousel.id }}'>Supprimer</a>
+				<a class="uk-button uk-button-secondary uk-margin-small-left" href="{% url 'update_carousel' id_carousel=carousel.id %}">Modifier</a>
+		</article>
+			<hr />
+		{% empty %}
+		<p>Aucun carousel n'a été crée, cliquez <a href="{% url 'create_carousel' %}">Ici</a> pour un créer un.</p>
+		{% endfor %}
+</div>
+{% endblock %}

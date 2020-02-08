@@ -1,0 +1,61 @@
+{% load static command_extras %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau récapitulatif de la commande</title>
+    <style>
+    @page{
+    	size: a4 landscape;
+    	margin: 1cm;
+    }
+    table
+	{/* Les bordures du tableau seront collées (plus joli) */
+	    text-align : center;
+	    font-size: 11px;
+	}
+	td, th
+	{
+		height 50px;
+	    border: 1px solid black;
+	}
+    </style>
+</head>
+<body>
+	<table class='table'>
+		<thead>
+			<tr>
+				<th>Nom du produit</th>
+				<th>Total</th>
+				{% for user in users %}
+					<th>{{ user.0 }}</th>
+				{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+			{% for product in products_list.values %}
+				<tr>
+					<td>{{ product.name }}</td>
+					{% if product.weight == 1 %}
+						<td>{{ product.total }}</td>
+					{% else %}
+						<td>{{ product.total }} caisses</td>
+					{% endif %}
+					{% for user in users %}
+						<td>{% quantity user.0 product.amouts %}</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td>Total</td>
+				<td>{{ total }} €</td>
+				{% for total_user in users %}
+					<td>{{ total_user.1 }} €</td>
+				{% endfor %}
+			</tr>
+		</tfoot>
+	</table>
+	</body>
+</html>

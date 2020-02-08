@@ -1,0 +1,12 @@
+Vous venez de commander des cafés sur le site cclapiarre.deblan.fr. Voici donc un récapitulatif de votre commande.\
+N'oubliez pas de venir chercher votre commande lors du prochain panier.
+
+>Nom : {{ name }}, prénom : {{ first_name }}, numéro de téléphone: {{ phone_number }}
+
+
+{% for coffee in command_sommary.values %}
+    {{ coffee.farm_coop }}, {{ coffee.type }}, {{ coffee.weight }} ......... {{ coffee.quantity }}, {{ coffee.price }}
+{% endfor %}
+
+
+Ce mail a été envoyé automatiquement, si vous avez des questions ou si vous souhaitez modifier votre commande, vous pouvez répondre directement à ce mail.

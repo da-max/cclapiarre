@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des commandes de pâte</title>
+    <style>
+    @page{
+    	size: a4;
+    	margin: 4cm;
+    }
+    </style>
+</head>
+<body>
+    {% for user, amount in data.items %}
+          <div class="center">
+                <p>
+                    Nom : {{ user.name }} - Prénom : {{ user.first_name }}
+                    <br>Email : {{ user.email }} - Prix à payer : {{ user.get_total_price }} €
+                </p>
+                <ul>
+                    {% for quantity in quantitys %}
+                    <li>{{ quantity.coffee.farm_coop }} ({{ quantity.sort }}) <p  class="text-right">{{ quantity.weight }}g x {{ quantity.quantity }} = {{ quantity.get_price }} €</p></li>
+                    {% endfor %}
+                </ul>
+                <hr>
+            </div>
+    {% endfor %}
+</body>

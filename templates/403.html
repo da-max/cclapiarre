@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Acces refusé {% endblock %}
+{% load static %}
+{% block content %}
+	<div class="uk-position-relative uk-margin-auto uk-position-bottom uk-width-3-5 uk-box-shadow-large uk-padding uk-margin-medium-top uk-margin-small-bottom uk-background-default">
+		<h1>Acces refusé !</h1>
+		<p>Vous n'avez pas la permission d'accéder à cette page. <span class="uk-text-bold uk-text-primary">Vous pouvez changer d'utilisateur en cliquant <a class="uk-link uk-text-warning" href="{% url 'disconnection_connection' %}">Ici</a>.</span> Si vous rencontrez un probléme, merci de contacter l'administrateur du site à cette adresse : 
+		benhassenm@tutamail.com</p>
+		<img src="{% static 'Images/privee.png' %}">
+	</div>
+{% endblock %}

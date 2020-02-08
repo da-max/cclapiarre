@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des commandes de pâtes{% endblock title %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+	<li class="uk-disabled"><a>Pâtes</a></li>
+	<li class="uk-disabled"><a>Commande</a></li>
+    <li><span>Liste des commandes de pâtes</span></li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    <div  class="uk-width-2-5 uk-margin-auto">
+        <h1 class="uk-text-center">Liste des commandes de pâtes</h1>
+        <a type="button" href="{% url 'pasta_pdf_list_command' %}" 
+        uk-scrollspy="cls:uk-animation-fade; delay: 500;" 
+        class="uk-button uk-button-secondary uk-margin-large uk-position-relative uk-position-bottom-center uk-padding-small">
+            Télécharger le tableau au format PDF
+        </a>
+        {% for command, amounts in data.items %}
+            <div class="uk-card uk-card-default uk-card-body uk-padding-large uk-margin-large-top" uk-scrollspy="cls:uk-animation-slide-left; delay:200;">
+                <p class="uk-card-header uk-text-bold">
+                    <span class="uk-label">Nom</span> {{ command.name }} <span class="uk-label">Prénom</span> {{ command.first_name }}
+                    <br><span class="uk-label">email</span> {{ command.email }} <span class="uk-label">Prix à payer</span> {{ command.get_total_price }} €
+                </p>
+                <ul  class="uk-list uk-list-divider">
+                    {% for a in amounts %}
+                    <li>{{ a.product.product.name }}<p  class="uk-text-right">{{ a.product.weight }} {{ a.product.unit }} x {{ a.amount }} = {{ a.get_price }} €</p></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

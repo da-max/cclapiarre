@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des commandes de pâtes</title>
+    <style>
+    @page{
+    	size: a4;
+    	margin: 4cm;
+    }
+    </style>
+</head>
+<body>
+    {% for user, amounts in data.items %}
+          <div class="center">
+                <p>
+                    Nom : {{ user.name }} - Prénom : {{ user.first_name }}
+                    <br>Email : {{ user.email }} - Numéro de téléphone : {{ user.phone_number }}<br>
+                    Prix à payer : {{ user.get_total_price }} €
+                </p>
+                <ul>
+                    {% for amount in amounts %}
+                    <li>{{ amount.product.product.name }}<p  class="text-right">{{ amount.product.weight }} {{ amount.product.unit }} x {{ amount.amount }} = {{ amount.get_price }} €</p></li>
+                    {% endfor %}
+                </ul>
+                <hr>
+            </div>
+    {% endfor %}
+</body>

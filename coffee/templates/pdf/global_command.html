@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+    @page{
+    	size: a4 landscape;
+    	margin: 1cm;
+    }
+    table
+	{/* Les bordures du tableau seront collées (plus joli) */
+	    text-align : center;
+	    font-size: 11px;
+	}
+	td, th
+	{
+		height 50px;
+	    border: 1px solid black;
+	}
+    </style>
+</head>
+<body>
+	<table class="tableau">
+            <thead>
+                <tr>
+                    <th>Nom du café</th>
+                    <th>Poids du café</th>
+                    <th>Type du café</th>
+                    <th>Quantité commandé</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for coffee, quantity in coffees_quantity.items %}
+                    <tr>
+                        <td>{{ coffee.0.farm_coop }}</td>
+                        <td>{{ coffee.2 }}</td>
+                        <td>{{ coffee.1 }}</td>
+                        <td>{{ quantity }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+	</table>
+</body>
+</html>

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Accueil{% endblock %}
+{% load static %}
+{% load humanize %}
+{% block header %}
+	{% include "carousel/view.html" %}
+{% endblock %}
+{% block content %}
+<div uk-grid class="uk-margin-auto uk-width-4-5@xl uk-width-expands uk-position-relative">
+	<div class="uk-width-2-3@l uk-width-auto">
+	<h1 class="uk-text-center">Liste des articles {{ filtered|lower }}s</h1>
+{% for art in article %}
+	<article uk-scrollspy="cls:uk-animation-fade; delay:100">
+		<h2>{{ art.title }}</h2>
+		<p class="ul-article-meta">Crée {{ art.date_creation|naturaltime }} par {{ art.author.username }}</p>
+		<div class="uk-text-justify">{{ art.contents|safe }}</div>
+	</article>
+			<br>
+			<hr />
+			<br>
+	{% empty %}
+		<p>Aucun article n'a été créé, cliquez <a href="{% url "create_article" %}">Ici</a> pour un créer un.</p>
+{% endfor %}
+	</div>
+	<div class="uk-width-1-3@l uk-width-auto uk-text-justify uk-padding">
+		<aside class="uk-card uk-card-default uk-card-hover" uk-scrollspy="cls:uk-animation-slide-right">
+			<div class="uk-card-header">
+				<h2 class="uk-card-title">Les dates importantes</h2>
+			</div>
+			<div class="uk-card-body">
+				<ul class="uk-list uk-list-bullet">
+					{% for ev in event %}
+						<li>{{ ev.date|date:"d F Y" }} : {{ ev.title }}.<br><button class="uk-button uk-button-text" uk-toggle="target: #a{{ ev.id }}" type="button">En savoir plus.</button></li>
+						<div id="a{{ ev.id }}" uk-offcanvas="overlay: true">
+							<div class="uk-offcanvas-bar">
+								<button class="uk-offcanvas-close" type="button" uk-close></button>
+								<h3>{{ ev.title }}</h3>
+								<p class="uk-text-muted">Le {{ ev.date|naturalday:"DATE_FORMAT" }} vers {{ ev.date|date:"H\Hi" }}</p>
+								{{ ev.description|safe }}
+							</div>
+						</div>
+					{% endfor %}
+				</ul>
+			</div>
+		</aside>
+		<br>
+		<br>
+		<aside class="uk-card uk-card-default uk-card-hover" uk-scrollspy="cls:uk-animation-scale-down">
+			<div class="uk-card-header">
+				<h2 class="uk-card-title">A propos de court-circuit</h2>
+			</div>
+			<div class="uk-card-body">
+				<ul>
+					<li>Date de création : </li>
+					<li>Lieu <strong>Veynes</strong> et ses alentours dans un périmétre de 30Km</li>
+					<li>Nombres d'adhérents : 350</li>
+					<li>Objectif : Permettre à chacun de consommer des <em>produits de qualité en respectant la nature et en permettant aux producteurs de vivre décemment</em></li>
+				</ul>
+			</div>
+			<div class="uk-card-footer uk-text-center">
+				Ce site est exclusivement réservé au relais <em>collaboratif</em> de court-circuit La Piarre, ci-dessous le lien pour accéder au site de l'association court-circuit<br>
+				<br><a class="uk-button uk-button-primary" href="https://www.court-circuit-05.com/">Site de court-circuit</a>
+			</div>
+		</aside>
+	</div>
+</div>
+{% endblock %}

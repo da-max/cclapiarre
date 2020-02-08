@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}Commander du café{% endblock title %}
+
+{% block header %}<h1  class="uk-text-center uk-text-bold uk-margin-large-top">Commander du café</h1>
+{% endblock header %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+	<li class="uk-disabled"><a>Café</a></li>
+	<li class="uk-disabled"><a>Commande</a></li>
+    <li><span>Commander du café</span></li>
+{% endblock breadcrumb %}
+
+{% block second_header %}
+<br>
+<div class="uk-width-3-5@s uk-margin-auto uk-padding-remove-left uk-padding-remove-right uk-padding"  uk-slider="center: true; autoplay: true; autoplay-interval: 6000; pause-on-hover: false; finite: false">
+    
+    <div class="uk-position-relative">
+    
+        <div class="uk-slider-container">
+ 
+            <ul class="uk-slider-items uk-grid">
+                <li class="uk-width-3-4">
+                    <img src="{% static 'Images/Coffee/coffee1.jpg' %}" alt="">
+                </li>
+                <li class="uk-width-3-4">
+                        <img src="{% static 'Images/Coffee/coffee2.jpg' %}" alt="">
+                </li>
+                <li class="uk-width-3-4">
+                    <img src="{% static 'Images/Coffee/coffee.jpg' %}" alt="">
+                </li>
+                <li class="uk-width-3-4">
+                    <img src="{% static 'Images/Coffee/coffee1.jpg' %}" alt="">
+                </li>
+                <li class="uk-width-3-4">
+                    <img src="{% static 'Images/Coffee/coffee2.jpg' %}" alt="">
+                </li>
+                <li class="uk-width-3-4">
+                    <img src="{% static 'Images/Coffee/coffee.jpg' %}" alt="">
+                </li>
+            </ul>
+ 
+        </div>
+ 
+        <div class="uk-hidden@s uk-light">
+            <a class="uk-position-center-left uk-position-small" href="#" uk-slidenav-previous uk-slider-item="previous"></a>
+            <a class="uk-position-center-right uk-position-small" href="#" uk-slidenav-next uk-slider-item="next"></a>
+        </div>
+        <div class="uk-visible@s">
+            <a class="uk-position-center-left-out uk-position-small" href="#" uk-slidenav-previous uk-slider-item="previous"></a>
+            <a class="uk-position-center-right-out uk-position-small" href="#" uk-slidenav-next uk-slider-item="next"></a>
+        </div>
+    </div>
+</div>
+{% endblock second_header %}
+{% block content %}
+<div class="uk-margin-auto uk-margin-large-bottom uk-width-2-5@m uk-card uk-card-default" uk-scrollspy="cls:uk-animation-fade; delay: 200">
+    <div class="uk-text-justify uk-text-bold uk-card-body">
+        <span class="uk-text-primary">Choisissez votre café en fonction de la cafetière à laquelle vous le destinez :</span><br>
+        <ul class="uk-list uk-list-bullet">
+            <li>Moulu expresso pour une cafetière expresso.</li>
+            <li>Moulu moka pour une cafetière italienne.</li>
+            <li>Moulu piston pour une cafetière à piston.</li>
+            <li>Moulu filtre pour une cafetière filtre.</li>
+        </ul>
+        <span class="uk-text-primary">
+        Vous pouvez aussi acheter votre café en grains et le moudre au fur et à mesure de votre consommation, l'arôme n'en sera que meilleur !
+        </span>
+        <ul class="uk-list uk-list-bullet">
+            <li>Grain expresso pour cafetière italienne et expresso (la torréfaction est légèrement plus forte).</li>
+            <li>Grain filtre pour une cafetière filtre ou piston (la torréfaction est légèrement plus douce).</li>
+        </ul>
+    <br>
+    Merci de compléter le tableau ci-dessous et de renseigner vos informations. 
+    Tous les procédés (mouture, torréfaction) ne sont pas disponibles pour chaque café. Dans ce cas, la cellule n'est pas active !
+    </div>
+</div>
+<div id="app">
+</div>{% render_bundle 'app' %}
+{% endblock content %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Erreur 404 {% endblock %}
+{% load static %}
+{% block content %}
+	<div class="uk-position-relative uk-margin-auto uk-position-bottom uk-width-3-5 uk-box-shadow-large uk-padding uk-margin-medium-top uk-margin-small-bottom uk-background-default">
+		<h1>Page non trouvé !</h1>
+		<p><span class="uk-text-bold" >La page que vous avez demandé n'a pas été trouvé !</span> Si vous rencontrez un problème, merci de contacter l'administrateur du site à cette adresse : 
+		benhassenm@tutamail.com</p>
+		<img src="{% static 'Images/404.jpeg' %}">
+	</div>
+{% endblock %}

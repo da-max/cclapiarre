@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des origines{% endblock title %}
+
+{% block header %}<h1 class="uk-text-center uk-margin-large-top">Liste des origines</h1>{% endblock header %}
+
+{% block breadcrumb %}
+    <li><a href="{% url 'home' %}">Accueil</a></li>
+	<li class="uk-disabled"><a>Café</a></li>
+	<li class="uk-disabled"><a>Origine</a></li>
+    <li><span>Liste des origines</span></li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    <div class="uk-width-4-5@s uk-margin-auto">
+        <a class="uk-button uk-button-primary uk-margin" href="{% url 'create_origin' %}">Ajouter une origine</a><br>
+            <div uk-grid class='uk-grid-large uk-grid-match uk-child-width-1-2@l uk-child-width-expends'>
+        {% for origin in origins %}
+                <div>
+                    <div id="a{{ origin.id }}" uk-modal>
+                        <div class="uk-modal-dialog uk-modal-body">
+                            <h2 class="uk-modal-title">Supprimer ?</h2>                        
+                            <p>
+                                Êtes-vous sûr de vouloir supprimer l'origin {{ origin.name }}, aucun retour ne sera possible !<br>
+                                <span class="uk-text-bold uk-text-danger">De plus TOUT les cafés ayant cette origine seront également supprimer.</span>
+                            </p>
+                            <p  class="uk-text-right">
+                                <button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
+                                <a class="uk-button uk-button-primary" href="{% url 'delete_origin' id_origin=origin.id %}">Supprimer</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="uk-card uk-card-default uk-padding-large"> 
+                        <h3>{{ origin.name }}</h3>
+                        <div class='uk-text-right'>
+                            <a class="uk-button uk-button-secondary uk-margin-right" href="{% url 'update_origin' id_origin=origin.id %}" typ="link">Modifier</a>
+                            <a class="uk-button uk-button-danger" uk-toggle="target: #a{{ origin.id }}" >Supprimer</a>
+                        </div>
+                    </div>
+                </div>
+        {% endfor %}
+            </div>
+    </div>
+{% endblock content %}

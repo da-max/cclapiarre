@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier un évènement{% endblock %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+	<li class="uk-disabled"><a>Évènement</a></li>
+	<li><a href="{% url 'list_event' %}">Liste des évènements</a></li>
+    <li><span>Modifier un évènement</span></li>
+{% endblock breadcrumb %}
+
+
+{%block content %}
+<div class="uk-width-4-5 uk-margin-auto">
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.media }}
+    {{ form.as_p }}
+	<p><input type="submit" class="uk-button uk-button-secondary uk-margin-top uk-margin-bottom uk-position-center uk-position-relative" value="Modifier l'évènement"></p>
+</form>
+</div>
+{% endblock %}

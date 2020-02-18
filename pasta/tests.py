@@ -90,7 +90,7 @@ class NewCommandPastaTest(TestCase):
             'name': 'name1',
             'first_name': 'first_name1',
             'email': 'email1',
-            'phone_number': '06000000',
+            'phone_number': '0600000000',
             '0': 'product1\\1\\bad amout'
         }
         
@@ -107,7 +107,7 @@ class NewCommandPastaTest(TestCase):
         
         data = {
             'name': 'name1',
-            'phone_number': '06000000',
+            'phone_number': '0600000000',
             'first_name': 'first_name1',
             '0': 'product1\\1\\2'
         }
@@ -124,7 +124,7 @@ class NewCommandPastaTest(TestCase):
         
         data = {
             'name': 'name1',
-            'phone_number': '06000000',
+            'phone_number': '0600000000',
             'email': 'email1',
             '0': 'product1\\1\\3'
         }
@@ -142,7 +142,7 @@ class NewCommandPastaTest(TestCase):
         data = {
             'first_name': 'fisrt_name1',
             'email': 'email1',
-            'phone_number': '06000000',
+            'phone_number': '0600000000',
             '0': 'product1\\1\\3'
         }
         
@@ -175,13 +175,13 @@ class NewCommandPastaTest(TestCase):
         
         product1 = MetadataProduct.objects.get(product__name='product1')
         
-        command = CommandPasta.objects.create(name='name1', first_name='first_name1', email='email1', phone_number='06000000')
+        command = CommandPasta.objects.create(name='name1', first_name='first_name1', email='email1', phone_number='0600000000')
         amount = Amount.objects.create(product=product1, command=command, amount=3)
         
         data = {
             'first_name': 'fisrt_name1',
             'email': 'email1',
-            'phone_number': '06000000',
+            'phone_number': '0600000000',
             'name': 'name1',
             '0': 'product1\\1\\3'
         }
@@ -198,7 +198,7 @@ class NewCommandPastaTest(TestCase):
         data = {
             'first_name': 'fisrt_name1',
             'email': 'email1',
-            'phone_number': '06000000',
+            'phone_number': '0600000000',
             'name': 'name1',
             '0': 'product1\\1\\3'
         }
@@ -215,7 +215,7 @@ class NewCommandPastaTest(TestCase):
             'name': 'name1',
             'first_name': 'first_name1',
             'email': 'email1',
-            'phone_number': '06000000',
+            'phone_number': '0600000000',
             '0': 'product1\\1\\4'
         }
         

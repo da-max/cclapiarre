@@ -15,10 +15,13 @@
         <a type="button" href="{% url 'pdf_list_command' %}" uk-scrollspy="cls:uk-animation-fade; delay: 500;" class="uk-button uk-button-secondary uk-margin-large uk-position-relative uk-position-bottom-center uk-padding-small">Télécharger le tableau au format PDF</a>
         {% for user, quantitys in data.items %}
             <div class="uk-card uk-card-default uk-card-body uk-padding-large uk-margin-large-top" uk-scrollspy="cls:uk-animation-slide-left; delay:200;">
-                <p class="uk-card-header uk-text-bold">
-                    <span class="uk-label">Nom</span> {{ user.name }} <span class="uk-label">Prénom</span> {{ user.first_name }}
-                    <br><span class="uk-label">email</span> {{ user.email }} <span class="uk-label">Prix à payer</span> {{ user.get_total_price }} €
-                </p>
+                <div class="uk-card-header uk-text-bold uk-child-width-auto uk-margin-large-bottom" uk-grid>
+                    <div><span class="uk-label">Nom</span> {{ user.name }}</div>
+                    <div><span class="uk-label">Prénom</span> {{ user.first_name }}</div>
+                    <div><span class="uk-label">Email</span> {{ user.email }}</div>
+                    <div><span class="uk-label">Numéro de téléphone</span> {{ user.phone_number }}</div>
+                    <div><span class="uk-label">Prix à payer</span> {{ user.get_total_price }} €</div>
+                </div>
                 <ul  class="uk-list uk-list-divider">
                     {% for quantity in quantitys %}
                     <li>{{ quantity.coffee.farm_coop }} ({{ quantity.sort }}) <p  class="uk-text-right">{{ quantity.weight }}g x {{ quantity.quantity }} = {{ quantity.get_price }} €</p></li>

@@ -1,6 +1,8 @@
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.test import Client
 from django.db.models import Q
+from django.template.loader import render_to_string
+
 
 from django.contrib.auth.models import User, Permission
 from django.contrib.auth.signals import user_logged_in
@@ -9,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from coffee.models import CommandCoffee, Coffee, Origin, Type, Quantity
 from registration.views import connect
+
 
 
 class NewCommandViewTest(TestCase):
@@ -161,8 +164,147 @@ class NewCommandViewTest(TestCase):
 
 
 
+class ViewTest(TransactionTestCase):
+    """ ViewTest is class for test all view of coffee apps. """
+    def setUp (self):
+        user_logged_in.disconnect(receiver=connect)
+        
+        origin1 = Origin.objects.create(name="origin1")
+        type1 = Type.objects.create(name='type1')
+        type2 = Type.objects.create(name='type2')
+        
+        types = Type.objects.all()
+        
+        coffee1 = Coffee.objects.create(origin=origin1, farm_coop="coffee1", region="region1", 
+                                   description="description1", process="process1", variety="variety1",
+                                   two_hundred_gram_price=5, kilogram_price=20,
+                                   display=True, maximum=100)
+
+        coffee1.available_type.set(Type.objects.all())
+        
+        self.user = User.objects.create_superuser('test1', 'test1@test.com', 'password')
+        self.client = Client()
+        self.client.login(username='test1', password='password')
+
+    
+    def test_list_coffee(self):
+        """ Test list coffee template, so this class
+        test all coffee pages for make sure it exits, and good value is displayed. """
+        response = self.client.get('/cafe/liste-des-cafes')
+        
+        self.assertEqual(response.status_code, 200)
+        # Test if template content contains title (h1) of page.
+        with self.assertTemplateUsed('coffee/coffee/list.html'):
+            render_to_string('coffee/coffee/list.html')
+
+    
+    def test_create_coffee(self):
+        """ Test coffee/coffee/new.html template."""
+        
+        response = self.client.get('/cafe/creer-un-cafe')
+
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('coffee/coffee/new.html'):
+            render_to_string('coffee/coffee/new.html')
+    
+    
+    def test_update_coffee(self):
+        """ Test coffee/coffee/update template. """
+        
+        coffee = Coffee.objects.get(farm_coop='coffee1')
+        response = self.client.get('/cafe/modifier-un-cafe/' + str(coffee.id))
+        
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('coffee/coffee/update.html'):
+            render_to_string('coffee/coffee/update.html')
+    
+    
+    def test_table_command(self):
+        """ Test coffee/coffee/table_command template."""
+
+        response = self.client.get('/cafe/ancien-commander-du-cafe')
+        
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('coffee/coffee/table_command.html'):     
+            render_to_string('coffee/coffee/table_command.html')
+            
+    
+    def test_global_command(self):
+        """ Test coffee/command/global_command template."""
+        
+        response = self.client.get('/cafe/commande-globale')
+        
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('coffee/command/global_command.html'):
+            render_to_string('coffee/command/global_command.html')
+
+
+    def test_list_command(self):
+        """ Test coffee/command/list_command template. """
+        
+        response = self.client.get('/cafe/liste-des-commandes')
+        
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('coffee/command/list_command.html'):
+            render_to_string('coffee/command/list_command.html')
+        
+    
+    def test_create_command(self):
+        """ Test view command_coffee, this template use vue.js, so just template app.html
+        is tested."""
+        
+        response = self.client.get('/cafe/commander-du-cafe')
+        
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('app.html'):
+            render_to_string('app.html')
+    
+
+    def test_list_origin(self):
+        """ Test /coffee/origin/list.html template. """
+        
+        response = self.client.get('/cafe/liste-des-origines')
+        
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('coffee/origin/list.html'):
+            render_to_string('coffee/origin/list.html')
+    
+    
+    def test_create_origin(self):
+        """ Test /coffee/origin/new.html. """
+        
+        response = self.client.get('/cafe/creer-une-origine')
+        
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('coffee/origin/new.html'):
+            render_to_string('coffee/origin/new.html')
+        
+    
+    def test_update_origin(self):
+        """ Test /coffee/origin/update.html template."""
+        
+        coffee = Coffee.objects.get(farm_coop='coffee1')
+        response = self.client.get('/cafe/modifier-un-cafe/' + str(coffee.id))
+        
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('coffee/origin/update.html'):
+            render_to_string('coffee/origin/update.html')
+    
+    
+    def test_pdf_global_command(self):
+        """ Test /coffee/pdf/global_command.html template. """
+        
+        response = self.client.get('/cafe/pdf-commande-globale')
+        
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('coffee/pdf/global_command.html'):
+            render_to_string('coffee/pdf/global_command.html')
+    
+    
+
+
 class PermissionsCoffeeTest(TestCase):
-    """ PermissionsCoffeeTest if class for test all permissions of coffee apps."""
+    """ PermissionsCoffeeTest is class for test all permissions of coffee apps."""
     def setUp (self):
         
         # Disconnect signals for don't send message when an user connect
@@ -185,6 +327,7 @@ class PermissionsCoffeeTest(TestCase):
         
         self.client = Client()
         self.client.login(username='permission_coffee', password='password')
+   
     
     def test_list_coffee(self):
         """ Test if user has good permission for access to ListCoffee view."""
@@ -195,7 +338,7 @@ class PermissionsCoffeeTest(TestCase):
         response = self.client.get('/cafe/liste-des-cafe')
         
         self.assertEqual(response.status_code, 200)
-    
+
     
     def test_bad_list_coffee(self):
         """ Test if user has not permission for access to ListCoffee."""
@@ -233,14 +376,16 @@ class PermissionsCoffeeTest(TestCase):
         response = self.client.get('/cafe/modifier-un-cafe/' + str(self.coffee.id))
         
         self.assertEqual(response.status_code, 200)
-    
+
+   
     def test_bad_update_coffee(self):
         """ Test if user has not change_coffee permuission for access to UpdateCoffee view."""
         
         response = self.client.get('/cafe/modifier-un-cafe/' + str(self.coffee.id))
         
         self.assertEqual(response.status_code, 403)
-        
+
+       
     def test_list_origin(self):
         """ Test if user has view_origin permission for access to ListOrigin."""
         
@@ -250,14 +395,16 @@ class PermissionsCoffeeTest(TestCase):
         response = self.client.get('/cafe/liste-des-origines')
         
         self.assertEqual(response.status_code, 200)
-        
+
+       
     def test_bad_list_origin(self):
         """ Test if user has not permission for access to ListOrigin view."""
         
         response = self.client.get('/cafe/liste-des-origines')
         
         self.assertEqual(response.status_code, 403)
-        
+
+      
     def test_create_origin(self):
         """ Test if user has add_origin for access to CreateOrigin view."""
         
@@ -267,6 +414,7 @@ class PermissionsCoffeeTest(TestCase):
         response = self.client.get('/cafe/creer-une-origine')
         
         self.assertEqual(response.status_code, 200)
+
         
     def test_bad_create_origin(self):
         """ Test if user has not permission for access to CreateOrigin view."""
@@ -293,7 +441,8 @@ class PermissionsCoffeeTest(TestCase):
         response = self.client.get('/cafe/modifier-une-origine/' + str(self.origin.id))
         
         self.assertEqual(response.status_code, 403)
-    
+
+   
     def test_delete_origin(self):
         """ Test if user has delete_origin for access to delete_origin view. """
         
@@ -303,13 +452,15 @@ class PermissionsCoffeeTest(TestCase):
         response = self.client.get('/cafe/supprimer-une-origine/' + str(self.origin.id))
         
         self.assertEqual(response.status_code, 302)
-        
+
+       
     def test_bad_delete_origin(self):
         """ Test if user has not permission for aceess to delete_origin view."""
         
         response = self.client.get('/cafe/supprimer-une-origine/' + str(self.origin.id))
         
         self.assertEqual(response.status_code, 403)
+
     
     def test_list_command(self):
         """ Test if user has view_commandcoffee for access to pdf_list_command view."""
@@ -318,8 +469,8 @@ class PermissionsCoffeeTest(TestCase):
         
         response1 = self.client.get('/cafe/pdf-liste-des-commandes')
         response2 = self.client.get('/cafe/liste-des-commandes')
-        response3 = self.client.get('/cafe/commande-global')
-        response4 = self.client.get('/cafe/pdf-commande-global')
+        response3 = self.client.get('/cafe/commande-globale')
+        response4 = self.client.get('/cafe/pdf-commande-globale')
         
         self.assertEqual(response1.status_code, 200)
         self.assertEqual(response2.status_code, 200)
@@ -332,13 +483,14 @@ class PermissionsCoffeeTest(TestCase):
         
         response1 = self.client.get('/cafe/pdf-liste-des-commandes')
         response2 = self.client.get('/cafe/liste-des-commandes')
-        response3 = self.client.get('/cafe/commande-global')
-        response4 = self.client.get('/cafe/pdf-commande-global')
+        response3 = self.client.get('/cafe/commande-globale')
+        response4 = self.client.get('/cafe/pdf-commande-globale')
 
         self.assertEqual(response1.status_code, 403)
         self.assertEqual(response2.status_code, 403)
         self.assertEqual(response3.status_code, 403)
         self.assertEqual(response4.status_code, 403)
+
     
     def test_command_coffee(self):
         """ Test if user has add_commandcoffee permission for access to command_coffee view."""
@@ -352,6 +504,7 @@ class PermissionsCoffeeTest(TestCase):
         self.assertEqual(response1.status_code, 200)
         self.assertEqual(response2.status_code, 200)
         self.assertEqual(response3.status_code, 302)
+
     
     def test_bad_command_coffee(self):
         """ Test if user has not permission for access to command_coffee views."""

@@ -1,8 +1,14 @@
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase, Client
+from django.template.loader import render_to_string
+
 
 from django.contrib.auth.models import User
+from django.contrib.auth.signals import user_logged_in
 
 from command.models import Amount, Command, Product
+from registration.views import connect
+
+
 
 class AmountTestCase(TestCase):
     
@@ -49,14 +55,60 @@ class AmountTestCase(TestCase):
         Amount.objects.create(product=product2, command=command1, amount=4)
         Amount.objects.create(product=product1, command=command2, amount=24)
     
+    
     def test_get_total_product(self):
 
         product = Product.objects.get(name="Orange")
         total = Amount.get_total_product(Amount, product=product)
         self.assertEqual(total, 36)
     
+    
     def test_get_total_user(self):
 
         command = Command.objects.get(number=1)
         total = Amount.get_total_user(Amount, command)
         self.assertEqual(total, 353.4)
+
+
+
+class ViewTest(TransactionTestCase):
+    """ ViewTest is class for test all view of command apps."""
+    
+    
+    def setUp(self):
+        user_logged_in.disconnect(receiver=connect)
+        
+        user = User.objects.create_superuser('test1', 'test1@test.com', 'password')
+        
+        self.client = Client()
+        self.client.login(username='test1', password='password')
+    
+    
+    def test_command_citrus(self):
+        """ Test if command_citrus display app.html template (vuejs app)."""
+        
+        response = self.client.get('/commande/commander-des-agrumes')
+        
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('app.html'):
+            render_to_string('app.html')
+    
+    
+    def test_sommary_command(self):
+        """ Test if sommary_command display command/pdf/sommary_command template. """
+        
+        response = self.client.get('/commande/recapitulatif-de-la-commande')
+        
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('command/pdf/sommary_command.html'):
+            render_to_string('command/pdf/sommary_command.html')
+    
+    
+    def test_table_command(self):
+        """ Tets if table_command display command/command/table_command.html template."""
+        
+        response = self.client.get('/commande/commander')
+        
+        self.assertEqual(response.status_code, 200)
+        with self.assertTemplateUsed('command/command/table_command.html'):
+            render_to_string('command/command/table_command.html')

@@ -1,3 +1,7 @@
+[![pipeline status](https://gitlab.com/Damax/cclapiarre/badges/master/pipeline.svg)](https://gitlab.com/Damax/cclapiarre/-/commits/master)
+
+
+
 # CC La Piarre
 
 

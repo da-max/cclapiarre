@@ -1,4 +1,4 @@
-[![pipeline status](https://gitlab.com/Damax/cclapiarre/badges/master/pipeline.svg)](https://gitlab.com/Damax/cclapiarre/-/commits/master)
+[![pipeline status](https://gitlab.com/Damax/cclapiarre/badges/develop/pipeline.svg)](https://gitlab.com/Damax/cclapiarre/-/commits/develop)
 
 
 

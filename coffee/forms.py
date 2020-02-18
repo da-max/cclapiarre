@@ -26,7 +26,7 @@ class CoffeeForm(models.ModelForm):
         }
         labels = {
             'origin': "Origine du café",
-            'available_type': "Type de moulure disponible"
+            'available_type': "Type de mouture disponible"
 
         }
         

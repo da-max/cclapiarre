@@ -34,7 +34,7 @@ class ListCoffee(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = "coffee.view_coffee"
     model = Coffee
     context_object_name = "coffees"
-    template_name = "coffee/list.html"
+    template_name = "coffee/coffee/list.html"
 
 
     def get_queryset(self):
@@ -62,7 +62,7 @@ class CreateCoffee(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_required = "coffee.add_coffee"
     model = Coffee
     form_class = CoffeeForm
-    template_name = "coffee/new.html"
+    template_name = "coffee/coffee/new.html"
     success_url = reverse_lazy('list_coffee')
 
 
@@ -113,7 +113,7 @@ class UpdateCoffee(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 
     permission_required = "coffee.change_coffee"
     model = Coffee
-    template_name = "coffee/update.html"
+    template_name = "coffee/coffee/update.html"
     content_object_name = 'coffee'
     success_url = reverse_lazy('list_coffee')
     form_class = CoffeeForm
@@ -170,7 +170,7 @@ class ListOrigin(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     permission_required = "coffee.view_origin"
     model = Origin
     context_object_name = "origins"
-    template_name = "origin/list.html"
+    template_name = "coffee/origin/list.html"
 
     def get_queryset(self):
         """ Method for personnalise request and order of data."""
@@ -197,7 +197,7 @@ class CreateOrigin(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_required = "coffee.add_origin"
     model = Origin
     form_class = OriginForm
-    template_name = "origin/new.html"
+    template_name = "coffee/origin/new.html"
     success_url = reverse_lazy('list_origin')
 
 
@@ -240,7 +240,7 @@ class UpdateOrigin(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 
     permission_required = "coffee.change_origin"
     model = Origin
-    template_name = "origin/update.html"
+    template_name = "coffee/origin/update.html"
     content_object_name = 'origin'
     success_url = reverse_lazy('list_origin')
     form_class = OriginForm
@@ -330,7 +330,7 @@ def table_command(request):
             type_available.append(t.name)
         coffees_type[coffee] = type_available
     
-    return render(request, 'coffee/table_command.html', locals())
+    return render(request, 'coffee/coffee/table_command.html', locals())
 
 
 @permission_required('coffee.can_commandcoffee', raise_exception=True)
@@ -541,7 +541,7 @@ def global_command(request):
         else : 
             coffees_quantity[metadata] = quantity.quantity
     
-    return render(request, "command/global_command.html", locals())
+    return render(request, "coffee/command/global_command.html", locals())
 
 
 
@@ -561,7 +561,7 @@ def pdf_global_command(request):
         else : 
             coffees_quantity[metadata] = quantity.quantity
     
-    return render(request, "pdf/global_command.html", locals())
+    return render(request, "coffee/pdf/global_command.html", locals())
 
 
 @login_required
@@ -582,7 +582,7 @@ def list_command(request):
 
                 data[command].append(quantity)
     
-    return render(request, "command/list_command.html", locals())
+    return render(request, "coffee/command/list_command.html", locals())
 
 
 @login_required
@@ -604,7 +604,7 @@ def pdf_list_command(request):
 
                 data[command].append(quantity)
     
-    return render(request, "pdf/list_command.html", locals())
+    return render(request, "coffee/pdf/list_command.html", locals())
 
 @login_required
 @permission_required('coffee.add_commandcoffee', raise_exception=True)
@@ -764,8 +764,8 @@ def new_command(request):
             
             subject = "Commande de café"
             from_email = 'cclapiarre@zohomail.eu'
-            html_text = get_template('mail/command_sommary.html')
-            plain_text = get_template('mail/command_sommary.txt')
+            html_text = get_template('coffee/mail/command_sommary.html')
+            plain_text = get_template('coffee/mail/command_sommary.txt')
             
             html_content = html_text.render({
                                                 'command_sommary': command_sommary, 

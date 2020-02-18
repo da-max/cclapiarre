@@ -75,7 +75,7 @@ def table_command(request):
         messages.info(request, "Vous avez déjà commandé, si vous souhaitez modifier votre commande merci de contacter directement les personnes qui s'occupent de la commande, ou l'administrateur du site à cette adresse : benhassenm@tutamail.com")
  
  
-    return render(request, "command/table_command.html", locals())
+    return render(request, "command/command/table_command.html", locals())
 
 
 
@@ -176,20 +176,19 @@ def sommary_command(request):
             'total': Amount.get_total_product(Amount, product)
         }
     
-    return render(request, "pdf/sommary_command.html", {'products_list': products_list, 'users': users, 'total': total})
+    return render(request, "command/pdf/sommary_command.html", {'products_list': products_list, 'users': users, 'total': total})
     
 @login_required
 @permission_required('command.add_command', raise_exception=True)
 def command_citrus(request):
-    '''
-    '''
+    ''' Vuejs app for command citrus.'''
     return render(request, 'app.html')
 
 @login_required
 @permission_required('command.add_command', raise_exception=True)
 def get_citrus_list(request):
-    '''
-    '''
+    ''' Return list of citrus on JSON format for VueJS app. '''
+    
     amouts_list = dict()
     users = list()
     command_user = dict()

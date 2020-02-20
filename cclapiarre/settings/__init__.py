@@ -59,7 +59,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'registration.middleware.CheckAccess'
+    'stats.middleware.CheckAccess',
+    'stats.middleware.Version'
 ]
 
 ROOT_URLCONF = 'cclapiarre.urls'

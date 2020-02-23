@@ -42,7 +42,6 @@ class Version:
                 package = json.load(package)
             
             version = package['version']
-            print(version)
 
         except:
             version = '0.0.1'

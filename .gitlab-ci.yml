@@ -6,9 +6,8 @@ services:
 include:
   - template: License-Scanning.gitlab-ci.yml
 
-licence_scanning:
-  variables:
-    LM_PYTHON_VERSION: 3
+variables:
+  LM_PYTHON_VERSION: 3
 
 before_script:
   - pip install -r requirements.txt

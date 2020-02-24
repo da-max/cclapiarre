@@ -3,6 +3,7 @@ from django.core.mail import send_mail
 from django.urls import reverse_lazy
 from django.views.decorators.cache import cache_page
 from django.views.generic import ListView, CreateView, UpdateView
+from django.core.files import File
 
 
 from django.contrib import messages
@@ -205,3 +206,10 @@ def delete_article(request, id):
     return HttpResponseRedirect(success_url)
 
 
+def changelog(request):
+    """ This function dislpay content of CHANGLOG.md files. """
+    with open('./CHANGELOG.md', 'r') as changelog_file:
+        ch = File(changelog_file)
+        changelog = ch.read()
+
+    return render(request, 'article/changelog.html', locals())

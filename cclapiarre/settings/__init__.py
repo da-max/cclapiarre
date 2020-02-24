@@ -42,6 +42,7 @@ INSTALLED_APPS =[
     'ckeditor',
     'phonenumber_field',
     'webpack_loader',
+    'markdown_deux',
     'registration',
     'article',
     'event',

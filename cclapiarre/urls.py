@@ -42,7 +42,7 @@ urlpatterns = [
     path('pages/', include('django.contrib.flatpages.urls')),
     
     # Page for display content of CHANGELOG.md files
-    path('changements', a_views.changelog)
+    path('changements', a_views.changelog, name='changelog')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

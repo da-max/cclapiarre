@@ -10,3 +10,7 @@ body {
     display: flex;
     flex-direction: column;
 }
+
+.fa-gitlab {
+    padding: 0.5rem 0.5rem;
+}

@@ -26,4 +26,4 @@ db.sqlite3
 
 media/*
 
-frontend/webpack-stats.json
+./frontend/webpack-stats.json

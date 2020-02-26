@@ -1,8 +1,9 @@
 dj-database-url==0.5.0
-Django==2.2
+Django==2.2.9
 django-ckeditor==5.8.0
 django-js-asset==1.2.2
 django-mailbox==4.8.0
+django-markdown-deux==1.0.5
 django-phonenumber-field==4.0.0
 django-webpack-loader==0.6.0
 django-xhtml2pdf==0.0.4
@@ -10,6 +11,7 @@ email==6.0.0a1
 gunicorn==19.9.0
 html5lib==1.0.1
 humanize==0.5.1
+markdown2==2.3.8
 phonenumbers==8.10.17
 Pillow==6.0.0
 psycopg2==2.8.3

@@ -3,6 +3,13 @@ image: python:3.7.6-buster
 services:
   - nouchka/sqlite3
 
+include:
+  - template: License-Scanning.gitlab-ci.yml
+
+license_scanning: 
+  variables:
+    LM_PYTHON_VERSION: 3
+
 before_script:
   - pip install -r requirements.txt
   - python ./manage.py makemigrations

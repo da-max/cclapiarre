@@ -65,7 +65,7 @@
 
 
 
-        <form method="post" action="#">
+        <form>
             <div class='uk-text-center uk-text-bold uk-margin-medium-bottom'>
                 <span class="uk-label">Vous êtes connecté sous le nom</span> {{ username }} 
                 <span class='uk-label'>email</span> {{ email }}

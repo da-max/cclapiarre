@@ -218,7 +218,12 @@ export default {
                 this.loading = false
             },
             response =>{
-                console.log('error');
+                this.messages.push({
+                    'id': Math.random() * 1000,
+                    'status': 'danger',
+                    'header': 'Erreur',
+                    'body': 'Une errreur est survenue, merci d\'actualiser la page (il est possible que votre commande ait été prise en compte) et de me contacter si l\'erreur persiste.'
+                })
                 this.loading = false
             })
         }

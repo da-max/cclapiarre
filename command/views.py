@@ -335,8 +335,8 @@ def new_command(request):
                     
             subject = "Récapitulatif de la commande"
             from_mail = settings.DEFAULT_FROM_EMAIL
-            html_text = get_template('command_mail/sommary.html')
-            plain_text = get_template('command_mail/sommary.txt')
+            html_text = get_template('command/command_mail/sommary.html')
+            plain_text = get_template('command/command_mail/sommary.txt')
         
             html_content = html_text.render({
                 'command_sommary': command_sommary,

@@ -49,3 +49,4 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+frontend/webpack-stats.json

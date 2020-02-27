@@ -323,7 +323,8 @@ class PermissionsCoffeeTest(TestCase):
                                    display=True, maximum=100)
 
         self.coffee.available_type.set(Type.objects.all())
-        
+
+        self.command_coffee = CommandCoffee.objects.create(name='Test', first_name='First test', email='test@test.com', phone_number='0659617169')
         
         self.client = Client()
         self.client.login(username='permission_coffee', password='password')
@@ -516,3 +517,23 @@ class PermissionsCoffeeTest(TestCase):
         self.assertEqual(response2.status_code, 403)
         self.assertEqual(response3.status_code, 403)
     
+
+    def test_delete_command (self):
+        """ Test if user has delete_commandcoffee permission for access to delete_command and delete_all_command view. """
+        permission = Permission.objects.get(Q(codename='delete_commandcoffee') & Q(content_type=self.content_type.get(model='commandcoffee')))
+        self.user.user_permissions.set([permission])
+
+        response2 = self.client.get('/cafe/delete-command/' +  str(self.command_coffee.id))
+        response1 = self.client.get('/cafe/delete-all-command')
+
+        self.assertEqual(response2.status_code, 302)
+        self.assertEqual(response1.status_code, 302)
+
+    def test_bda_delete_command (self):
+            """ Test if user has not delete_commandcoffee permission for access to delete_command and delete_all_command view. """
+
+            response2 = self.client.get('/cafe/delete-command/' +  str(self.command_coffee.id))
+            response1 = self.client.get('/cafe/delete-all-command')
+
+            self.assertEqual(response2.status_code, 403)
+            self.assertEqual(response1.status_code, 403)

@@ -301,7 +301,7 @@ def delete_coffee(request, id_coffee):
     return HttpResponseRedirect(success_url)
 
 
-@permission_required('coffee.delete_command', raise_exception=True)
+@permission_required('coffee.delete_commandcoffee', raise_exception=True)
 @login_required
 def delete_command(request, id_command):
 
@@ -317,7 +317,7 @@ def delete_command(request, id_command):
     return HttpResponseRedirect(reverse_lazy('list_command'))
 
 
-@permission_required('coffee.delete_commandcoffee')
+@permission_required('coffee.delete_commandcoffee', raise_exception=True)
 @login_required
 def delete_all_command_coffee(request):
     command_coffee = CommandCoffee.objects.all()

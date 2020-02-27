@@ -28,3 +28,4 @@ media/*
 
 frontend/webpack-stats.json
 frontend/webpack-stats-prod.json
+frontend/webpack-stats.json

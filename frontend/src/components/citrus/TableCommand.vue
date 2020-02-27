@@ -42,7 +42,6 @@
         </modal>
 
 
-
         <div id="messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
             <message v-show="has_command" :close='false'>
                 <template v-slot:header>
@@ -84,7 +83,29 @@
                             <th>Nom du produit</th>
                             <th v-show="!has_command">Ma commande</th>
                             <th>Total</th>
-                            <th v-for="user in users" :key="user[0]">{{ user[0] }}</th>
+                            <th v-for="user in users" :key="user[0]">
+
+                                <drop button_style='default' pos='left'>
+                                    <template v-slot:button>{{ user[0] }}</template>
+                                    <template v-slot:header>{{ user[0] }}</template>
+                                    <template v-slot:body>
+                                        <button :uk-toggle='"target: #confirm-delete-command-" + user[0]' type="button" class="uk-button uk-button-danger">Supprimer</button>
+                                    </template>
+                                </drop>
+
+                                <modal :close_button='true' :id='"confirm-delete-command-" + user[0]'>
+                                    <template v-slot:header>
+                                        <h3>Supprimer la commande de {{ user[0] }}</h3>
+                                    </template>
+                                    <template v-slot:body>
+                                        Vous êtes sur le point de supprimer la commande de {{ user[0] }}, <span class="uk-text-warning uk-text-bold">attention, cette ation est irréversible</span>.
+                                    </template>
+                                    <template v-slot:footer>
+                                        <button class="uk-button uk-button-default uk-margin-medium-right uk-modal-close">Annuler</button>
+                                        <button class="uk-button uk-button-danger" @click="delete_command(user[0])">Supprimer</button>
+                                    </template>
+                                </modal>
+                            </th>
                         </tr>
                     </thead>
                     <tfoot>
@@ -221,6 +242,33 @@ export default {
                 console.log('error');
                 this.loading = false
             })
+        },
+
+        delete_command (name) {
+            this.get_command()
+        },
+
+        get_command () {
+            this.$citrus.query().then(
+                (response) => {
+                    console.log('salut');
+                    
+                    this.products = response.data.products_list
+                    this.users = response.data.users
+                    this.total = response.data.total
+                    this.has_command = response.data.has_command
+                    Object.values(this.products).forEach(product => {
+                        this.command[product.name]
+                        
+                    });
+                    this.username = response.data.username
+                    this.email = response.data.email
+                },
+                (response) => {
+                    console.log('erreur', response);
+                    
+                }
+            )
         }
     },
 
@@ -228,26 +276,9 @@ export default {
         this.$citrus = this.$resource('commande/citrus-formate', {}, {}, {
             before: () => {this.loading = true},
             after: () => {this.loading = false}
-        }),
-
-        this.$citrus.query().then(
-            (response) => {
-                this.products = response.data.products_list
-                this.users = response.data.users
-                this.total = response.data.total
-                this.has_command = response.data.has_command
-                Object.values(this.products).forEach(product => {
-                    this.command[product.name]
-                    
-                });
-                this.username = response.data.username
-                this.email = response.data.email
-            },
-            (response) => {
-                console.log('erreur', response);
-                
-            }
-        )
+        })
+        this.get_command()
+        
     },
 }
 </script>

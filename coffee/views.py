@@ -303,7 +303,7 @@ def delete_coffee(request, id_coffee):
 
 @permission_required('coffee.delete_command', raise_exception=True)
 @login_required
-def delete_command(request, id_command):
+def delete_coffee_command(request, id_command):
 
     command = get_object_or_404(CommandCoffee, id=id_command)
     result = command.delete()
@@ -319,7 +319,7 @@ def delete_command(request, id_command):
 
 @permission_required('coffee.delete_commandcoffee')
 @login_required
-def delete_all_command_coffee(request):
+def delete_all_coffee_command(request):
     command_coffee = CommandCoffee.objects.all()
     result = command_coffee.delete()
 

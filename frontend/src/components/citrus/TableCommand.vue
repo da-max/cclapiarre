@@ -265,7 +265,11 @@ export default {
                     this.email = response.data.email
                 },
                 (response) => {
-                    console.log('erreur', response);
+                    this.messages.push({
+                        'status': 'danger',
+                        'header': 'Erreur',
+                        'body': 'Une erreur est survenue, merci de recharger la page est de me contacter si vous rencontrez de nouveau cette erreur.'
+                    })
                     
                 }
             )

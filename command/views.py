@@ -1,6 +1,6 @@
 import os
 from random import random
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.conf import settings
 from django.core.mail import send_mail
@@ -16,7 +16,6 @@ from django_xhtml2pdf.utils import pdf_decorator
 
 
 from command.models import Product, Command, Amount
-
 
 @login_required
 @permission_required('command.add_command', raise_exception=True)
@@ -208,7 +207,7 @@ def get_citrus_list(request):
             has_command = True
         
         user_total = Amount.get_total_user(Amount, command.id)
-        users.append((command.user.username, user_total))
+        users.append((command.user.username, user_total, command.id))
         total += user_total
     
     for product in products:
@@ -232,6 +231,37 @@ def get_citrus_list(request):
         }
     
     return JsonResponse({'products_list': products_list, 'users': users, 'total': total, 'has_command': has_command, 'username': request.user.username, 'email': request.user.email})
+
+
+@login_required
+@permission_required('command.delete_command', raise_exception=True)
+def delete_citrus_command(request):
+    """ View for delete a commandCitrus, this view is call by the VueJS app."""
+
+    try:
+        id_command = request.GET['id_command']
+    except:
+        return JsonResponse({
+            'status': 'warning',
+            'header': 'Suppression impossible !',
+            'body': 'La commande séléctionné n\'a pu pu être supprimé, merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur'
+        })
+    print(id_command)
+    command = get_object_or_404(Command, id=id_command)
+    result = command.delete()
+
+    if result:
+        return JsonResponse({
+            'status': 'success',
+            'header': 'Commande supprimée',
+            'body': 'La commande a bien été supprimé.'
+        })
+    else:
+        return JsonResponse({
+            'status':'warning',
+            'header':'Erreur',
+            'body': 'La commande n\'a pu être supprimé, merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur.'
+        })
 
 @login_required
 @permission_required('command.add_command', raise_exception=True)
@@ -335,8 +365,8 @@ def new_command(request):
                     
             subject = "Récapitulatif de la commande"
             from_mail = settings.DEFAULT_FROM_EMAIL
-            html_text = get_template('command_mail/sommary.html')
-            plain_text = get_template('command_mail/sommary.txt')
+            html_text = get_template('command/command_mail/sommary.html')
+            plain_text = get_template('command/command_mail/sommary.txt')
         
             html_content = html_text.render({
                 'command_sommary': command_sommary,
@@ -360,4 +390,3 @@ def new_command(request):
             'status': 'success',
             'header': 'Commande passée',
             'body': 'Votre commande a bien été enregistrée, merci de me contacter à l\'adresse mail : da-max@tutanota.com si vous souhaitez modifier votre commande.'})
-    

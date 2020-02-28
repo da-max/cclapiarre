@@ -64,7 +64,7 @@
 
 
 
-        <form>
+        <form id="form">
             <div class='uk-text-center uk-text-bold uk-margin-medium-bottom'>
                 <span class="uk-label">Vous êtes connecté sous le nom</span> {{ username }} 
                 <span class='uk-label'>email</span> {{ email }}
@@ -83,17 +83,17 @@
                             <th>Nom du produit</th>
                             <th v-show="!has_command">Ma commande</th>
                             <th>Total</th>
-                            <th v-for="user in users" :key="user[0]">
+                            <th v-for="user in users" :key="user[2]">
 
                                 <drop button_style='default' pos='left'>
                                     <template v-slot:button>{{ user[0] }}</template>
                                     <template v-slot:header>{{ user[0] }}</template>
                                     <template v-slot:body>
-                                        <button :uk-toggle='"target: #confirm-delete-command-" + user[0]' type="button" class="uk-button uk-button-danger">Supprimer</button>
+                                        <button :uk-toggle='"target: #confirm-delete-command-" + user[2]' type="button" class="uk-button uk-button-danger">Supprimer</button>
                                     </template>
                                 </drop>
 
-                                <modal :close_button='true' :id='"confirm-delete-command-" + user[0]'>
+                                <modal :close_button='true' :id='"confirm-delete-command-" + user[2]'>
                                     <template v-slot:header>
                                         <h3>Supprimer la commande de {{ user[0] }}</h3>
                                     </template>
@@ -102,7 +102,7 @@
                                     </template>
                                     <template v-slot:footer>
                                         <button class="uk-button uk-button-default uk-margin-medium-right uk-modal-close">Annuler</button>
-                                        <button class="uk-button uk-button-danger" @click="delete_command(user[0])">Supprimer</button>
+                                        <button class="uk-button uk-button-danger" @click="delete_command(user[2])">Supprimer</button>
                                     </template>
                                 </modal>
                             </th>
@@ -129,7 +129,7 @@
                                     </template>
                                 </drop>
                             </td>
-                            <td v-show="!has_command"><input type="number" min='0' :step='product.step' :max='product.maximum' class='uk-input' :disabled="has_command" v-model="command[product.name]"></td>
+                            <td v-show="!has_command"><input type="number" min='0' :step='product.step' :max='product.maximum' class='uk-input' v-model="command[product.name]"></td>
                             <td>
                                 <span v-if='product.weight != 1'>{{ product.total }} caisse<span v-if="product.total > 1">s</span>
                                     (soit {{ Math.round(product.total * product.weight * 100) / 100 }} kg)
@@ -142,7 +142,7 @@
                 </table>
             </div>
             <div class='uk-text-center uk-margin-large'>
-                <input type='submit' class="uk-button uk-margin-auto uk-button-primary" @click.prevent="show_recap()" value='Valider ma commande' v-show="!has_command" id='button-command'>
+                <input type='submit' class="uk-button uk-margin-auto uk-button-primary" @click.prevent="show_recap()" value='Valider ma commande' v-show="!has_command && Object.keys(command).length != 0" id='button-command'>
             </div>
         </form>
     </div>
@@ -230,7 +230,8 @@ export default {
             this.$resource('commande/create-command').save({}, formData).then(response => {
                 
                 if (response.data.status == 'success') {
-                    location.reload()
+                    this.get_command()
+                    this.loading = false
                 }
                 else {
                     this.messages.push(response.data)
@@ -239,19 +240,36 @@ export default {
                 this.loading = false
             },
             response =>{
-                console.log('error');
+                this.messages.push({
+                        'status': 'danger',
+                        'header': 'Erreur',
+                        'body': 'Une erreur est survenue, merci de recharger la page est de me contacter si vous rencontrez de nouveau cette erreur.'
+                    })
                 this.loading = false
             })
         },
 
-        delete_command (name) {
-            this.get_command()
+        delete_command (id_command) {
+            UIkit.modal('#confirm-delete-command-' + id_command).hide()
+            this.loading = true
+
+            this.$resource('commande/delete-citrus-command').delete({id_command: id_command}).then((response) => { 
+                this.messages.push(response.data)             
+                this.get_command()
+                this.loading = false
+            }, response => {
+                this.messages.push({
+                        'status': 'danger',
+                        'header': 'Erreur',
+                        'body': 'Une erreur est survenue, merci de recharger la page est de me contacter si vous rencontrez de nouveau cette erreur.'
+                    })
+                this.loading = false
+            })
         },
 
         get_command () {
             this.$citrus.query().then(
                 (response) => {
-                    console.log('salut');
                     
                     this.products = response.data.products_list
                     this.users = response.data.users

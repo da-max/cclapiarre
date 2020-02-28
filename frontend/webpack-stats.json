@@ -1,1 +1,1 @@
-{"status":"compiling","publicPath":"http://0.0.0.0:8080/"}
+{"status":"done","publicPath":"http://0.0.0.0:8080/","chunks":{"null":[{"name":"js/1.js","publicPath":"http://0.0.0.0:8080/js/1.js","path":"/bundles/js/1.js"}],"app":[{"name":"js/app.js","publicPath":"http://0.0.0.0:8080/js/app.js","path":"/bundles/js/app.js"}]}}

@@ -39,6 +39,7 @@ INSTALLED_APPS =[
     'django.contrib.sites',
     'django.contrib.flatpages',
     'django.contrib.humanize',
+    'rest_framework',
     'ckeditor',
     'phonenumber_field',
     'webpack_loader',

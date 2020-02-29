@@ -7,8 +7,8 @@
             </template>
             <template v-slot:body>
                 <p class="uk-text-center">
-                    <span class="uk-label">Vous ếtes connecté.e sous le nom de</span> {{ username }}
-                    <span class='uk-label uk-margin-left'>Email</span> {{ email }}
+                    <span class="uk-label">Vous ếtes connecté.e sous le nom de</span> {{ current_user.username }}
+                    <span class='uk-label uk-margin-left'>Email</span> {{ current_user.email }}
                     <span class="uk-label uk-margin-left">Total de votre commande</span> {{ total_command }} €
                 </p>
                 <message v-show="send_mail" class='uk-width-3-5@m'>
@@ -16,7 +16,7 @@
                         <h3>Mail Récapitulatif</h3>
                     </template>
                     <template v-slot:body>
-                        Un mail récapitulatif de votre commande sera envoyé à l'adresse suivante : <span class='uk-text-bold'>{{ email }}</span>.
+                        Un mail récapitulatif de votre commande sera envoyé à l'adresse suivante : <span class='uk-text-bold'>{{ current_user.email }}</span>.
                         Si vous ne souahitez pas recevoir ce mail, cliquez <button class="uk-button uk-button-link uk-text-warning" type="button" @click="send_mail = false">ici</button>
                     </template>
                 </message>
@@ -77,8 +77,8 @@
 
         <form id="form">
             <div class='uk-text-center uk-text-bold uk-margin-medium-bottom'>
-                <span class="uk-label">Vous êtes connecté sous le nom</span> {{ username }} 
-                <span class='uk-label'>email</span> {{ email }}
+                <span class="uk-label">Vous êtes connecté sous le nom</span> {{ current_user.username }} 
+                <span class='uk-label'>email</span> {{ current_user.email }}
                 <br>
                 <div class="uk-margin-medium-top">
                     <label class="uk-margin-right uk-form-label" for="checkbox">Recevoir un mail récapitulant ma commande</label><input type="checkbox" id='checkbox' class='uk-checkbox' v-model="send_mail">
@@ -195,8 +195,8 @@ export default {
         total_command () {
 
             if (this.has_command == true) {
-                return this.commands.filter(c => c.user == this.current_user).total
-
+                const command = this.commands.filter(c => c.user.id == this.current_user.id)
+                return command[0].total
             }
 
             let total_command = Number()
@@ -266,37 +266,25 @@ export default {
 
         commandCitrus () {
             UIkit.modal('#command-recap').hide()
-            this.loading = true
-
-
             let formData = new FormData()
-
-            Object.entries(this.command).forEach(c => {
-                formData.append(c[0], c[1])
-            })
-
-            formData.append('send_mail', this.send_mail)
-
-            this.$resource('commande/create-command').save({}, formData).then(response => {
-                
-                if (response.data.status == 'success') {
-                    this.get_command()
-                    this.loading = false
-                }
-                else {
-                    this.messages.push(response.data)
-                    UIkit.scroll('#button-command', {offset: 200}).scrollTo('#messages')
-                }
-                this.loading = false
-            },
-            response =>{
-                this.messages.push({
-                        'status': 'danger',
-                        'header': 'Erreur',
-                        'body': 'Une erreur est survenue, merci de recharger la page est de me contacter si vous rencontrez de nouveau cette erreur.'
+            this.$command.save({}, {user: this.current_user}).then((response) => {
+                if (response.data['status'] == 'success') {
+                    formData.append('user', parseInt(this.current_user.id))
+                    Object.entries(this.command).forEach(c => {
+                        formData.append(c[0], c[1])
                     })
-                this.loading = false
-            })
+
+                    this.$amount.save({}, formData).then((response) => {
+                        this.messages.push(response.data)
+                        if (response.data['status'] == 'success') {
+                            this.get_command()
+                        }
+
+                    }, (response) => {this.query_error = true})
+                } 
+                else {this.messages.push(response.data)}
+            
+            }, (response) => {this.query_error = true})
         },
 
         delete_command (id_command) {
@@ -318,68 +306,47 @@ export default {
         },
 
         get_command () {
-            this.$citrus.query().then(
-                (response) => {
-                    
-                    this.products = response.data.products_list
-                    this.users = response.data.users
-                    this.total = response.data.total
-                    this.has_command = response.data.has_command
-                    Object.values(this.products).forEach(product => {
-                        this.command[product.name]
-                        
-                    });
-                    this.username = response.data.username
-                    this.email = response.data.email
-                },
-                (response) => {
-                    this.messages.push({
-                        'status': 'danger',
-                        'header': 'Erreur',
-                        'body': 'Une erreur est survenue, merci de recharger la page est de me contacter si vous rencontrez de nouveau cette erreur.'
-                    })
-                    
-                }
-            )
+            // Get citrus list
+            this.$citrus = this.$resource('api/citrus/product', {}, {}, {
+                before: () => {this.loading = true},
+                after: () => {this.loading = false}
+            })
+            this.$citrus.query().then((response) => {
+                this.products = response.data
+            },
+            (response) => {
+                this.query_error = true
+            })
+
+            // Get command list
+            this.$command = this.$resource('api/citrus/command/', {}, {}, {
+                before: () => {this.loading = true},
+                after: () => {this.loading = false}
+            })
+
+            this.$command.query().then((response) => {            
+                this.commands = response.data            
+            }, (response) => {
+                this.query_error = true
+            })
+
+            // Get amounts
+            this.$amount = this.$resource('api/citrus/amount/', {}, {}, {
+                before: () => {this.loading = true},
+                after: () => {this.loading = false}
+            })
+
+            this.$amount.query().then((response) => {
+                this.amounts = response.data
+            }, (response) => {
+                this.query_error = true
+            })
         }
     },
 
-    mounted() {        
-        // Get citrus list
-        this.$citrus = this.$resource('api/citrus/product', {}, {}, {
-            before: () => {this.loading = true},
-            after: () => {this.loading = false}
-        })
-        this.$citrus.query().then((response) => {
-            this.products = response.data
-        },
-        (response) => {
-            this.query_error = true
-        })
+    mounted() {
 
-        // Get command list
-        this.$command = this.$resource('api/citrus/command', {}, {}, {
-            before: () => {this.loading = true},
-            after: () => {this.loading = false}
-        })
-
-        this.$command.query().then((response) => {            
-            this.commands = response.data            
-        }, (response) => {
-            this.query_error = true
-        })
-
-        // Get amounts
-        this.$amount = this.$resource('api/citrus/amount', {}, {}, {
-            before: () => {this.loading = true},
-            after: () => {this.loading = false}
-        })
-
-        this.$amount.query().then((response) => {
-            this.amounts = response.data
-        }, (response) => {
-            this.query_error = true
-        })
+        this.get_command()
 
         // Get current user
         this.$user = this.$resource('api/users/current', {}, {}, {

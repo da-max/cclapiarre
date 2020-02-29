@@ -29,7 +29,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="c in Object.entries(command)" :key="c[0]">
-                            <td>{{ c[0] }}</td>
+                            <td>{{ get_product_name(c[0]) }}</td>
                             <td>{{ c[1] }}</td>
                         </tr>
                     </tbody>
@@ -43,6 +43,19 @@
 
 
         <div id="messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
+            
+            <!-- Display if error = true -->
+            <message v-show="query_error" :close='false'>
+                <template v-slot:header>
+                    Erreur interne
+                </template>
+                <template v-slot:body>
+                        Une erreur est survenue, cela vient de nous, merci d'actualiser la page et de
+                        nous contacter si vous rencontrez de nouveau cette erreur.
+                </template>
+            </message>
+
+            <!--- Display if user has alreay command -->
             <message v-show="has_command" :close='false'>
                 <template v-slot:header>
                     Vous avez déjà commandé
@@ -61,8 +74,6 @@
                 </template>
             </message>
         </div>
-
-
 
         <form id="form">
             <div class='uk-text-center uk-text-bold uk-margin-medium-bottom'>
@@ -83,26 +94,26 @@
                             <th>Nom du produit</th>
                             <th v-show="!has_command">Ma commande</th>
                             <th>Total</th>
-                            <th v-for="user in users" :key="user[2]">
+                            <th v-for="c in commands" :key="c.id">
 
                                 <drop button_style='default' pos='left'>
-                                    <template v-slot:button>{{ user[0] }}</template>
-                                    <template v-slot:header>{{ user[0] }}</template>
+                                    <template v-slot:button>{{ c.user.username }}</template>
+                                    <template v-slot:header>{{ c.user.username }}</template>
                                     <template v-slot:body>
-                                        <button :uk-toggle='"target: #confirm-delete-command-" + user[2]' type="button" class="uk-button uk-button-danger">Supprimer</button>
+                                        <button :uk-toggle='"target: #confirm-delete-command-" + c.id' type="button" class="uk-button uk-button-danger">Supprimer</button>
                                     </template>
                                 </drop>
 
-                                <modal :close_button='true' :id='"confirm-delete-command-" + user[2]'>
+                                <modal :close_button='true' :id='"confirm-delete-command-" + c.id'>
                                     <template v-slot:header>
-                                        <h3>Supprimer la commande de {{ user[0] }}</h3>
+                                        <h3>Supprimer la commande de {{ c.user.username }}</h3>
                                     </template>
                                     <template v-slot:body>
-                                        Vous êtes sur le point de supprimer la commande de {{ user[0] }}, <span class="uk-text-warning uk-text-bold">attention, cette ation est irréversible</span>.
+                                        Vous êtes sur le point de supprimer la commande de {{ c.user.username}}, <span class="uk-text-warning uk-text-bold">attention, cette ation est irréversible</span>.
                                     </template>
                                     <template v-slot:footer>
                                         <button class="uk-button uk-button-default uk-margin-medium-right uk-modal-close">Annuler</button>
-                                        <button class="uk-button uk-button-danger" @click="delete_command(user[2])">Supprimer</button>
+                                        <button class="uk-button uk-button-danger" @click="delete_command(c.user)">Supprimer</button>
                                     </template>
                                 </modal>
                             </th>
@@ -113,11 +124,11 @@
                             <td>Total</td>
                             <td v-show="!has_command">{{ total_command }} €</td>
                             <td>{{ total }} €</td>
-                            <td v-for="user in users" :key="user[0]">{{ user[1] }} €</td> 
+                            <td v-for="c in commands" :key="c.id">{{ c.total }} €</td> 
                         </tr>
                     </tfoot>
                     <tbody>
-                        <tr v-for="product in products" :key="product.name">
+                        <tr v-for="product in products" :key="product.id">
                             <td>
                                 <drop button_style='secondary' pos='right'>
                                     <template v-slot:button>{{ product.name }}</template>
@@ -129,14 +140,14 @@
                                     </template>
                                 </drop>
                             </td>
-                            <td v-show="!has_command"><input type="number" min='0' :step='product.step' :max='product.maximum' class='uk-input' v-model="command[product.name]"></td>
+                            <td v-show="!has_command"><input type="number" min='0' :step='product.step' :max='product.maximum' class='uk-input' v-model="command[product.id]"></td>
                             <td>
                                 <span v-if='product.weight != 1'>{{ product.total }} caisse<span v-if="product.total > 1">s</span>
                                     (soit {{ Math.round(product.total * product.weight * 100) / 100 }} kg)
                                 </span>
                                 <span v-else>{{ product.total }}</span>
                             </td>
-                            <td v-for="user in users" :key='user.id'>{{ quantity(user[0], product.amouts) }}</td>
+                            <td v-for="c in commands" :key='c.id'>{{ quantity(c.user, product) }}</td>
                         </tr> 
                     </tbody>
                 </table>
@@ -167,44 +178,83 @@ export default {
     data() {
         return {
             products: {},
-            users: {},
-            total: Number(),
-            has_command: false,
+            current_user: {},
+            commands: {},
+            amounts: [],
             command: {},
             messages: [],
             email: String(),
             username: String(),
             loading: false,
-            send_mail: true
+            send_mail: true,
+            query_error: false
         }
     },
 
     computed: {
         total_command () {
-            if (this.has_command == true){
-                return this.users.filter(user => user[0] == this.username)[0][1]
+
+            if (this.has_command == true) {
+                return this.commands.filter(c => c.user == this.current_user).total
+
             }
-            else {
-                let total_command = Number()
-                let command_entries = Object.entries(this.command)
-                command_entries.forEach(command => {
-                
-                    total_command += Object.entries(this.products).filter(
-                    product => product[1].name == command[0])[0][1].price * command[1]
+
+            let total_command = Number()
+            let command_entries = Object.entries(this.command)
+            
+            command_entries.forEach(command => {
+                this.products.forEach(product => {
+                    if (product.id == command[0]) {
+                        total_command += product.price * command[1]
+                    }
+                })
             
             })
             
             return total_command
+        },
+
+        total() {
+            let total = 0
+            const command = Object.values(this.commands)
+            for (let i = 0; i < command.length; i++) {
+                const c = command[i];
+                total += c.total
             }
-        }
+            return total
+        },
+
+        has_command () {
+            const command = Object.values(this.commands)
+            
+            for (let i = 0; i < command.length; i++) {
+                const c = command[i];
+                if (c.user.id == this.current_user.id) {
+                    return true
+                }
+            }
+            return false
+        },
     },
 
-    methods: {
-        
-        quantity (user, amouts_users) {
-            for (let i = 0; i < amouts_users.length; i++) {
-                if (user === amouts_users[i].user) {
-                    return amouts_users[i].quantity
+    methods: { 
+
+        get_product_name (id_product) {
+
+            for (let i = 0; i < this.products.length; i++) {
+                const product = this.products[i];
+                if (product.id == id_product) {
+                    return product.name
+                }   
+            }
+
+        },
+
+        quantity (user, product) {
+            for (let i = 0; i < this.amounts.length; i++) {
+                const amount = this.amounts[i];
+                if (user.id === amount.command.user.id && amount.product.id === product.id) {
+                    return amount.amount
                 }
             }
             return 0
@@ -294,13 +344,54 @@ export default {
         }
     },
 
-    mounted() {
-        this.$citrus = this.$resource('commande/citrus-formate', {}, {}, {
+    mounted() {        
+        // Get citrus list
+        this.$citrus = this.$resource('api/citrus/product', {}, {}, {
             before: () => {this.loading = true},
             after: () => {this.loading = false}
         })
-        this.get_command()
-        
+        this.$citrus.query().then((response) => {
+            this.products = response.data
+        },
+        (response) => {
+            this.query_error = true
+        })
+
+        // Get command list
+        this.$command = this.$resource('api/citrus/command', {}, {}, {
+            before: () => {this.loading = true},
+            after: () => {this.loading = false}
+        })
+
+        this.$command.query().then((response) => {            
+            this.commands = response.data            
+        }, (response) => {
+            this.query_error = true
+        })
+
+        // Get amounts
+        this.$amount = this.$resource('api/citrus/amount', {}, {}, {
+            before: () => {this.loading = true},
+            after: () => {this.loading = false}
+        })
+
+        this.$amount.query().then((response) => {
+            this.amounts = response.data
+        }, (response) => {
+            this.query_error = true
+        })
+
+        // Get current user
+        this.$user = this.$resource('api/users/current', {}, {}, {
+            before: () => {this.loading = true},
+            after: () => {this.loading = false}
+        })
+        this.$user.query().then((response) => {
+            this.current_user = response.data
+        },
+        (response) => {
+            this.query_error = true
+        })
     },
 }
 </script>

@@ -35,9 +35,7 @@ class CommandViewSet(ModelViewSet):
         dict_user = request.data['user']
         try:
             user = User.objects.get(id=dict_user.get('id'))
-        except ObjectDoesNotExist:
-            return Response(error_response(e))
-        except (AttributeError, KeyError, Exception) as e:
+        except (ObjectDoesNotExist, AttributeError, KeyError, Exception) as e:
             return Response(error_response(e))
         
         try:
@@ -79,21 +77,21 @@ class AmoutViewSet(ModelViewSet):
                 'header': 'Erreur lors de l\'enregistrement des produits de votre commande',
                 'body': 'Une erreur est survenue lors de l\'enregistrement d\'un (ou plusieurs) produit⋅s, \
                 merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
-                (ERREUR : {})'.format(type(e))
+                (ERREUR : {})'.format(e)
             }
+       # For format data.
+        amounts = dict()        
+        # For count number of box (maximum=6)
         total_box = float()
+
+        # Data
         data = request.data.copy()
-        try:
-            user = data.pop('user')
-        except (KeyError, Exception) as e:
-            return Response(error_response(e))
         
         try:
-            command = Command.objects.get(user_id=user[0])
-        except (ObjectDoesNotExist, MultipleObjectsReturned, Exception) as e:
+            user_id = data.pop('user')
+        except (KeyError, Exception) as e:
             return Response(error_response(e))
 
-        amounts = dict()
         for product_id, amount in data.items():
             try:
                 product = Product.objects.get(id=product_id)
@@ -106,7 +104,6 @@ class AmoutViewSet(ModelViewSet):
                     total_box += float(amount)
         try:
             assert total_box <= 6
-        
         except AssertionError as e:
             return Response({
                 'id': int(random() * 1000),
@@ -116,6 +113,28 @@ class AmoutViewSet(ModelViewSet):
                 à 6 par adhérent. Merci de modifier votre commande.'
             })
         
+        try:
+            user = User.objects.get(id=user_id[0])
+        except (ObjectDoesNotExist, AttributeError, KeyError, Exception) as e:
+            return Response(error_response(e))
+        
+        try:
+            Command.objects.get(user=user)
+        except ObjectDoesNotExist:
+            pass
+        except Exception as e:
+            return Response(error_response(e))
+        else:
+            return Response({
+                'id': int(random() * 1000),
+                'status': 'warning',
+                'header': 'Vous avez déjà commandé !',
+                'body': 'Une commande à votre nom a déjà été trouvé ! Merci de vérifier que votre commande \
+                n\'est pas déjà présente dans le tableau. Si cette commande n\'est pas de vous, merci de me contacter.'
+            })
+        
+        command = Command.objects.create(user=user)
+
         try:
             for product_id, data in amounts.items():
                 amount = Amount.objects.create(product=data[0], command=command, amount=data[1])

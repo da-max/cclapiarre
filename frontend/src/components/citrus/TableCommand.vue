@@ -267,23 +267,15 @@ export default {
         commandCitrus () {
             UIkit.modal('#command-recap').hide()
             let formData = new FormData()
-            this.$command.save({}, {user: this.current_user}).then((response) => {
+            formData.append('user', parseInt(this.current_user.id))
+            Object.entries(this.command).forEach(c => {
+                formData.append(c[0], c[1])
+            })
+            this.$amount.save({}, formData).then((response) => {
+                this.messages.push(response.data)
                 if (response.data['status'] == 'success') {
-                    formData.append('user', parseInt(this.current_user.id))
-                    Object.entries(this.command).forEach(c => {
-                        formData.append(c[0], c[1])
-                    })
-
-                    this.$amount.save({}, formData).then((response) => {
-                        this.messages.push(response.data)
-                        if (response.data['status'] == 'success') {
-                            this.get_command()
-                        }
-
-                    }, (response) => {this.query_error = true})
-                } 
-                else {this.messages.push(response.data)}
-            
+                    this.get_command()
+                }
             }, (response) => {this.query_error = true})
         },
 

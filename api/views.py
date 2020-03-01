@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 
-from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer
+from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer, UserWithPermissionsSerializer
 from command.models import Command, Amount, Product
 
 
@@ -23,21 +23,21 @@ class CommandViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        error_response = lambda e: {
-                'id': int(random() * 1000),
-                'status': 'danger',
-                'header': 'Erreur lors de l\'enregistrement de votre commande',
-                'body': 'Une erreur est survenue lors de l\'enregistrement de votre commande, \
+        def error_response(e): return {
+            'id': int(random() * 1000),
+            'status': 'danger',
+            'header': 'Erreur lors de l\'enregistrement de votre commande',
+            'body': 'Une erreur est survenue lors de l\'enregistrement de votre commande, \
                 merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
                 (ERREUR : {})'.format(type(e))
-            }
-        
+        }
+
         dict_user = request.data['user']
         try:
             user = User.objects.get(id=dict_user.get('id'))
         except (ObjectDoesNotExist, AttributeError, KeyError, Exception) as e:
             return Response(error_response(e))
-        
+
         try:
             Command.objects.get(user=user)
         except ObjectDoesNotExist:
@@ -52,13 +52,35 @@ class CommandViewSet(ModelViewSet):
                 'body': 'Une commande à votre nom a déjà été trouvé ! Merci de vérifier que votre commande \
                 n\'est pas déjà présente dans le tableau. Si cette commande n\'est pas de vous, merci de me contacter.'
             })
-        
+
         Command.objects.create(user=user)
         return Response({
             'status': 'success',
             'header': 'Commande enregistrée',
             'body': 'Votre commande a bien été enregistré.'
         })
+
+    def destroy(self, request, pk):
+        def error_response(e): return {
+            'id': int(random() * 1000),
+            'status': 'danger',
+            'header': 'Erreur lors de l\'enregistrement des produits de votre commande',
+            'body': 'Une erreur est survenue lors de l\'enregistrement d\'un (ou plusieurs) produit⋅s, \
+                merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
+                (ERREUR : {})'.format(e)
+        }
+        print(pk)
+        try:
+            command = Command.objects.get(id=pk)
+        except (ObjectDoesNotExist, Exception) as e:
+            return Response(error_response(e))
+        else:
+            command.delete()
+            return Response({
+                'status': 'success',
+                'header': 'Commande supprimée',
+                'body': 'La commande de {} a bie été supprimé.'.format(command.user.username)})
+
 
 class AmoutViewSet(ModelViewSet):
     serializer_class = AmountSerializer
@@ -71,22 +93,23 @@ class AmoutViewSet(ModelViewSet):
 
     def create(self, request):
         print(request.data)
-        error_response = lambda e: {
-                'id': int(random() * 1000),
-                'status': 'danger',
-                'header': 'Erreur lors de l\'enregistrement des produits de votre commande',
-                'body': 'Une erreur est survenue lors de l\'enregistrement d\'un (ou plusieurs) produit⋅s, \
+
+        def error_response(e): return {
+            'id': int(random() * 1000),
+            'status': 'danger',
+            'header': 'Erreur lors de l\'enregistrement des produits de votre commande',
+            'body': 'Une erreur est survenue lors de l\'enregistrement d\'un (ou plusieurs) produit⋅s, \
                 merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
-                (ERREUR : {})'.format(e)
-            }
+                (ERREUR : {})'.format(type(e))
+        }
        # For format data.
-        amounts = dict()        
+        amounts = dict()
         # For count number of box (maximum=6)
         total_box = float()
 
         # Data
         data = request.data.copy()
-        
+
         try:
             user_id = data.pop('user')
         except (KeyError, Exception) as e:
@@ -112,12 +135,12 @@ class AmoutViewSet(ModelViewSet):
                 'header': 'Le nombre de caisse que vous avez commandé est trop important. Le nombre maximum de caisse est fixé \
                 à 6 par adhérent. Merci de modifier votre commande.'
             })
-        
+
         try:
             user = User.objects.get(id=user_id[0])
         except (ObjectDoesNotExist, AttributeError, KeyError, Exception) as e:
             return Response(error_response(e))
-        
+
         try:
             Command.objects.get(user=user)
         except ObjectDoesNotExist:
@@ -132,12 +155,13 @@ class AmoutViewSet(ModelViewSet):
                 'body': 'Une commande à votre nom a déjà été trouvé ! Merci de vérifier que votre commande \
                 n\'est pas déjà présente dans le tableau. Si cette commande n\'est pas de vous, merci de me contacter.'
             })
-        
+
         command = Command.objects.create(user=user)
 
         try:
             for product_id, data in amounts.items():
-                amount = Amount.objects.create(product=data[0], command=command, amount=data[1])
+                amount = Amount.objects.create(
+                    product=data[0], command=command, amount=data[1])
         except Exception as e:
             return Response(error_response(e))
         else:
@@ -146,9 +170,6 @@ class AmoutViewSet(ModelViewSet):
                 'header': 'Commande enregistrée',
                 'body': 'Votre commande a bien été enregistré.'
             })
-        
-        
-
 
 
 class ProductViewSet(ModelViewSet):
@@ -162,8 +183,9 @@ class ProductViewSet(ModelViewSet):
 
 
 class CurrentUserView(APIView):
-    serializer = UserSerializer()
+    queryset = User.objects.all()
+    serializer = UserWithPermissionsSerializer()
 
     def get(self, request):
-        serializer = UserSerializer(request.user)
+        serializer =UserWithPermissionsSerializer(request.user)
         return Response(serializer.data)

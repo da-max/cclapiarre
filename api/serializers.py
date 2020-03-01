@@ -3,6 +3,15 @@ from django.contrib.auth.models import User
 from rest_framework.serializers import ModelSerializer, BooleanField, FloatField, RelatedField, SerializerMethodField
 from command.models import Command, Amount, Product
 
+
+class UserWithPermissionsSerializer(ModelSerializer):
+    permissions = SerializerMethodField()
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'last_name', 'first_name', 'permissions']
+    
+    def get_permissions(self, user):
+        return user.get_all_permissions()
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
@@ -24,7 +33,7 @@ class CommandSerializer(ModelSerializer):
     product = ProductSerializer(many=True)
     class Meta:
         model = Command
-        fields = ['user', 'product', 'total']
+        fields = ['user', 'product', 'total', 'id']
     
     def get_total(self, command):
         

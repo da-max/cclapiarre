@@ -36,7 +36,7 @@
                 </table>
             </template>
             <template v-slot:footer>
-                <button class="uk-button uk-button-primary" type="submit" @click.prevent='commandCitrus()'>Commander</button>
+                <button class="uk-button uk-button-primary" type="submit" @click.prevent='command_citrus()'>Commander</button>
                 <button class="uk-button uk-button-default uk-modal-close uk-margin-large-left" type="button">Annuler</button>
             </template>
         </modal>
@@ -45,7 +45,7 @@
         <div id="messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
             
             <!-- Display if error = true -->
-            <message v-show="query_error" :close='false'>
+            <message v-show="query_error" :close='false' status='danger'>
                 <template v-slot:header>
                     Erreur interne
                 </template>
@@ -55,6 +55,15 @@
                 </template>
             </message>
 
+            <!-- Dsiplay if permission_error = true -->
+            <message v-show="permission_error" :close='false' status='danger'>
+                <template v-slot:header>
+                    Accès interdit
+                </template>
+                <template v-slot:body>
+                    Il semblerait qui vous n'ayez pas l'autorisation d'accéder à cette fonctionnalité du site.
+                </template>
+            </message>
             <!--- Display if user has alreay command -->
             <message v-show="has_command" :close='false'>
                 <template v-slot:header>
@@ -95,16 +104,17 @@
                             <th v-show="!has_command">Ma commande</th>
                             <th>Total</th>
                             <th v-for="c in commands" :key="c.id">
-
-                                <drop button_style='default' pos='left'>
+                                
+                                <drop button_style='default' pos='left' v-if="current_user.permissions.find(permission => permission === 'command.delete_command')">
                                     <template v-slot:button>{{ c.user.username }}</template>
                                     <template v-slot:header>{{ c.user.username }}</template>
                                     <template v-slot:body>
                                         <button :uk-toggle='"target: #confirm-delete-command-" + c.id' type="button" class="uk-button uk-button-danger">Supprimer</button>
                                     </template>
                                 </drop>
-
-                                <modal :close_button='true' :id='"confirm-delete-command-" + c.id'>
+                                <span class="uk-text-center" v-else>{{ c.user.username }}</span>
+                                
+                                <modal :close_button='true' :id='"confirm-delete-command-" + c.id'v-if="current_user.permissions.find(permission => permission === 'command.delete_command')">
                                     <template v-slot:header>
                                         <h3>Supprimer la commande de {{ c.user.username }}</h3>
                                     </template>
@@ -113,7 +123,7 @@
                                     </template>
                                     <template v-slot:footer>
                                         <button class="uk-button uk-button-default uk-margin-medium-right uk-modal-close">Annuler</button>
-                                        <button class="uk-button uk-button-danger" @click="delete_command(c.user)">Supprimer</button>
+                                        <button class="uk-button uk-button-danger" @click="delete_command(c.id)">Supprimer</button>
                                     </template>
                                 </modal>
                             </th>
@@ -187,7 +197,8 @@ export default {
             username: String(),
             loading: false,
             send_mail: true,
-            query_error: false
+            query_error: false,
+            permission_error: false,
         }
     },
 
@@ -260,11 +271,9 @@ export default {
             return 0
         },
 
-        show_recap () {
-            UIkit.modal('#command-recap').show()
-        },
+        show_recap () {UIkit.modal('#command-recap').show()},
 
-        commandCitrus () {
+        command_citrus () {
             UIkit.modal('#command-recap').hide()
             let formData = new FormData()
             formData.append('user', parseInt(this.current_user.id))
@@ -274,26 +283,26 @@ export default {
             this.$amount.save({}, formData).then((response) => {
                 this.messages.push(response.data)
                 if (response.data['status'] == 'success') {
+                    this.command = {}
                     this.get_command()
                 }
-            }, (response) => {this.query_error = true})
+            }, (response) => {
+                    if (response.status == 403 && response.statusText == "Forbidden") { this.permission_error = true }
+                    else { this.query_error = true }
+                })
         },
 
         delete_command (id_command) {
-            UIkit.modal('#confirm-delete-command-' + id_command).hide()
-            this.loading = true
-
-            this.$resource('commande/delete-citrus-command').delete({id_command: id_command}).then((response) => { 
-                this.messages.push(response.data)             
-                this.get_command()
-                this.loading = false
-            }, response => {
-                this.messages.push({
-                        'status': 'danger',
-                        'header': 'Erreur',
-                        'body': 'Une erreur est survenue, merci de recharger la page est de me contacter si vous rencontrez de nouveau cette erreur.'
-                    })
-                this.loading = false
+            UIkit.modal('#confirm-delete-command-' + id_command).hide()        
+            this.$command.remove({id: id_command}, {}).then((response) => { 
+                
+                this.messages.push(response.data)
+                if (response.data['status'] == 'success') { this.get_command() }
+            
+            }, (response) => { 
+                console.log(response.statusText)
+                if (response.status == 403 && response.statusText == 'Forbidden') { this.permission_error = true }
+                else { this.query_error = true }
             })
         },
 
@@ -307,11 +316,12 @@ export default {
                 this.products = response.data
             },
             (response) => {
-                this.query_error = true
+                if (response.status == 403 && response.statusText == 'Forbidden') { this.permission_error = true }
+                else { this.query_error = true }
             })
 
             // Get command list
-            this.$command = this.$resource('api/citrus/command/', {}, {}, {
+            this.$command = this.$resource('api/citrus/command{/id}', {}, {}, {
                 before: () => {this.loading = true},
                 after: () => {this.loading = false}
             })
@@ -319,7 +329,8 @@ export default {
             this.$command.query().then((response) => {            
                 this.commands = response.data            
             }, (response) => {
-                this.query_error = true
+                if (response.status == 403 && response.statusText == 'Forbidden') { this.permission_error = true }
+                else { this.query_error = true }
             })
 
             // Get amounts
@@ -331,7 +342,8 @@ export default {
             this.$amount.query().then((response) => {
                 this.amounts = response.data
             }, (response) => {
-                this.query_error = true
+                if (response.status == 403 && response.statusText == 'Forbidden') { this.permission_error = true }
+                else { this.query_error = true }
             })
         }
     },
@@ -349,7 +361,8 @@ export default {
             this.current_user = response.data
         },
         (response) => {
-            this.query_error = true
+            if (response.status == 403 && response.statusText == 'Forbidden') { this.permission_error = true }
+            else { this.query_error = true }
         })
     },
 }

@@ -15,7 +15,7 @@ urlpatterns = [
 
 router = DefaultRouter()
 router.register(r'citrus/command', CommandViewSet)
-router.register(r'^citrus/amount', AmoutViewSet, basename=Amount)
-router.register(r'citrus/product', ProductViewSet, basename=Product)
+router.register(r'^citrus/amount', AmoutViewSet, basename='amount')
+router.register(r'citrus/product', ProductViewSet, basename='product')
 
 urlpatterns += router.urls

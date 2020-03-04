@@ -1,6 +1,9 @@
 <template>
     <div id="command-citrus">
+        <!-- Loader -->
         <loader v-show='loading'></loader>
+
+        <!-- Sommary command -->
         <modal id='command-recap' :container='true'>
             <template v-slot:header>
                 <h3>Récapitulatif de votre commande</h3>
@@ -40,7 +43,6 @@
                 <button class="uk-button uk-button-default uk-modal-close uk-margin-large-left" type="button">Annuler</button>
             </template>
         </modal>
-
 
         <div id="messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
             
@@ -97,24 +99,19 @@
             </div>
             <div class="uk-text-center uk-text-bold uk-text-large uk-margin-medium-bottom"><span class="uk-label">Total actuel de votre commande</span> {{ total_command }} €</div>
             <div class="uk-overflow-auto uk-padding-large uk-padding-remove-left uk-padding-remove-right">
-                <table class='uk-table uk-table-divider uk-table-striped uk-table-hover'>
+                <table class='uk-table uk-table-divider uk-table-striped uk-table-hover uk-table-middle'>
                     <thead>
                         <tr>
                             <th>Nom du produit</th>
-                            <th v-show="!has_command">Ma commande</th>
+                            <th v-if="!has_command">Ma commande</th>
+
                             <th>Total</th>
                             <th v-for="c in commands" :key="c.id">
-                                
-                                <drop button_style='default' pos='left' v-if="current_user.permissions.find(permission => permission === 'command.delete_command')">
-                                    <template v-slot:button>{{ c.user.username }}</template>
-                                    <template v-slot:header>{{ c.user.username }}</template>
-                                    <template v-slot:body>
-                                        <button :uk-toggle='"target: #confirm-delete-command-" + c.id' type="button" class="uk-button uk-button-danger">Supprimer</button>
-                                    </template>
-                                </drop>
-                                <span class="uk-text-center" v-else>{{ c.user.username }}</span>
-                                
-                                <modal :close_button='true' :id='"confirm-delete-command-" + c.id'v-if="current_user.permissions.find(permission => permission === 'command.delete_command')">
+                                {{ c.user.username }}<br>
+                                <a :title="'Supprimer la commande de ' + c.user.username" type="button" uk-icon='icon: trash' :uk-toggle='"target: #confirm-delete-command-" + c.id' v-if="current_user.permissions.find(permission => permission === 'command.delete_command')"></a>
+                                <a :title="'Modifier la commande de ' + c.user.username" uk-icon='icon: refresh' v-if="current_user.permissions.find(permission => permission === 'command.change_command')" @click.prevent="get_command_for_update(c.id)"></a>
+
+                                <modal :close_button='true' :id='"confirm-delete-command-" + c.id' v-if="current_user.permissions.find(permission => permission === 'command.delete_command')">
                                     <template v-slot:header>
                                         <h3>Supprimer la commande de {{ c.user.username }}</h3>
                                     </template>
@@ -163,9 +160,48 @@
                 </table>
             </div>
             <div class='uk-text-center uk-margin-large'>
-                <input type='submit' class="uk-button uk-margin-auto uk-button-primary" @click.prevent="show_recap()" value='Valider ma commande' v-show="!has_command && Object.keys(command).length != 0" id='button-command'>
+                <input type='submit' class="uk-button uk-margin-auto uk-button-primary" @click.prevent="show_recap()" value="Valider ma commande" v-if="!has_command" id='button-command'>
             </div>
         </form>
+
+        <modal :center='true' id="update-command" v-show="false">
+            <template v-slot:header>
+                <h3>Modifier la commande de {{ update_command.user.username }}</h3>
+            </template>
+            <template v-slot:body>
+                <table class="uk-table uk-table-divider uk-table-hover uk-table-striped">
+                    <thead>
+                        <tr>
+                            <td>Nom des produits</td>
+                            <td>{{ update_command.user.username }}</td>
+                            <td>Total</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="product in products" :key="product.id">
+                            <td>
+                                <drop button_style='secondary' pos='right'>
+                                    <template v-slot:button>{{ product.name }}</template>
+                                    <template v-slot:header>{{ product.name }}</template>
+                                    <template v-slot:body>
+                                        Prix : {{ product.price }} €<br>
+                                        <span v-if="product.weight != 1">Poids : {{ product.weight }} kg<br></span>
+                                        <div v-html="product.description"></div>
+                                    </template>
+                                </drop>
+                            </td>
+                            <td><input type="number" min='0' :step='product.step' :max='product.maximum' class='uk-input' v-model="update_command[product.id]"></td>
+                            <td>
+                                <span v-if='product.weight != 1'>{{ product.total }} caisse<span v-if="product.total > 1">s</span>
+                                    (soit {{ Math.round(product.total * product.weight * 100) / 100 }} kg)
+                                </span>
+                                <span v-else>{{ product.total }}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </template>
+        </modal>
     </div>
 </template>
 
@@ -191,12 +227,17 @@ export default {
             current_user: {},
             commands: {},
             amounts: [],
+
+            // This object contain command that the user is entering
             command: {},
+            update_command: {},
+            // Messages of display
             messages: [],
-            email: String(),
-            username: String(),
+
             loading: false,
             send_mail: true,
+
+            // Error 
             query_error: false,
             permission_error: false,
         }
@@ -306,6 +347,21 @@ export default {
             })
         },
 
+        get_command_for_update(id_command) {
+            let com = {}
+            let command = this.commands.find(c => c.id == id_command)
+            com.update = true
+            com.user = command.user
+            com.id = command.id          
+            for (let i = 0; i < command.product.length; i++) {
+                const product = command.product[i];
+                com[product.id] = this.quantity(command.user, product)
+            }
+            this.update_command = com
+            UIkit.modal('#update-command').show()
+            
+        },
+
         get_command () {
             // Get citrus list
             this.$citrus = this.$resource('api/citrus/product', {}, {}, {
@@ -345,6 +401,10 @@ export default {
                 if (response.status == 403 && response.statusText == 'Forbidden') { this.permission_error = true }
                 else { this.query_error = true }
             })
+            if (this.messages.length !== 0) {
+                UIkit.scroll('#footer', {offset: 100}).scrollTo('#messages')
+            }
+            this.command = {}
         }
     },
 
@@ -359,11 +419,14 @@ export default {
         })
         this.$user.query().then((response) => {
             this.current_user = response.data
+            this.update_command['user'] = response.data
+
         },
         (response) => {
             if (response.status == 403 && response.statusText == 'Forbidden') { this.permission_error = true }
             else { this.query_error = true }
         })
+        
     },
 }
 </script>

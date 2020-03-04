@@ -69,7 +69,6 @@ class CommandViewSet(ModelViewSet):
                 merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
                 (ERREUR : {})'.format(e)
         }
-        print(pk)
         try:
             command = Command.objects.get(id=pk)
         except (ObjectDoesNotExist, Exception) as e:
@@ -92,7 +91,6 @@ class AmoutViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        print(request.data)
 
         def error_response(e): return {
             'id': int(random() * 1000),
@@ -118,13 +116,13 @@ class AmoutViewSet(ModelViewSet):
         for product_id, amount in data.items():
             try:
                 product = Product.objects.get(id=product_id)
-                amount = float(amount[0])
+                amount = float(amount)
             except (ObjectDoesNotExist, ValueError, Exception) as e:
                 return Response(error_response(e))
             else:
                 amounts[product.id] = (product, amount)
                 if product.weight != 1:
-                    total_box += float(amount)
+                    total_box += amount
         try:
             assert total_box <= 6
         except AssertionError as e:

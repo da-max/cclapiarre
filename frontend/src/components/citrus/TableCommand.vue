@@ -4,7 +4,7 @@
         <loader v-show='loading'></loader>
 
         <!-- Sommary command -->
-        <modal id='command-recap' :container='true'>
+        <modal id='command-recap' :container='true' :center='true'>
             <template v-slot:header>
                 <h3>Récapitulatif de votre commande</h3>
             </template>
@@ -44,6 +44,48 @@
             </template>
         </modal>
 
+        <modal :center='true' id="update-command" :container='true' :close_button='true'>
+            <template v-slot:header>
+                <h3 v-if="update_command.user != undefined">Modifier la commande de {{ update_command.user.username }}</h3>
+            </template>
+            <template v-slot:body>
+                <table class="uk-table uk-table-divider uk-table-hover uk-table-striped">
+                    <thead>
+                        <tr>
+                            <td>Nom des produits</td>
+                            <td v-if="update_command.user != undefined" >{{ update_command.user.username }}</td>
+                            <td>Total</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="product in products" :key="product.id">
+                            <td>
+                                <drop button_style='secondary' pos='right'>
+                                    <template v-slot:button>{{ product.name }}</template>
+                                    <template v-slot:header>{{ product.name }}</template>
+                                    <template v-slot:body>
+                                        Prix : {{ product.price }} €<br>
+                                        <span v-if="product.weight != 1">Poids : {{ product.weight }} kg<br></span>
+                                        <div v-html="product.description"></div>
+                                    </template>
+                                </drop>
+                            </td>
+                            <td><input type="number" min='0' :step='product.step' :max='product.maximum' class='uk-input' v-model="update_command[product.id]"></td>
+                            <td>
+                                <span v-if='product.weight != 1'>{{ product.total }} caisse<span v-if="product.total > 1">s</span>
+                                    (soit {{ Math.round(product.total * product.weight * 100) / 100 }} kg)
+                                </span>
+                                <span v-else>{{ product.total }}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </template>
+            <template v-slot:footer>
+                <button class="uk-button uk-button-default uk-margin-right">Annuler</button>
+                <button class="uk-button uk-button-primary">Modifier la commande</button>
+            </template>
+        </modal>
         <div id="messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
             
             <!-- Display if error = true -->
@@ -163,45 +205,6 @@
                 <input type='submit' class="uk-button uk-margin-auto uk-button-primary" @click.prevent="show_recap()" value="Valider ma commande" v-if="!has_command" id='button-command'>
             </div>
         </form>
-
-        <modal :center='true' id="update-command" v-show="false">
-            <template v-slot:header>
-                <h3>Modifier la commande de {{ update_command.user.username }}</h3>
-            </template>
-            <template v-slot:body>
-                <table class="uk-table uk-table-divider uk-table-hover uk-table-striped">
-                    <thead>
-                        <tr>
-                            <td>Nom des produits</td>
-                            <td>{{ update_command.user.username }}</td>
-                            <td>Total</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="product in products" :key="product.id">
-                            <td>
-                                <drop button_style='secondary' pos='right'>
-                                    <template v-slot:button>{{ product.name }}</template>
-                                    <template v-slot:header>{{ product.name }}</template>
-                                    <template v-slot:body>
-                                        Prix : {{ product.price }} €<br>
-                                        <span v-if="product.weight != 1">Poids : {{ product.weight }} kg<br></span>
-                                        <div v-html="product.description"></div>
-                                    </template>
-                                </drop>
-                            </td>
-                            <td><input type="number" min='0' :step='product.step' :max='product.maximum' class='uk-input' v-model="update_command[product.id]"></td>
-                            <td>
-                                <span v-if='product.weight != 1'>{{ product.total }} caisse<span v-if="product.total > 1">s</span>
-                                    (soit {{ Math.round(product.total * product.weight * 100) / 100 }} kg)
-                                </span>
-                                <span v-else>{{ product.total }}</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </template>
-        </modal>
     </div>
 </template>
 
@@ -274,6 +277,21 @@ export default {
                 total += c.total
             }
             return total
+        },
+
+        total_update_command () {
+            let total_command = Number()
+            let command_entries = Object.entries(this.update_command)
+            
+            command_entries.forEach(command => {
+                this.products.forEach(product => {
+                    if (product.id == command[0]) {
+                        total_command += product.price * command[1]
+                    }
+                })
+            })
+            
+            return total_command
         },
 
         has_command () {
@@ -364,10 +382,6 @@ export default {
 
         get_command () {
             // Get citrus list
-            this.$citrus = this.$resource('api/citrus/product', {}, {}, {
-                before: () => {this.loading = true},
-                after: () => {this.loading = false}
-            })
             this.$citrus.query().then((response) => {
                 this.products = response.data
             },
@@ -377,11 +391,6 @@ export default {
             })
 
             // Get command list
-            this.$command = this.$resource('api/citrus/command{/id}', {}, {}, {
-                before: () => {this.loading = true},
-                after: () => {this.loading = false}
-            })
-
             this.$command.query().then((response) => {            
                 this.commands = response.data            
             }, (response) => {
@@ -390,11 +399,6 @@ export default {
             })
 
             // Get amounts
-            this.$amount = this.$resource('api/citrus/amount/', {}, {}, {
-                before: () => {this.loading = true},
-                after: () => {this.loading = false}
-            })
-
             this.$amount.query().then((response) => {
                 this.amounts = response.data
             }, (response) => {
@@ -409,6 +413,21 @@ export default {
     },
 
     mounted() {
+
+        this.$citrus = this.$resource('api/citrus/product', {}, {}, {
+            before: () => {this.loading = true},
+            after: () => {this.loading = false}
+        })
+
+        this.$command = this.$resource('api/citrus/command{/id}', {}, {}, {
+            before: () => {this.loading = true},
+            after: () => {this.loading = false}
+        })
+
+        this.$amount = this.$resource('api/citrus/amount/', {}, {}, {
+            before: () => {this.loading = true},
+            after: () => {this.loading = false}
+        })
 
         this.get_command()
 

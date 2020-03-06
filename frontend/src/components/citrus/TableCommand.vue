@@ -39,8 +39,8 @@
                 </table>
             </template>
             <template v-slot:footer>
-                <button class="uk-button uk-button-primary" type="submit" @click.prevent='command_citrus()'>Commander</button>
-                <button class="uk-button uk-button-default uk-modal-close uk-margin-large-left" type="button">Annuler</button>
+                <button class="uk-button uk-button-primary uk-margin-large-right" type="submit" @click.prevent='add_command_citrus()'>Commander</button>
+                <button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
             </template>
         </modal>
 
@@ -82,8 +82,8 @@
                 </table>
             </template>
             <template v-slot:footer>
-                <button class="uk-button uk-button-default uk-margin-right">Annuler</button>
-                <button class="uk-button uk-button-primary">Modifier la commande</button>
+                <button v-if="update_command.id" class="uk-button uk-button-primary uk-margin-right" @click.prevent='update_command_citrus(update_command.id)'>Modifier la commande</button>
+                <button class="uk-button uk-button-default uk-modal-close">Annuler</button>
             </template>
         </modal>
         <div id="messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
@@ -161,8 +161,8 @@
                                         Vous êtes sur le point de supprimer la commande de {{ c.user.username}}, <span class="uk-text-warning uk-text-bold">attention, cette ation est irréversible</span>.
                                     </template>
                                     <template v-slot:footer>
-                                        <button class="uk-button uk-button-default uk-margin-medium-right uk-modal-close">Annuler</button>
-                                        <button class="uk-button uk-button-danger" @click="delete_command(c.id)">Supprimer</button>
+                                        <button class="uk-button uk-button-danger uk-margin-medium-right" @click="delete_command(c.id)">Supprimer</button>
+                                        <button class="uk-button uk-button-default uk-modal-close">Annuler</button>
                                     </template>
                                 </modal>
                             </th>
@@ -332,23 +332,25 @@ export default {
 
         show_recap () {UIkit.modal('#command-recap').show()},
 
-        command_citrus () {
+        add_command_citrus () {
             UIkit.modal('#command-recap').hide()
             let formData = new FormData()
             formData.append('user', parseInt(this.current_user.id))
             Object.entries(this.command).forEach(c => {
                 formData.append(c[0], c[1])
             })
-            this.$amount.save({}, formData).then((response) => {
+            this.$command.save({}, formData).then((response) => {
+                
                 this.messages.push(response.data)
+                
                 if (response.data['status'] == 'success') {
-                    this.command = {}
                     this.get_command()
+                    this.command = {}
                 }
             }, (response) => {
                     if (response.status == 403 && response.statusText == "Forbidden") { this.permission_error = true }
                     else { this.query_error = true }
-                })
+            })
         },
 
         delete_command (id_command) {
@@ -356,10 +358,37 @@ export default {
             this.$command.remove({id: id_command}, {}).then((response) => { 
                 
                 this.messages.push(response.data)
-                if (response.data['status'] == 'success') { this.get_command() }
+            
+                if (response.data['status'] == 'success') { 
+                    this.get_command()
+                    this.command = {}
+                }
             
             }, (response) => { 
-                console.log(response.statusText)
+
+                if (response.status == 403 && response.statusText == 'Forbidden') { this.permission_error = true }
+                else { this.query_error = true }
+            
+            })
+        },
+
+        update_command_citrus (id_command) {
+            UIkit.modal('#update-command').hide()
+            
+            let form_data = new FormData()
+            form_data.append('user_id', this.update_command.user.id)
+            
+            Object.entries(this.update_command).forEach(update_c => {
+                if (update_c[0] != 'user' && update_c[0] != 'id') { form_data.append(update_c[0], update_c[1]) }
+            })
+            
+            this.$command.update({id: id_command}, form_data).then(response => {
+                this.messages.push(response.data)
+                if (response.data['status'] == 'success') {
+                    this.update_command = {}
+                    this.get_command()
+                }
+            }, response => {
                 if (response.status == 403 && response.statusText == 'Forbidden') { this.permission_error = true }
                 else { this.query_error = true }
             })
@@ -368,16 +397,15 @@ export default {
         get_command_for_update(id_command) {
             let com = {}
             let command = this.commands.find(c => c.id == id_command)
-            com.update = true
             com.user = command.user
-            com.id = command.id          
+            com.id = command.id
             for (let i = 0; i < command.product.length; i++) {
                 const product = command.product[i];
                 com[product.id] = this.quantity(command.user, product)
             }
             this.update_command = com
             UIkit.modal('#update-command').show()
-            
+          
         },
 
         get_command () {
@@ -405,15 +433,12 @@ export default {
                 if (response.status == 403 && response.statusText == 'Forbidden') { this.permission_error = true }
                 else { this.query_error = true }
             })
-            if (this.messages.length !== 0) {
-                UIkit.scroll('#footer', {offset: 100}).scrollTo('#messages')
-            }
-            this.command = {}
         }
     },
 
     mounted() {
-
+        
+        // Define all resourcev (vue-resource)
         this.$citrus = this.$resource('api/citrus/product', {}, {}, {
             before: () => {this.loading = true},
             after: () => {this.loading = false}
@@ -421,14 +446,17 @@ export default {
 
         this.$command = this.$resource('api/citrus/command{/id}', {}, {}, {
             before: () => {this.loading = true},
-            after: () => {this.loading = false}
+            after: () => {this.loading = false
+                if (this.messages.length !== 0) { UIkit.scroll('#footer', {offset: 100}).scrollTo('#messages') }
+            }
         })
 
-        this.$amount = this.$resource('api/citrus/amount/', {}, {}, {
+        this.$amount = this.$resource('api/citrus/amount{/id}', {}, {}, {
             before: () => {this.loading = true},
             after: () => {this.loading = false}
         })
 
+        // Get all informations to display on the table
         this.get_command()
 
         // Get current user
@@ -438,7 +466,6 @@ export default {
         })
         this.$user.query().then((response) => {
             this.current_user = response.data
-            this.update_command['user'] = response.data
 
         },
         (response) => {

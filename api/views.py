@@ -69,7 +69,6 @@ class CommandViewSet(ModelViewSet):
                 merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
                 (ERREUR : {})'.format(e)
         }
-        print(pk)
         try:
             command = Command.objects.get(id=pk)
         except (ObjectDoesNotExist, Exception) as e:
@@ -92,7 +91,6 @@ class AmoutViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        print(request.data)
 
         def error_response(e): return {
             'id': int(random() * 1000),
@@ -177,7 +175,7 @@ class ProductViewSet(ModelViewSet):
     queryset = Product.objects.filter(display=True)
 
     def list(self, request, *args, **kwargs):
-        #queryset = Product.objects.all()
+        # queryset = Product.objects.all()
         serializer = ProductSerializer(self.queryset, many=True)
         return Response(serializer.data)
 
@@ -187,5 +185,5 @@ class CurrentUserView(APIView):
     serializer = UserWithPermissionsSerializer()
 
     def get(self, request):
-        serializer =UserWithPermissionsSerializer(request.user)
+        serializer = UserWithPermissionsSerializer(request.user)
         return Response(serializer.data)

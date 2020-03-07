@@ -350,6 +350,7 @@ export default {
             UIkit.modal('#command-recap').hide()
             let formData = new FormData()
             formData.append('user', parseInt(this.current_user.id))
+            formData.append('send_mail', this.send_mail)
             Object.entries(this.command).forEach(c => {
                 formData.append(c[0], c[1])
             })

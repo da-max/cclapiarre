@@ -3,6 +3,9 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import ObjectDoesNotExist
 from random import random
 from django.db.models import Q
+from django.template.loader import get_template
+from django.conf import settings
+from django.core.mail import send_mail
 
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
@@ -35,6 +38,9 @@ class CommandViewSet(ModelViewSet):
         }
        # For format data.
         amounts = dict()
+
+        # For send mail
+        command_sommary = dict()
         # For count number of box (maximum=6)
         total_box = float()
 
@@ -43,6 +49,7 @@ class CommandViewSet(ModelViewSet):
 
         try:
             user_id = data.pop('user')
+            mail = data.pop('send_mail')
         except (KeyError, Exception) as e:
             return Response(error_response(e))
 
@@ -91,11 +98,39 @@ class CommandViewSet(ModelViewSet):
 
         try:
             for product_id, data in amounts.items():
+                command_sommary[data[0].name] = {
+                    'weight': data[0].name,
+                    'price': float(data[0].weight) * float(data[1]),
+                    'quantity': data[1]
+                }
                 amount = Amount.objects.create(
                     product=data[0], command=command, amount=data[1])
         except Exception as e:
             return Response(error_response(e))
         else:
+            if mail:
+                subject = "Récapitulatif de la commande"
+                from_mail = settings.DEFAULT_FROM_EMAIL
+                html_text = get_template('command/command_mail/sommary.html')
+                plain_text = get_template('command/command_mail/sommary.txt')
+
+                html_content = html_text.render({
+                    'command_sommary': command_sommary,
+                    'first_name': request.user.first_name,
+                    'email': request.user.email,
+                    'total_price': Amount.get_total_user(Amount, command.id)
+                })
+
+                text_content = plain_text.render({
+                    'command_sommary': command_sommary,
+                    'first_name': request.user.first_name,
+                    'email': request.user.email,
+                    'total_price': Amount.get_total_user(Amount, command.id)
+                })
+
+                send_mail(subject, text_content, from_mail, [
+                          request.user.email], html_message=html_content)
+
             return Response({
                 'status': 'success',
                 'header': 'Commande enregistrée',
@@ -141,12 +176,13 @@ class CommandViewSet(ModelViewSet):
             amount = Amount.objects.filter(command=command).delete()
         except Exception as e:
             return Response(error_response(e))
-        
+
         for product_id, amount in data.items():
             try:
                 product = products.get(id=product_id)
                 amount = float(amount)
-                assert float(amount / product.step) == int(amount / product.step)
+                assert float(
+                    amount / product.step) == int(amount / product.step)
             except Exception as e:
                 return Response(error_response(e))
             else:
@@ -163,19 +199,21 @@ class CommandViewSet(ModelViewSet):
                 'header': 'Le nombre de caisse que commandé est trop important. Le nombre maximum de caisse est fixé \
                 à 6 par adhérent. Merci de modifier la commande.'
             })
-        
+
         for product, amount in amounts.items():
             try:
-                a = Amount.objects.create(command=command, product=product, amount=amount)
+                a = Amount.objects.create(
+                    command=command, product=product, amount=amount)
             except Exception as e:
                 return Response(error_response(e))
-        
+
         return Response({
             'id': int(random() * 1000),
             'status': 'success',
             'header': 'Commande modifée',
             'body': 'La commande de {} a bien été modifié.'.format(command.user.username)
         })
+
 
 class AmoutViewSet(ModelViewSet):
     serializer_class = AmountSerializer
@@ -264,6 +302,7 @@ class AmoutViewSet(ModelViewSet):
                 'header': 'Commande enregistrée',
                 'body': 'Votre commande a bien été enregistré.'
             })
+
 
 class ProductViewSet(ModelViewSet):
     serializer_class = ProductSerializer

@@ -12,7 +12,7 @@ Tous les changements de ce projet sont documentés ici, ce fichier est affiché 
 ### Ajout
 
 * La partie commande d’agrumes permet désormais, à certains utilisateurs, de modifier ou de supprimer de les commandes des utilisateurs. *Attention, une fois une commande supprimer, aucun retour en arrière ne sera possible.*
-* **Ces fonctionnalités sont toujours à l’état de test, n’hésiter pas à me faire vos retours et à me signaler toutes erreurs.**
+* **Ces fonctionnalités sont toujours à l’état de test, n’hésitez pas à me faire vos retours et à me signaler toutes erreurs.**
 
 ## 1 Mars : Sortie de la version 5.3.2
 

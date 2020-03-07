@@ -4,7 +4,7 @@ from django.urls import path, re_path
 from coffee.views import ListCoffee, ListOrigin, UpdateOrigin, CreateOrigin, delete_origin, \
     list_command, pdf_list_command, global_command, pdf_global_command, calcul_command,\
     CreateCoffee, UpdateCoffee, delete_coffee, table_command, create_command, command_coffee,\
-    get_coffees_list, new_command, delete_all_command_coffee, delete_command
+    get_coffees_list, new_command, delete_all_coffee_command, delete_coffee_command
 
 urlpatterns = [
     
@@ -22,8 +22,8 @@ urlpatterns = [
     
     url('pdf-liste-des-commandes', pdf_list_command, name="pdf_list_command"),
     url(r'^liste-des-commandes$', list_command, name="list_command"),
-    url(r'^delete-all-command$', delete_all_command_coffee, name='delete_all_command_coffee'),
-    re_path(r'^delete-command/(?P<id_command>[0-9]{1,})$', delete_command, name='delete_command'),
+    url(r'^delete-all-command$', delete_all_coffee_command, name='delete_all_command_coffee'),
+    re_path(r'^delete-command/(?P<id_command>[0-9]{1,})$', delete_coffee_command, name='delete_command'),
 
     url('pdf-commande-globale', pdf_global_command, name="pdf_global_command"),
     url('commande-globale', global_command, name="global_command"),

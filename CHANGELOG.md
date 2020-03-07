@@ -1,6 +1,18 @@
 # Changements
 Tous les changements de ce projet sont documentés ici, ce fichier est affiché sur cette page : [https://cclapiarre.deblan.fr/changements/](https://cclapiarre.deblan.fr/changements/) il est donc écrit en français.
 
+##  03 mars 2020 : Sorite de la version 5.4.0
+
+### Modification
+
+* Afin de faciliter la communication entre l'utilisateur, et plus particulièrement les parties utilisant le framework VueJs, le site intègre désormais une api qui, pour l’instant, ne concerne que la partie commande d’agrumes.
+* L’application permettant de commander des agrumes a donc changé de système, désormais, elle utilise l’api (généré par [Django_rest_framework](https://www.django-rest-framework.org))
+
+### Ajout
+
+* La partie commande d’agrumes permet désormais, à certains utilisateurs, de modifier ou de supprimer de les commandes des utilisateurs. *Attention, une fois une commande supprimer, aucun retour en arrière ne sera possible.*
+* **Ces fonctionnalités sont toujours à l’état de test, n’hésiter pas à me faire vos retours et à me signaler toutes erreurs.**
+
 ## 30 juillet 2019 : Sortie de la version 5.0
 
 ### Modification

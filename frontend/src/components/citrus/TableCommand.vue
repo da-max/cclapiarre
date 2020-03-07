@@ -43,7 +43,21 @@
                 <button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
             </template>
         </modal>
+        
+        <modal id="confirm-update" v-if="update_command.user != undefined" :close_button='true'>
+            <template v-slot:header>
+                <h3>Modifier la commande ?</h3>
+            </template>
+            <template v-slot:body>
+                <span class="uk-text-warning uk-text-bold">Attention, vous êtes sur le point de modifier la commande de {{ update_command.user.username }}.</span>.
+            </template>
+            <template v-slot:footer>
+                <button class="uk-button uk-button-primary uk-margin-right" @click.prevent="update_command_citrus(update_command.id)">Modifier la commande</button>
+                <button class="uk-button uk-button-default uk-modal-close">Annuler</button>
+            </template>
+        </modal>
 
+        <!-- Modal for update command -->
         <modal :center='true' id="update-command" :container='true' :close_button='true'>
             <template v-slot:header>
                 <h3 v-if="update_command.user != undefined">Modifier la commande de {{ update_command.user.username }}</h3>
@@ -82,7 +96,7 @@
                 </table>
             </template>
             <template v-slot:footer>
-                <button v-if="update_command.id" class="uk-button uk-button-primary uk-margin-right" @click.prevent='update_command_citrus(update_command.id)'>Modifier la commande</button>
+                <a v-if="update_command.id" type="button" class="uk-button uk-button-primary uk-margin-right" href='#confirm-update' uk-toggle>Modifier la commande</a>
                 <button class="uk-button uk-button-default uk-modal-close">Annuler</button>
             </template>
         </modal>
@@ -150,8 +164,8 @@
                             <th>Total</th>
                             <th v-for="c in commands" :key="c.id">
                                 {{ c.user.username }}<br>
-                                <a :title="'Supprimer la commande de ' + c.user.username" type="button" uk-icon='icon: trash' :uk-toggle='"target: #confirm-delete-command-" + c.id' v-if="current_user.permissions.find(permission => permission === 'command.delete_command')"></a>
-                                <a :title="'Modifier la commande de ' + c.user.username" uk-icon='icon: refresh' v-if="current_user.permissions.find(permission => permission === 'command.change_command')" @click.prevent="get_command_for_update(c.id)"></a>
+                                <a :title="'Supprimer la commande de ' + c.user.username" type="button" uk-icon='icon: trash; ratio: 2' :uk-toggle='"target: #confirm-delete-command-" + c.id' v-if="current_user.permissions.find(permission => permission === 'command.delete_command')"></a>
+                                <a :title="'Modifier la commande de ' + c.user.username" uk-icon='icon: refresh; ratio: 2' v-if="current_user.permissions.find(permission => permission === 'command.change_command')" @click.prevent="get_command_for_update(c.id)"></a>
 
                                 <modal :close_button='true' :id='"confirm-delete-command-" + c.id' v-if="current_user.permissions.find(permission => permission === 'command.delete_command')">
                                     <template v-slot:header>

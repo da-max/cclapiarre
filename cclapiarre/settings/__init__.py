@@ -39,6 +39,7 @@ INSTALLED_APPS =[
     'django.contrib.sites',
     'django.contrib.flatpages',
     'django.contrib.humanize',
+    'rest_framework',
     'ckeditor',
     'phonenumber_field',
     'webpack_loader',
@@ -176,4 +177,11 @@ WEBPACK_LOADER = {
         'BUNDLE_DIR_NAME': '/bundles/',
         'STATS_FILE': os.path.join(BASE_DIR, 'frontend', 'webpack-stats.json')
     }
+}
+
+# Django Rest Framework Configuration
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissions'
+    ]
 }

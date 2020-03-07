@@ -20,11 +20,18 @@ class Product(Model):
 
     def __str__(self):
         return self.name
+    
+    def get_total(self):
+        total = float()
+        amounts = Amount.objects.filter(product=self)
+        for amount in amounts:
+            total += amount.amount
+        return total
 
 class Command(Model):
     number = IntegerField(default=int(random() * 1000), help_text="Merci de laisser la valeur par défaut.")
     user = ForeignKey(User, on_delete=CASCADE, related_name="utilisateur")
-    product = ManyToManyField(Product, through='Amount')
+    product = ManyToManyField(Product, through='Amount', related_name='product')
 
     class Meta:
 
@@ -32,6 +39,14 @@ class Command(Model):
 
     def __str__(self):
         return self.user.username
+    
+    def get_total(self):
+        total = float()
+        amounts = Amount.objects.filter(command=self)
+        for amount in amounts:
+            total += amount.product.price * amount.amount
+        
+        return total
 
 class Amount(Model):
     product = ForeignKey(Product, on_delete=CASCADE, related_name="produit")

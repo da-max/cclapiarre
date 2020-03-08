@@ -55,7 +55,7 @@ class CommandViewSet(ModelViewSet):
 
         for product_id, amount in data.items():
             try:
-                product = Product.objects.get(id=product_id)
+                product = Product.objects.get(Q(id=product_id) & Q(display=True))
                 amount = float(amount)
             except (ObjectDoesNotExist, ValueError, Exception) as e:
                 return Response(error_response(e))
@@ -70,8 +70,8 @@ class CommandViewSet(ModelViewSet):
                 'id': int(random() * 1000),
                 'status': 'warning',
                 'header': 'Nombre de caisse trop important',
-                'header': 'Le nombre de caisse que vous avez commandé est trop important. Le nombre maximum de caisse est fixé \
-                à 6 par adhérent. Merci de modifier votre commande.'
+                'body': 'Le nombre de caisse que vous avez commandé est trop important. '
+                'Le nombre maximum de caisse est fixé à 6 par adhérent. Merci de modifier votre commande.'
             })
 
         try:
@@ -132,9 +132,10 @@ class CommandViewSet(ModelViewSet):
                           request.user.email], html_message=html_content)
 
             return Response({
+                'id': int(random() * 1000),
                 'status': 'success',
                 'header': 'Commande enregistrée',
-                'body': 'Votre commande a bien été enregistré.'
+                'body': 'Votre commande a bien été enregistrée.'
             })
 
     def destroy(self, request, pk):
@@ -196,8 +197,8 @@ class CommandViewSet(ModelViewSet):
                 'id': int(random() * 1000),
                 'status': 'warning',
                 'header': 'Nombre de caisse trop important',
-                'header': 'Le nombre de caisse que commandé est trop important. Le nombre maximum de caisse est fixé \
-                à 6 par adhérent. Merci de modifier la commande.'
+                'body': 'Le nombre de caisse que commandé est trop important. '
+                'Le nombre maximum de caisse est fixé à 6 par adhérent. Merci de modifier la commande.'
             })
 
         for product, amount in amounts.items():

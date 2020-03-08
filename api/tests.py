@@ -1,3 +1,220 @@
-from django.test import TestCase
+import json
+from random import random
+from django.test import TransactionTestCase, Client
+from django.urls import reverse
+from django.db.models import ObjectDoesNotExist
 
-# Create your tests here.
+
+from django.contrib.auth.signals import user_logged_in
+from django.contrib.auth.models import User
+
+from command.models import Amount, Product, Command
+from registration.views import connect
+
+
+class CitrusApiTestCase (TransactionTestCase):
+
+    def setUp(self):
+        user = User.objects.create_superuser(
+            'test1', 'test1@test.com', 'password')
+        self.user = User.objects.create(
+            username='user1', email='user1@user.com', password='password')
+
+        self.error_response = lambda id, e: {
+            'id': id,
+            'status': 'danger',
+            'header': 'Erreur lors de l\'enregistrement des produits de votre commande',
+            'body': 'Une erreur est survenue lors de l\'enregistrement d\'un (ou plusieurs) produit⋅s, \
+                merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
+                (ERREUR : {})'.format(type(e))
+        }
+
+        self.p1 = Product.objects.create(name='product1', weight=1,
+                                         price=10, display=True)
+        self.p2 = Product.objects.create(name='prduct2', weight=2,
+                                         price=20, display=True)
+        self.p3 = Product.objects.create(name='product3', weight=3,
+                                         price=30, display=False)
+
+        self.command = Command.objects.create(user=user)
+        Amount.objects.create(command=self.command, product=self.p1, amount=10)
+
+        user_logged_in.disconnect(receiver=connect)
+
+        self.client = Client()
+        self.client.login(username='test1', password='password')
+
+    def test_list_product(self):
+
+        response = self.client.get(reverse('api:product-list'))
+
+        self.assertNotIn({
+            'id': 3,
+            'name': 'product3',
+            'weight': float(3),
+            'description': '',
+            'step': float(1),
+            'maximum': 100,
+            'price': float(30),
+            'total': float(0)
+        }, response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_list_command(self):
+
+        response = self.client.get(reverse('api:command-list'))
+        content = json.loads(response.content)[0]
+
+        self.assertJSONEqual(response.content, [
+            {
+                'user': {
+                    'id': content['user']['id'],
+                    'username': 'test1',
+                    'email': 'test1@test.com',
+                    'last_name': '',
+                    'first_name': '',
+                },
+                'product': [{
+                    'id': content['product'][0]['id'],
+                    'name': 'product1',
+                    'weight': float(1),
+                    'description': '',
+                    'step': float(1),
+                    'maximum': 100,
+                    'price': float(10),
+                    'total': float(10),
+                }],
+                'total': self.command.get_total(),
+                'id': content['id'],
+            }
+        ])
+        self.assertEqual(response.status_code, 200)
+
+    def test_list_amount(self):
+
+        response = self.client.get('/api/citrus/amount')
+        content = json.loads(response.content)[0]
+
+        self.assertJSONEqual(response.content, [
+            {
+                'id': content['id'],
+                'command': {
+                    'id': content['command']['id'],
+                    'user': {
+                        'id': content['command']['user']['id'],
+                        'username': 'test1',
+                        'email': 'test1@test.com',
+                        'last_name': '',
+                        'first_name': ''
+                    }
+                },
+                'product': {
+                    'id': content['product']['id'],
+                    'name': 'product1',
+                    'weight': float(1),
+                    'description': '',
+                    'step': float(1),
+                    'maximum': 100,
+                    'price': float(10),
+                    'total': float(10)
+                },
+                'amount': float(10)
+            }
+        ])
+        self.assertEqual(response.status_code, 200)
+
+    def test_add_command(self):
+
+        data = {
+            'user': 2,
+            'send_mail': 'true',
+            self.p1.id: 3,
+            self.p2.id: 2,
+        }
+
+        response = self.client.post(reverse('api:command-list'), data)
+
+        self.assertJSONEqual(response.content, {
+            'id': float(json.loads(response.content)['id']),
+            'status': 'success',
+            'header': 'Commande enregistrée',
+            'body': 'Votre commande a bien été enregistrée.'
+        })
+        self.assertEqual(response.status_code, 200)
+
+        Command.objects.get(user_id=2).delete()
+
+    def test_case_number_add_command(self):
+
+        data = {
+            'user': self.user.id,
+            'send_mail': 'true',
+            self.p1.id: 10,
+            self.p2.id: 7
+        }
+
+        response = self.client.post(reverse('api:command-list'), data)
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': json.loads(response.content)['id'],
+            'status': 'warning',
+            'header': 'Nombre de caisse trop important',
+            'body': 'Le nombre de caisse que vous avez commandé est trop important. '
+                'Le nombre maximum de caisse est fixé à 6 par adhérent. Merci de modifier votre commande.'
+        })
+    
+    def test_bad_product_add_command(self):
+
+        data = {
+            'user': self.user.id,
+            'send_mail': 'true',
+            self.p1.id: 1,
+            self.p3.id: 4
+        }
+
+        response = self.client.post(reverse('api:command-list'), data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], Product.DoesNotExist()))
+
+
+    def test_bad_user_add_command(self):
+
+        data = {
+            'user': int(random() * 10000),
+            'send_mail': 'true',
+            self.p1.id: 3,
+            self.p2.id: 4
+        }
+
+        response = self.client.post(reverse('api:command-list'), data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], User.DoesNotExist()))
+    
+    def test_bad_data_add_command(self):
+
+        data = {
+            'wrong_data': self.user.id,
+            self.p1.id: 3
+        }
+
+        response = self.client.post(reverse('api:command-list'), data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], KeyError()))
+
+    def test_bad_amount_add_command(self):
+        
+        data = {
+            'user': int(random() * 10000),
+            'send_mail': 'true',
+            self.p1.id: 'wrong_amount',
+            self.p2.id: 4
+        }
+
+        response = self.client.post(reverse('api:command-list'), data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], ValueError()))

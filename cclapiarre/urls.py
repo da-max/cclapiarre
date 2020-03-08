@@ -26,6 +26,7 @@ from django.contrib.flatpages import views
 
 from article import views as a_views
 from article.views import home
+from api.apps import ApiConfig
 
 
 urlpatterns = [
@@ -45,7 +46,7 @@ urlpatterns = [
     path('changements', a_views.changelog, name='changelog'),
 
     # Api
-    url(r'^api/', include('api.urls'))
+    url(r'^api/', include(('api.urls', 'api'), namespace='api'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

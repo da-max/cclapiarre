@@ -1,10 +1,10 @@
 import json
 from random import random
 from django.test import TransactionTestCase, Client
-from django.urls import reverse
+from django.urls import reverse, path, include
 from django.db.models import ObjectDoesNotExist
 
-
+from rest_framework.test import APITransactionTestCase, URLPatternsTestCase, APIClient
 from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth.models import User
 
@@ -12,10 +12,14 @@ from command.models import Amount, Product, Command
 from registration.views import connect
 
 
-class CitrusApiTestCase (TransactionTestCase):
+class CitrusApiTestCase (APITransactionTestCase, URLPatternsTestCase):
+
+    urlpatterns = [
+        path('api/', include('api.urls')),
+    ]
 
     def setUp(self):
-        user = User.objects.create_superuser(
+        self.super_user = User.objects.create_superuser(
             'test1', 'test1@test.com', 'password')
         self.user = User.objects.create(
             username='user1', email='user1@user.com', password='password')
@@ -36,17 +40,17 @@ class CitrusApiTestCase (TransactionTestCase):
         self.p3 = Product.objects.create(name='product3', weight=3,
                                          price=30, display=False)
 
-        self.command = Command.objects.create(user=user)
+        self.command = Command.objects.create(user=self.super_user)
         Amount.objects.create(command=self.command, product=self.p1, amount=10)
 
         user_logged_in.disconnect(receiver=connect)
 
-        self.client = Client()
+        self.client = APIClient()
         self.client.login(username='test1', password='password')
 
     def test_list_product(self):
 
-        response = self.client.get(reverse('api:product-list'))
+        response = self.client.get(reverse('product-list'))
 
         self.assertNotIn({
             'id': 3,
@@ -62,7 +66,7 @@ class CitrusApiTestCase (TransactionTestCase):
 
     def test_list_command(self):
 
-        response = self.client.get(reverse('api:command-list'))
+        response = self.client.get(reverse('command-list'))
         content = json.loads(response.content)[0]
 
         self.assertJSONEqual(response.content, [
@@ -92,7 +96,7 @@ class CitrusApiTestCase (TransactionTestCase):
 
     def test_list_amount(self):
 
-        response = self.client.get('/api/citrus/amount')
+        response = self.client.get(reverse('amount-list'))
         content = json.loads(response.content)[0]
 
         self.assertJSONEqual(response.content, [
@@ -132,7 +136,7 @@ class CitrusApiTestCase (TransactionTestCase):
             self.p2.id: 2,
         }
 
-        response = self.client.post(reverse('api:command-list'), data)
+        response = self.client.post(reverse('command-list'), data)
 
         self.assertJSONEqual(response.content, {
             'id': float(json.loads(response.content)['id']),
@@ -153,7 +157,7 @@ class CitrusApiTestCase (TransactionTestCase):
             self.p2.id: 7
         }
 
-        response = self.client.post(reverse('api:command-list'), data)
+        response = self.client.post(reverse('command-list'), data)
         
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
@@ -173,7 +177,7 @@ class CitrusApiTestCase (TransactionTestCase):
             self.p3.id: 4
         }
 
-        response = self.client.post(reverse('api:command-list'), data)
+        response = self.client.post(reverse('command-list'), data)
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], Product.DoesNotExist()))
@@ -188,7 +192,7 @@ class CitrusApiTestCase (TransactionTestCase):
             self.p2.id: 4
         }
 
-        response = self.client.post(reverse('api:command-list'), data)
+        response = self.client.post(reverse('command-list'), data)
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], User.DoesNotExist()))
@@ -200,7 +204,7 @@ class CitrusApiTestCase (TransactionTestCase):
             self.p1.id: 3
         }
 
-        response = self.client.post(reverse('api:command-list'), data)
+        response = self.client.post(reverse('command-list'), data)
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], KeyError()))
@@ -208,13 +212,51 @@ class CitrusApiTestCase (TransactionTestCase):
     def test_bad_amount_add_command(self):
         
         data = {
-            'user': int(random() * 10000),
+            'user': 'wrong_id',
             'send_mail': 'true',
             self.p1.id: 'wrong_amount',
             self.p2.id: 4
         }
 
-        response = self.client.post(reverse('api:command-list'), data)
+        response = self.client.post(reverse('command-list'), data)
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], ValueError()))
+
+    def test_also_command(self):
+        data = {
+            'user': self.user.id,
+            'send_mail': 'true',
+            self.p1.id: 4,
+            self.p2.id: 3
+        }
+
+        self.client.post(reverse('command-list'), data)
+        response = self.client.post(reverse('command-list'), data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': json.loads(response.content)['id'],
+            'status': 'warning',
+            'header': 'Vous avez déjà commandé !',
+            'body': 'Une commande à votre nom a déjà été trouvé ! '
+            'Merci de vérifier que votre commande n\'est pas déjà '
+            'présente dans le tableau. Si cette commande n\'est pas de vous, '
+            'merci de me contacter.'
+        })
+    
+    def test_update_command(self):
+        data = {
+            'user_id': self.super_user.id,
+            str(self.p1.id): 4
+        }
+
+        response = self.client.put(reverse('command-detail', kwargs={'pk': self.command.id}), data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': json.loads(response.content)['id'],
+            'status': 'success',
+            'header': 'Commande modifiée',
+            'body': 'La commande de {} a bien été modifié.'.format(self.super_user.username)
+        })

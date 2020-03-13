@@ -90,8 +90,8 @@ class CommandViewSet(ModelViewSet):
                 'id': int(random() * 1000),
                 'status': 'warning',
                 'header': 'Vous avez déjà commandé !',
-                'body': 'Une commande à votre nom a déjà été trouvé ! Merci de vérifier que votre commande \
-                n\'est pas déjà présente dans le tableau. Si cette commande n\'est pas de vous, merci de me contacter.'
+                'body': 'Une commande à votre nom a déjà été trouvé ! Merci de vérifier que votre commande '
+                'n\'est pas déjà présente dans le tableau. Si cette commande n\'est pas de vous, merci de me contacter.'
             })
 
         command = Command.objects.create(user=user)
@@ -211,7 +211,7 @@ class CommandViewSet(ModelViewSet):
         return Response({
             'id': int(random() * 1000),
             'status': 'success',
-            'header': 'Commande modifée',
+            'header': 'Commande modifiée',
             'body': 'La commande de {} a bien été modifié.'.format(command.user.username)
         })
 

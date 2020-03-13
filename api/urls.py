@@ -13,9 +13,9 @@ urlpatterns = [
 ]
 
 
-router = DefaultRouter(trailing_slash=False)
+router = DefaultRouter()
 router.register(r'citrus/command', CommandViewSet)
-router.register(r'^citrus/amount', AmoutViewSet, basename='amount')
+router.register(r'citrus/amount', AmoutViewSet, basename='amount')
 router.register(r'citrus/product', ProductViewSet, basename='product')
 
 urlpatterns += router.urls

@@ -57,6 +57,8 @@ class CommandViewSet(ModelViewSet):
             try:
                 product = Product.objects.get(Q(id=product_id) & Q(display=True))
                 amount = float(amount)
+                assert float(
+                    amount % product.step) == 0
             except (ObjectDoesNotExist, ValueError, Exception) as e:
                 return Response(error_response(e))
             else:
@@ -163,14 +165,13 @@ class CommandViewSet(ModelViewSet):
             'id': int(random() * 1000),
             'status': 'danger',
             'header': 'Erreur lors de la modification de la commande',
-            'body': 'Une erreur est survenue lors de la modification de la commande de {} \
-                merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
-                (ERREUR : {})'.format(type(e))
+            'body': 'Une erreur est survenue lors de la modification de la commande'
+                'merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. '
+                '(ERREUR : {})'.format(type(e))
         }
         amounts = dict()
         data = request.data.copy()
         total_box = float()
-        products = Product.objects.filter(display=True)
         try:
             user_id = data.pop('user_id')[0]
             command = Command.objects.get(Q(id=pk) & Q(user_id=user_id))
@@ -180,11 +181,11 @@ class CommandViewSet(ModelViewSet):
 
         for product_id, amount in data.items():
             try:
-                product = products.get(id=product_id)
+                product = Product.objects.get(Q(id=product_id) & Q(display=True))
                 amount = float(amount)
                 assert float(
-                    amount / product.step) == int(amount / product.step)
-            except Exception as e:
+                    amount % product.step) == 0
+            except (ObjectDoesNotExist, Exception) as e:
                 return Response(error_response(e))
             else:
                 if product.weight != 1:
@@ -197,7 +198,7 @@ class CommandViewSet(ModelViewSet):
                 'id': int(random() * 1000),
                 'status': 'warning',
                 'header': 'Nombre de caisse trop important',
-                'body': 'Le nombre de caisse que commandé est trop important. '
+                'body': 'Le nombre de caisse commandé est trop important. '
                 'Le nombre maximum de caisse est fixé à 6 par adhérent. Merci de modifier la commande.'
             })
 

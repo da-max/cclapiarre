@@ -6,6 +6,8 @@ from django.db.models import Q
 from django.template.loader import get_template
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
 
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
@@ -14,6 +16,44 @@ from django.contrib.auth.models import User
 
 from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer, UserWithPermissionsSerializer
 from command.models import Command, Amount, Product
+
+
+def command_send_mail(sender, instance, **kwargs):
+    command_sommary = dict()
+    try:
+        isinstance(instance, Command)
+        mail = instance.send_mail
+    except Exception as e:
+        return e
+
+    if instance.send_mail:
+        amounts = instance.product.through.objects.all()
+        for amount in amounts:
+            command_sommary[amount.product.name] = {
+                'weight': amount.product.weight,
+                'price': float(amount.product.weight * amount.amount),
+                'quantity': amount.amount
+            }
+        print(command_sommary)
+        SUBJECT = "Récapitulatif de la commande"
+        FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
+        HTML_TEXT = get_template('command/command_mail/sommary.html')
+        PLAIN_TEXT = get_template('command/command_mail/sommary.txt')
+
+        DATA = {
+            'command_sommary': command_sommary,
+            'first_name': instance.user.first_name,
+            'email': instance.user.email,
+            'total_price': Amount.get_total_user(Amount, instance.id)
+        }
+
+        html_content = HTML_TEXT.render(DATA)
+        text_content = PLAIN_TEXT.render(DATA)
+        send_mail(SUBJECT, text_content, FROM_EMAIL, [
+            instance.user.email], html_message=html_content)
+
+
+m2m_changed.connect(command_send_mail, sender=Command.product.through)
 
 
 class CommandViewSet(ModelViewSet):
@@ -49,13 +89,14 @@ class CommandViewSet(ModelViewSet):
 
         try:
             user_id = data.pop('user')
-            mail = data.pop('send_mail')
+            mail = bool(data.pop('send_mail'))
         except (KeyError, Exception) as e:
             return Response(error_response(e))
 
         for product_id, amount in data.items():
             try:
-                product = Product.objects.get(Q(id=product_id) & Q(display=True))
+                product = Product.objects.get(
+                    Q(id=product_id) & Q(display=True))
                 amount = float(amount)
                 assert float(
                     amount % product.step) == 0
@@ -96,9 +137,9 @@ class CommandViewSet(ModelViewSet):
                 'n\'est pas déjà présente dans le tableau. Si cette commande n\'est pas de vous, merci de me contacter.'
             })
 
-        command = Command.objects.create(user=user)
-
         try:
+            command = Command.objects.create(user=user, send_mail=mail)
+
             for product_id, data in amounts.items():
                 command_sommary[data[0].name] = {
                     'weight': data[0].name,
@@ -106,32 +147,12 @@ class CommandViewSet(ModelViewSet):
                     'quantity': data[1]
                 }
                 amount = Amount.objects.create(
-                    product=data[0], command=command, amount=data[1])
+                    product=data[0], amount=data[1], command=command)
         except Exception as e:
             return Response(error_response(e))
         else:
-            if mail:
-                subject = "Récapitulatif de la commande"
-                from_mail = settings.DEFAULT_FROM_EMAIL
-                html_text = get_template('command/command_mail/sommary.html')
-                plain_text = get_template('command/command_mail/sommary.txt')
-
-                html_content = html_text.render({
-                    'command_sommary': command_sommary,
-                    'first_name': request.user.first_name,
-                    'email': request.user.email,
-                    'total_price': Amount.get_total_user(Amount, command.id)
-                })
-
-                text_content = plain_text.render({
-                    'command_sommary': command_sommary,
-                    'first_name': request.user.first_name,
-                    'email': request.user.email,
-                    'total_price': Amount.get_total_user(Amount, command.id)
-                })
-
-                send_mail(subject, text_content, from_mail, [
-                          request.user.email], html_message=html_content)
+            # For launch signal m2m and send_mail (if )
+            command.product.add(data[0], through_defaults=amount)
 
             return Response({
                 'id': int(random() * 1000),
@@ -166,8 +187,8 @@ class CommandViewSet(ModelViewSet):
             'status': 'danger',
             'header': 'Erreur lors de la modification de la commande',
             'body': 'Une erreur est survenue lors de la modification de la commande'
-                'merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. '
-                '(ERREUR : {})'.format(type(e))
+            'merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. '
+            '(ERREUR : {})'.format(type(e))
         }
         amounts = dict()
         data = request.data.copy()
@@ -181,7 +202,8 @@ class CommandViewSet(ModelViewSet):
 
         for product_id, amount in data.items():
             try:
-                product = Product.objects.get(Q(id=product_id) & Q(display=True))
+                product = Product.objects.get(
+                    Q(id=product_id) & Q(display=True))
                 amount = float(amount)
                 assert float(
                     amount % product.step) == 0
@@ -295,7 +317,8 @@ class AmoutViewSet(ModelViewSet):
         try:
             for product_id, data in amounts.items():
                 amount = Amount.objects.create(
-                    product=data[0], command=command, amount=data[1])
+                    product=data[0], amount=data[1])
+                command.product.add(amount)
         except Exception as e:
             return Response(error_response(e))
         else:

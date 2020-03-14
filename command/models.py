@@ -5,14 +5,18 @@ from django.db.models.fields import CharField, FloatField, IntegerField, Boolean
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
 
+
 class Product(Model):
     name = CharField(max_length=255, verbose_name="Nom du produit")
-    description = RichTextField(blank=True, verbose_name="Description du produit", help_text="Ce champ est optionnel.")
-    weight = FloatField(default=10, verbose_name="Poids du produit", help_text="Mettre 1 si ce produit n'est pas vendu au poids.")
+    description = RichTextField(
+        blank=True, verbose_name="Description du produit", help_text="Ce champ est optionnel.")
+    weight = FloatField(default=10, verbose_name="Poids du produit",
+                        help_text="Mettre 1 si ce produit n'est pas vendu au poids.")
     price = FloatField(default=1, verbose_name="Prix du produit")
     display = BooleanField(verbose_name="Afficher le produit")
     step = FloatField(default=1, verbose_name="Pas d'augmentation du produit")
-    maximum = IntegerField(default=100, verbose_name="Quantité maximal commandable par commande")
+    maximum = IntegerField(
+        default=100, verbose_name="Quantité maximal commandable par commande")
 
     class Meta:
 
@@ -20,7 +24,7 @@ class Product(Model):
 
     def __str__(self):
         return self.name
-    
+
     def get_total(self):
         total = float()
         amounts = Amount.objects.filter(product=self)
@@ -28,10 +32,16 @@ class Product(Model):
             total += amount.amount
         return total
 
+
 class Command(Model):
-    number = IntegerField(default=int(random() * 1000), help_text="Merci de laisser la valeur par défaut.")
+    number = IntegerField(default=int(random() * 1000),
+                          help_text="Merci de laisser la valeur par défaut.")
     user = ForeignKey(User, on_delete=CASCADE, related_name="utilisateur")
-    product = ManyToManyField(Product, through='Amount', related_name='product')
+    product = ManyToManyField(
+        Product, through='Amount', related_name='product')
+    send_mail = BooleanField(verbose_name='Envoyer un mail', default=True,
+                             help_text='Décocher cette case afin qu\'aucun mail ne soit envoyé à l\'utilisateur '
+                             'lors de sa commande (ou de la modification de sa commande.')
 
     class Meta:
 
@@ -39,14 +49,15 @@ class Command(Model):
 
     def __str__(self):
         return self.user.username
-    
+
     def get_total(self):
         total = float()
         amounts = Amount.objects.filter(command=self)
         for amount in amounts:
             total += amount.product.price * amount.amount
-        
+
         return total
+
 
 class Amount(Model):
     product = ForeignKey(Product, on_delete=CASCADE, related_name="produit")

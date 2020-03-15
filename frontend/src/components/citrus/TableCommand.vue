@@ -100,8 +100,30 @@
                 <button class="uk-button uk-button-default uk-modal-close">Annuler</button>
             </template>
         </modal>
+
+        <!-- Modal soow before delete all -->
+        <modal id="warning-delete-all-command">
+            <template v-slot:header>
+                <h3 class="text-center">Supprimer toutes les commandes ?</h3>
+            </template>
+            <template v-slot:body>
+                <p>Vous êts sur le point de supprimer toutes les commandes, <span class="uk-text-warning uk-text-bold uk-text-uppercase">attention, cette action est irréversible !</span></p>
+            </template>
+            <template v-slot:footer>
+                <div class="uk-text-center">
+                    <a type="button" class="uk-button uk-button-danger uk-margin-right" @click.prevent="delete_all_command()">Supprimer toutes les commandes</a>
+                    <button class="uk-button uk-button-default uk-modal-close">Annuler</button>
+                </div>
+            </template>
+        </modal>
+        
+        <section class="uk-text-center uk-margin-large-bottom uk-margin-large-top" uk-scrollspy="cls:uk-animation-fade; delay:200;">
+            <a type="button" href="/commande/recapitulatif-de-la-commande" class="uk-button uk-button-secondary uk-padding-small uk-margin-medium-right@m uk-margin-large-right">Générer le récapitulatif PDF de la commande</a>
+            <a @click.prevent="show_warning_delete_all_command()" v-if="current_user.permissions.find(permission => permission === 'command.delete_command')" type="button" class="uk-button uk-button-danger uk-padding-small">Supprimer toutes les commandes</a>
+        </section>
+
         <div id="messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
-            
+        
             <!-- Display if error = true -->
             <message v-show="query_error" :close='false' status='danger'>
                 <template v-slot:header>
@@ -409,6 +431,17 @@ export default {
             })
         },
 
+        show_warning_delete_all_command() {UIkit.modal('#warning-delete-all-command').show()},
+
+        delete_all_command() {
+            UIkit.modal('#warning-delete-all-command').hide()
+            this.$command.remove({id: 'destroy_all'}).then((response) => {
+                this.messages.push(response.data)
+                this.get_command()
+            }, (response) => {
+                this.query_error = true
+            })
+        }, 
         get_command_for_update(id_command) {
             let com = {}
             let command = this.commands.find(c => c.id == id_command)

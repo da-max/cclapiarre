@@ -13,47 +13,48 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
+from rest_framework.decorators import action
 
 from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer, UserWithPermissionsSerializer
 from command.models import Command, Amount, Product
 
 
-def command_send_mail(sender, instance, **kwargs):
-    command_sommary = dict()
-    try:
-        isinstance(instance, Command)
-        mail = instance.send_mail
-    except Exception as e:
-        return e
+@receiver(m2m_changed, sender=Command.product.through)
+def command_send_mail(sender, instance, action, **kwargs):
 
-    if instance.send_mail:
-        amounts = instance.product.through.objects.all()
-        for amount in amounts:
-            command_sommary[amount.product.name] = {
-                'weight': amount.product.weight,
-                'price': float(amount.product.weight * amount.amount),
-                'quantity': amount.amount
+    # Send mail when command is add
+    if action == 'post_add':
+        command_sommary = dict()
+        try:
+            isinstance(instance, Command)
+            mail = instance.send_mail
+        except Exception as e:
+            return e
+
+        if instance.send_mail:
+            amounts = instance.product.through.objects.all()
+            for amount in amounts:
+                command_sommary[amount.product.name] = {
+                    'weight': amount.product.weight,
+                    'price': float(amount.product.weight * amount.amount),
+                    'quantity': amount.amount
+                }
+            SUBJECT = "Récapitulatif de la commande"
+            FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
+            HTML_TEXT = get_template('command/command_mail/sommary.html')
+            PLAIN_TEXT = get_template('command/command_mail/sommary.txt')
+
+            DATA = {
+                'command_sommary': command_sommary,
+                'first_name': instance.user.first_name,
+                'email': instance.user.email,
+                'total_price': Amount.get_total_user(Amount, instance.id)
             }
-        print(command_sommary)
-        SUBJECT = "Récapitulatif de la commande"
-        FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
-        HTML_TEXT = get_template('command/command_mail/sommary.html')
-        PLAIN_TEXT = get_template('command/command_mail/sommary.txt')
 
-        DATA = {
-            'command_sommary': command_sommary,
-            'first_name': instance.user.first_name,
-            'email': instance.user.email,
-            'total_price': Amount.get_total_user(Amount, instance.id)
-        }
-
-        html_content = HTML_TEXT.render(DATA)
-        text_content = PLAIN_TEXT.render(DATA)
-        send_mail(SUBJECT, text_content, FROM_EMAIL, [
-            instance.user.email], html_message=html_content)
-
-
-m2m_changed.connect(command_send_mail, sender=Command.product.through)
+            html_content = HTML_TEXT.render(DATA)
+            text_content = PLAIN_TEXT.render(DATA)
+            send_mail(SUBJECT, text_content, FROM_EMAIL, [
+                instance.user.email], html_message=html_content)
 
 
 class CommandViewSet(ModelViewSet):
@@ -94,14 +95,18 @@ class CommandViewSet(ModelViewSet):
             return Response(error_response(e))
 
         for product_id, amount in data.items():
+
             try:
                 product = Product.objects.get(
                     Q(id=product_id) & Q(display=True))
                 amount = float(amount)
+
                 assert float(
                     amount % product.step) == 0
+
             except (ObjectDoesNotExist, ValueError, Exception) as e:
                 return Response(error_response(e))
+
             else:
                 amounts[product.id] = (product, amount)
                 if product.weight != 1:
@@ -141,18 +146,13 @@ class CommandViewSet(ModelViewSet):
             command = Command.objects.create(user=user, send_mail=mail)
 
             for product_id, data in amounts.items():
-                command_sommary[data[0].name] = {
-                    'weight': data[0].name,
-                    'price': float(data[0].weight) * float(data[1]),
-                    'quantity': data[1]
-                }
                 amount = Amount.objects.create(
                     product=data[0], amount=data[1], command=command)
+                command.product.add(data[0], through_defaults=amount)
         except Exception as e:
             return Response(error_response(e))
         else:
             # For launch signal m2m and send_mail (if )
-            command.product.add(data[0], through_defaults=amount)
 
             return Response({
                 'id': int(random() * 1000),
@@ -182,6 +182,7 @@ class CommandViewSet(ModelViewSet):
                 'body': 'La commande de {} a bie été supprimé.'.format(command.user.username)})
 
     def update(self, request, pk):
+
         def error_response(e): return {
             'id': int(random() * 1000),
             'status': 'danger',
@@ -228,6 +229,7 @@ class CommandViewSet(ModelViewSet):
             try:
                 a = Amount.objects.create(
                     command=command, product=product, amount=amount)
+                command.product.add(product, through_defaults=a)
             except Exception as e:
                 return Response(error_response(e))
 
@@ -238,6 +240,27 @@ class CommandViewSet(ModelViewSet):
             'body': 'La commande de {} a bien été modifié.'.format(command.user.username)
         })
 
+    @action(detail=False, methods=['delete'])
+    def destroy_all(self, request):
+        command = Command.objects.all()
+        try:
+            command.delete()
+            
+        except Exception as e:
+            return Response({
+                'id': int(random() * 10000),
+                'status': 'danger',
+                'header': 'Erreur interne',
+                'body': 'Une erreur est survenue lors de la suppression de toutes les commandes. '
+                'Merce de réessayer et de me contacter si besoin (ERREUR: {})'.format(type(e))
+            })
+        else:
+            return Response({
+                'id': int(random() * 10000),
+                'status': 'success',
+                'header': 'Commandes supprimées',
+                'body': 'Toutes les commandes ont bien été supprimées.'
+            })
 
 class AmoutViewSet(ModelViewSet):
     serializer_class = AmountSerializer

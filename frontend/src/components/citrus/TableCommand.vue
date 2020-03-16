@@ -372,7 +372,8 @@ export default {
             UIkit.modal('#command-recap').hide()
             let formData = new FormData()
             formData.append('user', parseInt(this.current_user.id))
-            formData.append('send_mail', this.send_mail)
+            console.log(Number(this.send_mail));
+            formData.append('send_mail',  Number(this.send_mail))
             Object.entries(this.command).forEach(c => {
                 formData.append(c[0], c[1])
             })
@@ -431,7 +432,7 @@ export default {
             })
         },
 
-        show_warning_delete_all_command() {UIkit.modal('#warning-delete-all-command').show()},
+        show_warning_delete_all_command() { UIkit.modal('#warning-delete-all-command').show() },
 
         delete_all_command() {
             UIkit.modal('#warning-delete-all-command').hide()

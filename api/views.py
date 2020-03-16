@@ -31,6 +31,7 @@ def command_send_mail(sender, instance, action, **kwargs):
         except Exception as e:
             return e
 
+        print(instance.send_mail)
         if instance.send_mail:
             amounts = instance.product.through.objects.all()
             for amount in amounts:
@@ -90,7 +91,7 @@ class CommandViewSet(ModelViewSet):
 
         try:
             user_id = data.pop('user')
-            mail = bool(data.pop('send_mail'))
+            mail = bool(int(data.pop('send_mail')[0]))
         except (KeyError, Exception) as e:
             return Response(error_response(e))
 

@@ -147,20 +147,26 @@ class CommandViewSet(ModelViewSet):
             command = Command.objects.create(user=user, send_mail=mail)
 
             for product_id, data in amounts.items():
-                amount = Amount.objects.create(
-                    product=data[0], amount=data[1], command=command)
-                command.product.add(data[0], through_defaults=amount)
+                product = data[0]
+                amount = data[1]
+                try:
+                    assert float(amount) != float(0)
+                except:
+                    pass
+                else:
+                    amount = Amount.objects.create(
+                        product=product, amount=amount, command=command)
+                    command.product.add(data[0], through_defaults=amount)
+        
         except Exception as e:
             return Response(error_response(e))
-        else:
-            # For launch signal m2m and send_mail (if )
 
-            return Response({
-                'id': int(random() * 1000),
-                'status': 'success',
-                'header': 'Commande enregistrée',
-                'body': 'Votre commande a bien été enregistrée.'
-            })
+        return Response({
+            'id': int(random() * 1000),
+            'status': 'success',
+            'header': 'Commande enregistrée',
+            'body': 'Votre commande a bien été enregistrée.'
+        })
 
     def destroy(self, request, pk):
         def error_response(e): return {

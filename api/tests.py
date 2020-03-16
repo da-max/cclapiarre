@@ -161,7 +161,7 @@ class CitrusApiTestCase (APITransactionTestCase, URLPatternsTestCase):
 
         data = {
             'user': 2,
-            'send_mail': 'true',
+            'send_mail': 1,
             self.p1.id: 3,
             self.p2.id: 2,
         }
@@ -183,7 +183,7 @@ class CitrusApiTestCase (APITransactionTestCase, URLPatternsTestCase):
 
         data = {
             'user': self.user.id,
-            'send_mail': 'true',
+            'send_mail': '1',
             self.p1.id: 10,
             self.p2.id: 7
         }
@@ -204,7 +204,7 @@ class CitrusApiTestCase (APITransactionTestCase, URLPatternsTestCase):
 
         data = {
             'user': self.user.id,
-            'send_mail': 'true',
+            'send_mail': '1',
             self.p1.id: 1,
             self.p3.id: 4
         }
@@ -220,7 +220,7 @@ class CitrusApiTestCase (APITransactionTestCase, URLPatternsTestCase):
 
         data = {
             'user': int(random() * 100000),
-            'send_mail': 'true',
+            'send_mail': '1',
             self.p1.id: 3,
             self.p2.id: 4
         }
@@ -265,7 +265,7 @@ class CitrusApiTestCase (APITransactionTestCase, URLPatternsTestCase):
         This critere is define with step attriut. """
         data = {
             'user': self.user.id,
-            'send_mail': 'true',
+            'send_mail': '1',
             self.p2.id: 1.70
         }
 
@@ -280,7 +280,7 @@ class CitrusApiTestCase (APITransactionTestCase, URLPatternsTestCase):
         """ Test if user as also command. """
         data = {
             'user': self.user.id,
-            'send_mail': 'true',
+            'send_mail': '1',
             self.p1.id: 4,
             self.p2.id: 3
         }

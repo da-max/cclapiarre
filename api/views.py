@@ -31,7 +31,6 @@ def command_send_mail(sender, instance, action, **kwargs):
         except Exception as e:
             return e
 
-        print(instance.send_mail)
         if instance.send_mail:
             amounts = instance.product.through.objects.all()
             for amount in amounts:

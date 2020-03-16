@@ -411,7 +411,7 @@ export default {
         },
 
         update_command_citrus (id_command) {
-            UIkit.modal('#update-command').hide()
+            UIkit.modal('#confirm-update').hide()
             
             let form_data = new FormData()
             form_data.append('user_id', this.update_command.user.id)
@@ -423,7 +423,6 @@ export default {
             this.$command.update({id: id_command}, form_data).then(response => {
                 this.messages.push(response.data)
                 if (response.data['status'] == 'success') {
-                    this.update_command = {}
                     this.get_command()
                 }
             }, response => {

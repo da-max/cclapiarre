@@ -238,7 +238,7 @@
                 </table>
             </div>
             <div class='uk-text-center uk-margin-large'>
-                <input type='submit' class="uk-button uk-margin-auto uk-button-primary" @click.prevent="show_recap()" value="Valider ma commande" v-if="!has_command" id='button-command'>
+                <input type='submit' class="uk-button uk-margin-auto uk-button-primary" @click.prevent="show_recap()" value="Valider ma commande" v-if="!has_command && Object.values(command).length != 0" id='button-command'>
             </div>
         </form>
     </div>

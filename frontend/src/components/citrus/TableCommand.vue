@@ -122,7 +122,7 @@
             <a @click.prevent="show_warning_delete_all_command()" v-if="current_user.permissions.find(permission => permission === 'command.delete_command')" type="button" class="uk-button uk-button-danger uk-padding-small">Supprimer toutes les commandes</a>
         </section>
 
-        <div id="messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
+        <div id="vue-messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
         
             <!-- Display if error = true -->
             <message v-show="query_error" :close='false' status='danger'>
@@ -495,7 +495,7 @@ export default {
         this.$command = this.$resource('api/citrus/command{/id}', {}, {}, {
             before: () => {this.loading = true},
             after: () => {this.loading = false
-                if (this.messages.length !== 0) { UIkit.scroll('#footer', {offset: 100}).scrollTo('#messages') }
+                if (this.messages.length !== 0) { UIkit.scroll('#footer', {offset: 100}).scrollTo('#vue-messages') }
             }
         })
 

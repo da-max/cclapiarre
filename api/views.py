@@ -15,8 +15,9 @@ from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework.decorators import action
 
-from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer, UserWithPermissionsSerializer
+from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer, UserWithPermissionsSerializer, CoffeeSerializer, CommandCoffeeSerializer
 from command.models import Command, Amount, Product
+from coffee.models import Coffee, CommandCoffee
 
 
 @receiver(m2m_changed, sender=Command.product.through)
@@ -374,4 +375,20 @@ class CurrentUserView(APIView):
 
     def get(self, request):
         serializer = UserWithPermissionsSerializer(request.user)
+        return Response(serializer.data)
+
+class CoffeeViewSet(ModelViewSet):
+    serializer_class = CoffeeSerializer
+    queryset = Coffee.objects.filter(display=True)
+
+    def get(self, request):
+        serializer = CoffeeSerializer()
+        return Response(serializer.data)
+
+class CommandCoffeeViewSet(ModelViewSet):
+    serializer_class = CommandCoffeeSerializer
+    queryset = CommandCoffee.objects.all()
+
+    def get(self, request):
+        serializer = CommandCoffeeSerializer()
         return Response(serializer.data)

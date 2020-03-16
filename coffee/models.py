@@ -125,7 +125,7 @@ class Coffee(Model):
 
 
 class CommandCoffee(Command):
-    coffee = ManyToManyField(Coffee, through="Quantity")
+    coffee = ManyToManyField(Coffee, through="Quantity", through_fields=('command', 'coffee'))
 
     class Meta:
         verbose_name = 'Commande de café'
@@ -154,8 +154,8 @@ class CommandCoffee(Command):
 
 
 class Quantity(Model):
-    coffee = ForeignKey(Coffee, on_delete=CASCADE, related_name="café")
-    command = ForeignKey(CommandCoffee, on_delete=CASCADE, related_name="commande")
+    coffee = ForeignKey(Coffee, on_delete=CASCADE, related_name="coffee_amount")
+    command = ForeignKey(CommandCoffee, on_delete=CASCADE, related_name="command")
     quantity = IntegerField(verbose_name="Quantité commandé")
     weight = IntegerField(verbose_name="Poids commandé", help_text="200 ou 1000 grammes.")
     sort = ForeignKey(Type, on_delete=CASCADE, related_name="type")

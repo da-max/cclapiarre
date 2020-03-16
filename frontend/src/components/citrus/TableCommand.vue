@@ -100,8 +100,30 @@
                 <button class="uk-button uk-button-default uk-modal-close">Annuler</button>
             </template>
         </modal>
-        <div id="messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
-            
+
+        <!-- Modal soow before delete all -->
+        <modal id="warning-delete-all-command">
+            <template v-slot:header>
+                <h3 class="text-center">Supprimer toutes les commandes ?</h3>
+            </template>
+            <template v-slot:body>
+                <p>Vous êts sur le point de supprimer toutes les commandes, <span class="uk-text-warning uk-text-bold uk-text-uppercase">attention, cette action est irréversible !</span></p>
+            </template>
+            <template v-slot:footer>
+                <div class="uk-text-center">
+                    <a type="button" class="uk-button uk-button-danger uk-margin-right" @click.prevent="delete_all_command()">Supprimer toutes les commandes</a>
+                    <button class="uk-button uk-button-default uk-modal-close">Annuler</button>
+                </div>
+            </template>
+        </modal>
+        
+        <section class="uk-text-center uk-margin-large-bottom uk-margin-large-top" uk-scrollspy="cls:uk-animation-fade; delay:200;">
+            <a type="button" href="/commande/recapitulatif-de-la-commande" class="uk-button uk-button-secondary uk-padding-small uk-margin-medium-right@m uk-margin-large-right">Générer le récapitulatif PDF de la commande</a>
+            <a @click.prevent="show_warning_delete_all_command()" v-if="current_user.permissions.find(permission => permission === 'command.delete_command')" type="button" class="uk-button uk-button-danger uk-padding-small">Supprimer toutes les commandes</a>
+        </section>
+
+        <div id="vue-messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
+        
             <!-- Display if error = true -->
             <message v-show="query_error" :close='false' status='danger'>
                 <template v-slot:header>
@@ -216,7 +238,7 @@
                 </table>
             </div>
             <div class='uk-text-center uk-margin-large'>
-                <input type='submit' class="uk-button uk-margin-auto uk-button-primary" @click.prevent="show_recap()" value="Valider ma commande" v-if="!has_command" id='button-command'>
+                <input type='submit' class="uk-button uk-margin-auto uk-button-primary" @click.prevent="show_recap()" value="Valider ma commande" v-if="!has_command && Object.values(command).length != 0" id='button-command'>
             </div>
         </form>
     </div>
@@ -350,7 +372,8 @@ export default {
             UIkit.modal('#command-recap').hide()
             let formData = new FormData()
             formData.append('user', parseInt(this.current_user.id))
-            formData.append('send_mail', this.send_mail)
+            console.log(Number(this.send_mail));
+            formData.append('send_mail',  Number(this.send_mail))
             Object.entries(this.command).forEach(c => {
                 formData.append(c[0], c[1])
             })
@@ -388,7 +411,7 @@ export default {
         },
 
         update_command_citrus (id_command) {
-            UIkit.modal('#update-command').hide()
+            UIkit.modal('#confirm-update').hide()
             
             let form_data = new FormData()
             form_data.append('user_id', this.update_command.user.id)
@@ -400,7 +423,6 @@ export default {
             this.$command.update({id: id_command}, form_data).then(response => {
                 this.messages.push(response.data)
                 if (response.data['status'] == 'success') {
-                    this.update_command = {}
                     this.get_command()
                 }
             }, response => {
@@ -409,6 +431,17 @@ export default {
             })
         },
 
+        show_warning_delete_all_command() { UIkit.modal('#warning-delete-all-command').show() },
+
+        delete_all_command() {
+            UIkit.modal('#warning-delete-all-command').hide()
+            this.$command.remove({id: 'destroy_all'}).then((response) => {
+                this.messages.push(response.data)
+                this.get_command()
+            }, (response) => {
+                this.query_error = true
+            })
+        }, 
         get_command_for_update(id_command) {
             let com = {}
             let command = this.commands.find(c => c.id == id_command)
@@ -462,7 +495,7 @@ export default {
         this.$command = this.$resource('api/citrus/command{/id}', {}, {}, {
             before: () => {this.loading = true},
             after: () => {this.loading = false
-                if (this.messages.length !== 0) { UIkit.scroll('#footer', {offset: 100}).scrollTo('#messages') }
+                if (this.messages.length !== 0) { UIkit.scroll('#footer', {offset: 100}).scrollTo('#vue-messages') }
             }
         })
 

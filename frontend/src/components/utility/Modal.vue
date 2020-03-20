@@ -5,7 +5,7 @@
             <div class="uk-modal-header">
                 <slot name="header"></slot>
             </div>
-            <div class="uk-modal-body">
+            <div class="uk-modal-body" uk-overflow-auto>
                 <slot name="body"></slot>
             </div>
             <div class="uk-modal-footer uk-text-center uk-padding">

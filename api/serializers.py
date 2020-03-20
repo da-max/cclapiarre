@@ -98,13 +98,21 @@ class AmountCoffeeSerializer(ModelSerializer):
     
     coffee = CoffeeSerializer()
     sort = AvailableTypeSerializer()
+    total = SerializerMethodField()
     class Meta:
         model = CoffeeAmount
-        fields = ['id', 'quantity', 'sort', 'coffee']
+        fields = ['id', 'quantity', 'sort', 'coffee', 'total', 'weight']
+
+    def get_total(self, amount):
+        return amount.get_price()
 
 class CommandCoffeeSerializer(ModelSerializer):
     #coffee.amount = AmountCoffeeSerializer(many=True)
     command = AmountCoffeeSerializer(many=True)
+    total = SerializerMethodField()
     class Meta:
         model = CommandCoffee
-        fields = ['id', 'name', 'first_name', 'email', 'phone_number', 'command']
+        fields = ['id', 'name', 'first_name', 'email', 'phone_number', 'command', 'total']
+    
+    def get_total(self, command):
+        return command.get_total_price()

@@ -394,3 +394,24 @@ class CommandCoffeeViewSet(ModelViewSet):
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
+    
+    def destroy(self, request, pk):
+        def error_response(e): return {
+            'id': int(random() * 1000),
+            'status': 'danger',
+            'header': 'Erreur lors de la suppression de la commande de café',
+            'body': 'Une erreur est survenue lors de la suppression de la commande de café, \
+                merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
+                (ERREUR : {})'.format(e)
+        }
+        try:
+            command_coffee = CommandCoffee.objects.get(id=pk)
+        except (ObjectDoesNotExist, Exception) as e:
+            return Response(error_response(e))
+        else:
+            command_coffee.delete()
+            return Response({
+                'status': 'success',
+                'header': 'Commande supprimée',
+                'body': 'La commande de {} {} a bien été supprimé.'.format(command_coffee.first_name, command_coffee.name)})
+        

@@ -1,6 +1,6 @@
 <template>
     <div id="modal" :class="{ 'uk-flex-top ' :center, 'uk-modal-container' :container }" uk-modal>
-        <div class="uk-modal-dialog" uk-overflow-auto>
+        <div class="uk-modal-dialog">
             <button class="uk-modal-close-default" :class="{ 'uk-magin-auto-vertical' :center }" type="button" uk-close></button>
             <div class="uk-modal-header">
                 <slot name="header"></slot>

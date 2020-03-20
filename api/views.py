@@ -373,7 +373,7 @@ class CurrentUserView(APIView):
     queryset = User.objects.all()
     serializer = UserWithPermissionsSerializer()
 
-    def get(self, request):
+    def list(self, request):
         serializer = UserWithPermissionsSerializer(request.user)
         return Response(serializer.data)
 
@@ -381,14 +381,16 @@ class CoffeeViewSet(ModelViewSet):
     serializer_class = CoffeeSerializer
     queryset = Coffee.objects.filter(display=True)
 
-    def get(self, request):
-        serializer = CoffeeSerializer()
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
 class CommandCoffeeViewSet(ModelViewSet):
     serializer_class = CommandCoffeeSerializer
     queryset = CommandCoffee.objects.all()
 
-    def get(self, request):
-        serializer = CommandCoffeeSerializer()
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)

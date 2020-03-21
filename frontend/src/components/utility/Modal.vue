@@ -1,7 +1,7 @@
 <template>
-    <div id="modal" :class="{ 'uk-flex-top ' :center, 'uk-modal-container' :container }" uk-modal>
+    <div id="modal" :class="{ 'uk-flex-top ' :center, 'uk-modal-container' :container }" :uk-modal="{'{\'bg-close\': false}': bg_close}">
         <div class="uk-modal-dialog">
-            <button class="uk-modal-close-default" :class="{ 'uk-magin-auto-vertical' :center }" type="button" uk-close></button>
+            <button class="uk-modal-close-default" :class="{ 'uk-magin-auto-vertical' :center }" type="button" uk-close v-show="close_button"></button>
             <div class="uk-modal-header">
                 <slot name="header"></slot>
             </div>
@@ -22,9 +22,10 @@ export default {
     name: "Modal",
 
     props: {
-        close_button: {type: Boolean, default: false},
+        close_button: {type: Boolean, default: true},
         center: {type: Boolean, default: false},
-        container: {type: Boolean, default: false}
+        container: {type: Boolean, default: false},
+        bg_close: {type: Boolean, default: false}
     }
 }
 </script>

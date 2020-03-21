@@ -6,51 +6,39 @@
       id="update-command"
       :container="true"
       :center="true"
-      v-if="Object.keys(update_command) != 0"
+      :bg_close="false"
+      v-if="Object.keys(command_has_update).length != 0"
     >
-      <template v-slot:header>
-        <h3>Modifier la commande de {{ update_command.first_name }} {{ update_command.name }}</h3>
+      <template #header>
+        <h3>Modifier la commande de {{ command_has_update.first_name }} {{ command_has_update.name }}</h3>
       </template>
-      <template v-slot:body>
-        <form action="#">
-          <table class="uk-table uk-table-divider uk-table-striped">
-            <thead>
-              <tr>
-                <th>Nom du café</th>
-                <th>Poids</th>
-                <th>Type de mouture</th>
-                <th>Quantité</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="command in update_command.command" :key="command.id">
-                <td>
-                  <select name="coffees" class="uk-select" v-model="command.coffee.farm_coop">
-                    <option>{{ command.coffee.farm_coop }}</option>
-                    <option v-for="coffee in coffees.filter(c => c.farm_coop != command.coffee.farm_coop)" :key="coffee.id">{{ coffee.farm_coop }}</option>
-                  </select>
-                </td>
-                <td>{{ command.weight }}</td>
-                <td>{{ command.sort.name }}</td>
-                <td>{{ command.quantity }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </form>
+      <template #body>
+        <table-update-command :command="command_has_update" :coffees="coffees"></table-update-command>
+      </template>
+      <template #footer>
+        <button
+          class="uk-button uk-button-primary uk-margin-medium-right"
+          @click.prevent="update_command()"
+        >Modifier la commande</button>
+        <button
+          class="uk-button uk-button-default uk-modal-close"
+          @click.prevent="get_commands()"
+          type="button"
+        >Annuler</button>
       </template>
     </modal>
 
     <modal id="delete-all">
-      <template v-slot:header>
+      <template #header>
         <h3 class="uk-modal-title">Supprimer toutes les commandes ?</h3>
       </template>
-      <template v-slot:body>
+      <template #body>
         Vous êtes sur le point de supprimer toutes les commandes de café,
         <span
           class="uk-text-warning uk-text-bold"
         >attention, cette action est irréversible !</span>
       </template>
-      <template v-slot:footer>
+      <template #footer>
         <a
           class="uk-button uk-button-danger uk-margin-right"
           @click.prevent="delete_all_command()"
@@ -87,8 +75,8 @@
       >
         <!-- Display if error = true -->
         <message v-show="query_error" :close="false" status="danger">
-          <template v-slot:header>Erreur interne</template>
-          <template v-slot:body>
+          <template #header>Erreur interne</template>
+          <template #body>
             Une erreur est survenue, cela vient de nous, merci d'actualiser la page et de
             nous contacter si vous rencontrez de nouveau cette erreur.
           </template>
@@ -96,17 +84,17 @@
 
         <!-- Dsiplay if permission_error = true -->
         <message v-show="permission_error" :close="false" status="danger">
-          <template v-slot:header>Accès interdit</template>
+          <template #header>Accès interdit</template>
           <template
-            v-slot:body
+            #body
           >Il semblerait qui vous n'ayez pas l'autorisation d'accéder à cette fonctionnalité du site.</template>
         </message>
 
         <message v-for="message in messages" :key="message.id" :status="message.status">
-          <template v-slot:header>
+          <template #header>
             <div v-html="message.header"></div>
           </template>
-          <template v-slot:body>
+          <template #body>
             <div v-html="message.body"></div>
           </template>
         </message>
@@ -152,6 +140,7 @@
               >{{ c.coffee.farm_coop }}</a>
               ({{ c.sort.name }})
               <p class="uk-text-right">{{ c.weight }} g x {{ c.quantity }} = {{ c.total }}</p>
+
               <modal :id="'coffee-info-' + c.id" :container="true" :center="true">
                 <template v-slot:header>
                   <h3 class="uk-text-center">{{ c.coffee.farm_coop }}</h3>
@@ -228,6 +217,7 @@
 import Modal from "../components/utility/Modal";
 import Loader from "../components/utility/Loader";
 import Message from "../components/utility/Message";
+import TableUpdateCommand from "../components/coffees/TableUpdateCommand";
 
 export default {
   name: "CoffeeCommandList",
@@ -235,14 +225,15 @@ export default {
   components: {
     Modal,
     Loader,
-    Message
+    Message,
+    TableUpdateCommand
   },
 
   data() {
     return {
       commands: {},
-      update_command: {},
-      coffees: {},
+      command_has_update: {},
+      coffees: [],
 
       messages: [],
 
@@ -252,17 +243,49 @@ export default {
     };
   },
   methods: {
+    update_command() {
+      const command = this.command_has_update;
+      let form_data = {};
+
+      form_data["name"] = command.name;
+      form_data["first_name"] = command.first_name;
+      form_data["email"] = command.email;
+      form_data["phone_number"] = command.phone_number;
+      form_data["command"] = [];
+
+      command.command.forEach(com => {
+        form_data.command[com.coffee.id] = {
+          quantity: com.quantity,
+          sort: com.sort.id,
+          weight: com.weight
+        };
+
+        this.$command.update({ id: command.id }, form_data).then(
+          response => {
+            console.log(response);
+          },
+          response => {
+            console.log(response);
+          }
+        );
+      });
+
+      this.$command
+        .update({ id: this.command_has_update.id }, form_data)
+        .then(response => {});
+    },
+
     delete_command(id_command) {
       UIkit.modal("#delete-command-" + id_command).hide();
 
       this.$command.remove({ id: id_command }).then(
         response => {
           this.messages.push(response.data);
-          this.get_command();
+          this.get_commands();
         },
         response => {
           this.query_error = true;
-          this.get_command();
+          this.get_commands();
         }
       );
     },
@@ -271,16 +294,16 @@ export default {
       this.$command.remove({ id: "destroy-all" }).then(
         response => {
           this.messages.push(reponse.data);
-          this.get_command();
+          this.get_commands();
         },
         response => {
-          this.commands();
+          this.get_commands();
           this.query_error = true;
         }
       );
     },
 
-    get_command() {
+    get_commands() {
       this.$command.query().then(
         response => {
           this.commands = response.data;
@@ -296,15 +319,19 @@ export default {
     },
 
     get_update_command(id_command) {
-      this.$coffee.query().then((response) => {
-        this.coffees = response.data
-      }, response => {
-        this.query_error = true
-      })
-      this.update_command = this.commands.find(c => {
-        return c.id === id_command;
+      this.command_has_update = this.commands.find(c => {
+        return c.id == id_command;
       });
-      UIkit.modal("#update-command").show();
+
+      this.$coffee.query().then(
+        response => {
+          this.coffees = response.data;
+          UIkit.modal("#update-command").show();
+        },
+        response => {
+          this.query_error = true;
+        }
+      );
     }
   },
 
@@ -335,9 +362,9 @@ export default {
           this.loading = false;
         }
       }
-    )
+    );
 
-    this.get_command();
+    this.get_commands();
   }
 };
 </script>

@@ -412,7 +412,7 @@ class CommandCoffeeViewSet(ModelViewSet):
         try:
             command_coffee = CommandCoffee.objects.get(id=pk)
         except (ObjectDoesNotExist, Exception) as e:
-            return Response(error_response(e))
+            return Response(self.error_response(error=e, action="la suppression"))
         else:
             command_coffee.delete()
             return Response({
@@ -425,8 +425,10 @@ class CommandCoffeeViewSet(ModelViewSet):
         data = request.data.copy()
         sommary_command = []
 
+        command = CommandCoffee.objects.get(id=pk)
+
         try:
-            command = CommandCoffee.objects.get(id=pk)
+            pass
         except (ObjectDoesNotExist, Exception):
             return Response(self.error_response(error=e, action='la modification'))
 
@@ -457,12 +459,12 @@ class CommandCoffeeViewSet(ModelViewSet):
                 )
             
         try:
-            CommandCoffee.objects.filter(id=pk).update(name=name, first_name=first_name, email=email, phone_number=phone_number)
             command = CommandCoffee.objects.get(id=pk)
-            command.coffee.through.objects.all().delete()
+            CommandCoffee.objects.filter(id=pk).update(name=name, first_name=first_name, email=email, phone_number=phone_number)
+            command.coffee.through.objects.filter(command_id=command.id).delete()
+
         except Exception as e:
             return Response(self.error_response(error=e, action='la modification'))
-        
         for amount in sommary_command:
             try:
                 AmountCoffee.objects.create(command=command, coffee=amount['coffee'], quantity=amount['amount'], weight=amount['weight'], sort=amount['sort'])
@@ -471,7 +473,23 @@ class CommandCoffeeViewSet(ModelViewSet):
 
         return Response({
             'id': int(random() * 1000),
-            'satuts': 'success',
-            'header': 'Commande modifié',
+            'status': 'success',
+            'header': 'Commande modifiée',
             'body': 'La commande de {} {} a bien été modifié.'.format(command.first_name, command.name)
         })
+
+    @action(detail=False, methods=['delete'])
+    def destroy_all(self, request):
+        command = CommandCoffee.objects.all()
+        try:
+            command.delete()
+
+        except Exception as e:
+            return Response(self.error_response(error=e, action='la suppression')) 
+        else:
+            return Response({
+                'id': int(random() * 10000),
+                'status': 'success',
+                'header': 'Commandes supprimées',
+                'body': 'Toutes les commandes ont bien été supprimées.'
+            })

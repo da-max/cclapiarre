@@ -53,7 +53,7 @@
       <h1 class="uk-text-center">Liste des commandes de café</h1>
       <div class="uk-margin-large-top" v-if="Object.keys(commands).length != 0">
         <a
-          href
+          href="/cafe/pdf-liste-des-commandes"
           type="button"
           class="uk-button uk-button-secondary uk-padding-small"
         >Télécharger la liste des commandes au format PDF</a>
@@ -103,7 +103,7 @@
 
     <section class="uk-width-2-3@m uk-width-1-2@xl uk-width-3-4@s uk-margin-auto">
       <div
-        class="uk-card uk-card-default uk-card-large"
+        class="uk-card uk-card-default uk-card-large uk-margin-xlarge-bottom"
         v-for="command in commands"
         :key="command.id"
       >
@@ -244,6 +244,7 @@ export default {
   },
   methods: {
     update_command() {
+      UIkit.modal("#update-command").hide();
       const command = this.command_has_update;
       let form_data = {};
 
@@ -256,19 +257,18 @@ export default {
       command.command.forEach(com => {
         form_data.command.push({
           id_coffee: com.coffee.id,
-          quantity: com.quantity,
+          quantity: parseFloat(com.quantity),
           sort: com.sort.id,
           weight: com.weight
         });
       });
-      console.log(form_data);
 
       this.$command.update({ id: command.id }, form_data).then(
         response => {
-          console.log(response);
+          this.messages.push(response.data);
         },
         response => {
-          console.log(response);
+          this.messages.push(response.data);
         }
       );
 
@@ -293,9 +293,10 @@ export default {
     },
 
     delete_all_command() {
-      this.$command.remove({ id: "destroy-all" }).then(
+      UIkit.modal("#delete-all").hide();
+      this.$command.remove({ id: "destroy_all" }).then(
         response => {
-          this.messages.push(reponse.data);
+          this.messages.push(response.data);
           this.get_commands();
         },
         response => {

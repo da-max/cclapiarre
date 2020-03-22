@@ -59,7 +59,7 @@ class CommandSmallSerializer(ModelSerializer):
         fields = ['id', 'user']
 
 
-class AmountSerializer(RelatedField):
+class AmountSerializer(ModelSerializer):
     amount = FloatField()
     product = ProductSerializer()
     command = CommandSmallSerializer()

@@ -17,8 +17,7 @@ from rest_framework.decorators import action
 
 from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer, UserWithPermissionsSerializer, CoffeeSerializer, CommandCoffeeSerializer
 from command.models import Command, Amount, Product
-from coffee.models import Coffee, CommandCoffee
-
+from coffee.models import Coffee, CommandCoffee, Quantity as AmountCoffee
 
 @receiver(m2m_changed, sender=Command.product.through)
 def command_send_mail(sender, instance, action, **kwargs):
@@ -157,7 +156,7 @@ class CommandViewSet(ModelViewSet):
                     amount = Amount.objects.create(
                         product=product, amount=amount, command=command)
                     command.product.add(data[0], through_defaults=amount)
-        
+
         except Exception as e:
             return Response(error_response(e))
 
@@ -252,14 +251,15 @@ class CommandViewSet(ModelViewSet):
         command = Command.objects.all()
         try:
             command.delete()
-            
+
         except Exception as e:
             return Response({
                 'id': int(random() * 10000),
                 'status': 'danger',
                 'header': 'Erreur interne',
                 'body': 'Une erreur est survenue lors de la suppression de toutes les commandes. '
-                'Merce de réessayer et de me contacter si besoin (ERREUR: {})'.format(type(e))
+                'Merce de réessayer et de me contacter si besoin (ERREUR: {})'.format(
+                    type(e))
             })
         else:
             return Response({
@@ -268,6 +268,7 @@ class CommandViewSet(ModelViewSet):
                 'header': 'Commandes supprimées',
                 'body': 'Toutes les commandes ont bien été supprimées.'
             })
+
 
 class AmoutViewSet(ModelViewSet):
     serializer_class = AmountSerializer
@@ -377,6 +378,7 @@ class CurrentUserView(APIView):
         serializer = UserWithPermissionsSerializer(request.user)
         return Response(serializer.data)
 
+
 class CoffeeViewSet(ModelViewSet):
     serializer_class = CoffeeSerializer
     queryset = Coffee.objects.filter(display=True)
@@ -386,24 +388,27 @@ class CoffeeViewSet(ModelViewSet):
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
+
 class CommandCoffeeViewSet(ModelViewSet):
     serializer_class = CommandCoffeeSerializer
     queryset = CommandCoffee.objects.all()
+
+    def error_response(self, error=Exception, action="l\’enregistrement"):
+        return {
+            'id': int(random() * 1000),
+            'status': 'danger',
+            'header': 'Erreur lors de {action} de la commande de café'.format(action=action),
+            'body': 'Une erreur est survenue lors de {action} de la commande de café,'
+                    'merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. '
+            '(ERREUR : {error})'.format(action=action, error=error)
+        }
 
     def list(self, request):
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
-    
+
     def destroy(self, request, pk):
-        def error_response(e): return {
-            'id': int(random() * 1000),
-            'status': 'danger',
-            'header': 'Erreur lors de la suppression de la commande de café',
-            'body': 'Une erreur est survenue lors de la suppression de la commande de café, \
-                merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
-                (ERREUR : {})'.format(e)
-        }
         try:
             command_coffee = CommandCoffee.objects.get(id=pk)
         except (ObjectDoesNotExist, Exception) as e:
@@ -414,4 +419,59 @@ class CommandCoffeeViewSet(ModelViewSet):
                 'status': 'success',
                 'header': 'Commande supprimée',
                 'body': 'La commande de {} {} a bien été supprimé.'.format(command_coffee.first_name, command_coffee.name)})
+
+    def update(self, request, pk):
+
+        data = request.data.copy()
+        sommary_command = []
+
+        try:
+            command = CommandCoffee.objects.get(id=pk)
+        except (ObjectDoesNotExist, Exception):
+            return Response(self.error_response(error=e, action='la modification'))
+
+        try:
+            name = data.pop('name')
+            first_name = data.pop('first_name')
+            email = data.pop('email')
+            phone_number = data.pop('phone_number')
+        except (KeyError, Exception) as e:
+            return Response(self.error_response(error=e, action='la modification'))
+
+        for amount in data['command']:
+            try:
+                coffee = Coffee.objects.get(id=amount['id_coffee'])
+                sort = coffee.available_type.get(id=amount['sort'])
+                assert amount['weight'] == 200 or amount['weight'] == 1000
+                assert amount['quantity'] == int(amount['quantity'])
+            except (ObjectDoesNotExist, AssertionError, Exception) as e:
+                return Response(self.error_response(error=e, action='la modification'))
+            else:
+                sommary_command.append(
+                    {
+                        'coffee': coffee,
+                        'sort': sort,
+                        'amount': amount['quantity'],
+                        'weight': amount['weight']
+                    }
+                )
+            
+        try:
+            CommandCoffee.objects.filter(id=pk).update(name=name, first_name=first_name, email=email, phone_number=phone_number)
+            command = CommandCoffee.objects.get(id=pk)
+            command.coffee.through.objects.all().delete()
+        except Exception as e:
+            return Response(self.error_response(error=e, action='la modification'))
         
+        for amount in sommary_command:
+            try:
+                AmountCoffee.objects.create(command=command, coffee=amount['coffee'], quantity=amount['amount'], weight=amount['weight'], sort=amount['sort'])
+            except Exception as e:
+                return Response(self.error_response(error=e, action='la modification'))
+
+        return Response({
+            'id': int(random() * 1000),
+            'satuts': 'success',
+            'header': 'Commande modifié',
+            'body': 'La commande de {} {} a bien été modifié.'.format(command.first_name, command.name)
+        })

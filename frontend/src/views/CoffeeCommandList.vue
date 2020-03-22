@@ -254,21 +254,23 @@ export default {
       form_data["command"] = [];
 
       command.command.forEach(com => {
-        form_data.command[com.coffee.id] = {
+        form_data.command.push({
+          id_coffee: com.coffee.id,
           quantity: com.quantity,
           sort: com.sort.id,
           weight: com.weight
-        };
-
-        this.$command.update({ id: command.id }, form_data).then(
-          response => {
-            console.log(response);
-          },
-          response => {
-            console.log(response);
-          }
-        );
+        });
       });
+      console.log(form_data);
+
+      this.$command.update({ id: command.id }, form_data).then(
+        response => {
+          console.log(response);
+        },
+        response => {
+          console.log(response);
+        }
+      );
 
       this.$command
         .update({ id: this.command_has_update.id }, form_data)

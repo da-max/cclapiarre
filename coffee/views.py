@@ -594,25 +594,30 @@ def pdf_global_command(request):
     return render(request, "coffee/pdf/global_command.html", locals())
 
 
+#@login_required
+#@permission_required('coffee.view_commandcoffee', raise_exception=True)
+#def list_command(request):
+#
+#    commands = CommandCoffee.objects.all()
+#    quantitys = Quantity.objects.all()
+#
+#    data = dict()
+#
+#    for command in commands:
+#
+#        data[command] = list()
+#        for quantity in quantitys:
+#
+#            if quantity.command == command:
+#
+#                data[command].append(quantity)
+#
+#    return render(request, "coffee/command/list_command.html", locals())
+
 @login_required
 @permission_required('coffee.view_commandcoffee', raise_exception=True)
 def list_command(request):
-
-    commands = CommandCoffee.objects.all()
-    quantitys = Quantity.objects.all()
-
-    data = dict()
-
-    for command in commands:
-
-        data[command] = list()
-        for quantity in quantitys:
-
-            if quantity.command == command:
-
-                data[command].append(quantity)
-
-    return render(request, "coffee/command/list_command.html", locals())
+    return render(request, 'app.html')
 
 
 @login_required

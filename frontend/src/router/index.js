@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import CoffeeCommand from '../views/CoffeeCommand'
 
 Vue.use(VueRouter)
 
@@ -8,7 +7,9 @@ const routes = [
   {
     path: '/cafe/commander-du-cafe',
     name: 'coffee_command',
-    component: CoffeeCommand
+    component: function () {
+      return import('../views/CoffeeCommand.vue')
+    }
   },
   {
     path: '/commande/commander-des-agrumes',
@@ -22,6 +23,13 @@ const routes = [
     name: 'pasta_command',
     component: function () {
       return import ('../views/PastaCommand.vue')
+    }
+  },
+  {
+    path: '/cafe/liste-des-commandes',
+    name: 'coffee_list',
+    component: function () {
+      return import ('../views/CoffeeCommandList.vue')
     }
   }
   /*{

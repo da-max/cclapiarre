@@ -1,6 +1,18 @@
 # Changements
 Tous les changements de ce projet sont documentés ici, ce fichier est affiché sur cette page : [https://cclapiarre.deblan.fr/changements/](https://cclapiarre.deblan.fr/changements/) il est donc écrit en français.
 
+## 22 mars 2020 : Sortie de la version 5.4.2
+
+### Modification
+* Modification complète de la page listant les commandes de café, à présent, sur cette page, il est possible de :
+  * Modifier une commande.
+  * Supprimer cette commande.
+  * Supprimer toutes les commandes.
+  * Les anciennes fonctionnalités sont conservés (export de la liste au format PDF).
+
+### Ajout
+* L’application café possède désormais une api généré par Django rest framework, pour le moment ce système n’est utilisé que pour la nouvelle page de liste de commande, cette api devrait être utilisé pour la page de commande dans un futur proche.
+
 ## 10 mars 2020 : Sortie de la version 5.4.1
 
 ### Résolution de bogue

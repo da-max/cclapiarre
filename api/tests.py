@@ -8,17 +8,29 @@ from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth.models import User
 
 from command.models import Amount, Product, Command
+from coffee.models import Coffee, CommandCoffee, Quantity as AmountCoffee, Origin as OriginCoffee, Type as TypeCoffee
 from registration.views import connect
 
 
-class CitrusApiTestCase (APITransactionTestCase, URLPatternsTestCase):
-    """ This class user APITransactioTestCase and URLPatternsTestCase for use urlpatterns attribut
-    So this class depends to rest_framework module.
-    The client is define in setUp method, this client is APIClient."""
+class CommandApiTestCase (APITransactionTestCase, URLPatternsTestCase):
 
     urlpatterns = [
         path('api/', include('api.urls')),
     ]
+
+    def setUp(self):
+        self.super_user = User.objects.create_superuser(
+            'test1', 'test1@test.com', 'password')
+        self.user = User.objects.create(
+            username='user1', email='user1@user.com', password='password')
+
+        user_logged_in.disconnect(receiver=connect)
+
+
+class CitrusApiTestCase (CommandApiTestCase):
+    """ This class user APITransactioTestCase and URLPatternsTestCase for use urlpatterns attribut
+    So this class depends to rest_framework module.
+    The client is define in setUp method, this client is APIClient."""
 
     def setUp(self):
         """ Define user, command and product for all CitrusApiTestCase. 
@@ -36,11 +48,7 @@ class CitrusApiTestCase (APITransactionTestCase, URLPatternsTestCase):
 
 
         """
-        self.super_user = User.objects.create_superuser(
-            'test1', 'test1@test.com', 'password')
-        self.user = User.objects.create(
-            username='user1', email='user1@user.com', password='password')
-
+        super().setUp()
         self.add_error_response = lambda id, e: {
             'id': id,
             'status': 'danger',
@@ -68,8 +76,6 @@ class CitrusApiTestCase (APITransactionTestCase, URLPatternsTestCase):
 
         self.command = Command.objects.create(user=self.super_user)
         Amount.objects.create(command=self.command, product=self.p1, amount=10)
-
-        user_logged_in.disconnect(receiver=connect)
 
         self.client = APIClient()
         self.client.login(username='test1', password='password')
@@ -380,3 +386,42 @@ class CitrusApiTestCase (APITransactionTestCase, URLPatternsTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.update_error_response(
             json.loads(response.content)['id'], AssertionError()))
+
+
+class CoffeeApiTestCase (CommandApiTestCase):
+    """ This classe test all Api of coffee."""
+
+    def setUp(self):
+        super().setUp()
+        OriginCoffee.objects.create(name='Origin 1')
+        OriginCoffee.objects.create(name='Origin 2')
+        OriginCoffee.objects.create(name='Origin 3')
+
+        TypeCoffee.objects.create(name='Type 1')
+        TypeCoffee.objects.create(name='Type 2')
+        TypeCoffee.objects.create(name='Type 3')
+
+        self.error_response = lambda id, e, action :{
+            'id': id,
+            'status': 'danger',
+            'header': 'Erreur lors de {action} de la commande de café'.format(action=action),
+            'body': 'Une erreur est survenue lors de {action} de la commande de café,'
+                    'merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. '
+            '(ERREUR : {error})'.format(action=action, error=ObjectDoesNotExist)
+        }
+
+        coffee1 = Coffee.objects.create(origin=OriginCoffee.objects.get(name='Origin 1'), farm_coop='coffee 1', region='region_coffee 1', process='process_coffee 1',
+                                        variety='variety_coffee 1', two_hundred_gram_price=5, kilogram_price=20)
+        coffee1.available_type.set(TypeCoffee.objects.all())
+        coffee2 = Coffee.objects.create(origin=OriginCoffee.objects.get(name='Origin 2'), farm_coop='coffee 2', region='region_coffee 2',
+                                        process='process_coffee 2', two_hundred_gram_price=7, kilogram_price=21)
+        coffee2.available_type.set(TypeCoffee.objects.all()[:1])
+        coffee3 = Coffee.objects.create(origin=OriginCoffee.objects.get(name='Origin 3'), farm_coop='coffee 3',
+                                        region='region_coffee 3', process='process_coffee 3',  display=False)
+        coffee3.available_type.set(TypeCoffee.objects.all())
+
+        self.command_coffee = CommandCoffee.objects.create(name='name 1', first_name='first_name 1', email='email@email.com', phone_number='04000000')
+        self.command_coffee.coffee.set(coffee1, coffee2)
+
+        self.client = APIClient()
+        self.client.login(username='test1', password='password')

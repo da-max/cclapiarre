@@ -5,7 +5,7 @@
         <div class="uk-padding uk-margin-auto uk-width-3-5 uk-margin-xlarge-bottom">
             <img src="../assets/Images/Citrus/citrus.jpg" alt="Photo d'agrumes" class="uk-box-shadow-large" uk-img>
         </div>
-        <section class="uk-width-3-5 uk-margin-auto">
+        <section class="uk-width-3-5@m uk-margin-auto">
             <div class="uk-card uk-card-default">
                 <p class="uk-card-body uk-text-large uk-text-justify" uk-scrollspy="cls:uk-animation-fade; delay: 100;">
                 Voici le tableau des produits proposés pour la commande. Pour le moment, vous pouvez commander des oranges, clémentines et mandarines par tranche de 3kg. 
@@ -13,7 +13,6 @@
                 Si ces tranches ne vous conviennent pas, envoyez-nous un courriel ou demandez à votre voisin.e/ami.e 
                 pour avoir accès à des quantités encore plus petites.... Pour voir le prix et la quantité proposée, il faut cliquer sur chacun des produits.</p>
             </div>
-            <a type="button" href="/commande/recapitulatif-de-la-commande" uk-scrollspy="cls:uk-animation-fade; delay:500;" class="uk-button uk-button-secondary uk-margin-large uk-position-relative uk-position-bottom-center uk-padding-small">Générer le récapitulatif PDF de la commande</a>
         </section>
 
         <table-command></table-command>
@@ -49,9 +48,10 @@ export default {
                 }
             ]
         }
-    },
+    },      
 
     mounted() {
+
         document.title = 'Commander des agrumes | CC La Piarre'
     },
 }

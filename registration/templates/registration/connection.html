@@ -11,7 +11,33 @@
 {% endblock breadcrumb %}
 
 {% block content %}
-<div class="uk-card uk-card-default uk-card-large uk-margin-auto uk-margin-large-bottom uk-width-2-5 uk-padding-large uk-padding-remove-top uk-padding-remove-bottom">
+<div class="uk-card uk-hidden-touch uk-card-default uk-card-large uk-margin-auto uk-margin-large-bottom uk-width-2-5@m uk-width-3-4@s uk-width-expand uk-padding-large uk-padding-remove-top uk-padding-remove-bottom">
+	<form action="" method="post">
+		<fieldset class="uk-fieldset">
+			<div class="uk-card-header">
+				<p><span class="uk-text-warning uk-text-bold">L'accès est réservé aux adhérents</span>, merci de rentrer votre NOM (en majuscule).prénom et le mot de passe qui vous a été communiqué.<br><br>
+				<span class="uk-text-primary uk-text-bold">Si vous êtes ici pour commander du café ou des pâtes, le nom d'utilisateur est court-circuit (il est normalement rentré par défaut), le mot de passe est, quant à lui, le même que pour vous
+				connecter au site de court-circuit.</span></p>
+			</div>
+			<div class="uk-card-body">
+			{% if error %}
+				<p><strong class="uk-text-danger">Utilisateur inconnu ou mot de passe incorrect.</strong></p>
+			{% endif %}
+			{% if user.is_authenticated %}
+			<p>Vous êtes connecté.e sous le nom de <span  class="uk-text-bold">{{ user.username }}</span> ! Si vous souhaitez changer d'utilisateur, cliquez <a class="uk-link" href="{% url 'disconnection_connection' %}">ici</a>
+			{% else %}
+					{% csrf_token %}
+				<div uk-grid class='uk-margin-medium-bottom'>	
+					{{ form.as_p }}
+				</div>
+					<input type="submit" value="Se connecter" class="uk-button uk-button-primary uk-margin-xlarge-right">
+					<a type='link' class='uk-button uk-button-text' href="{% url 'reset_password' %}">Mot de passe oublié</a>
+			{% endif %}
+			</div>
+		</fieldset>
+	</form>
+</div>
+<div class="uk-card uk-hidden-notouch uk-card-default uk-card-large uk-margin-auto uk-margin-large-bottom uk-width-3-4@s uk-padding-large uk-padding-remove-top uk-padding-remove-bottom">
 	<form action="" method="post">
 		<fieldset class="uk-fieldset">
 			<div class="uk-card-header">

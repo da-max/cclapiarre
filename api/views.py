@@ -17,7 +17,7 @@ from rest_framework.decorators import action
 
 from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer, UserWithPermissionsSerializer, CoffeeSerializer, CommandCoffeeSerializer
 from command.models import Command, Amount, Product
-from coffee.models import Coffee, CommandCoffee, Quantity as AmountCoffee
+from coffee.models import Coffee, CommandCoffee, Quantity as AmountCoffee, Type
 
 @receiver(m2m_changed, sender=Command.product.through)
 def command_send_mail(sender, instance, action, **kwargs):
@@ -420,15 +420,50 @@ class CommandCoffeeViewSet(ModelViewSet):
                 'header': 'Commande supprimée',
                 'body': 'La commande de {} {} a bien été supprimé.'.format(command_coffee.first_name, command_coffee.name)})
 
+    def create(self, request):
+        data = request.data.copy()
+        sommary_command = []
+
+        try:
+            name = data.pop('name')
+            first_name = data.pop('first_name')
+            email = data.pop('email')
+            phone_number = data.pop('phone_number')
+        except (KeyError, Exception) as e:
+            return Response(self.error_response(e))
+        
+        print(data)
+        
+        try:
+            CommandCoffee.objects.get(Q(email=email) | Q(phone_number=phone_number))
+        except ObjectDoesNotExist:
+            pass
+        else:
+            return Response({
+                'id': int(random() * 1000),
+                'status': 'warning',
+                'header': 'Vous avez déjà commandé !',
+                'body': 'Cet email et/ou ce numéro de téléphone est déjà utilisé pour une commande. Si vous souhaitez modifié votre commande '
+                'merci d’envoyer un mail à : benhassenm@tutamail.com'
+            })
+
+        for command in data['command']:
+            try:
+                coffee = Coffee.objects.get(Q(id=command['id']) & Q(farm_coop=command['farm_coop']))
+                t = Type.objects.get(Q(coffee=coffee) & Q(name=command['type']))
+                assert command['quanity'] == int(command['quantity'])
+                assert command['weight'] == 200 or command['weight'] == 1000
+            except Exception as e:
+                return Response(self.error_response(e))
+
     def update(self, request, pk):
 
         data = request.data.copy()
         sommary_command = []
 
-        command = CommandCoffee.objects.get(id=pk)
 
         try:
-            pass
+            command = CommandCoffee.objects.get(id=pk)
         except (ObjectDoesNotExist, Exception):
             return Response(self.error_response(error=e, action='la modification'))
 

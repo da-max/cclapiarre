@@ -95,10 +95,10 @@
               </td>
               <td
                 v-if="coffee.weight == 200 && coffee.coffee"
-              >{{ Math.round(coffee.quantity * coffee.coffee.two_hundred_gram_price * 100)/100 }}</td>
+              >{{ Math.round(coffee.quantity * coffee.coffee.two_hundred_gram_price * 100)/100 }} €</td>
               <td
                 v-else-if="coffee.weight == 1000 && coffee.coffee"
-              >{{ Math.round(coffee.quantity * coffee.coffee.kilogram_price * 100)/100 }}</td>
+              >{{ Math.round(coffee.quantity * coffee.coffee.kilogram_price * 100)/100 }} €</td>
               <td>
                 <button
                   class="uk-button uk-button-small uk-button-danger"

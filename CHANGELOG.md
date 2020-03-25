@@ -1,6 +1,11 @@
 # Changements
 Tous les changements de ce projet sont documentés ici, ce fichier est affiché sur cette page : [https://cclapiarre.deblan.fr/changements/](https://cclapiarre.deblan.fr/changements/) il est donc écrit en français.
 
+## 10 mars 2020 : Sortie de la version 5.4.1
+
+### Résolution de bogue
+Modification de l’affichage du menu sur les petits écrans (téléphones), en effet, un bogue d’affichage empêcher cet affichage.
+
 ##  03 mars 2020 : Sorite de la version 5.4.0
 
 ### Modification

@@ -89,16 +89,16 @@
             <tr v-for="coffee in coffees_command" :key="coffee.id">
               <td>{{ coffee.coffee.farm_coop }}</td>
               <td>{{ coffee.weight }}</td>
-              <td>{{ coffee.type }}</td>
+              <td>{{ coffee.type.name }}</td>
               <td>
                 <input type="number" class="uk-input uk-form-width-small" v-model="coffee.quantity" />
               </td>
               <td
-                v-if="coffee.weight == '200 grammes' && coffee.coffee"
+                v-if="coffee.weight == 200 && coffee.coffee"
               >{{ Math.round(coffee.quantity * coffee.coffee.two_hundred_gram_price * 100)/100 }}</td>
               <td
-                v-else-if="coffee.weight == '1 kg' && coffee.default_coffee"
-              >{{ Math.round(coffee.quantity * coffee.coffee.kilogram_price, 2) }}</td>
+                v-else-if="coffee.weight == 1000 && coffee.coffee"
+              >{{ Math.round(coffee.quantity * coffee.coffee.kilogram_price * 100)/100 }}</td>
               <td>
                 <button
                   class="uk-button uk-button-small uk-button-danger"
@@ -323,9 +323,9 @@ export default {
     change_price() {
       let price = 0;
       this.coffees_command.forEach(coffee => {
-        if (coffee.weight == "200 grammes" && coffee.coffee !== undefined) {
+        if (coffee.weight == 200 && coffee.coffee !== undefined) {
           price += coffee.coffee.two_hundred_gram_price * coffee.quantity;
-        } else if (coffee.weight == "1 kg" && coffee.coffee !== undefined) {
+        } else if (coffee.weight == 1000 && coffee.coffee !== undefined) {
           price += coffee.coffee.kilogram_price * coffee.quantity;
         }
       });
@@ -375,24 +375,21 @@ export default {
 
       this.coffees_command.forEach(command => {
         let metadata = {
-            id_coffee: command.coffee.id,
-            farm_coop_coffee: command.coffee.farm_coop,
-            weight: command.weight,
-            type: command.type,
-            quantity: command.quantity,
-            }
-        data.command.push(metadata)
+          id_coffee: command.coffee.id,
+          weight: parseInt(command.weight),
+          sort: command.type.id,
+          quantity: parseInt(command.quantity)
+        };
+        data.command.push(metadata);
       });
 
       this.$command.save({}, data).then(
         response => {
-          console.log(response);
-          this.coffees_command = [];
-          this.index = 0;
-          this.name = "";
-          this.first_name = "";
-          this.email = "";
-          this.phone_number = "";
+          this.messages.push(response.data);
+          if (response.data.status == "success") {
+            this.coffees_command = [];
+            this.name = this.first_name = this.email = this.phone_number = "";
+          }
         },
         reponse => {
           this.messages.push({
@@ -402,7 +399,6 @@ export default {
             body:
               "Une erreur est survenue, merci de réessayer et de me contacter si besoin."
           });
-          this.loading = false;
           UIkit.scroll("#command-button", { offset: 250 }).scrollTo(
             "#messages"
           );

@@ -13,8 +13,8 @@
             <div class="uk-form-controls">
                 <select class="uk-select" v-model='coffee.weight'>
                     <option>Sélectionner le poids</option>
-                    <option>200 grammes</option>
-                    <option>1 kg</option>
+                    <option value="200">200 grammes</option>
+                    <option value="1000">1 kg</option>
                 </select>
             </div>
         </div>
@@ -23,7 +23,7 @@
             <div class="uk-form-controls">
                 <select class="uk-select" v-model='coffee.type'>
                     <option>Sélectionner le type de café</option>
-                    <option v-for="type in coffee.coffee.available_type" :key="type.id">{{ type.name }}</option>
+                    <option v-for="type in coffee.coffee.available_type" :key="type.id" :value="type">{{ type.name }}</option>
                 </select>
             </div>
         </div>

@@ -395,7 +395,7 @@ class CommandCoffeeViewSet(ModelViewSet):
     serializer_class = CommandCoffeeSerializer
     queryset = CommandCoffee.objects.all()
 
-    def error_response(self, error=Exception, action="l\’enregistrement"):
+    def error_response(self, error=Exception, action="l’enregistrement"):
         return {
             'id': int(random() * 1000),
             'status': 'danger',
@@ -435,13 +435,13 @@ class CommandCoffeeViewSet(ModelViewSet):
                 assert amount['quantity'] == int(amount['quantity'])
             except ObjectDoesNotExist as object_excetion:
                 raise ObjectDoesNotExist(
-                    'Un ou plusieurs café commandé n\'existe pas, merci de vérifier la commande, est de réessayer. (ERREUR : {})'.format(object_excetion))
+                    'Un ou plusieurs café commandé n’existe pas, merci de vérifier la commande, est de réessayer. (ERREUR : {})'.format(object_excetion))
             except AssertionError as assertion_exception:
                 raise AssertionError(
-                    'La quantité ou le poids commandé n\'est pas valide, merci de vérifier la commande et de réessayer. (ERREUR : {})'.format(assertion_exception))
+                    'La quantité ou le poids commandé n’est pas valide, merci de vérifier la commande et de réessayer. (ERREUR : {})'.format(assertion_exception))
             except ValueError as value_exception:
                 raise ValueError(
-                    'Le café ou le type de mouture commandé n\'existe, merci de vérifier la commande et de réessayer. (ERREUR : {})'.format(value_exception))
+                    'Le café ou le type de mouture commandé n’existe, merci de vérifier la commande et de réessayer. (ERREUR : {})'.format(value_exception))
             except Exception as e:
                 raise Exception('Erreur', e)
             else:
@@ -477,7 +477,7 @@ class CommandCoffeeViewSet(ModelViewSet):
 
         try:
             (personnal_data, sommary_command) = self.command_check(request)
-        except (ObjectDoesNotExist, AssertionError, Exception) as e:
+        except (ObjectDoesNotExist, KeyError, AssertionError, Exception) as e:
             return Response(self.error_response(e))
 
         try:

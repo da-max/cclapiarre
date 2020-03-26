@@ -374,7 +374,7 @@ class CurrentUserView(APIView):
     queryset = User.objects.all()
     serializer = UserWithPermissionsSerializer()
 
-    def list(self, request):
+    def get(self, request):
         serializer = UserWithPermissionsSerializer(request.user)
         return Response(serializer.data)
 

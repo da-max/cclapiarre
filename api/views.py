@@ -376,7 +376,7 @@ class CurrentUserView(APIView):
     queryset = User.objects.all()
     serializer = UserWithPermissionsSerializer()
 
-    def list(self, request):
+    def get(self, request):
         serializer = UserWithPermissionsSerializer(request.user)
         return Response(serializer.data)
 
@@ -481,17 +481,15 @@ class CommandCoffeeViewSet(ModelViewSet):
             return Response(self.error_response(e))
 
         try:
-            CommandCoffee.objects.get(Q(email=personnal_data['email']) | Q(
+            command = CommandCoffee.objects.get(Q(email=personnal_data['email']) | Q(
                 phone_number=personnal_data['phone_number']))
         except ObjectDoesNotExist:
             pass
         else:
-            return Response({
-                'id': int(random()*1000),
-                'status': 'warning',
-                'header': 'Vous avez déjà commandé !',
-                'body': 'Une commande avec le même numéro de télephone ou la même adresse mail a été trouvé, si vous souhaitez modifier votre commande merci d’envoyer un mail à l’adresse : da-max@tutanota.com'
-            })
+            serializer = CommandCoffeeSerializer(command)
+            return Response(({
+                'status': 'also_command',
+            }, serializer.data))
 
         command = CommandCoffee.objects.create(
             name=personnal_data['name'], first_name=personnal_data['first_name'], email=personnal_data['email'], phone_number=personnal_data['phone_number'])

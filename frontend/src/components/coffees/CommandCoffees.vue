@@ -3,20 +3,92 @@
     <!-- Loader -->
     <loader v-show="loading"></loader>
 
+    <modal
+      v-if="Object.keys(old_command).lenght !== 0"
+      id="also-command"
+      :container="true"
+      :bg_close="false"
+      :close_button="false"
+    >
+      <template #header>
+        <h3 class="uk-modal-title">Vous avez déjà commandé !</h3>
+      </template>
+      <template #body>
+        <div class="uk-width-3-4@m uk-width-3-4 uk-margin-auto">
+          <message status="warning">
+            <template #header>
+              Attention
+            </template>
+            <template #body>
+              Une commande avec le même numéro de télephone ou la même adresse mail a été trouvé. Cette commande est affichée ci-dessous,
+              <span
+                class="uk-text-bold"
+              >si elle correspond à une commande que vous avez effectué</span>, il est possible de la remplacer.
+              <span class="uk-text-bold uk-text-warning">
+                Si cette commande n’a pas été
+                passé par vous merci de cliquer sur annuler la commande.
+              </span>
+            </template>
+          </message>
+        </div>
+        <div class="uk-child-width-1-2 uk-grid-divider" uk-grid>
+          <div>
+            <h4 class="uk-text-center">Ancienne commande</h4>
+            <div class="uk-child-width-1-2" uk-grid>
+              <div><span class="uk-label">Nom</span> {{ old_command.name }}</div>
+              <div><span class="uk-label">Prénom</span> {{ old_command.first_name }}</div>
+              <div><span class="uk-label">Email</span> {{ old_command.email }}</div>
+              <div><span class="uk-label">Numéro de télephone</span> {{ old_command.phone_number }}</div>
+              <div><span class="uk-label">Total</span> {{old_command.total }} €</div>
+            </div>
+            <ul class="uk-list">
+              <li v-for="command in old_command.command" :key="command.id">
+                 <div uk-grid class="uk-child-width-1-2">
+                  <div>{{ command.coffee.farm_coop }} ({{ command.sort.name }})</div>
+                  <div class="uk-text-right"> {{ command.weight}} gr x {{ command.quantity }} = {{ command.total }} €</div>
+                 </div>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="uk-text-center">Nouvelle commande</h4>
+            <div class="uk-child-width-1-2" uk-grid>
+              <div><span class="uk-label">Nom</span> {{ name }}</div>
+              <div><span class="uk-label">Prénom</span> {{ first_name }}</div>
+              <div><span class="uk-label">Email</span> {{ email }}</div>
+              <div><span class="uk-label">Numéro de télephone</span> {{ phone_number }}</div>
+              <div><span class="uk-label">Total</span> {{ change_price() }}€</div>
+            </div>
+            <ul class="uk-list">
+              <ul class="uk-list">
+              <li v-for="command in coffees_command" :key="command.id">
+                <div uk-grid class="uk-child-width-1-2">
+                  <div>{{ command.coffee.farm_coop }} ({{ command.type.name }})</div>
+                  <div class="uk-text-right" v-if="command.weight == 200"> {{ command.weight }} gr x {{ command.quantity }} = {{ Math.round(command.quantity * command.coffee.two_hundred_gram_price * 100) / 100 }} €</div>
+                  <div class="uk-text-right" v-else> {{ command.weight }} gr x {{ command.quantity }} = {{ Math.round(command.quantity * command.coffee.kilogram_price * 100) / 100 }} €</div>
+                </div>
+              </li>
+            </ul>
+            </ul>
+          </div>
+        </div>
+      </template>
+    </modal>
+
     <!-- Modal for recap command -->
     <modal id="command-recap" :container="true">
-      <template v-slot:header>
+      <template #header>
         <h3 class="uk-modal-title">Récapitulatif de la comande</h3>
       </template>
-      <template v-slot:body>
+      <template #body>
         <transition name="slide-top">
           <div
-            class="uk-width-3-4@m uk-width-3-4 uk-margin-auto"
+            class="uk-width-3-4@m uk-margin-auto"
             v-show="name == '' || first_name == '' || email == '' || phone_number == ''"
           >
             <message :status="'warning'" :close="false">
-              <template v-slot:header>Données personnelles</template>
-              <template v-slot:body>
+              <template #header>Données personnelles</template>
+              <template #body>
                 Vous n'avez pas remplis
                 <span class="uk-text-bold">les champs vous concernant</span>, merci de les compléter, ils ne seront utilisés
                 qu'afin de vous contacter.
@@ -109,7 +181,7 @@
           </transition-group>
         </table>
       </template>
-      <template v-slot:footer>
+      <template #footer>
         <button
           class="uk-button uk-button-primary"
           type="submit"
@@ -126,8 +198,8 @@
     <!-- Messages  -->
     <div id="messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto">
       <message v-for="message in messages" :status="message.status" :key="message.id">
-        <template v-slot:header>{{ message.header }}</template>
-        <template v-slot:body>{{ message.body }}</template>
+        <template #header>{{ message.header }}</template>
+        <template #body>{{ message.body }}</template>
       </message>
     </div>
 
@@ -215,10 +287,10 @@
     <!-- List of coffee -->
     <div class="uk-margin-auto uk-width-2-3@l">
       <coffee-card v-for="coffee in coffees" :key="coffee.id">
-        <template v-slot:header>
+        <template #header>
           <h3 class="uk-card-title uk-text-center">{{ coffee.farm_coop }}</h3>
         </template>
-        <template v-slot:body>
+        <template #body>
           <div uk-grid class="uk-grid-large uk-child-width-expand uk-margin-auto">
             <div>
               <span class="uk-text-bold">Région de culture :</span>
@@ -249,7 +321,7 @@
           </div>
           <div v-html="coffee.description"></div>
         </template>
-        <template v-slot:footer>
+        <template #footer>
           <button
             class="uk-button uk-button-primary"
             id="add-coffee"
@@ -292,7 +364,8 @@ export default {
       first_name: "",
       email: "",
       phone_number: String(),
-      price: 0
+      price: 0,
+      old_command: {}
     };
   },
 
@@ -385,10 +458,15 @@ export default {
 
       this.$command.save({}, data).then(
         response => {
-          this.messages.push(response.data);
-          if (response.data.status == "success") {
-            this.coffees_command = [];
-            this.name = this.first_name = this.email = this.phone_number = "";
+          if (response.data[0] && response.data[0].status == "also_command") {
+            this.old_command = response.data[1];
+            UIkit.modal("#also-command").show();
+          } else {
+            this.messages.push(response.data);
+            if (response.data.status == "success") {
+              this.coffees_command = [];
+              this.name = this.first_name = this.email = this.phone_number = "";
+            }
           }
         },
         reponse => {

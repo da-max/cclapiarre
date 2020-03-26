@@ -119,7 +119,7 @@
         
         <section class="uk-text-center uk-margin-large-bottom uk-margin-large-top" uk-scrollspy="cls:uk-animation-fade; delay:200;">
             <a type="button" href="/commande/recapitulatif-de-la-commande" class="uk-button uk-button-secondary uk-padding-small uk-margin-medium-right@m uk-margin-large-right">Générer le récapitulatif PDF de la commande</a>
-            <a @click.prevent="show_warning_delete_all_command()" v-if="current_user.permissions.find(permission => permission === 'command.delete_command')" type="button" class="uk-button uk-button-danger uk-padding-small">Supprimer toutes les commandes</a>
+            <a @click.prevent="show_warning_delete_all_command()" v-if="current_user.permissions && current_user.permissions.find(permission => permission === 'command.delete_command')" type="button" class="uk-button uk-button-danger uk-padding-small">Supprimer toutes les commandes</a>
         </section>
 
         <div id="vue-messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
@@ -186,10 +186,10 @@
                             <th>Total</th>
                             <th v-for="c in commands" :key="c.id">
                                 {{ c.user.username }}<br>
-                                <a :title="'Supprimer la commande de ' + c.user.username" type="button" uk-icon='icon: trash; ratio: 2' :uk-toggle='"target: #confirm-delete-command-" + c.id' v-if="current_user.permissions.find(permission => permission === 'command.delete_command')"></a>
-                                <a :title="'Modifier la commande de ' + c.user.username" uk-icon='icon: refresh; ratio: 2' v-if="current_user.permissions.find(permission => permission === 'command.change_command')" @click.prevent="get_command_for_update(c.id)"></a>
+                                <a :title="'Supprimer la commande de ' + c.user.username" type="button" uk-icon='icon: trash; ratio: 2' :uk-toggle='"target: #confirm-delete-command-" + c.id' v-if="current_user.permissions && current_user.permissions.find(permission => permission === 'command.delete_command')"></a>
+                                <a :title="'Modifier la commande de ' + c.user.username" uk-icon='icon: refresh; ratio: 2' v-if="current_user.permissions && current_user.permissions.find(permission => permission === 'command.change_command')" @click.prevent="get_command_for_update(c.id)"></a>
 
-                                <modal :close_button='true' :id='"confirm-delete-command-" + c.id' v-if="current_user.permissions.find(permission => permission === 'command.delete_command')">
+                                <modal :close_button='true' :id='"confirm-delete-command-" + c.id' v-if="current_user.permissions && current_user.permissions.find(permission => permission === 'command.delete_command')">
                                     <template v-slot:header>
                                         <h3>Supprimer la commande de {{ c.user.username }}</h3>
                                     </template>
@@ -504,9 +504,6 @@ export default {
             after: () => {this.loading = false}
         })
 
-        // Get all informations to display on the table
-        this.get_command()
-
         // Get current user
         this.$user = this.$resource('api/users/current', {}, {}, {
             before: () => {this.loading = true},
@@ -520,6 +517,9 @@ export default {
             if (response.status == 403 && response.statusText == 'Forbidden') { this.permission_error = true }
             else { this.query_error = true }
         })
+
+        // Get all informations to display on the table
+        this.get_command()
         
     },
 }

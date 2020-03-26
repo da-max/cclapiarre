@@ -3,6 +3,7 @@
     <!-- Loader -->
     <loader v-show="loading"></loader>
 
+    <!-- Modal display if a command has found and user can update command. -->
     <modal
       v-if="Object.keys(old_command).lenght !== 0"
       id="also-command"
@@ -16,9 +17,7 @@
       <template #body>
         <div class="uk-width-3-4@m uk-width-3-4 uk-margin-auto">
           <message status="warning">
-            <template #header>
-              Attention
-            </template>
+            <template #header>Attention</template>
             <template #body>
               Une commande avec le même numéro de télephone ou la même adresse mail a été trouvé. Cette commande est affichée ci-dessous,
               <span
@@ -35,43 +34,88 @@
           <div>
             <h4 class="uk-text-center">Ancienne commande</h4>
             <div class="uk-child-width-1-2" uk-grid>
-              <div><span class="uk-label">Nom</span> {{ old_command.name }}</div>
-              <div><span class="uk-label">Prénom</span> {{ old_command.first_name }}</div>
-              <div><span class="uk-label">Email</span> {{ old_command.email }}</div>
-              <div><span class="uk-label">Numéro de télephone</span> {{ old_command.phone_number }}</div>
-              <div><span class="uk-label">Total</span> {{old_command.total }} €</div>
+              <div>
+                <span class="uk-label">Nom</span>
+                {{ old_command.name }}
+              </div>
+              <div>
+                <span class="uk-label">Prénom</span>
+                {{ old_command.first_name }}
+              </div>
+              <div>
+                <span class="uk-label">Email</span>
+                {{ old_command.email }}
+              </div>
+              <div>
+                <span class="uk-label">Numéro de télephone</span>
+                {{ old_command.phone_number }}
+              </div>
+              <div>
+                <span class="uk-label">Total</span>
+                {{old_command.total }} €
+              </div>
             </div>
             <ul class="uk-list">
               <li v-for="command in old_command.command" :key="command.id">
-                 <div uk-grid class="uk-child-width-1-2">
+                <div uk-grid class="uk-child-width-1-2">
                   <div>{{ command.coffee.farm_coop }} ({{ command.sort.name }})</div>
-                  <div class="uk-text-right"> {{ command.weight}} gr x {{ command.quantity }} = {{ command.total }} €</div>
-                 </div>
+                  <div
+                    class="uk-text-right"
+                  >{{ command.weight}} gr x {{ command.quantity }} = {{ command.total }} €</div>
+                </div>
               </li>
             </ul>
           </div>
           <div>
             <h4 class="uk-text-center">Nouvelle commande</h4>
             <div class="uk-child-width-1-2" uk-grid>
-              <div><span class="uk-label">Nom</span> {{ name }}</div>
-              <div><span class="uk-label">Prénom</span> {{ first_name }}</div>
-              <div><span class="uk-label">Email</span> {{ email }}</div>
-              <div><span class="uk-label">Numéro de télephone</span> {{ phone_number }}</div>
-              <div><span class="uk-label">Total</span> {{ change_price() }}€</div>
+              <div>
+                <span class="uk-label">Nom</span>
+                {{ name }}
+              </div>
+              <div>
+                <span class="uk-label">Prénom</span>
+                {{ first_name }}
+              </div>
+              <div>
+                <span class="uk-label">Email</span>
+                {{ email }}
+              </div>
+              <div>
+                <span class="uk-label">Numéro de télephone</span>
+                {{ phone_number }}
+              </div>
+              <div>
+                <span class="uk-label">Total</span>
+                {{ change_price() }}€
+              </div>
             </div>
             <ul class="uk-list">
               <ul class="uk-list">
-              <li v-for="command in coffees_command" :key="command.id">
-                <div uk-grid class="uk-child-width-1-2">
-                  <div>{{ command.coffee.farm_coop }} ({{ command.type.name }})</div>
-                  <div class="uk-text-right" v-if="command.weight == 200"> {{ command.weight }} gr x {{ command.quantity }} = {{ Math.round(command.quantity * command.coffee.two_hundred_gram_price * 100) / 100 }} €</div>
-                  <div class="uk-text-right" v-else> {{ command.weight }} gr x {{ command.quantity }} = {{ Math.round(command.quantity * command.coffee.kilogram_price * 100) / 100 }} €</div>
-                </div>
-              </li>
-            </ul>
+                <li v-for="command in coffees_command" :key="command.id">
+                  <div uk-grid class="uk-child-width-1-2">
+                    <div>{{ command.coffee.farm_coop }} ({{ command.type.name }})</div>
+                    <div
+                      class="uk-text-right"
+                      v-if="command.weight == 200"
+                    >{{ command.weight }} gr x {{ command.quantity }} = {{ Math.round(command.quantity * command.coffee.two_hundred_gram_price * 100) / 100 }} €</div>
+                    <div
+                      class="uk-text-right"
+                      v-else
+                    >{{ command.weight }} gr x {{ command.quantity }} = {{ Math.round(command.quantity * command.coffee.kilogram_price * 100) / 100 }} €</div>
+                  </div>
+                </li>
+              </ul>
             </ul>
           </div>
         </div>
+      </template>
+      <template #footer>
+        <button
+          class="uk-button uk-button-secondary uk-margin-right"
+          @click.prevent="update_command(old_command.id)"
+        >Remplacer ma commande</button>
+        <button class="uk-button uk-button-default uk-modal-close">Annuler ma commande</button>
       </template>
     </modal>
 
@@ -196,7 +240,20 @@
     </modal>
 
     <!-- Messages  -->
-    <div id="messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto">
+    <div id="vue-messages" class="uk-width-2-5@m uk-width-3-4 uk-margin-auto">
+      <message v-show="permission_error" :close="false" status="danger">
+        <template v-slot:header>Accès interdit</template>
+        <template
+          v-slot:body
+        >Il semblerait qui vous n'ayez pas l'autorisation d'accéder à cette fonctionnalité du site.</template>
+      </message>
+      <message v-show="query_error" :close="false" status="danger">
+        <template v-slot:header>Erreur interne</template>
+        <template v-slot:body>
+          Une erreur est survenue, cela vient de nous, merci d'actualiser la page et de
+          nous contacter si vous rencontrez de nouveau cette erreur.
+        </template>
+      </message>
       <message v-for="message in messages" :status="message.status" :key="message.id">
         <template #header>{{ message.header }}</template>
         <template #body>{{ message.body }}</template>
@@ -353,6 +410,8 @@ export default {
 
   data() {
     return {
+      permission_error: false,
+      query_error: false,
       index: 0,
       coffees_command: [],
       coffees: [],
@@ -427,9 +486,13 @@ export default {
       UIkit.modal("#command-recap").show();
     },
 
+    reset_command() {
+      this.coffees_command = [];
+      this.name = this.first_name = this.email = this.phone_number = "";
+    },
+
     commandCoffee() {
       UIkit.modal("#command-recap").hide();
-      this.loading = true;
       let data = Object();
 
       if (
@@ -464,24 +527,59 @@ export default {
           } else {
             this.messages.push(response.data);
             if (response.data.status == "success") {
-              this.coffees_command = [];
-              this.name = this.first_name = this.email = this.phone_number = "";
+              this.reset_command();
             }
           }
         },
         reponse => {
-          this.messages.push({
-            id: parseInt(Math.random() * 1000),
-            status: "danger",
-            header: "Erreur interne",
-            body:
-              "Une erreur est survenue, merci de réessayer et de me contacter si besoin."
-          });
-          UIkit.scroll("#command-button", { offset: 250 }).scrollTo(
-            "#messages"
-          );
+          if (response.status == 403 && response.statusText == "Forbidden") {
+            this.permission_error = true;
+          } else {
+            this.query_error = true;
+          }
         }
       );
+      UIkit.scroll('',{offset: 250}).scrollTo("#vue-messages");
+    },
+
+    update_command(id_command) {
+      UIkit.modal("#also-command").hide();
+
+      let form_data = Object();
+
+      form_data["name"] = this.name;
+      form_data["first_name"] = this.first_name;
+      form_data["email"] = this.email;
+      form_data["phone_number"] = this.phone_number;
+
+      form_data["command"] = Array();
+
+      this.coffees_command.forEach(command => {
+        form_data.command.push({
+          id_coffee: command.coffee.id,
+          weight: parseInt(command.weight),
+          sort: command.type.id,
+          quantity: parseInt(command.quantity)
+        });
+      });
+
+      this.$command.update({ id: id_command }, form_data).then(
+        response => {
+          this.messages.push(response.data);
+          if (response.data.status == "success") {
+            this.reset_command();
+          }
+        },
+        response => {
+          if (response.status == 403 && response.statusText == "Forbidden") {
+            this.permission_error = true;
+          } else {
+            this.query_error = true;
+          }
+        }
+      );
+
+      UIkit.scroll('', {offset: 250}).scrollTo("#vue-messages");
     }
   },
 
@@ -500,7 +598,7 @@ export default {
       }
     )),
       (this.$command = this.$resource(
-        "api/coffee/command",
+        "api/coffee/command{/id}",
         {},
         {},
         {

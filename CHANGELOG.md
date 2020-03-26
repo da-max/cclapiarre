@@ -1,6 +1,11 @@
 # Changements
 Tous les changements de ce projet sont documentés ici, ce fichier est affiché sur cette page : [https://cclapiarre.deblan.fr/changements/](https://cclapiarre.deblan.fr/changements/) il est donc écrit en français.
 
+## mars 2020
+
+### Modification
+* La page permettant de commandé du café utilise à présent l’api créée par Django rest framework.
+
 ## 22 mars 2020 : Sortie de la version 5.4.2
 
 ### Modification

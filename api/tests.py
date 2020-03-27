@@ -418,10 +418,16 @@ class CoffeeApiTestCase (CommandApiTestCase):
                                         region='region_coffee 3', process='process_coffee 3',  display=False)
         self.coffee3.available_type.set(TypeCoffee.objects.all())
 
+        self.command = CommandCoffee.objects.create(name='name 1', first_name='first_name 2', email='command1@command1.com', phone_number='0611111111')
+        self.command.coffee.add(self.coffee1, through_defaults={
+            'quantity': 3,
+            'weight': 200,
+            'sort':self.type1
+        })
+
         self.client = APIClient()
         self.client.login(username='test1', password='password')
     
-
     def test_create_command(self):
         data = {
             'name': 'name 1',
@@ -580,7 +586,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
             'header': 'Erreur lors de l’enregistrement de la commande de café',
             'body':'Un ou plusieurs café commandé n’existe pas, merci de vérifier la commande, est de réessayer. (ERREUR : Type matching query does not exist.)'
         })
-    
+
     def test_bad_weight_create_command(self):
         data = {
             'name': 'name 1',
@@ -644,9 +650,9 @@ class CoffeeApiTestCase (CommandApiTestCase):
             'header': 'Erreur lors de l’enregistrement de la commande de café',
             'body': 'La quantité ou le poids commandé n’est pas valide, merci de vérifier la commande et de réessayer. (ERREUR : )'
         })
-
     
     def test_not_amount_create_command(self):
+        """ Test if user send request without quantity. """
         data = {
             'name': 'name 1',
             'first_name': 'first_name 1',
@@ -678,6 +684,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
         })
 
     def test_not_name_create_command(self):
+        """ Test if user send request without name. """
         data = {
             'first_name': 'first_name 1',
             'email': 'email@email.com',
@@ -708,6 +715,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
         })
     
     def test_not_id_coffee_create_command(self):
+        """ Test if an user try to command without id_coffee. """
         data = {
             'first_name': 'first_name 1',
             'email': 'email@email.com',
@@ -739,6 +747,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
         })
     
     def test_bad_pk_update_command(self):
+        """ Test if user send request with bad pk. """
         data = {
             'name': 'name 1',
             'first_name': 'first_name 1',
@@ -763,3 +772,24 @@ class CoffeeApiTestCase (CommandApiTestCase):
         response = self.client.put(reverse('coffee-command-coffee-detail', kwargs={'pk': int(random() * 10000)}), data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], 'CommandCoffee matching query does not exist.', 'la modification'))
+    
+    def test_delete_command(self):
+        """ Test if user want delete CoffeeCommand. """
+
+        response = self.client.delete(reverse('coffee-command-coffee-detail', kwargs={'pk': self.command.id}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'success',
+            'header': 'Commande supprimée',
+            'body': 'La commande de {} {} a bien été supprimé.'.format(self.command.first_name, self.command.name)
+        })
+
+    def test_bad_pk_delete_command(self):
+        """ Test if an user want delete CoffeeCommand with bad pk. """
+
+        response = self.client.delete(reverse('coffee-command-coffee-detail', kwargs={'pk': int(random() * 1000)}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], 'CommandCoffee matching query does not exist.', 'la suppression'))

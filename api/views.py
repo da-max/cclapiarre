@@ -404,7 +404,8 @@ class CommandCoffeeViewSet(ModelViewSet):
         }
 
     def command_check(self, request):
-        """ Method for check all data send by the user when he want create or update any coffeeCommand. """
+        """ Method for check all data send by the user when 
+        he want create or update any coffeeCommand. """
         data = request.data.copy()
         personnal_data = dict()
         sommary_command = list()
@@ -469,6 +470,7 @@ class CommandCoffeeViewSet(ModelViewSet):
         else:
             command_coffee.delete()
             return Response({
+                'id': int(random() * 1000),
                 'status': 'success',
                 'header': 'Commande supprimée',
                 'body': 'La commande de {} {} a bien été supprimé.'.format(command_coffee.first_name, command_coffee.name)})

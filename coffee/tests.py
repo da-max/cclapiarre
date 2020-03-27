@@ -165,7 +165,7 @@ class NewCommandViewTest(TestCase):
 
 
 class ViewTest(TransactionTestCase):
-    """ ViewTest is class for test all view of coffee apps. """
+    """ ViewTest is classe for test all view of coffee apps. """
     def setUp (self):
         user_logged_in.disconnect(receiver=connect)
         
@@ -194,9 +194,7 @@ class ViewTest(TransactionTestCase):
         
         self.assertEqual(response.status_code, 200)
         # Test if template content contains title (h1) of page.
-        with self.assertTemplateUsed('coffee/coffee/list.html'):
-            render_to_string('coffee/coffee/list.html')
-
+        self.assertTemplateUsed(response, 'coffee/coffee/list.html')
     
     def test_create_coffee(self):
         """ Test coffee/coffee/new.html template."""
@@ -204,9 +202,7 @@ class ViewTest(TransactionTestCase):
         response = self.client.get('/cafe/creer-un-cafe')
 
         self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('coffee/coffee/new.html'):
-            render_to_string('coffee/coffee/new.html')
-    
+        self.assertTemplateUsed(response, 'coffee/coffee/new.html')    
     
     def test_update_coffee(self):
         """ Test coffee/coffee/update template. """
@@ -215,9 +211,7 @@ class ViewTest(TransactionTestCase):
         response = self.client.get('/cafe/modifier-un-cafe/' + str(coffee.id))
         
         self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('coffee/coffee/update.html'):
-            render_to_string('coffee/coffee/update.html')
-    
+        self.assertTemplateUsed(response, 'coffee/coffee/update.html')    
     
     def test_table_command(self):
         """ Test coffee/coffee/table_command template."""
@@ -225,9 +219,7 @@ class ViewTest(TransactionTestCase):
         response = self.client.get('/cafe/ancien-commander-du-cafe')
         
         self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('coffee/coffee/table_command.html'):     
-            render_to_string('coffee/coffee/table_command.html')
-            
+        self.assertTemplateUsed(response, 'coffee/coffee/table_command.html')                 
     
     def test_global_command(self):
         """ Test coffee/command/global_command template."""
@@ -235,9 +227,7 @@ class ViewTest(TransactionTestCase):
         response = self.client.get('/cafe/commande-globale')
         
         self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('coffee/command/global_command.html'):
-            render_to_string('coffee/command/global_command.html')
-
+        self.assertTemplateUsed(response, 'coffee/command/global_command.html')
 
     def test_list_command(self):
         """ Test coffee/command/list_command template. """
@@ -245,8 +235,7 @@ class ViewTest(TransactionTestCase):
         response = self.client.get('/cafe/liste-des-commandes')
         
         self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('coffee/command/list_command.html'):
-            render_to_string('coffee/command/list_command.html')
+        self.assertTemplateUsed(response, 'app.html')
         
     
     def test_create_command(self):
@@ -254,11 +243,9 @@ class ViewTest(TransactionTestCase):
         is tested."""
         
         response = self.client.get('/cafe/commander-du-cafe')
-        
+
         self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('app.html'):
-            render_to_string('app.html')
-    
+        self.assertTemplateUsed(response, 'app.html')    
 
     def test_list_origin(self):
         """ Test /coffee/origin/list.html template. """
@@ -266,9 +253,7 @@ class ViewTest(TransactionTestCase):
         response = self.client.get('/cafe/liste-des-origines')
         
         self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('coffee/origin/list.html'):
-            render_to_string('coffee/origin/list.html')
-    
+        self.assertTemplateUsed(response, 'coffee/origin/list.html')    
     
     def test_create_origin(self):
         """ Test /coffee/origin/new.html. """
@@ -276,20 +261,16 @@ class ViewTest(TransactionTestCase):
         response = self.client.get('/cafe/creer-une-origine')
         
         self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('coffee/origin/new.html'):
-            render_to_string('coffee/origin/new.html')
-        
+        self.assertTemplateUsed(response, 'coffee/origin/new.html')        
     
     def test_update_origin(self):
         """ Test /coffee/origin/update.html template."""
         
-        coffee = Coffee.objects.get(farm_coop='coffee1')
-        response = self.client.get('/cafe/modifier-un-cafe/' + str(coffee.id))
+        origin = Origin.objects.get(name='origin1')
+        response = self.client.get('/cafe/modifier-une-origine/' + str(origin.id))
         
         self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('coffee/origin/update.html'):
-            render_to_string('coffee/origin/update.html')
-    
+        self.assertTemplateUsed(response, 'coffee/origin/update.html')    
     
     def test_pdf_global_command(self):
         """ Test /coffee/pdf/global_command.html template. """
@@ -297,9 +278,7 @@ class ViewTest(TransactionTestCase):
         response = self.client.get('/cafe/pdf-commande-globale')
         
         self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('coffee/pdf/global_command.html'):
-            render_to_string('coffee/pdf/global_command.html')
-    
+        self.assertTemplateUsed(response, 'coffee/pdf/global_command.html')    
     
 
 

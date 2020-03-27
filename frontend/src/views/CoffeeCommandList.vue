@@ -139,7 +139,7 @@
                 :uk-toggle="'target: #coffee-info-' + c.id"
               >{{ c.coffee.farm_coop }}</a>
               ({{ c.sort.name }})
-              <p class="uk-text-right">{{ c.weight }} g x {{ c.quantity }} = {{ c.total }}</p>
+              <p class="uk-text-right">{{ c.weight }} g x {{ c.quantity }} = {{ c.total }} €</p>
 
               <modal :id="'coffee-info-' + c.id" :container="true" :center="true">
                 <template v-slot:header>

@@ -397,31 +397,399 @@ class CoffeeApiTestCase (CommandApiTestCase):
         OriginCoffee.objects.create(name='Origin 2')
         OriginCoffee.objects.create(name='Origin 3')
 
-        TypeCoffee.objects.create(name='Type 1')
-        TypeCoffee.objects.create(name='Type 2')
-        TypeCoffee.objects.create(name='Type 3')
+        self.type1 = TypeCoffee.objects.create(name='Type 1')
+        self.type2 = TypeCoffee.objects.create(name='Type 2')
+        self.type3 = TypeCoffee.objects.create(name='Type 3')
 
         self.error_response = lambda id, e, action :{
             'id': id,
             'status': 'danger',
             'header': 'Erreur lors de {action} de la commande de café'.format(action=action),
-            'body': 'Une erreur est survenue lors de {action} de la commande de café,'
-                    'merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. '
-            '(ERREUR : {error})'.format(action=action, error=ObjectDoesNotExist)
+            'body': str(e)
         }
 
-        coffee1 = Coffee.objects.create(origin=OriginCoffee.objects.get(name='Origin 1'), farm_coop='coffee 1', region='region_coffee 1', process='process_coffee 1',
+        self.coffee1 = Coffee.objects.create(origin=OriginCoffee.objects.get(name='Origin 1'), farm_coop='coffee 1', region='region_coffee 1', process='process_coffee 1',
                                         variety='variety_coffee 1', two_hundred_gram_price=5, kilogram_price=20)
-        coffee1.available_type.set(TypeCoffee.objects.all())
-        coffee2 = Coffee.objects.create(origin=OriginCoffee.objects.get(name='Origin 2'), farm_coop='coffee 2', region='region_coffee 2',
+        self.coffee1.available_type.set(TypeCoffee.objects.all())
+        self.coffee2 = Coffee.objects.create(origin=OriginCoffee.objects.get(name='Origin 2'), farm_coop='coffee 2', region='region_coffee 2',
                                         process='process_coffee 2', two_hundred_gram_price=7, kilogram_price=21)
-        coffee2.available_type.set(TypeCoffee.objects.all()[:1])
-        coffee3 = Coffee.objects.create(origin=OriginCoffee.objects.get(name='Origin 3'), farm_coop='coffee 3',
+        self.coffee2.available_type.set(TypeCoffee.objects.all()[:2])
+        self.coffee3 = Coffee.objects.create(origin=OriginCoffee.objects.get(name='Origin 3'), farm_coop='coffee 3',
                                         region='region_coffee 3', process='process_coffee 3',  display=False)
-        coffee3.available_type.set(TypeCoffee.objects.all())
+        self.coffee3.available_type.set(TypeCoffee.objects.all())
 
-        self.command_coffee = CommandCoffee.objects.create(name='name 1', first_name='first_name 1', email='email@email.com', phone_number='04000000')
-        self.command_coffee.coffee.set(coffee1, coffee2)
+        self.command = CommandCoffee.objects.create(name='name 1', first_name='first_name 2', email='command1@command1.com', phone_number='0611111111')
+        self.command.coffee.add(self.coffee1, through_defaults={
+            'quantity': 3,
+            'weight': 200,
+            'sort':self.type1
+        })
 
         self.client = APIClient()
         self.client.login(username='test1', password='password')
+    
+    def test_create_command(self):
+        data = {
+            'name': 'name 1',
+            'first_name': 'first_name 1',
+            'email': 'email1@test.com',
+            'phone_number': '0600000000',
+            'command': [
+                {
+                    'id_coffee': self.coffee1.id,
+                    'sort': self.type1.id,
+                    'weight': 200,
+                    'quantity': 1
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type2.id,
+                    'weight': 1000,
+                    'quantity': 2
+                }
+            ] 
+        }
+
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'success',
+            'header': 'Commande enregistrée !',
+            'body': 'Votre commande a bien été enregistré, merci d’envoyer un mail à l’adresse da-max@tutanota.com si vous souhaitez la modifier.'
+        })
+    
+    def test_bad_email_create_command(self):
+        data = {
+            'name': 'name 1',
+            'first_name': 'first_name 1',
+            'email': 'email.com',
+            'phone_number': '0600000000',
+            'command': [
+                {
+                    'id_coffee': self.coffee1.id,
+                    'sort': self.type1.id,
+                    'weight': 200,
+                    'quantity': 2
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type2.id,
+                    'weight': 1000,
+                    'quantity': 3
+                }
+            ]
+        }
+
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'danger',
+            'header': 'Erreur lors de l’enregistrement de la commande de café',
+            'body':'L’email rentré ou le numéro  de télephone n’est pas valide, merci de vérifier qu’ils sont corrects et de réessayer. (ERREUR : )'
+        })
+    
+    def test_bad_phone_number_create_command(self):
+        data = {
+            'name': 'name 1',
+            'first_name': 'first_name 1',
+            'email': 'email@email.com',
+            'phone_number': 'azertyuiop',
+            'command': [
+                {
+                    'id_coffee': self.coffee1.id,
+                    'sort': self.type1.id,
+                    'weight': 200,
+                    'quantity': 2
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type2.id,
+                    'weight': 1000,
+                    'quantity': 3
+                }
+            ]
+        }
+
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'danger',
+            'header': 'Erreur lors de l’enregistrement de la commande de café',
+            'body':'L’email rentré ou le numéro  de télephone n’est pas valide, merci de vérifier qu’ils sont corrects et de réessayer. (ERREUR : )'
+        })
+    
+    def test_bad_coffee_create_command(self):
+        data = {
+            'name': 'name 1',
+            'first_name': 'first_name 1',
+            'email': 'email@email.com',
+            'phone_number': '0600000000',
+            'command': [
+                {
+                    'id_coffee': int(random() * 10000),
+                    'sort': self.type1.id,
+                    'weight': 200,
+                    'quantity': 2
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type2.id,
+                    'weight': 1000,
+                    'quantity': 3
+                }
+            ]
+        }
+
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'danger',
+            'header': 'Erreur lors de l’enregistrement de la commande de café',
+            'body':'Un ou plusieurs café commandé n’existe pas, merci de vérifier la commande, est de réessayer. (ERREUR : Coffee matching query does not exist.)'
+        })
+    
+    def test_bad_sort_create_command(self):
+        data = {
+            'name': 'name 1',
+            'first_name': 'first_name 1',
+            'email': 'email@email.com',
+            'phone_number': '0600000000',
+            'command': [
+                {
+                    'id_coffee': self.coffee1.id,
+                    'sort': self.type1.id,
+                    'weight': 200,
+                    'quantity': 2
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type3.id,
+                    'weight': 1000,
+                    'quantity': 3
+                }
+            ]
+        }
+
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'danger',
+            'header': 'Erreur lors de l’enregistrement de la commande de café',
+            'body':'Un ou plusieurs café commandé n’existe pas, merci de vérifier la commande, est de réessayer. (ERREUR : Type matching query does not exist.)'
+        })
+
+    def test_bad_weight_create_command(self):
+        data = {
+            'name': 'name 1',
+            'first_name': 'first_name 1',
+            'email': 'email@email.com',
+            'phone_number': '0600000000',
+            'command': [
+                {
+                    'id_coffee': self.coffee1.id,
+                    'sort': self.type1.id,
+                    'weight': 2000,
+                    'quantity': 2
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type2.id,
+                    'weight': 1000,
+                    'quantity': 3
+                }
+            ]
+        }
+
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'danger',
+            'header': 'Erreur lors de l’enregistrement de la commande de café',
+            'body': 'La quantité ou le poids commandé n’est pas valide, merci de vérifier la commande et de réessayer. (ERREUR : )'
+        })
+    
+    def test_bad_amount_create_command(self):
+        data = {
+            'name': 'name 1',
+            'first_name': 'first_name 1',
+            'email': 'email@email.com',
+            'phone_number': '0600000000',
+            'command': [
+                {
+                    'id_coffee': self.coffee1.id,
+                    'sort': self.type1.id,
+                    'weight': 200,
+                    'quantity': 2
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type2.id,
+                    'weight': 1000,
+                    'quantity': 3.12
+                }
+            ]
+        }
+
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'danger',
+            'header': 'Erreur lors de l’enregistrement de la commande de café',
+            'body': 'La quantité ou le poids commandé n’est pas valide, merci de vérifier la commande et de réessayer. (ERREUR : )'
+        })
+    
+    def test_not_amount_create_command(self):
+        """ Test if user send request without quantity. """
+        data = {
+            'name': 'name 1',
+            'first_name': 'first_name 1',
+            'email': 'email@email.com',
+            'phone_number': '0600000000',
+            'command': [
+                {
+                    'id_coffee': self.coffee1.id,
+                    'sort': self.type1.id,
+                    'weight': 200,
+                    'quantity': 2
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type2.id,
+                    'weight': 1000,
+                }
+            ]
+        }
+
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'danger',
+            'header': 'Erreur lors de l’enregistrement de la commande de café',
+            'body': "('Erreur', KeyError('quantity'))"
+        })
+
+    def test_not_name_create_command(self):
+        """ Test if user send request without name. """
+        data = {
+            'first_name': 'first_name 1',
+            'email': 'email@email.com',
+            'phone_number': '0600000000',
+            'command': [
+                {
+                    'id_coffee': self.coffee1.id,
+                    'sort': self.type1.id,
+                    'weight': 200,
+                    'quantity': 2
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type2.id,
+                    'weight': 1000,
+                    'quantity': 3
+                }
+            ]
+        }
+
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'danger',
+            'header': 'Erreur lors de l’enregistrement de la commande de café',
+            'body': '"Les champs nom, prénom, email ou numéro de télephone n’ont pas été rentrés, merci de vérifier qu’ils sont correctement renseignés, puis réessayer. (ERREUR : \'name\')"'
+        })
+    
+    def test_not_id_coffee_create_command(self):
+        """ Test if an user try to command without id_coffee. """
+        data = {
+            'first_name': 'first_name 1',
+            'email': 'email@email.com',
+            'phone_number': '0600000000',
+            'name': 'name 1',
+            'command': [
+                {
+                    'sort': self.type1.id,
+                    'weight': 200,
+                    'quantity': 2
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type2.id,
+                    'weight': 1000,
+                    'quantity': 3
+                }
+            ]
+        }
+
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'danger',
+            'header': 'Erreur lors de l’enregistrement de la commande de café',
+            'body': "('Erreur', KeyError('id_coffee'))"
+        })
+    
+    def test_bad_pk_update_command(self):
+        """ Test if user send request with bad pk. """
+        data = {
+            'name': 'name 1',
+            'first_name': 'first_name 1',
+            'email': 'email1@test.com',
+            'phone_number': '0600000000',
+            'command': [
+                {
+                    'id_coffee': self.coffee1.id,
+                    'sort': self.type1.id,
+                    'weight': 200,
+                    'quantity': 1
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type2.id,
+                    'weight': 1000,
+                    'quantity': 2
+                }
+            ] 
+        }
+
+        response = self.client.put(reverse('coffee-command-coffee-detail', kwargs={'pk': int(random() * 10000)}), data, format='json')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], 'CommandCoffee matching query does not exist.', 'la modification'))
+    
+    def test_delete_command(self):
+        """ Test if user want delete CoffeeCommand. """
+
+        response = self.client.delete(reverse('coffee-command-coffee-detail', kwargs={'pk': self.command.id}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'success',
+            'header': 'Commande supprimée',
+            'body': 'La commande de {} {} a bien été supprimé.'.format(self.command.first_name, self.command.name)
+        })
+
+    def test_bad_pk_delete_command(self):
+        """ Test if an user want delete CoffeeCommand with bad pk. """
+
+        response = self.client.delete(reverse('coffee-command-coffee-detail', kwargs={'pk': int(random() * 1000)}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], 'CommandCoffee matching query does not exist.', 'la suppression'))

@@ -206,20 +206,20 @@ export default {
   },
 
   computed: {
-    total_price () {
-      let price = 0
+    total_price() {
+      let price = 0;
       this.command.command.forEach(com => {
         console.log(com);
         if (com.weight == 200) {
-          price += parseFloat(com.coffee.two_hundred_gram_price) * parseFloat(com.quantity)
+          price +=
+            parseFloat(com.coffee.two_hundred_gram_price) *
+            parseFloat(com.quantity);
+        } else {
+          price +=
+            parseFloat(com.coffee.kilogram_price) * parseFloat(com.quantity);
         }
-        else {
-          price += parseFloat(com.coffee.kilogram_price) * parseFloat(com.quantity)
-        }
-        
-      });      
-      return price
-
+      });
+      return Math.round(price * 1000) / 1000;
     }
   },
 
@@ -251,13 +251,19 @@ export default {
     price(command) {
       if (command.weight == 200) {
         return (
-          parseFloat(command.coffee.two_hundred_gram_price) *
-          parseFloat(command.quantity)
+          Math.round(
+            parseFloat(command.coffee.two_hundred_gram_price) *
+              parseFloat(command.quantity) *
+              1000
+          ) / 1000
         );
       } else {
         return (
-          parseFloat(command.coffee.kilogram_price) *
-          parseFloat(command.quantity)
+          Math.round(
+            parseFloat(command.coffee.kilogram_price) *
+              parseFloat(command.quantity) *
+              1000
+          ) / 1000
         );
       }
     }

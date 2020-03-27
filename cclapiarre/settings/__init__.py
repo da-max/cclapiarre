@@ -182,6 +182,6 @@ WEBPACK_LOADER = {
 # Django Rest Framework Configuration
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissions'
+        'cclapiarre.permissions.CustomObjectPermissions'
     ]
 }

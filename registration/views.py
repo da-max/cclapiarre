@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.http.response import HttpResponseRedirect, HttpResponse
 from django.dispatch.dispatcher import receiver
+import copy
 
 from django.views.generic import ListView
 from django.contrib.auth.views import LogoutView, PasswordChangeView,\
@@ -11,6 +12,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from rest_framework import permissions
 
 from registration.models import Informations
 from registration.forms import ConnectionForm, CourtCircuitConnectionForm
@@ -172,3 +174,10 @@ class ChangePassword(PermissionRequiredMixin, PasswordChangeView):
 
 class ChangePasswordSuccess(PasswordChangeDoneView):
 	template_name = "registration/change_password_success.html"
+
+
+class CustomDjangoModelPermission(permissions.DjangoModelPermissions):
+
+    def __init__(self):
+        self.perms_map = copy.deepcopy(self.perms_map)  # from EunChong's answer
+        self.perms_map['GET'] = ['%(app_label)s.view_%(model_name)s']

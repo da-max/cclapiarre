@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import ObjectDoesNotExist
@@ -17,7 +18,8 @@ from rest_framework.decorators import action
 
 from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer, UserWithPermissionsSerializer, CoffeeSerializer, CommandCoffeeSerializer
 from command.models import Command, Amount, Product
-from coffee.models import Coffee, CommandCoffee, Quantity as AmountCoffee
+from coffee.models import Coffee, CommandCoffee, Quantity as AmountCoffee, Type
+
 
 @receiver(m2m_changed, sender=Command.product.through)
 def command_send_mail(sender, instance, action, **kwargs):
@@ -374,7 +376,7 @@ class CurrentUserView(APIView):
     queryset = User.objects.all()
     serializer = UserWithPermissionsSerializer()
 
-    def list(self, request):
+    def get(self, request):
         serializer = UserWithPermissionsSerializer(request.user)
         return Response(serializer.data)
 
@@ -393,15 +395,67 @@ class CommandCoffeeViewSet(ModelViewSet):
     serializer_class = CommandCoffeeSerializer
     queryset = CommandCoffee.objects.all()
 
-    def error_response(self, error=Exception, action="l\’enregistrement"):
+    def error_response(self, error=Exception, action="l’enregistrement"):
         return {
             'id': int(random() * 1000),
             'status': 'danger',
             'header': 'Erreur lors de {action} de la commande de café'.format(action=action),
-            'body': 'Une erreur est survenue lors de {action} de la commande de café,'
-                    'merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. '
-            '(ERREUR : {error})'.format(action=action, error=error)
+            'body': str(error)
         }
+
+    def command_check(self, request):
+        """ Method for check all data send by the user when 
+        he want create or update any coffeeCommand. """
+        data = request.data.copy()
+        personnal_data = dict()
+        sommary_command = list()
+        try:
+            name = data.pop('name')
+            first_name = data.pop('first_name')
+            email = data.pop('email')
+            phone_number = data.pop('phone_number')
+            assert re.match('^[\w.-]+@(\w)+\.(\w){2,4}$', email)
+            assert re.match('^0[0-9]([ .-]?[0-9]{2}){4}$', phone_number)
+        except KeyError as key_exception:
+            raise KeyError('Les champs nom, prénom, email ou numéro de télephone n’ont pas été rentrés, merci de vérifier qu’ils sont correctement renseignés, puis réessayer. (ERREUR : {})'.format(key_exception))
+        except AssertionError as assertion_exception:
+            raise AssertionError(
+                'L’email rentré ou le numéro  de télephone n’est pas valide, merci de vérifier qu’ils sont corrects et de réessayer. (ERREUR : {})'.format(assertion_exception))
+        else:
+            personnal_data['name'] = name
+            personnal_data['first_name'] = first_name
+            personnal_data['email'] = email
+            personnal_data['phone_number'] = phone_number
+
+        for amount in data['command']:
+            try:
+                coffee = Coffee.objects.get(id=amount['id_coffee'])
+                sort = coffee.available_type.get(
+                    Q(id=amount['sort']) & Q(coffee=coffee))
+                assert amount['weight'] == 200 or amount['weight'] == 1000
+                assert amount['quantity'] == int(amount['quantity'])
+            except ObjectDoesNotExist as object_excetion:
+                raise ObjectDoesNotExist(
+                    'Un ou plusieurs café commandé n’existe pas, merci de vérifier la commande, est de réessayer. (ERREUR : {})'.format(object_excetion))
+            except AssertionError as assertion_exception:
+                raise AssertionError(
+                    'La quantité ou le poids commandé n’est pas valide, merci de vérifier la commande et de réessayer. (ERREUR : {})'.format(assertion_exception))
+            except ValueError as value_exception:
+                raise ValueError(
+                    'Le café ou le type de mouture commandé n’existe, merci de vérifier la commande et de réessayer. (ERREUR : {})'.format(value_exception))
+            except Exception as e:
+                raise Exception('Erreur', e)
+            else:
+                sommary_command.append(
+                    {
+                        'coffee': coffee,
+                        'sort': sort,
+                        'amount': amount['quantity'],
+                        'weight': amount['weight']
+                    }
+                )
+
+        return (personnal_data, sommary_command)
 
     def list(self, request):
         queryset = self.get_queryset()
@@ -416,58 +470,78 @@ class CommandCoffeeViewSet(ModelViewSet):
         else:
             command_coffee.delete()
             return Response({
+                'id': int(random() * 1000),
                 'status': 'success',
                 'header': 'Commande supprimée',
                 'body': 'La commande de {} {} a bien été supprimé.'.format(command_coffee.first_name, command_coffee.name)})
 
+    def create(self, request):
+
+        try:
+            (personnal_data, sommary_command) = self.command_check(request)
+        except (ObjectDoesNotExist, KeyError, AssertionError, Exception) as e:
+            return Response(self.error_response(e))
+
+        try:
+            command = CommandCoffee.objects.get(Q(email=personnal_data['email']) | Q(
+                phone_number=personnal_data['phone_number']))
+        except ObjectDoesNotExist:
+            pass
+        else:
+            serializer = CommandCoffeeSerializer(command)
+            return Response(({
+                'status': 'also_command',
+            }, serializer.data))
+
+        command = CommandCoffee.objects.create(
+            name=personnal_data['name'], first_name=personnal_data['first_name'], email=personnal_data['email'], phone_number=personnal_data['phone_number'])
+
+        for amount in sommary_command:
+            a = AmountCoffee.objects.create(
+                coffee=amount['coffee'], quantity=amount['amount'], command=command, sort=amount['sort'], weight=amount['weight'])
+            command.coffee.add(amount['coffee'], through_defaults={
+                'quantity': amount['amount'],
+                'sort': amount['sort'],
+                'weight': amount['weight']
+            })
+
+        return Response({
+            'id': int(random() * 1000),
+            'status': 'success',
+            'header': 'Commande enregistrée !',
+            'body': 'Votre commande a bien été enregistré, merci d’envoyer un mail à l’adresse da-max@tutanota.com si vous souhaitez la modifier.'
+        })
+
     def update(self, request, pk):
 
-        data = request.data.copy()
-        sommary_command = []
-
-        command = CommandCoffee.objects.get(id=pk)
-
-        try:
-            pass
-        except (ObjectDoesNotExist, Exception):
-            return Response(self.error_response(error=e, action='la modification'))
-
-        try:
-            name = data.pop('name')
-            first_name = data.pop('first_name')
-            email = data.pop('email')
-            phone_number = data.pop('phone_number')
-        except (KeyError, Exception) as e:
-            return Response(self.error_response(error=e, action='la modification'))
-
-        for amount in data['command']:
-            try:
-                coffee = Coffee.objects.get(id=amount['id_coffee'])
-                sort = coffee.available_type.get(id=amount['sort'])
-                assert amount['weight'] == 200 or amount['weight'] == 1000
-                assert amount['quantity'] == int(amount['quantity'])
-            except (ObjectDoesNotExist, AssertionError, Exception) as e:
-                return Response(self.error_response(error=e, action='la modification'))
-            else:
-                sommary_command.append(
-                    {
-                        'coffee': coffee,
-                        'sort': sort,
-                        'amount': amount['quantity'],
-                        'weight': amount['weight']
-                    }
-                )
-            
         try:
             command = CommandCoffee.objects.get(id=pk)
-            CommandCoffee.objects.filter(id=pk).update(name=name, first_name=first_name, email=email, phone_number=phone_number)
-            command.coffee.through.objects.filter(command_id=command.id).delete()
+        except (ObjectDoesNotExist, Exception) as e:
+            return Response(self.error_response(error=e, action='la modification'))
 
+        try:
+            (personnal_data, sommary_command) = self.command_check(request)
+        except (ObjectDoesNotExist, AssertionError, Exception) as e:
+            return Response(self.error_response(e))
+
+        try:
+            command = CommandCoffee.objects.get(id=pk)
+            CommandCoffee.objects.filter(id=pk).update(
+                name=personnal_data['name'], first_name=personnal_data['first_name'], email=personnal_data['email'], phone_number=personnal_data['phone_number'])
+            command.coffee.through.objects.filter(
+                command_id=command.id).delete()
         except Exception as e:
             return Response(self.error_response(error=e, action='la modification'))
+
         for amount in sommary_command:
             try:
-                AmountCoffee.objects.create(command=command, coffee=amount['coffee'], quantity=amount['amount'], weight=amount['weight'], sort=amount['sort'])
+                AmountCoffee.objects.create(
+                    command=command, coffee=amount['coffee'], quantity=amount['amount'], weight=amount['weight'], sort=amount['sort'])
+                command.coffee.add(amount['coffee'], through_defaults={
+                    'quantity': amount['amount'],
+                    'sort': amount['sort'],
+                    'weight': amount['weight']
+                })
             except Exception as e:
                 return Response(self.error_response(error=e, action='la modification'))
 
@@ -485,7 +559,7 @@ class CommandCoffeeViewSet(ModelViewSet):
             command.delete()
 
         except Exception as e:
-            return Response(self.error_response(error=e, action='la suppression')) 
+            return Response(self.error_response(error=e, action='la suppression'))
         else:
             return Response({
                 'id': int(random() * 10000),

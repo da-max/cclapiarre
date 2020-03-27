@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 
 from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer, UserWithPermissionsSerializer, CoffeeSerializer, CommandCoffeeSerializer
 from command.models import Command, Amount, Product
@@ -375,7 +376,7 @@ class ProductViewSet(ModelViewSet):
 class CurrentUserView(APIView):
     queryset = User.objects.all()
     serializer = UserWithPermissionsSerializer()
-
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         serializer = UserWithPermissionsSerializer(request.user)
         return Response(serializer.data)

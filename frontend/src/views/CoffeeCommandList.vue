@@ -51,6 +51,7 @@
       uk-scrollspy="cls:uk-animation-fade; delay:200; target: > *"
     >
       <h1 class="uk-text-center">Liste des commandes de café</h1>
+      <breadcrumd :elements='breadcrumb'></breadcrumd>
       <div class="uk-margin-large-top" v-if="Object.keys(commands).length != 0">
         <a
           href="/cafe/pdf-liste-des-commandes"
@@ -199,7 +200,11 @@
             </li>
           </ul>
         </div>
-        <div class="uk-card-footer uk-text-center" v-show="current_user.permissions.find(permission => permission === 'coffee.change_commandcoffee' || permission === 'coffee.delete_commandcoffee')" uk-margin>
+        <div
+          class="uk-card-footer uk-text-center"
+          v-show="current_user.permissions.find(permission => permission === 'coffee.change_commandcoffee' || permission === 'coffee.delete_commandcoffee')"
+          uk-margin
+        >
           <button
             class="uk-button uk-button-secondary uk-margin-medium-right"
             @click.prevent="get_update_command(command.id)"
@@ -221,6 +226,7 @@ import Modal from "../components/utility/Modal";
 import Loader from "../components/utility/Loader";
 import Message from "../components/utility/Message";
 import TableUpdateCommand from "../components/coffees/TableUpdateCommand";
+import Breadcrumd from "../components/utility/Breadcrumb";
 
 export default {
   name: "CoffeeCommandList",
@@ -229,11 +235,26 @@ export default {
     Modal,
     Loader,
     Message,
-    TableUpdateCommand
+    TableUpdateCommand,
+    Breadcrumd
   },
 
   data() {
     return {
+      breadcrumb: [
+        {
+          name: "Accueil",
+          link: "/"
+        },
+        {
+          name: "Café",
+          link: "#",
+          class: "uk-disabled"
+        },
+        {
+          name: "Liste des commandes de café"
+        }
+      ],
       commands: {},
       command_has_update: {},
       coffees: [],
@@ -263,22 +284,22 @@ export default {
           id_coffee: com.coffee.id,
           quantity: parseFloat(com.quantity),
           sort: com.sort.id,
-          weight: com.weight
+          weight: parseInt(com.weight)
         });
       });
 
-      this.$command.update({ id: command.id }, form_data).then(
+      this.$command.update({ id: this.command_has_update.id }, form_data).then(
         response => {
           this.messages.push(response.data);
+          UIkit.scroll("", { offset: 250 }).scrollTo("#vue-messages");
         },
         response => {
           this.messages.push(response.data);
+          UIkit.scroll("", { offset: 250 }).scrollTo("#vue-messages");
         }
       );
 
-      this.$command
-        .update({ id: this.command_has_update.id }, form_data)
-        .then(response => {});
+      this.get_commands();
     },
 
     delete_command(id_command) {
@@ -287,13 +308,12 @@ export default {
       this.$command.remove({ id: id_command }).then(
         response => {
           this.messages.push(response.data);
-          this.get_commands();
         },
         response => {
           this.query_error = true;
-          this.get_commands();
         }
       );
+      this.get_commands();
     },
 
     delete_all_command() {
@@ -394,6 +414,8 @@ export default {
         this.query_error = true;
       }
     );
+
+    document.title = "Listes des commandes de café | CC La Piarre";
   }
 };
 </script>

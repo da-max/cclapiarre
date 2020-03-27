@@ -7,7 +7,7 @@
       :container="true"
       :center="true"
       :bg_close="false"
-      v-if="Object.keys(command_has_update).length != 0"
+      v-if="Object.keys(command_has_update).length != 0 && current_user.permissions.find(permission => permission === 'coffee.change_commandcoffee')"
     >
       <template #header>
         <h3>Modifier la commande de {{ command_has_update.first_name }} {{ command_has_update.name }}</h3>
@@ -62,6 +62,7 @@
           class="uk-button uk-button-danger uk-padding-small uk-margin-medium-left"
           uk-toggle="target: #delete-all"
           href="#"
+          v-show="current_user.permissions.find(permission => permission === 'coffee.delete_commandcoffee')"
         >Supprimer toutes les commandes</a>
       </div>
       <div class="uk-margin-large-top" v-else>
@@ -198,14 +199,16 @@
             </li>
           </ul>
         </div>
-        <div class="uk-card-footer">
+        <div class="uk-card-footer uk-text-center" v-show="current_user.permissions.find(permission => permission === 'coffee.change_commandcoffee' || permission === 'coffee.delete_commandcoffee')" uk-margin>
           <button
-            class="uk-button uk-button-secondary"
+            class="uk-button uk-button-secondary uk-margin-medium-right"
             @click.prevent="get_update_command(command.id)"
+            v-show="current_user.permissions.find(permission => permission === 'coffee.change_commandcoffee')"
           >Modifier cette commande</button>
           <button
-            class="uk-button uk-button-danger uk-margin-medium-left"
+            class="uk-button uk-button-danger"
             :uk-toggle="'#delete-command-' + command.id"
+            v-show="current_user.permissions.find(permission => permission === 'coffee.delete_commandcoffee')"
           >Supprimer cette commande</button>
         </div>
       </div>
@@ -234,6 +237,7 @@ export default {
       commands: {},
       command_has_update: {},
       coffees: [],
+      current_user: {},
 
       messages: [],
 
@@ -367,7 +371,29 @@ export default {
       }
     );
 
-    this.get_commands();
+    this.$current_user = this.$resource(
+      "api/users/current",
+      {},
+      {},
+      {
+        before: () => {
+          this.loading = true;
+        },
+        after: () => {
+          this.loading = false;
+        }
+      }
+    );
+
+    this.$current_user.query().then(
+      response => {
+        this.current_user = response.data;
+        this.get_commands();
+      },
+      response => {
+        this.query_error = true;
+      }
+    );
   }
 };
 </script>

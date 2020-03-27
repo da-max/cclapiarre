@@ -446,7 +446,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
             ] 
         }
 
-        response = self.client.post(reverse('coffee_command_coffee-list'), data, format='json')
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             'id': int(json.loads(response.content)['id']),
@@ -477,7 +477,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
             ]
         }
 
-        response = self.client.post(reverse('coffee_command_coffee-list'), data, format='json')
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
@@ -509,7 +509,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
             ]
         }
 
-        response = self.client.post(reverse('coffee_command_coffee-list'), data, format='json')
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
@@ -541,7 +541,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
             ]
         }
 
-        response = self.client.post(reverse('coffee_command_coffee-list'), data, format='json')
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
@@ -573,7 +573,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
             ]
         }
 
-        response = self.client.post(reverse('coffee_command_coffee-list'), data, format='json')
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
@@ -605,7 +605,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
             ]
         }
 
-        response = self.client.post(reverse('coffee_command_coffee-list'), data, format='json')
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
@@ -637,7 +637,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
             ]
         }
 
-        response = self.client.post(reverse('coffee_command_coffee-list'), data, format='json')
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
@@ -669,7 +669,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
             ]
         }
 
-        response = self.client.post(reverse('coffee_command_coffee-list'), data, format='json')
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
@@ -700,11 +700,42 @@ class CoffeeApiTestCase (CommandApiTestCase):
             ]
         }
 
-        response = self.client.post(reverse('coffee_command_coffee-list'), data, format='json')
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             'id': int(json.loads(response.content)['id']),
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande de café',
             'body': '"Les champs nom, prénom, email ou numéro de télephone n’ont pas été rentrés, merci de vérifier qu’ils sont correctement renseignés, puis réessayer. (ERREUR : \'name\')"'
+        })
+    
+    def test_not_id_coffee_create_command(self):
+        data = {
+            'first_name': 'first_name 1',
+            'email': 'email@email.com',
+            'phone_number': '0600000000',
+            'name': 'name 1',
+            'command': [
+                {
+                    'sort': self.type1.id,
+                    'weight': 200,
+                    'quantity': 2
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type2.id,
+                    'weight': 1000,
+                    'quantity': 3
+                }
+            ]
+        }
+
+        response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': int(json.loads(response.content)['id']),
+            'status': 'danger',
+            'header': 'Erreur lors de l’enregistrement de la commande de café',
+            'body': "('Erreur', KeyError('id_coffee'))"
         })

@@ -405,9 +405,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
             'id': id,
             'status': 'danger',
             'header': 'Erreur lors de {action} de la commande de café'.format(action=action),
-            'body': 'Une erreur est survenue lors de {action} de la commande de café,'
-                    'merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. '
-            '(ERREUR : {error})'.format(action=action, error=ObjectDoesNotExist)
+            'body': str(e)
         }
 
         self.coffee1 = Coffee.objects.create(origin=OriginCoffee.objects.get(name='Origin 1'), farm_coop='coffee 1', region='region_coffee 1', process='process_coffee 1',
@@ -739,3 +737,29 @@ class CoffeeApiTestCase (CommandApiTestCase):
             'header': 'Erreur lors de l’enregistrement de la commande de café',
             'body': "('Erreur', KeyError('id_coffee'))"
         })
+    
+    def test_bad_pk_update_command(self):
+        data = {
+            'name': 'name 1',
+            'first_name': 'first_name 1',
+            'email': 'email1@test.com',
+            'phone_number': '0600000000',
+            'command': [
+                {
+                    'id_coffee': self.coffee1.id,
+                    'sort': self.type1.id,
+                    'weight': 200,
+                    'quantity': 1
+                },
+                {
+                    'id_coffee': self.coffee2.id,
+                    'sort': self.type2.id,
+                    'weight': 1000,
+                    'quantity': 2
+                }
+            ] 
+        }
+
+        response = self.client.put(reverse('coffee-command-coffee-detail', kwargs={'pk': int(random() * 10000)}), data, format='json')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], 'CommandCoffee matching query does not exist.', 'la modification'))

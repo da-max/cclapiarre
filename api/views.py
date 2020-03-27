@@ -514,7 +514,7 @@ class CommandCoffeeViewSet(ModelViewSet):
 
         try:
             command = CommandCoffee.objects.get(id=pk)
-        except (ObjectDoesNotExist, Exception):
+        except (ObjectDoesNotExist, Exception) as e:
             return Response(self.error_response(error=e, action='la modification'))
 
         try:

@@ -1,6 +1,6 @@
-Vous venez de commander des agrumes sur le site cclapiarre.deblan.fr. Voici donc un récapitulatif de votre commande.\
+Une commande d’agrumes à votre nom vient d’être {% if status %}{% if status == 'update' %}modifiée{% else %}ajoutée{% endif %}{% endif %} depuis le site cclapiarre.deblan.fr. Voici donc un récapitulatif de cette commande.
 
->Email : {{ email }}, prénom : {{ first_name }}
+Email : {{ email }}, prénom : {{ first_name }}
 
 
 {% for product, metadata in command_sommary.items %}

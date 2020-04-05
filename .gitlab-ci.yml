@@ -5,7 +5,9 @@ services:
 
 before_script:
   - cd ./frontend
+  - npm i
   - npm run build
+  - cd ../
   - pip install -r requirements.txt
   - python ./manage.py makemigrations
   - python ./manage.py migrate

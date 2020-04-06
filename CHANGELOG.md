@@ -1,10 +1,18 @@
 # Changements
 Tous les changements de ce projet sont documentés ici, ce fichier est affiché sur cette page : [https://cclapiarre.deblan.fr/changements/](https://cclapiarre.deblan.fr/changements/) il est donc écrit en français.
 
-## mars 2020
+## 04 avril 2020 : Sortie de la version 5.4.3
+
+### Ajout
+* Lors d’une commande de café, si un adhérent rentre **exactement** la même adresse mail OU le même numéro de téléphone que lors de sa première commande, il va lui être automatiquement proposé de changer sa commande par la nouvelle.
+* Des tests ont été ajouté afin de vérifier que l’api du système de commande de café fonctionne bien.
 
 ### Modification
-* La page permettant de commandé du café utilise à présent l’api créée par Django rest framework.
+La page permettant de commandé du café utilise à présent l’api créée par Django rest framework.
+
+### Résolution de bogue
+* Résolution d’un bogue d’affichage des évènements (dû au framework UIkit) sur la page d’accueil.
+* Correction d’un problème de sécurité permettant à un utilisateur *connecté uniquement* d’avoir accès à des pages dont il n’avait pas la permission (ce défaut était dû à la récente introduction de Django rest framework dans le projet). 
 
 ## 22 mars 2020 : Sortie de la version 5.4.2
 

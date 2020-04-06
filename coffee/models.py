@@ -157,7 +157,7 @@ class Quantity(Model):
     coffee = ForeignKey(Coffee, on_delete=CASCADE, related_name="coffee_amount")
     command = ForeignKey(CommandCoffee, on_delete=CASCADE, related_name="command")
     quantity = IntegerField(verbose_name="Quantité commandé")
-    weight = IntegerField(verbose_name="Poids commandé", help_text="200 ou 1000 grammes.")
+    weight = IntegerField(verbose_name="Poids commandé", help_text="200 ou 1000 grammes.", choices= ((200, '200 grammes'), (1000, '1 kilogramme')))
     sort = ForeignKey(Type, on_delete=CASCADE, related_name="type")
 
     def __str__(self):

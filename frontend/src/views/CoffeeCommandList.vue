@@ -7,7 +7,7 @@
       :container="true"
       :center="true"
       :bg_close="false"
-      v-if="Object.keys(command_has_update).length != 0"
+      v-if="Object.keys(command_has_update).length != 0 && current_user.permissions.find(permission => permission === 'coffee.change_commandcoffee')"
     >
       <template #header>
         <h3>Modifier la commande de {{ command_has_update.first_name }} {{ command_has_update.name }}</h3>
@@ -51,6 +51,7 @@
       uk-scrollspy="cls:uk-animation-fade; delay:200; target: > *"
     >
       <h1 class="uk-text-center">Liste des commandes de café</h1>
+      <breadcrumd :elements='breadcrumb'></breadcrumd>
       <div class="uk-margin-large-top" v-if="Object.keys(commands).length != 0">
         <a
           href="/cafe/pdf-liste-des-commandes"
@@ -62,6 +63,7 @@
           class="uk-button uk-button-danger uk-padding-small uk-margin-medium-left"
           uk-toggle="target: #delete-all"
           href="#"
+          v-show="current_user.permissions.find(permission => permission === 'coffee.delete_commandcoffee')"
         >Supprimer toutes les commandes</a>
       </div>
       <div class="uk-margin-large-top" v-else>
@@ -139,7 +141,7 @@
                 :uk-toggle="'target: #coffee-info-' + c.id"
               >{{ c.coffee.farm_coop }}</a>
               ({{ c.sort.name }})
-              <p class="uk-text-right">{{ c.weight }} g x {{ c.quantity }} = {{ c.total }}</p>
+              <p class="uk-text-right">{{ c.weight }} g x {{ c.quantity }} = {{ c.total }} €</p>
 
               <modal :id="'coffee-info-' + c.id" :container="true" :center="true">
                 <template v-slot:header>
@@ -198,14 +200,20 @@
             </li>
           </ul>
         </div>
-        <div class="uk-card-footer">
+        <div
+          class="uk-card-footer uk-text-center"
+          v-show="current_user.permissions.find(permission => permission === 'coffee.change_commandcoffee' || permission === 'coffee.delete_commandcoffee')"
+          uk-margin
+        >
           <button
-            class="uk-button uk-button-secondary"
+            class="uk-button uk-button-secondary uk-margin-medium-right"
             @click.prevent="get_update_command(command.id)"
+            v-show="current_user.permissions.find(permission => permission === 'coffee.change_commandcoffee')"
           >Modifier cette commande</button>
           <button
-            class="uk-button uk-button-danger uk-margin-medium-left"
+            class="uk-button uk-button-danger"
             :uk-toggle="'#delete-command-' + command.id"
+            v-show="current_user.permissions.find(permission => permission === 'coffee.delete_commandcoffee')"
           >Supprimer cette commande</button>
         </div>
       </div>
@@ -218,6 +226,7 @@ import Modal from "../components/utility/Modal";
 import Loader from "../components/utility/Loader";
 import Message from "../components/utility/Message";
 import TableUpdateCommand from "../components/coffees/TableUpdateCommand";
+import Breadcrumd from "../components/utility/Breadcrumb";
 
 export default {
   name: "CoffeeCommandList",
@@ -226,14 +235,30 @@ export default {
     Modal,
     Loader,
     Message,
-    TableUpdateCommand
+    TableUpdateCommand,
+    Breadcrumd
   },
 
   data() {
     return {
+      breadcrumb: [
+        {
+          name: "Accueil",
+          link: "/"
+        },
+        {
+          name: "Café",
+          link: "#",
+          class: "uk-disabled"
+        },
+        {
+          name: "Liste des commandes de café"
+        }
+      ],
       commands: {},
       command_has_update: {},
       coffees: [],
+      current_user: {},
 
       messages: [],
 
@@ -259,22 +284,22 @@ export default {
           id_coffee: com.coffee.id,
           quantity: parseFloat(com.quantity),
           sort: com.sort.id,
-          weight: com.weight
+          weight: parseInt(com.weight)
         });
       });
 
-      this.$command.update({ id: command.id }, form_data).then(
+      this.$command.update({ id: this.command_has_update.id }, form_data).then(
         response => {
           this.messages.push(response.data);
+          UIkit.scroll("", { offset: 250 }).scrollTo("#vue-messages");
         },
         response => {
           this.messages.push(response.data);
+          UIkit.scroll("", { offset: 250 }).scrollTo("#vue-messages");
         }
       );
 
-      this.$command
-        .update({ id: this.command_has_update.id }, form_data)
-        .then(response => {});
+      this.get_commands();
     },
 
     delete_command(id_command) {
@@ -283,13 +308,12 @@ export default {
       this.$command.remove({ id: id_command }).then(
         response => {
           this.messages.push(response.data);
-          this.get_commands();
         },
         response => {
           this.query_error = true;
-          this.get_commands();
         }
       );
+      this.get_commands();
     },
 
     delete_all_command() {
@@ -367,7 +391,31 @@ export default {
       }
     );
 
-    this.get_commands();
+    this.$current_user = this.$resource(
+      "api/users/current",
+      {},
+      {},
+      {
+        before: () => {
+          this.loading = true;
+        },
+        after: () => {
+          this.loading = false;
+        }
+      }
+    );
+
+    this.$current_user.query().then(
+      response => {
+        this.current_user = response.data;
+        this.get_commands();
+      },
+      response => {
+        this.query_error = true;
+      }
+    );
+
+    document.title = "Listes des commandes de café | CC La Piarre";
   }
 };
 </script>

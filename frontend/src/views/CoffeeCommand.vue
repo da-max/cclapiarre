@@ -63,14 +63,16 @@
         <div class="uk-margin-auto uk-width-3-5@m uk-margin-large-bottom uk-section uk-section-muted uk-padding-large uk-box-shadow-medium" uk-scrollspy="cls:uk-animation-fade; delay: 200">
             <h3 class="uk-title">Comment commander ?</h3>
             <p>
-                Bienvenue sur la nouvelle interface de commande de café. Pour commander, il suffit de cliquer sur
-                le bouton <span class="uk-text-bold uk-text-primary">"ajouter ce café à ma commande"</span> qui se trouve en dessous de chaque café. Puis, il vous faudra 
-                choisir le <span class="uk-text-bold uk-text-primary">poids</span> que vous désirez (200 grammes ou 1 kg), le <span class="uk-text-bold uk-text-primary">type de mouture</span> en fonction de votre cafetière
-                et la quantité de café que vous souhaitez. Renouvellez cette opération pour autant de café que vous souhaitez.<br>
-                Enfin, n'oubliez pas de renseigner votre <span class="uk-text-bold uk-text-primary">nom, prénom, email et votre numéro de téléphone</span> afin que l'on vous confirme votre commande.
+                Bienvenue sur la nouvelle interface de commande de café. Pour commander, il suffit de cliquer sur 
+                le bouton <span class="uk-text-bold uk-text-primary">« ajouter ce café à ma commande »</span> qui se trouve en dessous de chaque café. 
+                Puis, il vous faudra choisir le <span class="uk-text-bold uk-text-primary">poids</span> que vous désirez (200 grammes ou 1 kg), 
+                le <span class="uk-text-bold uk-text-primary">type de mouture</span> en fonction de votre cafetière et la quantité de café que vous souhaitez. 
+                Renouvelez cette opération pour autant de café que vous souhaitez.
+                
+                Enfin, n’oubliez pas de renseigner votre <span class="uk-text-bold uk-text-primary">nom, prénom, e-mail et votre numéro de téléphone</span> afin que l’on vous confirme votre commande. 
+                
                 <span class="uk-text-bold">
-                    Tous ces renseignements ne seront en aucun cas diffusés ni utilisés pour vous contactez dans un autre cadre que cette commande, ces informations seront
-                    donc supprimées à la fin de la commande.
+                    Tous ces renseignements ne seront en aucun cas diffusés ni utilisés pour vous contacter dans un autre cadre que cette commande, ces informations seront donc supprimées à la fin de la commande.
                 </span>
             </p>
         </div>

@@ -46,6 +46,16 @@
 			</div>
 		</aside>
 		<br>
+		{% for ev in event %}
+			<div id="a{{ ev.id }}" uk-offcanvas="overlay: true">
+				<div class="uk-offcanvas-bar">
+					<button class="uk-offcanvas-close" type="button" uk-close></button>
+					<h3>{{ ev.title }}</h3>
+					<p class="uk-text-muted">Le {{ ev.date|naturalday:"DATE_FORMAT" }} vers {{ ev.date|date:"H\Hi" }}</p>
+					{{ ev.description|safe }}
+				</div>
+			</div>
+		{% endfor %}
 		<br>
 		<aside class="uk-card uk-card-default uk-card-hover" uk-scrollspy="cls:uk-animation-scale-down">
 			<div class="uk-card-header">

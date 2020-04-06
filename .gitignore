@@ -50,3 +50,5 @@ yarn-error.log*
 *.sln
 *.sw?
 frontend/webpack-stats.json
+frontend/webpack-stats-prod.json
+

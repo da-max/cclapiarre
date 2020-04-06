@@ -3,7 +3,7 @@
         <meta charset='utf-8'>
     </head>
     <body>
-        <p>Vous venez de commander des cafés sur le site cclapiarre.deblan.fr. Voici donc un récapitulatif de votre commande.
+        <p>Une commande de café à votre nom vient d’être {% if status %}{% if status == 'update' %}modifiée{% else %}ajoutée{% endif %}{% endif %} depuis le site cclapiarre.deblan.fr. Voici donc un récapitulatif de cette commande.
         N'oubliez pas de venir chercher votre commande lors du prochain panier.</p><br><br>
         <p>Nom : {{ name }}, prénom : {{ first_name }}, numéro de téléphone: {{ phone_number }}</p><br>
         <table cellspacing="0" cellpadding="0" border="1" width="100%">
@@ -30,6 +30,7 @@
         </table><br><br><br>
         Prix à payer : {{ total_price }} €
         <br><br>
-        <p>Ce mail a été envoyé automatiquement, si vous avez des questions ou si vous souhaitez modifier votre commande, vous pouvez répondre directement à ce mail.</p>
+        <p>Ce mail a été envoyé automatiquement, si vous avez des questions vous pouvez répondre directement à ce mail.</p>
+        <p>Si vous souhaitez modifier votre commande, vous pouvez rentrer une nouvelle commande avec les mêmes informations personnelles que pour cette commande.</p>
     </body>
 </html>

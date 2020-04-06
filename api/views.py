@@ -8,7 +8,7 @@ from django.template.loader import get_template
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models.signals import m2m_changed
-from django.dispatch import receiver
+from django.dispatch import receiver, Signal
 
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
@@ -22,42 +22,91 @@ from command.models import Command, Amount, Product
 from coffee.models import Coffee, CommandCoffee, Quantity as AmountCoffee, Type
 
 
-@receiver(m2m_changed, sender=Command.product.through)
-def command_send_mail(sender, instance, action, **kwargs):
+# Created new signals
+post_change_command = Signal(providing_args=['instance', 'status'])
 
+
+@receiver(post_change_command, sender=Command.product.through)
+def command_send_mail(sender, instance, **kwargs):
     # Send mail when command is add
-    if action == 'post_add':
-        command_sommary = dict()
-        try:
-            isinstance(instance, Command)
-            mail = instance.send_mail
-        except Exception as e:
-            return e
+    command_sommary = dict()
+    if kwargs['status']:
+        status = kwargs['status']
 
-        if instance.send_mail:
-            amounts = instance.product.through.objects.all()
-            for amount in amounts:
-                command_sommary[amount.product.name] = {
-                    'weight': amount.product.weight,
-                    'price': float(amount.product.weight * amount.amount),
-                    'quantity': amount.amount
-                }
-            SUBJECT = "Récapitulatif de la commande"
-            FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
-            HTML_TEXT = get_template('command/command_mail/sommary.html')
-            PLAIN_TEXT = get_template('command/command_mail/sommary.txt')
+    try:
+        isinstance(instance, Command)
+        mail = instance.send_mail
+    except Exception as e:
+        return e
 
-            DATA = {
-                'command_sommary': command_sommary,
-                'first_name': instance.user.first_name,
-                'email': instance.user.email,
-                'total_price': Amount.get_total_user(Amount, instance.id)
+    if instance.send_mail:
+        amounts = instance.product.through.objects.filter(command=instance)
+        for amount in amounts:
+            command_sommary[amount.product.name] = {
+                'weight': amount.product.weight,
+                'price': float(amount.product.weight * amount.amount),
+                'quantity': amount.amount
             }
+        SUBJECT = "Récapitulatif de votre commande"
+        FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
+        HTML_TEXT = get_template('command/command_mail/sommary.html')
+        PLAIN_TEXT = get_template('command/command_mail/sommary.txt')
 
-            html_content = HTML_TEXT.render(DATA)
-            text_content = PLAIN_TEXT.render(DATA)
+        DATA = {
+            'command_sommary': command_sommary,
+            'first_name': instance.user.first_name,
+            'email': instance.user.email,
+            'total_price': Amount.get_total_user(Amount, instance.id),
+            'status': status
+        }
+
+        html_content = HTML_TEXT.render(DATA)
+        text_content = PLAIN_TEXT.render(DATA)
+        if instance.user.email:
             send_mail(SUBJECT, text_content, FROM_EMAIL, [
                 instance.user.email], html_message=html_content)
+
+
+@receiver(post_change_command, sender=CommandCoffee.coffee.through)
+def command_coffee_send_mail(sender, instance, **kwargs):
+    command_sommary = dict()
+    if kwargs['status']:
+        status = kwargs['status']
+
+    try:
+        isinstance(instance, CommandCoffee)
+    except Exception as e:
+        return e
+
+    amounts = instance.coffee.through.objects.filter(command=instance)
+    for amount in amounts:
+        command_sommary[amount.id] = {
+            'farm_coop': amount.coffee.farm_coop,
+            'weight': amount.weight,
+            'type': amount.sort.name,
+            'quantity': amount.quantity,
+            'price': amount.get_price()
+        }
+
+    SUBJECT = 'Récapitulatif de votre commande de café'
+    FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
+    HTML_TEXT = get_template('coffee/mail/command_sommary.html')
+    PLAIN_TEXT = get_template('coffee/mail/command_sommary.txt')
+
+    DATA = {
+        'command_sommary': command_sommary,
+        'name': instance.name,
+        'first_name': instance.first_name,
+        'phone_number': instance.phone_number,
+        'total_price': instance.get_total_price(),
+        'status': status
+    }
+
+    html_content = HTML_TEXT.render(DATA)
+    text_content = PLAIN_TEXT.render(DATA)
+
+    send_mail(SUBJECT, text_content, FROM_EMAIL, [
+              instance.email], html_message=html_content)
 
 
 class CommandViewSet(ModelViewSet):
@@ -158,11 +207,11 @@ class CommandViewSet(ModelViewSet):
                 else:
                     amount = Amount.objects.create(
                         product=product, amount=amount, command=command)
-                    command.product.add(data[0], through_defaults=amount)
 
         except Exception as e:
             return Response(error_response(e))
 
+        post_change_command.send(sender=Command.product.through, instance=command, status='add')
         return Response({
             'id': int(random() * 1000),
             'status': 'success',
@@ -238,10 +287,11 @@ class CommandViewSet(ModelViewSet):
             try:
                 a = Amount.objects.create(
                     command=command, product=product, amount=amount)
-                command.product.add(product, through_defaults=a)
             except Exception as e:
                 return Response(error_response(e))
 
+        post_change_command.send(
+            sender=Command.product.through, instance=command, status='update')
         return Response({
             'id': int(random() * 1000),
             'status': 'success',
@@ -500,11 +550,8 @@ class CommandCoffeeViewSet(ModelViewSet):
         for amount in sommary_command:
             a = AmountCoffee.objects.create(
                 coffee=amount['coffee'], quantity=amount['amount'], command=command, sort=amount['sort'], weight=amount['weight'])
-            command.coffee.add(amount['coffee'], through_defaults={
-                'quantity': amount['amount'],
-                'sort': amount['sort'],
-                'weight': amount['weight']
-            })
+        
+        post_change_command.send(sender=CommandCoffee.coffee.through, instance=command, status='add')
 
         return Response({
             'id': int(random() * 1000),
@@ -538,13 +585,10 @@ class CommandCoffeeViewSet(ModelViewSet):
             try:
                 AmountCoffee.objects.create(
                     command=command, coffee=amount['coffee'], quantity=amount['amount'], weight=amount['weight'], sort=amount['sort'])
-                command.coffee.add(amount['coffee'], through_defaults={
-                    'quantity': amount['amount'],
-                    'sort': amount['sort'],
-                    'weight': amount['weight']
-                })
             except Exception as e:
                 return Response(self.error_response(error=e, action='la modification'))
+        
+        post_change_command.send(sender=CommandCoffee.coffee.through, instance=command, status='update')
 
         return Response({
             'id': int(random() * 1000),

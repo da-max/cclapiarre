@@ -19,13 +19,13 @@
           <message status="warning">
             <template #header>Attention</template>
             <template #body>
-              Une commande avec le même numéro de télephone ou la même adresse mail a été trouvé. Cette commande est affichée ci-dessous,
+              Une commande avec le même numéro de téléphone ou la même adresse mail a été trouvé. Cette commande est affichée ci-dessous,
               <span
                 class="uk-text-bold"
-              >si elle correspond à une commande que vous avez effectué</span>, il est possible de la remplacer.
+              >si elle correspond à une commande que vous avez effectuée</span>, il est possible de la remplacer.
               <span class="uk-text-bold uk-text-warning">
                 Si cette commande n’a pas été
-                passé par vous merci de cliquer sur annuler la commande.
+                passée par vous merci de cliquer sur annuler la commande.
               </span>
             </template>
           </message>
@@ -47,7 +47,7 @@
                 {{ old_command.email }}
               </div>
               <div>
-                <span class="uk-label">Numéro de télephone</span>
+                <span class="uk-label">Numéro de téléphone</span>
                 {{ old_command.phone_number }}
               </div>
               <div>
@@ -82,7 +82,7 @@
                 {{ email }}
               </div>
               <div>
-                <span class="uk-label">Numéro de télephone</span>
+                <span class="uk-label">Numéro de téléphone</span>
                 {{ phone_number }}
               </div>
               <div>

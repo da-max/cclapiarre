@@ -1,6 +1,6 @@
 import json
 from django.core.exceptions import ObjectDoesNotExist
-from registration.models import PageAccess
+from stats.models import PageAccess
 
 
 

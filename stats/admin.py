@@ -1,3 +1,4 @@
 from django.contrib import admin
+from stats.models import PageAccess
 
-# Register your models here.
+admin.site.register(PageAccess)

@@ -22,16 +22,15 @@
 				{% block breadcrumb %}{% endblock breadcrumb %}
 			</ul>
 		</section>
-		{% if request.is_access == False %}
-			<div id="not_access" class="uk-flex-top" uk-modal="bg-close: false; esc-clode: false;">
+		{% if request.page_access == False %}
+			<div id="not_access" class="uk-flex-top" uk-modal="bg-close: false; esc-close: false;">
 				<div class="uk-modal-dialog uk-margin-auto-vertical">
 					<div class="uk-modal-header">
-						<h2 class="uk-modal-title uk-text-primary">Vous êtes en avance (ou en retard) !</h2>
+						<h2 class="uk-modal-title uk-text-primary">{{ request.page_title }}</h2>
 					</div>
 					<div class="uk-modal-body">
 						<p>
-						Cette partie du site n'est pas encore ouverte, ou est fermée temporairement. Merci de repasser plus tard ou de contacter un gérant du site
-						si vous rencontrez un problème.
+						{{ request.page_content|safe }}
 						</p>
 					</div>
 					<div class="uk-modal-footer uk-text-right">

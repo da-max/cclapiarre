@@ -40,6 +40,7 @@ urlpatterns = [
     path('carousel/', include("carousel.urls")),
     path("cafe/", include("coffee.urls")),
     path('pate/', include("pasta.urls")),
+    path('parametre/', include('stats.urls')),
     path('pages/', include('django.contrib.flatpages.urls')),
     
     # Page for display content of CHANGELOG.md files

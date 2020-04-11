@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponseRedirect
 from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib import messages
 
 from stats.models import PageAccess
 from stats.forms import PageAccessForm
@@ -27,14 +28,7 @@ class ListPageAccess(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = PageAccess
     context_object_name = 'pages'
     template_name = 'stats/page_access/list.html'
-
-    def get_queryset(self):
-        """ Queryset for get data for template.
-
-        Returns:
-            Queryset -- contains all PageAccess objects.
-        """
-        return PageAccess.objects.all()
+    queryset = PageAccess.objects.all()
 
 
 class CreatePageAccess(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
@@ -58,3 +52,11 @@ class CreatePageAccess(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     template_name = 'stats/page_access/new.html'
     success_url = reverse_lazy('list_pageaccess')
     form_class = PageAccessForm
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.save()
+        messages.success(self.request, "La règle a bien été enregistrée.")
+        return HttpResponseRedirect(self.get_success_url())
+    
+    

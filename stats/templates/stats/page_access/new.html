@@ -1,8 +1,17 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block style %}
+<script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+<script type="text/javascript" src="{% static '/admin/js/core.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static '/admin/css/widgets.css' %}">
+<style>.calendar>table>caption{caption-side:unset}</style>
+{% endblock style %}
+
 
 {% block header %}
     <h1 class="uk-text-center uk-margin-xlarge-top">Créer une règle d’accès pour une page</h1>
-    <aside class="uk-tile uk-tile-default uk-text-justify">
+    <aside class="uk-tile uk-tile-default uk-text-justify uk-width-2-5@m uk-margin-large-top uk-margin-large-bottom uk-box-shadow-small uk-margin-auto">
         Cette page permet de créer une régle d’accès pour une page, pour cela, il faut récupérer l'URL de la page
         concernée par cette règle (vous trouverez l'URL en haut de la page, elle devrait commencer par : https://cclapiarre.deblan.fr/).
         Il y a différentes options disponibles, vous les trouverez ci-dessus.
@@ -10,11 +19,52 @@
 {% endblock header %}
 
 {% block content %}
-    <div>
-        <form method='post' action="#">
-            {% csrf_token %}
-            {{ form.media }}
-            {{ form.as_p }}
-        </form>
-    </div>
+    <form class="uk-width-3-5@m uk-width-3-4@s uk-margin-auto uk-margin-top uk-form-width-small" method='post' action="">
+        {% csrf_token %}
+        {{ form.media }}
+        <fieldset class="uk-fieldset uk-grid-large uk-child-width-1-2@m" uk-grid>
+            <legend class="uk-legend uk-width-1-1 uk-text-center uk-margin-medium-bottom">Informations générales</legend>
+                <div>
+                    <label for="name">{{ form.name.label }}</label>
+                    {{ form.name }}
+                </div>
+                <div>
+                    <label for="url">{{ form.url.label }}</label>
+                    {{ form.url }}
+                    <p class="uk-text-muted">{{ form.url.help_text }}</p>
+                </div>
+                <div>
+                    <label for="access">{{ form.access.label }}</label>
+                    {{ form.access }}
+                    <p class="uk-text-muted">{{ form.access.help_text }}</p>
+                </div>
+                <div>
+                    <label for="raise_exception">{{ form.raise_exception.label }}</label>
+                    {{ form.raise_exception }}
+                    <p class="uk-text-muted">{{ form.raise_exception.help_text }}</p>
+                </div>
+                <div>
+                    <label for="start_date">{{ form.start_date.label }}</label>
+                    {{ form.start_date }}
+                    <p class="uk-text-muted">{{ form.start_date.help_text }}</p>
+                </div>
+        </fieldset>
+        <hr class="uk-divider-icon uk-margin-large-bottom uk-margin-large-top">
+        <fieldset class="uk-fieldset uk-margin-large-top" uk-margin>
+            <legend class="uk-legend uk-text-center">A propos du message affiché (si l’accès est bloqué)</legend>
+            <div>
+                <label for="title">{{ form.title.label }}</label>
+                {{ form.title }}
+                <p class="uk-text-muted">{{ form.title.help_text }}</p>
+            </div>
+            <div>
+                <label for="content">{{ form.content.label }}</label><bR>
+                {{ form.content }}
+                <p class="uk-text-muted">{{ form.content.help_text }}</p>
+            </div>
+        </fieldset>
+        <div class="uk-text-center">
+            <input type="submit" class="uk-button uk-button-primary uk-button-large uk-margin-medium-top" value="Créer la règle">
+        </div>
+    </form>
 {% endblock content %}

@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 
 from stats.models import PageAccess
 from stats.forms import PageAccessForm
@@ -110,8 +111,34 @@ class UpdatePageAccess(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
         """
         id = self.kwargs.get('id_pageaccess', None)
         return get_object_or_404(PageAccess, id=id)
-    
+
     def form_valid(self, form):
         self.object = form.save()
-        messages.success(self.request, "La règle <span class='uk-text-italic'>« {} »</span> a bien été modifiée.".format(self.object.name))
+        messages.success(
+            self.request, "La règle <span class='uk-text-italic'>« {} »</span> a bien été modifiée.".format(self.object.name))
         return HttpResponseRedirect(self.get_success_url())
+
+
+@login_required
+@permission_required('stats.delete_pageaccess')
+def delete_pageaccess(request, id_pageaccess):
+    """ Function fot delete PageAccess model, from id.
+
+    Arguments:
+        request {Request} -- Request
+        id_pageaccess {int} -- Id gave in URL.
+
+    Returns:
+        Response -- Redirect to list_pageaccess
+    """
+    page_access = get_object_or_404(PageAccess, id=id_pageaccess)
+    result = page_access.delete()
+    success_url = reverse_lazy('list_pageaccess')
+
+    if result:
+        messages.success(request, "La règle a bien été supprimée.")
+    else:
+        messages.warning(
+            request, "la règle n’a pas pu être supprimée, merci de réessayer.")
+
+    return HttpResponseRedirect(success_url)

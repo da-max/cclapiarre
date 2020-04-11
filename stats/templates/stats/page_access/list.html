@@ -11,15 +11,25 @@
             cliquer sur le bouton « ajouter une nouvelle régle d’accès ».
         </aside>
         <div class="uk-margin-large-top uk-text-center">
-            <a href="{% url 'home' %}" class="uk-button uk-button-primary uk-button-large">Ajouter une régle</a>    
+            <a href="{% url 'create_pageaccess' %}" class="uk-button uk-button-primary uk-button-large">Ajouter une régle</a>    
         </div>
 {% endblock header %}
 
 {% block content %}
     <div class="uk-margin-top uk-margin-auto uk-width-3-5@m uk-width-3-4@s">
     {% for page in pages %}
+        <div id="p{{ page.id }}" uk-modal>
+	    	<div class="uk-modal-dialog uk-modal-body">
+			    <h2 class="uk-modal-title">Supprimer ?</h2>
+		    	<p>Êtes-vous sûr de vouloir supprimer cette règle, aucun retour en arrière ne sera possible !</p>
+	    		<p class="uk-text-right">
+    				<button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
+				    <a class="uk-button uk-button-primary" type="link" href="{% url 'delete_pageaccess' id_pageaccess=page.id %}">Supprimer</a>
+			    </p>
+		    </div>
+	    </div>
         <div>
-                <h2 class="uk-text-center">{{ page.name }}</h2>
+            <h2 class="uk-text-center">{{ page.name }}</h2>
             <div class="uk-child-width-1-2@m uk-margin-large-top uk-child-width-extends uk-grid-divider" uk-grid>
                 <div>
                     <h3 class="uk-text-center">Informations générale</h3>
@@ -43,8 +53,8 @@
                 </div>
             </div>
             <div class="uk-margin-large-top uk-margin-large-bottom uk-text-center">
+                <button class="uk-button uk-button-danger" href="#p{{ page.id }}" uk-toggle>Supprimer cette règle</button>
                 <a href="{% url 'update_pageaccess' id_pageaccess=page.id %}" class="uk-button uk-button-secondary">Modifier cette règle</a>
-                <button class="uk-button uk-button-danger">Supprimer cette règle</button>        
             </div>
         </div>
         {% if pages|length > 1 %}

@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from stats.models import PageAccess
 from django.utils import timezone
 from django.http import Http404
-
+from django.db.models import Q
 
 class CheckAccess:
     """ Middleware for check if the page display has not an access as False. """
@@ -15,25 +15,23 @@ class CheckAccess:
     def __call__(self, request):
 
         try:
-            page = PageAccess.objects.get(url=request.build_absolute_uri())
+            # Get PageAccess object with same url to request, start_date before now, and with False access.
+            page = PageAccess.objects.get(Q(url=request.build_absolute_uri()) & Q(start_date__lt=timezone.now()) & Q(access=False))
 
         # url fields has unique attribute at True,so I don’t check if get return one of more values (with except).
         except ObjectDoesNotExist:
             pass
-
         else:
-            if page.start_date > timezone.now():
-                request.page_access = True
-
-            elif page.raise_exception:
-                raise Http404(page.content)
+            if page.raise_exception:
+                raise Http404((page.title, page.content))
             else:
-                request.page_access = bool(page.access)
-                request.page_title = page.title
-                request.page_content = page.content
-        finally:
-            response = self.get_response(request)
-            return response
+                request.page = dict()
+                request.page['access'] = False
+                request.page['title'] = page.title
+                request.page['content'] = page.content
+        
+        response = self.get_response(request)
+        return response
 
 
 class Version:

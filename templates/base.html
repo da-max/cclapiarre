@@ -22,15 +22,15 @@
 				{% block breadcrumb %}{% endblock breadcrumb %}
 			</ul>
 		</section>
-		{% if request.page_access == False %}
+		{% if request.page.access == False %}
 			<div id="not_access" class="uk-flex-top" uk-modal="bg-close: false; esc-close: false;">
 				<div class="uk-modal-dialog uk-margin-auto-vertical">
 					<div class="uk-modal-header">
-						<h2 class="uk-modal-title uk-text-primary">{{ request.page_title }}</h2>
+						<h2 class="uk-modal-title uk-text-primary">{{ request.page.title }}</h2>
 					</div>
 					<div class="uk-modal-body">
 						<p>
-						{{ request.page_content|safe }}
+						{{ request.page.content|safe }}
 						</p>
 					</div>
 					<div class="uk-modal-footer uk-text-right">

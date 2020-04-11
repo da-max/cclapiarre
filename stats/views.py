@@ -1,5 +1,5 @@
-from django.shortcuts import render, HttpResponseRedirect
-from django.views.generic import ListView, CreateView
+from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
+from django.views.generic import ListView, CreateView, UpdateView
 from django.urls import reverse_lazy
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -54,9 +54,64 @@ class CreatePageAccess(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     form_class = PageAccessForm
 
     def form_valid(self, form):
+        """ Method call when the form is valid. Save the data in database.
+
+        Arguments:
+            form {cleanned_data} -- Data cleanned after verification
+
+        Returns:
+            Response -- Redirect to list_pageaccess when the rules is save.
+        """
         self.object = form.save()
-        self.object.save()
         messages.success(self.request, "La règle a bien été enregistrée.")
         return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        """ Method for define comportement when an user send bad data
+
+        Arguments:
+            form {cleanned_data} -- Cleanned_data after automatic verification
+
+        Returns:
+            Response -- contains warning messages and form.
+        """
+        messages.warning(self.request, "La règle n’a pas pu être enregistré, merci de vérifier que \
+        tous les champs ont bien été remplis, puis réessayer.")
+        return HttpResponseRedirect(reverse_lazy('create_pageaccess', {'form': form}))
+
+
+class UpdatePageAccess(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    """ Class for update pageaccess
+
+    Extends:
+        LoginRequiredMixin -- This view required login user.
+        PermissionRequiredMixin -- This view required permission for access to view.
+        UpdateView  -- This class extends to UpdateView.
+
+    Attribute:
+        permission_required -- The view is accessible if user have stats.change_pageaccess permission
+        model -- This view use PageAccess model.
+        template_name -- The template for this view is stats/page_access/update.html
+        success_url -- If form is valid, the user is redirect to list_pageaccess (ListPageAccess class)
+        form_class -- The form is PageAccessForm (display in template)
+    """
+    permission_required = "stats.change_pageaccess"
+    model = PageAccess
+    template_name = "stats/page_access/update.html"
+    content_object_name = 'page_access'
+    success_url = reverse_lazy('list_pageaccess')
+    form_class = PageAccessForm
+
+    def get_object(self):
+        """ Method for define rules for get_object
+
+        Returns:
+            PageAccess or 404 -- If object is find with id (define in url), an object is return, else raise 404 error. 
+        """
+        id = self.kwargs.get('id_pageaccess', None)
+        return get_object_or_404(PageAccess, id=id)
     
-    
+    def form_valid(self, form):
+        self.object = form.save()
+        messages.success(self.request, "La règle <span class='uk-text-italic'>« {} »</span> a bien été modifiée.".format(self.object.name))
+        return HttpResponseRedirect(self.get_success_url())

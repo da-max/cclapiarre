@@ -7,10 +7,12 @@ from stats.models import PageAccess
 
 class PageAccessForm(models.ModelForm):
     """ Class for define form display with CreatePageAccess."""
-    start_date = SplitDateTimeField()
     class Meta:
         model = PageAccess
         fields = '__all__'
+        field_classes = {
+            "start_date": SplitDateTimeField
+        }
         widgets = {
             "name": TextInput(attrs={"class": "uk-input"}),
             "url": URLInput(attrs={"class": "uk-input"}),

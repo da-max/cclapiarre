@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Liste des accès aux pages
-{% endblock title %}
+{% block title %}Liste des accès aux pages{% endblock title %}
+
+{% block breadcrumb %}
+    <li><a href="{% url 'home' %}">Accueil</a></li>
+    <li class="uk-disabled"><a href="">Paramètre</a></li>
+    <li><span>Listes des règles d’accès aux pages</span></li>
+{% endblock breadcrumb %}
 
 {% block header %}
         <h1 class="uk-text-center uk-margin-xlarge-top">Liste des accès aux pages</h1>

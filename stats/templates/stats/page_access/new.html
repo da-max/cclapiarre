@@ -5,9 +5,16 @@
 <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
 <script type="text/javascript" src="{% static '/admin/js/core.js' %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static '/admin/css/widgets.css' %}">
-<style>.calendar>table>caption{caption-side:unset}</style>
 {% endblock style %}
 
+{% block title %}Créer une règle d’accès pour une page{% endblock title %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+    <li class="uk-disabled"><a href="#">Paramètres</a></li>
+    <li><a href="{% url 'list_pageaccess' %}">Listes des règles d’accès aux pages</a></li>
+	<li><span>Ajouter une règle d’accès</span></li>
+{% endblock breadcrumb %}
 
 {% block header %}
     <h1 class="uk-text-center uk-margin-xlarge-top">Créer une règle d’accès pour une page</h1>

@@ -38,7 +38,7 @@ class Command(Model):
                           help_text="Merci de laisser la valeur par défaut.")
     user = ForeignKey(User, on_delete=CASCADE, related_name="utilisateur")
     product = ManyToManyField(
-        Product, through='Amount', related_name='product')
+        Product, through='Amount', related_name='commands')
     send_mail = BooleanField(verbose_name='Envoyer un mail', default=True,
                              help_text='Décocher cette case afin qu\'aucun mail ne soit envoyé à l\'utilisateur '
                              'lors de sa commande (ou de la modification de sa commande.')
@@ -60,8 +60,8 @@ class Command(Model):
 
 
 class Amount(Model):
-    product = ForeignKey(Product, on_delete=CASCADE, related_name="produit")
-    command = ForeignKey(Command, on_delete=CASCADE, related_name="commande")
+    product = ForeignKey(Product, on_delete=CASCADE, related_name="amounts")
+    command = ForeignKey(Command, on_delete=CASCADE, related_name="amounts")
     amount = FloatField(verbose_name="Quatité commandé")
 
     class Meta:

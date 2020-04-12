@@ -23,7 +23,6 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'last_name', 'first_name']
 
-
 class ProductSerializer(ModelSerializer):
     #display = BooleanField(required=False)
     total = SerializerMethodField()
@@ -36,15 +35,23 @@ class ProductSerializer(ModelSerializer):
     def get_total(self, product):
         return product.get_total()
 
+class AmountSerializer(ModelSerializer):
+    amount = FloatField()
+    product = ProductSerializer()
+
+    class Meta:
+        model = Amount
+        fields = ['id', 'product', 'amount']
+
 
 class CommandSerializer(ModelSerializer):
     total = SerializerMethodField()
     user = UserSerializer()
-    product = ProductSerializer(many=True)
+    amounts = AmountSerializer(many=True)
 
     class Meta:
         model = Command
-        fields = ['user', 'product', 'total', 'id']
+        fields = ['user', 'total', 'id', 'amounts']
 
     def get_total(self, command):
 
@@ -58,15 +65,6 @@ class CommandSmallSerializer(ModelSerializer):
         model = Command
         fields = ['id', 'user']
 
-
-class AmountSerializer(ModelSerializer):
-    amount = FloatField()
-    product = ProductSerializer()
-    command = CommandSmallSerializer()
-
-    class Meta:
-        model = Amount
-        fields = ['id', 'command', 'product', 'amount']
 
 
 """ Serializer for coffee app """

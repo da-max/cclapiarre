@@ -12,7 +12,7 @@ const routes = [
     }
   },
   {
-    path: '/commande/commander-des-agrumes',
+    path: '/agrumes/commander-des-agrumes',
     name: 'citrus_command',
     component: function () {
       return import('../views/CitrusCommand.vue')

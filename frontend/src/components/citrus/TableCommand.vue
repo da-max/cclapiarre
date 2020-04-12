@@ -149,7 +149,7 @@
       </template>
       <template v-slot:body>
         <p>
-          Vous êts sur le point de supprimer toutes les commandes,
+          Vous êtes sur le point de supprimer toutes les commandes,
           <span
             class="uk-text-warning uk-text-bold uk-text-uppercase"
           >attention, cette action est irréversible !</span>
@@ -206,9 +206,9 @@
       </message>
       <!--- Display if user has alreay command -->
       <message v-show="has_command" :close="false">
-        <template v-slot:header>Vous avez déjà commandé</template>
+        <template v-slot:header>Vous avez commandé</template>
         <template v-slot:body>
-          Vous avez déjà commandé, si vous souhaitez modifier votre commande merci
+          Vous avez commandé, si vous souhaitez modifier votre commande merci
           de contacter l'administrateur du site à cette adresse :
           <span class="uk-text-bold">da-max@tutanota.com</span>
         </template>

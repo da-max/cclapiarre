@@ -18,6 +18,7 @@ from django.urls import path
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
+from django.views.i18n import JavaScriptCatalog
 
 
 from django.contrib import admin
@@ -40,13 +41,16 @@ urlpatterns = [
     path('carousel/', include("carousel.urls")),
     path("cafe/", include("coffee.urls")),
     path('pate/', include("pasta.urls")),
+    path('parametre/', include('stats.urls')),
     path('pages/', include('django.contrib.flatpages.urls')),
     
     # Page for display content of CHANGELOG.md files
     path('changements', a_views.changelog, name='changelog'),
 
     # Api
-    url(r'^api/', include(('api.urls', 'api'), namespace='api'))
+    url(r'^api/', include(('api.urls', 'api'), namespace='api')),
+
+    path('jsi18n', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

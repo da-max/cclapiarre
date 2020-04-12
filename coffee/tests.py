@@ -1,5 +1,4 @@
-from django.test import TestCase, TransactionTestCase
-from django.test import Client
+from django.test import TestCase, TransactionTestCase, Client
 from django.db.models import Q
 from django.template.loader import render_to_string
 

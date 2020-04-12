@@ -134,7 +134,7 @@ class UpdateCoffee(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
         coffees = Coffee.objects.exclude(id=id_coffee)
         for coffee in coffees:
             if coffee.region == region:
-                messages.warning(self.request, "Le nom de région que rentré est le même que pour un autre café, \
+                messages.warning(self.request, "Le nom de région rentré est le même que pour un autre café, \
                     merci de le changer puis de réessayer.")
                 return HttpResponseRedirect(reverse_lazy('update_coffee', kwargs={'id_coffee': id_coffee}), {'form': form})
 

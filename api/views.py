@@ -237,7 +237,7 @@ class CommandViewSet(ModelViewSet):
             return Response({
                 'status': 'success',
                 'header': 'Commande supprimée',
-                'body': 'La commande de {} a bie été supprimé.'.format(command.user.username)})
+                'body': 'La commande de {} a bien été supprimé.'.format(command.user.username)})
 
     def update(self, request, pk):
 

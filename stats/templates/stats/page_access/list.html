@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des accès aux pages{% endblock title %}
+
+{% block breadcrumb %}
+    <li><a href="{% url 'home' %}">Accueil</a></li>
+    <li class="uk-disabled"><a href="">Paramètre</a></li>
+    <li><span>Listes des règles d’accès aux pages</span></li>
+{% endblock breadcrumb %}
+
+{% block header %}
+        <h1 class="uk-text-center uk-margin-xlarge-top">Liste des accès aux pages</h1>
+        <aside class="uk-text-justify uk-margin-auto uk-margin-large-top uk-margin-large-bottom uk-box-shadow-small uk-width-2-5@m uk-tile uk-tile-default">
+            Cette page recense tous les accès aux pages de cclpiarre.deblan.fr. Il est possible de gérer
+            l’ensemble des accès aux pages du site. Pour ajouter une nouvelle régle d'accès, il suffit de 
+            cliquer sur le bouton « ajouter une nouvelle régle d’accès ».
+        </aside>
+        <div class="uk-margin-large-top uk-text-center">
+            <a href="{% url 'create_pageaccess' %}" class="uk-button uk-button-primary uk-button-large">Ajouter une régle</a>    
+        </div>
+{% endblock header %}
+
+{% block content %}
+    <div class="uk-margin-top uk-margin-auto uk-width-3-5@m uk-width-3-4@s">
+    {% for page in pages %}
+        <div id="p{{ page.id }}" uk-modal>
+	    	<div class="uk-modal-dialog uk-modal-body">
+			    <h2 class="uk-modal-title">Supprimer ?</h2>
+		    	<p>Êtes-vous sûr de vouloir supprimer cette règle, aucun retour en arrière ne sera possible !</p>
+	    		<p class="uk-text-right">
+    				<button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
+				    <a class="uk-button uk-button-primary" type="link" href="{% url 'delete_pageaccess' id_pageaccess=page.id %}">Supprimer</a>
+			    </p>
+		    </div>
+	    </div>
+        <div>
+            <h2 class="uk-text-center">{{ page.name }}</h2>
+            <div class="uk-child-width-1-2@m uk-margin-large-top uk-child-width-extends uk-grid-divider" uk-grid>
+                <div>
+                    <h3 class="uk-text-center">Informations générale</h3>
+                    <div><span class="uk-label">Url de la page</span> <a href="{{ page.url }}">{{ page.url }}</a></div>
+                    <div>
+                        <span class="uk-label">Date de prise en compte de la règle</span> {{ page.start_date }}
+                        <p class="uk-text-muted">La règle ne sera prise en compte d’après la date affichée ci-dessus. Si cette date est après la date d’aujourd’hui ({% now "DATETIME_FORMAT" %}),
+                        l’accès est actuellement ouvert.</p>
+                    </div>
+                    <div><span class="uk-label">Accès</span> {{ page.access|yesno:'Ouvert,Fermé' }}</div>
+                    <div>
+                        <span class="uk-label">Lever une exception</span> {{ page.raise_exception|yesno:'Oui,Non' }}
+                        <p class="uk-text-muted">Si cette option est cochée, lorsque l’utilisateur essayera d’aller sur la page en question, elle sera affichée comme inexistante. Sinon, une simple fenêtre modal
+                        sera affichée avec le contenu du message.</p>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="uk-text-center">Message affiché</h3>
+                    <div><span class="uk-label">Titre</span> {{ page.title }}</div>
+                    <div><span class="uk-label">Contenu du message</span> {{ page.content|safe }}</div>
+                </div>
+            </div>
+            <div class="uk-margin-large-top uk-margin-large-bottom uk-text-center">
+                <button class="uk-button uk-button-danger" href="#p{{ page.id }}" uk-toggle>Supprimer cette règle</button>
+                <a href="{% url 'update_pageaccess' id_pageaccess=page.id %}" class="uk-button uk-button-secondary">Modifier cette règle</a>
+            </div>
+        </div>
+        {% if pages|length > 1 %}
+            <hr class="uk-divider-icon">    
+        {% endif %}
+    {% empty %}
+        <p class="uk-text-center uk-text-bold">Acune régle n'a été définis.</p>
+    {% endfor %}
+    </div>
+{% endblock content %}

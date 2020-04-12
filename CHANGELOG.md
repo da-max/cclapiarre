@@ -1,14 +1,26 @@
 # Changements
 Tous les changements de ce projet sont documentés ici, ce fichier est affiché sur cette page : [https://cclapiarre.deblan.fr/changements/](https://cclapiarre.deblan.fr/changements/) il est donc écrit en français.
 
+## 12 avril 2020 : Sortie de la version 5.4.4
+
+### Ajout
+* Développement d’un système déjà existant : la règle d’accès aux différentes pages du site. Ce système intègre désormais les options suivantes :
+  * La possibilité de définir une date et une heure à laquelle cette règle prendra effet.
+  * Ajout d’une option permettant de rendre la page introuvable (404), si cette option n’est pas activée, un simple message sera affiché dans une fenêtre modal.
+  * Possibilité de personnaliser le message affiché dans la fenêtre modale (ce message sera affiché uniquement si l’option « lever une exception » n’est pas activée).
+* Des tests ont été ajoutés afin de tester cette nouvelle fonctionnalité.
+
+### Résolution de bogue
+* Des petites corrections ont été effectués sur le système d’ajout de café (corrections de fautes d’orthographes).
+
 ## 04 avril 2020 : Sortie de la version 5.4.3
 
 ### Ajout
 * Lors d’une commande de café, si un adhérent rentre **exactement** la même adresse mail OU le même numéro de téléphone que lors de sa première commande, il va lui être automatiquement proposé de changer sa commande par la nouvelle.
-* Des tests ont été ajouté afin de vérifier que l’api du système de commande de café fonctionne bien.
+* Des tests ont été ajoutés afin de vérifier que l’api du système de commande de café fonctionne bien.
 
 ### Modification
-La page permettant de commandé du café utilise à présent l’api créée par Django rest framework.
+La page permettant de commander du café utilise à présent l’api créée par Django rest framework.
 
 ### Résolution de bogue
 * Résolution d’un bogue d’affichage des évènements (dû au framework UIkit) sur la page d’accueil.
@@ -41,7 +53,7 @@ Modification de l’affichage du menu sur les petits écrans (téléphones), en 
 ### Ajout
 
 * La partie commande d’agrumes permet désormais, à certains utilisateurs, de modifier ou de supprimer de les commandes des utilisateurs. *Attention, une fois une commande supprimer, aucun retour en arrière ne sera possible.*
-* **Ces fonctionnalités sont toujours à l’état de test, n’hésiter pas à me faire vos retours et à me signaler toutes erreurs.**
+* **Ces fonctionnalités sont toujours à l’état de test, n’hésitez pas à me faire vos retours et à me signaler toutes erreurs.**
 
 ## 30 juillet 2019 : Sortie de la version 5.0
 
@@ -63,7 +75,7 @@ Modification de l’affichage du menu sur les petits écrans (téléphones), en 
 ### Modification
 
 * Le fond a également changé de couleur pour une meilleure lisibilité.
-* L’animation d’apparition du “footer” (la panel tout en bas) a également changé afin d'offrir une meilleure navigation dans le site.
+* L’animation d’apparition du “footer” (la panel tout en bas) a également changé afin d’offrir une meilleure navigation dans le site.
 
 ## 11 septembre 2019 : Sortie de la version 5.1.1
 
@@ -76,7 +88,7 @@ Modification de l’affichage du menu sur les petits écrans (téléphones), en 
 ### Ajout
 
 * Depuis cette version, le site utilise le framework frontend [vuejs](https://vuejs.org) afin de rendre le site plus dynamique. Cette technologie est utilisée pour le moment uniquement pour les parties agrumes et café !
-* Ajout d'un fil d'ariane afin de naviguer plus facilement dans le site
+* Ajout d’un fil d’Ariane afin de naviguer plus facilement dans le site
 
 ## 23 décembre 2019 : Sortie de la version 5.2.1
 
@@ -90,31 +102,31 @@ Pour cette fin d’année le site se dote d’une petite fonctionnalité en plus
 
 La fonctionnalité permettant de télécharger le fichier récapitulatif de la commande d’agrumes a aussi été revu, tout devrait à présent fonctionner.
 
-## 12 Janvier : Sortie de la version 5.3
+## 12 janvier : Sortie de la version 5.3
 
 *Une page pour commander des pâtes, et plus de stabilité*
 
 ### Ajout
 
-* En ce début d'année, un nouveau système fait son arrivé, la commande de pâtes. Ce système devrait donc faciliter les prochaines commandes de pâtes.
+* En ce début d’année, un nouveau système fait son arrivée, la commande de pâtes. Ce système devrait donc faciliter les prochaines commandes de pâtes.
 * Des tests sont intégrés à ce projet afin de sécuriser et de vérifier que le site fonctionne comme il le devrait.
 
 ### Correction de bogue
 
 Modification du système permettant de générer le fichier récapitulatif de la commande de café.
 
-## 24 Février : Sortie de la version 5.3.1
+## 24 février : Sortie de la version 5.3.1
 
 ### Ajout
 
 * Un fichier (CHANGELOG.md) a été ajouté au projet afin de lister les changements fait au site. Ce fichier est affiché sur le site à cette adresse : [https://cclapiarre.deblan.fr/changements](https://cclapiarre.deblan.fr/changements).
-* Une nouvelle dépendance s'ajoute donc au site : [https://github.com/trentm/django-markdown-deux](https://github.com/trentm/django-markdown-deux) afin de pouvoir afficher du Markdown dans le site.
-* Le site inclus maintenant un système d'intégration continue, cela permet de tester automatiquement le projet à chaque mise à jour.
-* Le site utilise maintenant [Font awesome](https://fontawesome.com) afin d'afficher des icônes dans les pages (l'icône de Gitlab provient de fontawesome).
-* Le site inclus de plus en plus de tests afin d'être certain que l'ensemble du site fonctionne correctement.
+* Une nouvelle dépendance s’ajoute donc au site : [https://github.com/trentm/django-markdown-deux](https://github.com/trentm/django-markdown-deux) afin de pouvoir afficher du Markdown dans le site.
+* Le site inclus maintenant un système d’intégration continue, cela permet de tester automatiquement le projet à chaque mise à jour.
+* Le site utilise maintenant [Font awesome](https://fontawesome.com) afin d’afficher des icônes dans les pages (l’icône de Gitlab provient de fontawesome).
+* Le site inclus de plus en plus de tests afin d’être certain que l’ensemble du site fonctionne correctement.
 
 ### Modification
 
-* Le footer a été modifié afin d'afficher plus d'informations à propos du site tel qu'un lien vers le code source du projet (hébergé par Gitlab), le numéro de la version du site, la licence de site ou le nom du développeur du site.
-* Jusqu'à maintenant, le site utilisé un CDN afin de récupérer le framework css UIkit. Depuis la version 5.3.1, le style est directement inclus dans le site, cela favorisera son indépendance.
-* La licence a été modifié afin qu'elle soit plus en accord avec le projet (elle reste libre).
+* Le footer a été modifié afin d’afficher plus d’informations à propos du site tel qu’un lien vers le code source du projet (hébergé par Gitlab), le numéro de la version du site, la licence de site ou le nom du développeur du site.
+* Jusqu’à maintenant, le site utilisé un CDN afin de récupérer le framework css UIkit. Depuis la version 5.3.1, le style est directement inclus dans le site, cela favorisera son indépendance.
+* La licence a été modifiée afin qu’elle soit plus en accord avec le projet (elle reste libre).

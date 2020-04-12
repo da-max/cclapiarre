@@ -7,7 +7,7 @@ from rest_framework.test import APITransactionTestCase, URLPatternsTestCase, API
 from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth.models import User
 
-from command.models import Amount, Product, Command
+from citrus.models import Amount, Product, Command
 from coffee.models import Coffee, CommandCoffee, Quantity as AmountCoffee, Origin as OriginCoffee, Type as TypeCoffee
 from registration.views import connect
 

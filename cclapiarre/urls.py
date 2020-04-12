@@ -36,7 +36,7 @@ urlpatterns = [
     path('compte/', include("registration.urls")),
     path('article/', include("article.urls")),
     path('evenement/', include("event.urls")),
-    path('commande/', include('command.urls')),
+    path('agrumes/', include('citrus.urls')),
     path('a-propos-du-site/', views.flatpage, {'url': "/a-propos-du-site/"}, name="a_propos"),
     path('carousel/', include("carousel.urls")),
     path("cafe/", include("coffee.urls")),

@@ -2,7 +2,7 @@
 from django.contrib.auth.models import User
 from rest_framework.serializers import ModelSerializer, BooleanField, FloatField, RelatedField, SerializerMethodField
 
-from command.models import Command, Amount, Product
+from citrus.models import Command, Amount, Product
 from coffee.models import Origin as CoffeeOrigin, Quantity as CoffeeAmount, Coffee, CommandCoffee, Type as CoffeeType
 
 

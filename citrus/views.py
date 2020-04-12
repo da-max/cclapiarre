@@ -15,10 +15,10 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django_xhtml2pdf.utils import pdf_decorator
 
 
-from command.models import Product, Command, Amount
+from citrus.models import Product, Command, Amount
 
 @login_required
-@permission_required('command.add_command', raise_exception=True)
+@permission_required('citrus.add_command', raise_exception=True)
 def table_command(request):
     """ This view create a table with all commands of users,
     list of product and allows of an user to order.
@@ -74,12 +74,12 @@ def table_command(request):
         messages.info(request, "Vous avez déjà commandé, si vous souhaitez modifier votre commande merci de contacter directement les personnes qui s'occupent de la commande, ou l'administrateur du site à cette adresse : benhassenm@tutamail.com")
  
  
-    return render(request, "command/command/table_command.html", locals())
+    return render(request, "citrus/command/table_command.html", locals())
 
 
 
 @login_required
-@permission_required('command.add_command', raise_exception=True)
+@permission_required('citrus.add_command', raise_exception=True)
 def create_command(request):
     """ For create an order when an user has send an order.
     
@@ -135,7 +135,7 @@ def create_command(request):
 
 
 @login_required
-@permission_required('command.change_product', raise_exception=True)
+@permission_required('citrus.change_product', raise_exception=True)
 @pdf_decorator(pdfname="recapitulatif_de_la_commande.pdf")
 def sommary_command(request):
     amouts_list = dict()
@@ -175,16 +175,16 @@ def sommary_command(request):
             'total': Amount.get_total_product(Amount, product)
         }
     
-    return render(request, "command/pdf/sommary_command.html", {'products_list': products_list, 'users': users, 'total': total})
+    return render(request, "citrus/pdf/sommary_command.html", {'products_list': products_list, 'users': users, 'total': total})
     
 @login_required
-@permission_required('command.add_command', raise_exception=True)
+@permission_required('citrus.add_command', raise_exception=True)
 def command_citrus(request):
     ''' Vuejs app for command citrus.'''
     return render(request, 'app.html')
 
 @login_required
-@permission_required('command.add_command', raise_exception=True)
+@permission_required('citrus.add_command', raise_exception=True)
 def get_citrus_list(request):
     ''' Return list of citrus on JSON format for VueJS app. '''
     
@@ -234,7 +234,7 @@ def get_citrus_list(request):
 
 
 @login_required
-@permission_required('command.delete_command', raise_exception=True)
+@permission_required('citrus.delete_command', raise_exception=True)
 def delete_citrus_command(request):
     """ View for delete a commandCitrus, this view is call by the VueJS app."""
 
@@ -264,7 +264,7 @@ def delete_citrus_command(request):
         })
 
 @login_required
-@permission_required('command.add_command', raise_exception=True)
+@permission_required('citrus.add_command', raise_exception=True)
 def new_command(request):
     """ Ajax call with vuejs app"""
     
@@ -365,8 +365,8 @@ def new_command(request):
                     
             subject = "Récapitulatif de la commande"
             from_mail = settings.DEFAULT_FROM_EMAIL
-            html_text = get_template('command/command_mail/sommary.html')
-            plain_text = get_template('command/command_mail/sommary.txt')
+            html_text = get_template('citrus/command_mail/sommary.html')
+            plain_text = get_template('citrus/command_mail/sommary.txt')
         
             html_content = html_text.render({
                 'command_sommary': command_sommary,

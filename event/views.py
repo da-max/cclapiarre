@@ -16,7 +16,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin,\
 from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib.auth.models import User
 
-from command.models import Command
+from citrus.models import Command
 from event.models import Event
 from event.forms import EventForm
 

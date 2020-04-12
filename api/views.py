@@ -18,7 +18,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer, UserWithPermissionsSerializer, CoffeeSerializer, CommandCoffeeSerializer
-from command.models import Command, Amount, Product
+from citrus.models import Command, Amount, Product
 from coffee.models import Coffee, CommandCoffee, Quantity as AmountCoffee, Type
 
 
@@ -49,8 +49,8 @@ def command_send_mail(sender, instance, **kwargs):
             }
         SUBJECT = "Récapitulatif de votre commande"
         FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
-        HTML_TEXT = get_template('command/command_mail/sommary.html')
-        PLAIN_TEXT = get_template('command/command_mail/sommary.txt')
+        HTML_TEXT = get_template('citrus/command_mail/sommary.html')
+        PLAIN_TEXT = get_template('citrus/command_mail/sommary.txt')
 
         DATA = {
             'command_sommary': command_sommary,

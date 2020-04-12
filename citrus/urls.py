@@ -1,7 +1,7 @@
 from django.urls import path, re_path, include
 from django.conf.urls import url
 
-from command.views import table_command, sommary_command, create_command, command_citrus,\
+from citrus.views import table_command, sommary_command, create_command, command_citrus,\
    get_citrus_list, new_command, delete_citrus_command
 
 urlpatterns = [

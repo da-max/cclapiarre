@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 from django.contrib.auth.models import User
 
 from api.views import CommandViewSet, AmoutViewSet, ProductViewSet, CurrentUserView, CoffeeViewSet, CommandCoffeeViewSet
-from command.models import Amount, Product
+from citrus.models import Amount, Product
 
 urlpatterns = [
     url(r'^users/current', CurrentUserView.as_view())

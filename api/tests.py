@@ -102,7 +102,6 @@ class CitrusApiTestCase (CommandApiTestCase):
 
         response = self.client.get(reverse('command-list'))
         content = json.loads(response.content)[0]
-
         self.assertJSONEqual(response.content, [
             {
                 'user': {
@@ -112,52 +111,23 @@ class CitrusApiTestCase (CommandApiTestCase):
                     'last_name': '',
                     'first_name': '',
                 },
-                'product': [{
-                    'id': content['product'][0]['id'],
-                    'name': 'product1',
-                    'weight': float(1),
-                    'description': '',
-                    'step': float(1),
-                    'maximum': 100,
-                    'price': float(10),
-                    'total': float(10),
+                'amounts': [{
+                    'id': content['amounts'][0]['id'],
+                    "product":
+                        {
+                            'id': content['amounts'][0]['product']['id'],
+                            'name': 'product1',
+                            'weight': float(1),
+                            'description': '',
+                            'step': float(1),
+                            'maximum': 100,
+                            'price': float(10),
+                            'total': float(10),
+                        },
+                    "amount": float(10)
                 }],
                 'total': self.command.get_total(),
                 'id': content['id'],
-            }
-        ])
-        self.assertEqual(response.status_code, 200)
-
-    def test_list_amount(self):
-        """ For test if list_amount display good value. """
-
-        response = self.client.get(reverse('amount-list'))
-        content = json.loads(response.content)[0]
-
-        self.assertJSONEqual(response.content, [
-            {
-                'id': content['id'],
-                'command': {
-                    'id': content['command']['id'],
-                    'user': {
-                        'id': content['command']['user']['id'],
-                        'username': 'test1',
-                        'email': 'test1@test.com',
-                        'last_name': '',
-                        'first_name': ''
-                    }
-                },
-                'product': {
-                    'id': content['product']['id'],
-                    'name': 'product1',
-                    'weight': float(1),
-                    'description': '',
-                    'step': float(1),
-                    'maximum': 100,
-                    'price': float(10),
-                    'total': float(10)
-                },
-                'amount': float(10)
             }
         ])
         self.assertEqual(response.status_code, 200)

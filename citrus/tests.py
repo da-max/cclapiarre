@@ -103,13 +103,3 @@ class ViewTest(TransactionTestCase):
         self.assertEqual(response.status_code, 200)
         with self.assertTemplateUsed('citrus/pdf/sommary_command.html'):
             render_to_string('citrus/pdf/sommary_command.html')
-    
-    
-    def test_table_command(self):
-        """ Tets if table_command display command/command/table_command.html template."""
-        
-        response = self.client.get(reverse('command'))
-        
-        self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('citrus/command/table_command.html'):
-            render_to_string('citrus/command/table_command.html')

@@ -22,6 +22,16 @@
 		<p>Aucun article n'a été créé, cliquez <a href="{% url "create_article" %}">Ici</a> pour un créer un.</p>
 {% endfor %}
 	</div>
+	{% for ev in event %}
+		<div id="a{{ ev.id }}" uk-offcanvas="overlay: true">
+			<div class="uk-offcanvas-bar">
+				<button class="uk-offcanvas-close" type="button" uk-close></button>
+				<h3>{{ ev.title }}</h3>
+				<p class="uk-text-muted">Le {{ ev.date|naturalday:"DATE_FORMAT" }} vers {{ ev.date|date:"H\Hi" }}</p>
+				{{ ev.description|safe }}
+			</div>
+		</div>
+	{% endfor %}
 	<div class="uk-width-1-3@l uk-width-auto uk-text-justify uk-padding">
 		<aside class="uk-card uk-card-default uk-card-hover" uk-scrollspy="cls:uk-animation-slide-right">
 			<div class="uk-card-header">

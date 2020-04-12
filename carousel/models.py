@@ -26,4 +26,4 @@ class Carousel(models.Model):
 
     def __str__(self):
         ''' Display information for admin system.'''
-        return "{} a une position {}".print(self.title, self.position)
+        return "{} a une position {}".format(self.title, self.position)

@@ -25,7 +25,7 @@ class ListPageAccess(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         template_name -- The data is send to stats/page_access/list.html template.
     """
 
-    permission_required = 'stats.view_pagesaccess'
+    permission_required = 'stats.view_pageaccess'
     model = PageAccess
     context_object_name = 'pages'
     template_name = 'stats/page_access/list.html'
@@ -48,7 +48,7 @@ class CreatePageAccess(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         form_class --- This class use PageAccessForm class for display formm.
     """
 
-    permission_required = 'stats.create_pageaccess'
+    permission_required = 'stats.add_pageaccess'
     model = PageAccess
     template_name = 'stats/page_access/new.html'
     success_url = reverse_lazy('list_pageaccess')

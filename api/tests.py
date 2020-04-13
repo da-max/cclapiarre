@@ -52,19 +52,15 @@ class CitrusApiTestCase (CommandApiTestCase):
         self.add_error_response = lambda id, e: {
             'id': id,
             'status': 'danger',
-            'header': 'Erreur lors de l\'enregistrement des produits de votre commande',
-            'body': 'Une erreur est survenue lors de l\'enregistrement d\'un (ou plusieurs) produit⋅s, \
-                merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
-                (ERREUR : {})'.format(type(e))
+            'header': 'Erreur lors de l’enregistrement de la commande',
+            'body': f'{e}'
         }
 
         self.update_error_response = lambda id, e: {
             'id': id,
             'status': 'danger',
             'header': 'Erreur lors de la modification de la commande',
-            'body': 'Une erreur est survenue lors de la modification de la commande'
-            'merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. '
-            '(ERREUR : {})'.format(type(e))
+            'body': f'{e}'
         }
 
         self.p1 = Product.objects.create(name='product1', weight=1,
@@ -169,10 +165,9 @@ class CitrusApiTestCase (CommandApiTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             'id': json.loads(response.content)['id'],
-            'status': 'warning',
-            'header': 'Nombre de caisse trop important',
-            'body': 'Le nombre de caisse que vous avez commandé est trop important. '
-            'Le nombre maximum de caisse est fixé à 6 par adhérent. Merci de modifier votre commande.'
+            'status': 'danger',
+            'header': 'Erreur lors de l’enregistrement de la commande',
+            'body': 'Le nombre de caisse est limité a 6, vous avez commandé 7.0 caisses. Merci de modifier la commande.'
         })
 
     def test_bad_product_add_command(self):
@@ -189,7 +184,7 @@ class CitrusApiTestCase (CommandApiTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.add_error_response(
-            json.loads(response.content)['id'], Product.DoesNotExist()))
+            json.loads(response.content)['id'], Product.DoesNotExist('Une erreur est survenue, merci de réessayer. (ERREUR: Product matching query does not exist.)')))
 
     def test_bad_user_add_command(self):
         """ Test if user send bad user_id (random number for example). """
@@ -202,10 +197,9 @@ class CitrusApiTestCase (CommandApiTestCase):
         }
 
         response = self.client.post(reverse('command-list'), data)
-
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.add_error_response(
-            json.loads(response.content)['id'], User.DoesNotExist()))
+            json.loads(response.content)['id'], User.DoesNotExist('User matching query does not exist.')))
 
     def test_bad_key_add_command(self):
         """ Test if user send bad key. """
@@ -219,7 +213,7 @@ class CitrusApiTestCase (CommandApiTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.add_error_response(
-            json.loads(response.content)['id'], KeyError()))
+            json.loads(response.content)['id'], KeyError('user')))
 
     def test_bad_data_add_command(self):
         """ Test if user send bad Value of key. """
@@ -234,7 +228,7 @@ class CitrusApiTestCase (CommandApiTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.add_error_response(
-            json.loads(response.content)['id'], ValueError()))
+            json.loads(response.content)['id'], ValueError("invalid literal for int() with base 10: 'wrong_id'")))
 
     def test_bad_amount_add_command(self):
         """ Test if user send bad amount for a product.
@@ -250,7 +244,7 @@ class CitrusApiTestCase (CommandApiTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.add_error_response(
-            json.loads(response.content)['id'], AssertionError()))
+            json.loads(response.content)['id'], AssertionError('Une erreur est survenue, merci de réessayer. (ERREUR: )')))
 
     def test_also_command(self):
         """ Test if user as also command. """
@@ -261,7 +255,17 @@ class CitrusApiTestCase (CommandApiTestCase):
             self.p2.id: 3
         }
 
-        self.client.post(reverse('command-list'), data)
+        #self.client.post(reverse('command-list'), data)
+        response = self.client.post(reverse('command-list'), data)
+        
+        data = {
+            'user': self.user.id,
+            'send_mail': '1',
+            self.p1.id: 4,
+            self.p2.id: 3
+        }
+
+        #self.client.post(reverse('command-list'), data)
         response = self.client.post(reverse('command-list'), data)
 
         self.assertEqual(response.status_code, 200)
@@ -278,7 +282,7 @@ class CitrusApiTestCase (CommandApiTestCase):
     def test_update_command(self):
         """ Test if user send good data."""
         data = {
-            'user_id': self.super_user.id,
+            'user': self.super_user.id,
             self.p1.id: 10,
             self.p2.id: 1.25
         }
@@ -297,7 +301,7 @@ class CitrusApiTestCase (CommandApiTestCase):
     def test_number_case_update_command(self):
         """ Like add_command."""
         data = {
-            'user_id': self.super_user.id,
+            'user': self.super_user.id,
             self.p2.id: 7
         }
 
@@ -307,16 +311,15 @@ class CitrusApiTestCase (CommandApiTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             'id': json.loads(response.content)['id'],
-            'status': 'warning',
-            'header': 'Nombre de caisse trop important',
-            'body': 'Le nombre de caisse commandé est trop important. '
-            'Le nombre maximum de caisse est fixé à 6 par adhérent. Merci de modifier la commande.'
+            'status': 'danger',
+            'header': 'Erreur lors de la modification de la commande',
+            'body': 'Le nombre de caisse est limité a 6, vous avez commandé 7.0 caisses. Merci de modifier la commande.'
         })
 
     def test_bad_product_update_command(self):
         """ Like add_command."""
         data = {
-            'user_id': self.super_user.id,
+            'user': self.super_user.id,
             self.p1.id: 1,
             self.p3.id: 4
         }
@@ -326,12 +329,12 @@ class CitrusApiTestCase (CommandApiTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.update_error_response(
-            json.loads(response.content)['id'], Product.DoesNotExist()))
+            json.loads(response.content)['id'], Product.DoesNotExist(f'Une erreur est survenue, merci de réessayer. (ERREUR: Product matching query does not exist.)')))
 
     def test_bad_data_update_command(self):
         """ Like add_command."""
         data = {
-            'user_id': 'wrong_id',
+            'user': 'wrong_id',
             self.p1.id: 'wrong_amount',
             self.p2.id: 4
         }
@@ -341,12 +344,12 @@ class CitrusApiTestCase (CommandApiTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.update_error_response(
-            json.loads(response.content)['id'], ValueError()))
+            json.loads(response.content)['id'], ValueError("invalid literal for int() with base 10: 'wrong_id'")))
 
     def test_bad_amount_update_command(self):
         """ Like add_command."""
         data = {
-            'user_id': self.super_user.id,
+            'user': self.super_user.id,
             self.p2.id: 1.70
         }
 
@@ -355,7 +358,7 @@ class CitrusApiTestCase (CommandApiTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.update_error_response(
-            json.loads(response.content)['id'], AssertionError()))
+            json.loads(response.content)['id'], AssertionError('Une erreur est survenue, merci de réessayer. (ERREUR: )')))
 
 
 class CoffeeApiTestCase (CommandApiTestCase):

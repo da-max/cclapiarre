@@ -577,7 +577,7 @@ export default {
 			UIkit.modal("#confirm-update").hide();
 
 			let form_data = new FormData();
-			form_data.append("user_id", this.update_command.user.id);
+			form_data.append("user", this.update_command.user.id);
 
 			Object.entries(this.update_command).forEach(update_c => {
 				if (update_c[0] != "user" && update_c[0] != "id") {
@@ -617,7 +617,7 @@ export default {
 					this.query_error = true;
 				}
 			);
-    },
+    	},
     
 		get_command_for_update(id_command) {
       let com = Object();

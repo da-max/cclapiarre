@@ -295,7 +295,12 @@ class ProductViewSet(ModelViewSet):
         # queryset = Product.objects.all()
         serializer = ProductSerializer(self.queryset, many=True)
         return Response(serializer.data)
-
+    
+    @action(detail=False, methods=['get'])
+    def list_all(self, request, *args, **kwargs):
+        queryset = Product.objects.all()
+        serializer = ProductSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 class CurrentUserView(APIView):
     queryset = User.objects.all()

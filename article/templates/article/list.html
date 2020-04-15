@@ -17,7 +17,7 @@
 			<p>Êtes-vous sûr de vouloir supprimer cet article, aucun retour en arrière ne sera possible !</p>
 			<p class="uk-text-right">
 				<button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
-				<a class="uk-button uk-button-primary" type="link" href="{% url 'delete_article' id=article.id %}">Supprimer</a>
+				<a class="uk-button uk-button-primary" type="link" href="{% url 'delete_article' id_article=article.id %}">Supprimer</a>
 			</p>
 		</div>
 	</div>

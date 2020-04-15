@@ -1,11 +1,11 @@
+""" File for describes all the urls of api apps. """
 from django.conf.urls import url
 
 
 from rest_framework.routers import DefaultRouter
-from django.contrib.auth.models import User
 
-from api.views import CommandViewSet, AmoutViewSet, ProductViewSet, CurrentUserView, CoffeeViewSet, CommandCoffeeViewSet
-from command.models import Amount, Product
+from api.views import CommandViewSet, AmoutViewSet, \
+ ProductViewSet, CurrentUserView, CoffeeViewSet, CommandCoffeeViewSet
 
 urlpatterns = [
     url(r'^users/current', CurrentUserView.as_view())
@@ -13,11 +13,11 @@ urlpatterns = [
 ]
 
 
-router = DefaultRouter(trailing_slash=False)
-router.register(r'citrus/command', CommandViewSet)
-router.register(r'citrus/amount', AmoutViewSet, basename='amount')
-router.register(r'citrus/product', ProductViewSet, basename='product')
-router.register(r'coffee/coffee', CoffeeViewSet, basename='coffee-coffee')
-router.register(r'coffee/command', CommandCoffeeViewSet, basename='coffee-command-coffee')
+ROUTER = DefaultRouter(trailing_slash=False)
+ROUTER.register(r'citrus/command', CommandViewSet)
+ROUTER.register(r'citrus/amount', AmoutViewSet, basename='amount')
+ROUTER.register(r'citrus/product', ProductViewSet, basename='product')
+ROUTER.register(r'coffee/coffee', CoffeeViewSet, basename='coffee-coffee')
+ROUTER.register(r'coffee/command', CommandCoffeeViewSet, basename='coffee-command-coffee')
 
-urlpatterns += router.urls
+urlpatterns += ROUTER.urls

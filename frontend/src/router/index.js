@@ -19,6 +19,13 @@ const routes = [
     }
   },
   {
+    path: '/agrumes/liste-des-produits',
+    name: 'citrus_list_product',
+    component: function () {
+      return import('../views/CitrusProductList.vue')
+    }
+  },
+  {
     path: '/pate/commander-des-pates',
     name: 'pasta_command',
     component: function () {

@@ -84,7 +84,6 @@
 <script>
 import Loader from "../utility/Loader";
 import Message from "../utility/Message";
-import LineListProduct from "./LineListProduct";
 
 export default {
 	name: "ListProduct",

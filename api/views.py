@@ -21,6 +21,7 @@ from cclapiarre.exceptions import BoxNumberException
 from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer, UserWithPermissionsSerializer, CoffeeSerializer, CommandCoffeeSerializer
 from citrus.models import Command, Amount, Product
 from coffee.models import Coffee, CommandCoffee, Quantity as AmountCoffee, Type
+from api.pagination import StandardLimitOffsetPagination
 
 
 # Created new signals
@@ -288,19 +289,22 @@ class CommandViewSet(ModelViewSet):
 
 
 class ProductViewSet(ModelViewSet):
+
     serializer_class = ProductSerializer
     queryset = Product.objects.filter(display=True)
+    pagination_class = StandardLimitOffsetPagination
 
-    def list(self, request, *args, **kwargs):
-        # queryset = Product.objects.all()
+    def list(self, request):
+        super().list(request)
         serializer = ProductSerializer(self.queryset, many=True)
-        return Response(serializer.data)
+        return self.get_paginated_response(serializer.data)
     
     @action(detail=False, methods=['get'])
     def list_all(self, request, *args, **kwargs):
         queryset = Product.objects.all()
-        serializer = ProductSerializer(queryset, many=True)
-        return Response(serializer.data)
+        page = self.paginate_queryset(queryset)
+        serializer = ProductSerializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
 class CurrentUserView(APIView):
     queryset = User.objects.all()

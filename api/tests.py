@@ -76,23 +76,6 @@ class CitrusApiTestCase (CommandApiTestCase):
         self.client = APIClient()
         self.client.login(username='test1', password='password')
 
-    def test_list_product(self):
-        """ For test if list of product display goof value. """
-
-        response = self.client.get(reverse('product-list'))
-
-        self.assertNotIn({
-            'id': 3,
-            'name': 'product3',
-            'weight': float(3),
-            'description': '',
-            'step': float(1),
-            'maximum': 100,
-            'price': float(30),
-            'total': float(0)
-        }, response.data)
-        self.assertEqual(response.status_code, 200)
-
     def test_list_command(self):
         """ For test if list command display good value. """
 
@@ -119,6 +102,7 @@ class CitrusApiTestCase (CommandApiTestCase):
                             'maximum': 100,
                             'price': float(10),
                             'total': float(10),
+                            'display': True
                         },
                     "amount": float(10)
                 }],

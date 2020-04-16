@@ -88,7 +88,7 @@ class ViewTest(TransactionTestCase):
     def test_command_citrus(self):
         """ Test if command_citrus display app.html template (vuejs app)."""
         
-        response = self.client.get(reverse('new_command_citrus'))
+        response = self.client.get(reverse('citrus:new_command_citrus'))
         
         self.assertEqual(response.status_code, 200)
         with self.assertTemplateUsed('app.html'):
@@ -98,7 +98,7 @@ class ViewTest(TransactionTestCase):
     def test_sommary_command(self):
         """ Test if sommary_command display command/pdf/sommary_command template. """
         
-        response = self.client.get(reverse('sommary_command'))
+        response = self.client.get(reverse('citrus:sommary_command'))
         
         self.assertEqual(response.status_code, 200)
         with self.assertTemplateUsed('citrus/pdf/sommary_command.html'):

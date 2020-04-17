@@ -6,7 +6,7 @@
             Si les produits ont le status « afficher le produit » le produit sera affiché sur le tableau et les adhérents pourront le commander. Sinon, le produit 
             ne sera pas affiché (et donc pas commandable). Ainsi, <span class="uk-text-bold">il est inutile de supprimer les produits</span>, il suffit de les déclarer comme « invisible ».
         </aside>
-        <list-product></list-product>
+        <list-product :page='page'></list-product>
     </div>
 </template>
 
@@ -15,9 +15,13 @@ import ListProduct from '../components/citrus/ListProduct'
 
 export default {
     name: "CitrusProductList",
-    
+
+    props: {
+        page: {type: Number, default() { return 1}}
+    },
+
     components: {
         ListProduct
-    }
+    },
 };
 </script>

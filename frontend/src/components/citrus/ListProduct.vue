@@ -28,26 +28,43 @@
 				</template>
 			</message>
 		</div>
-
 		<div class="uk-width-3-5@m uk-margin-auto">
 			<div class="uk-margin-medium-bottom">
 				<select name="actions" class="uk-select uk-form-width-medium" v-model="action">
-					<option value="" selected>------ ------</option>
+					<option value selected>------ ------</option>
 					<option v-for="(name, value) in ACTIONS" :value="value" :key="value">{{ name }}</option>
 				</select>
-				<input type="button" v-if="action !== ''" value="Appliquer" class="uk-button uk-button-primary uk-margin-medium-left">
+				<input
+					type="button"
+					v-if="action !== ''"
+					value="Appliquer"
+					class="uk-button uk-button-primary uk-margin-medium-left"
+				/>
 			</div>
 
 			<table class="uk-table uk-table-divider uk-striped uk-table-hover uk-table-middle">
 				<thead>
 					<tr>
 						<th class="uk-table-shrink">
-							<input type="checkbox" class="uk-checkbox" title='Sélectionner tous les produits' v-model="check_all" />
+							<input
+								type="checkbox"
+								class="uk-checkbox"
+								title="Sélectionner tous les produits"
+								v-model="check_all"
+							/>
 						</th>
 						<th>Nom du produit</th>
-						<th>Poids du produit</th>
+						<th>
+							<span
+								uk-tooltip="Si le poids du produit est de 1, cela veut dire que le produit ne se vend pas au poids."
+							>Poids du produit</span>
+						</th>
 						<th>Prix du produit</th>
-						<th>Produit affiché</th>
+						<th>
+							<span
+								uk-tooltip="Défini si ce produit est affiché, ou pas, sur le tableau des commandes."
+							>Produit affiché</span>
+						</th>
 						<th class="uk-table-shrink">Actions</th>
 					</tr>
 				</thead>
@@ -77,6 +94,29 @@
 					</tr>
 				</tbody>
 			</table>
+			<div uk-grid class="uk-margin-large-top">
+				<div class="uk-width-2-3">
+					<ul v-show="pagination.next !== null || pagination.previous !== null" class="uk-pagination">
+						<li><a href="#" type='button'><span uk-pagination-previous></span></a></li>
+						<li>{{ pagination.active }}</li>
+						<li><a href="" type='button'>{{ pagination.next }}</a></li>
+						<li><a href="#" type='button'><span uk-pagination-next></span></a></li>
+					</ul>
+				</div>
+				<form action="#" class="uk-form-horizontal uk-width-1-3 uk-text-right">
+					<label for="pagination_limit" class="uk-form-label">Produits par page</label>
+					<div class="uk-form-controls uk-margin-small-bottom">
+						<select class="uk-select uk-form-width-small" name="pagination_limit" v-model="pagination.limit">
+							<option selected value="">-------</option>
+							<option value="10">10</option>
+							<option value="20">20</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+						</select>
+					</div>
+					<input type="button" value="Valider" v-show="pagination.limit !== ''" class="uk-button uk-button-primary uk-button-small" @click="update_limit()">
+				</form>
+			</div>
 		</div>
 	</div>
 </template>
@@ -88,6 +128,8 @@ import Message from "../utility/Message";
 export default {
 	name: "ListProduct",
 
+	props: ["page"],
+
 	data() {
 		return {
 			// Utility
@@ -97,19 +139,24 @@ export default {
 			messages: Object(),
 
 			products: Array(),
-			products_check: Object(),
 			action: String(),
+			pagination: {
+				active: 1,
+				next: null,
+				previous: null,
+				count: Number(),
+				limit: 20
+			},
 			ACTIONS: {
-				'hide': 'Cacher ces produits',
-				'show': 'Afficher ces produits',
+				hide: "Cacher ces produits",
+				show: "Afficher ces produits"
 			}
 		};
 	},
 
 	components: {
 		Loader,
-		Message,
-		LineListProduct
+		Message
 	},
 
 	computed: {
@@ -118,19 +165,32 @@ export default {
 				return false;
 			},
 			set(value) {
-					console.log(value);
-
-				this.products.forEach(product => {									
+				this.products.forEach(product => {
 					product.check = value;
 				});
 			}
+		},
+
+		ratio () {
+			return this.pagination.count / this.pagination.limit
+		}
+	},
+
+	methods: {
+		update_limit () {
+			this.$product.get({'limit': this.pagination.limit}).then((response) => {
+				this.pagination.next = response.body.next
+				this.pagination.previous = response.body.next
+				this.pagination.count = response.body.count
+				this.products = response.body.results
+			})
 		}
 	},
 
 	mounted() {
 		this.$product = this.$resource(
 			"api/citrus/product{/id}",
-			{},
+			{query: 'all'},
 			{},
 			{
 				before: () => {
@@ -143,12 +203,16 @@ export default {
 			}
 		);
 
-		this.$product.query({ query: "all" }).then(
+		this.$product.query({limit: this.pagination.limit}).then(
 			response => {
-				response.body.forEach(product => {
-					product.check = false
+				this.pagination.next = response.body.next
+				this.pagination.previous = response.body.next
+				this.pagination.count = response.body.count
+
+				response.body.results.forEach(product => {
+					product.check = false;
 				});
-				this.products = response.body;
+				this.products = response.body.results;
 			},
 			response => {
 				if (this.status === "Forbidden" && this.status_code === 403) {

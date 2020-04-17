@@ -7,46 +7,39 @@ const routes = [
   {
     path: '/cafe/commander-du-cafe',
     name: 'coffee_command',
-    component: function () {
+    component: function() {
       return import('../views/CoffeeCommand.vue')
-    }
+    },
   },
   {
     path: '/agrumes/commander-des-agrumes',
     name: 'citrus_command',
-    component: function () {
+    component: function() {
       return import('../views/CitrusCommand.vue')
-    }
+    },
   },
   {
     path: '/agrumes/liste-des-produits',
     name: 'citrus_list_product',
-    component: function () {
+    props: (route) => ({ page: route.query.page }),
+    component: function() {
       return import('../views/CitrusProductList.vue')
-    }
+    },
   },
   {
     path: '/pate/commander-des-pates',
     name: 'pasta_command',
-    component: function () {
-      return import ('../views/PastaCommand.vue')
-    }
+    component: function() {
+      return import('../views/PastaCommand.vue')
+    },
   },
   {
     path: '/cafe/liste-des-commandes',
     name: 'coffee_list',
-    component: function () {
-      return import ('../views/CoffeeCommandList.vue')
-    }
-  }
-  /*{
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: function () {
-      return import(/* webpackChunkName: "about" *//* '../views/About.vue')
+    component: function() {
+      return import('../views/CoffeeCommandList.vue')
+    },
+  } /* '../views/About.vue')
     }
   },
   {
@@ -71,13 +64,21 @@ const routes = [
   {
     path: '*',
     redirect: '/'
-  }*/
+  }*/,
+  /*{
+    path: '/about',
+    name: 'about',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: function () {
+      return import(/* webpackChunkName: "about" */
 ]
 
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
+  routes,
 })
 
 export default router

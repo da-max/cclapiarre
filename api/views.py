@@ -297,8 +297,13 @@ class ProductViewSet(ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
         query = self.request.query_params.get('query', None)
+        display = self.request.query_params.get('display', None)
+        
         if query == 'all':
             queryset = Product.objects.all()
+        
+        if display is not None:
+            queryset.filter(display=True)
         
         return queryset
 
@@ -310,7 +315,7 @@ class ProductViewSet(ModelViewSet):
         # If query == all I paginated_queryset and return paginated response.
         if query == 'all':
             return self.get_paginated_response(self.paginate_queryset(serializer.data))
-            
+
         # Else I return classic response.
         return Response(serializer.data)
 

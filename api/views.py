@@ -294,17 +294,25 @@ class ProductViewSet(ModelViewSet):
     queryset = Product.objects.filter(display=True)
     pagination_class = StandardLimitOffsetPagination
 
+    def get_queryset(self):
+        queryset = self.queryset
+        query = self.request.query_params.get('query', None)
+        if query == 'all':
+            queryset = Product.objects.all()
+        
+        return queryset
+
     def list(self, request):
         super().list(request)
-        serializer = ProductSerializer(self.queryset, many=True)
-        return self.get_paginated_response(serializer.data)
-    
-    @action(detail=False, methods=['get'])
-    def list_all(self, request, *args, **kwargs):
-        queryset = Product.objects.all()
-        page = self.paginate_queryset(queryset)
-        serializer = ProductSerializer(page, many=True)
-        return self.get_paginated_response(serializer.data)
+        serializer = ProductSerializer(self.get_queryset(), many=True)
+        query = request.query_params.get('query', None)
+        
+        # If query == all I paginated_queryset and return paginated response.
+        if query == 'all':
+            return self.get_paginated_response(self.paginate_queryset(serializer.data))
+            
+        # Else I return classic response.
+        return Response(serializer.data)
 
 class CurrentUserView(APIView):
     queryset = User.objects.all()

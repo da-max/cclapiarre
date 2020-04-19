@@ -39,6 +39,8 @@
 					v-if="action !== ''"
 					value="Appliquer"
 					class="uk-button uk-button-primary uk-margin-medium-left"
+					id="action-button"
+					@click="apply_action()"
 				/>
 			</div>
 
@@ -94,28 +96,13 @@
 					</tr>
 				</tbody>
 			</table>
-			<div uk-grid class="uk-margin-large-top">
-				<div class="uk-width-2-3">
-					<ul v-show="pagination.next !== null || pagination.previous !== null" class="uk-pagination">
-						<li><a href="#" type='button'><span uk-pagination-previous></span></a></li>
-						<li>{{ pagination.active }}</li>
-						<li><a href="" type='button'>{{ pagination.next }}</a></li>
-						<li><a href="#" type='button'><span uk-pagination-next></span></a></li>
-					</ul>
-				</div>
-				<form action="#" class="uk-form-horizontal uk-width-1-3 uk-text-right">
-					<label for="pagination_limit" class="uk-form-label">Produits par page</label>
-					<div class="uk-form-controls uk-margin-small-bottom">
-						<select class="uk-select uk-form-width-small" name="pagination_limit" v-model="pagination.limit">
-							<option selected value="">-------</option>
-							<option value="10">10</option>
-							<option value="20">20</option>
-							<option value="50">50</option>
-							<option value="100">100</option>
-						</select>
-					</div>
-					<input type="button" value="Valider" v-show="pagination.limit !== ''" class="uk-button uk-button-primary uk-button-small" @click="update_limit()">
-				</form>
+			<div class="uk-text-center uk-margin-large-top">
+				<button
+					class="uk-button uk-button-default"
+					type="button"
+					@click="get_more_product()"
+					v-show="display_button_get_more_product"
+				>Afficher plus de produit</button>
 			</div>
 		</div>
 	</div>
@@ -137,16 +124,15 @@ export default {
 			query_error: false,
 			permission_error: false,
 			messages: Object(),
+			display_button_get_more_product: true,
 
 			products: Array(),
 			action: String(),
-			pagination: {
-				active: 1,
-				next: null,
-				previous: null,
-				count: Number(),
-				limit: 20
-			},
+
+			offset: 0,
+
+			// LIMIT const is number of product add when an user click on button "Afficher plus de produit"
+			LIMIT: 10,
 			ACTIONS: {
 				hide: "Cacher ces produits",
 				show: "Afficher ces produits"
@@ -169,28 +155,55 @@ export default {
 					product.check = value;
 				});
 			}
-		},
-
-		ratio () {
-			return this.pagination.count / this.pagination.limit
 		}
 	},
 
 	methods: {
-		update_limit () {
-			this.$product.get({'limit': this.pagination.limit}).then((response) => {
-				this.pagination.next = response.body.next
-				this.pagination.previous = response.body.next
-				this.pagination.count = response.body.count
-				this.products = response.body.results
-			})
+		get_more_product() {
+			this.offset += parseInt(this.LIMIT);
+			this.$product
+				.query({ limit: this.LIMIT, offset: this.offset })
+				.then(response => {
+					this.products = this.products.concat(response.body.results);
+					if (response.next === undefined) {
+						this.display_button_get_more_product = false;
+					}
+				});
+		},
+
+		apply_action() {
+			
+			if (this.products.find(product => product.check === true)  === undefined) {
+				UIkit.notification("Aucun produit sélctionné. <br>L’action ne peut être appliquée.", {status: "warning", pos: "bottom-right"})
+			}
+			else {
+				let products_check = this.products.filter(product => product.check === true)
+				if (this.action === 'hide') {
+					products_check.forEach(product => {
+						product.display = false	
+					})
+				}
+				else if (this.action === 'show') {
+					products_check.forEach(product => {
+						product.display = true
+					})
+				}
+
+				products_check.forEach(product => {
+					this.$product.update({id: product.id}, product).then((response) => {
+						console.log(response);
+					})
+				})
+
+
+			}
 		}
 	},
 
 	mounted() {
 		this.$product = this.$resource(
 			"api/citrus/product{/id}",
-			{query: 'all'},
+			{ query: "all" },
 			{},
 			{
 				before: () => {
@@ -203,16 +216,16 @@ export default {
 			}
 		);
 
-		this.$product.query({limit: this.pagination.limit}).then(
+		this.$product.query({ limit: this.LIMIT }).then(
 			response => {
-				this.pagination.next = response.body.next
-				this.pagination.previous = response.body.next
-				this.pagination.count = response.body.count
-
 				response.body.results.forEach(product => {
 					product.check = false;
 				});
 				this.products = response.body.results;
+
+				if (response.next !== undefined) {
+					this.display_button_get_more_product = false;
+				}
 			},
 			response => {
 				if (this.status === "Forbidden" && this.status_code === 403) {

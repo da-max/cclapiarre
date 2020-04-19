@@ -129,10 +129,9 @@ class CommandViewSet(ModelViewSet):
         BOX_LIMIT = 6
         # For count number of box (maximum=6)
         total_box = float()
-        
+
         # For format data.
         amounts = dict()
-
 
         # Data
         data = request.data.copy()
@@ -160,21 +159,23 @@ class CommandViewSet(ModelViewSet):
                     amount % product.step) == 0
 
             except (AssertionError, ObjectDoesNotExist, ValueError) as e:
-                raise type(e)(f"Une erreur est survenue, merci de réessayer. (ERREUR: {e})")
+                raise type(e)(
+                    f"Une erreur est survenue, merci de réessayer. (ERREUR: {e})")
 
             else:
                 if amount != float(0):
                     amounts[product.id] = {
                         'product': product,
                         'amount': amount
-                        }
+                    }
                     if product.weight != 1:
                         total_box += amount
         try:
             assert total_box <= BOX_LIMIT
         except AssertionError as e:
-            raise BoxNumberException(f"Le nombre de caisse est limité a {BOX_LIMIT}, vous avez commandé {total_box} caisses. Merci de modifier la commande.")
-        
+            raise BoxNumberException(
+                f"Le nombre de caisse est limité a {BOX_LIMIT}, vous avez commandé {total_box} caisses. Merci de modifier la commande.")
+
         return (user, mail, amounts)
 
     def list(self, request):
@@ -233,7 +234,7 @@ class CommandViewSet(ModelViewSet):
                 'status': 'success',
                 'header': 'Commande supprimée',
                 'body': f'La commande de {command.user.username} a bien été supprimé.'
-                })
+            })
 
     def update(self, request, pk):
 
@@ -298,20 +299,19 @@ class ProductViewSet(ModelViewSet):
         queryset = self.queryset
         query = self.request.query_params.get('query', None)
         display = self.request.query_params.get('display', None)
-        
-        if query == 'all':
-            queryset = Product.objects.all()
-        
+
         if display is not None:
-            queryset.filter(display=True)
-        
+            queryset = Product.objects.filter(display=True)
+        elif query == 'all':
+            queryset = Product.objects.all()
+
         return queryset
 
     def list(self, request):
         super().list(request)
         serializer = ProductSerializer(self.get_queryset(), many=True)
         query = request.query_params.get('query', None)
-        
+
         # If query == all I paginated_queryset and return paginated response.
         if query == 'all':
             return self.get_paginated_response(self.paginate_queryset(serializer.data))

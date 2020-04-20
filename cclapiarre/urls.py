@@ -21,14 +21,21 @@ from django.conf import settings
 from django.views.i18n import JavaScriptCatalog
 
 
+from django.contrib.sitemaps.views import sitemap
 from django.contrib import admin
 from django.contrib.flatpages import views
+from django.views.generic import TemplateView
 
 
 from article import views as a_views
+from article.sitemaps import StaticViewSitemap
 from article.views import home
 from api.apps import ApiConfig
 
+
+sitemaps = {
+    'static': StaticViewSitemap(),
+}
 
 urlpatterns = [
     path("", home, {"filtered":"Public"}, name="home"),
@@ -51,6 +58,11 @@ urlpatterns = [
     url(r'^api/', include(('api.urls', 'api'), namespace='api')),
 
     path('jsi18n', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+
+    # Utility
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
+     name='django.contrib.sitemaps.views.sitemap'),
+    url(r'^robots.txt$', TemplateView.as_view(template_name="robots.txt", content_type="text/plain"), name="robots_file")
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

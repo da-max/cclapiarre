@@ -185,3 +185,11 @@ def changelog(request):
         changelog = File(changelog_file).read()
 
     return render(request, 'article/changelog.html', {'changelog': changelog})
+
+def robots_txt(request):
+
+    ROBOTS_TXT_PATH  ='./robots.txt'
+    with open(ROBOTS_TXT_PATH, 'r') as ROBOTS_TXT_FILE:
+        ROBOTS_TXT = File(ROBOTS_TXT_FILE).read()
+    
+    return render(request, 'robots_txt.html', locals())

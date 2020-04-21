@@ -75,7 +75,8 @@
 							<input type="checkbox" class="uk-checkbox" v-model="product.check" />
 						</td>
 						<td>{{ product.name }}</td>
-						<td>{{ product.weight }} kg</td>
+						<td v-if="product.weight === 1">Vendu à l’unité</td>
+						<td v-else>{{ product.weight }} kg</td>
 						<td>{{ product.price }} €</td>
 						<td v-if="product.display == true">
 							<span uk-icon="check"></span>

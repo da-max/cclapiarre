@@ -30,7 +30,7 @@ class ProductSerializer(ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'name', 'weight', 'description',
-                  'step', 'maximum', 'price', 'total', 'display']
+                  'step', 'maximum', 'price', 'total', 'display', 'maybe_not_available']
 
     def get_total(self, product):
         return product.get_total()

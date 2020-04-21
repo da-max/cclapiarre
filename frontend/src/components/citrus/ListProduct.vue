@@ -66,6 +66,14 @@
 								uk-tooltip="Défini si ce produit est affiché, ou pas, sur le tableau des commandes."
 							>Produit affiché</span>
 						</th>
+						<th>
+							<span
+								uk-tooltip="Permet d’afficher un message d’alerte sur le tableau de commande, afin de prévenir les adhérents que le produit sera, peut être, pas disponible."
+							>
+								Produit peut être
+								<br />non disponible
+							</span>
+						</th>
 						<th class="uk-table-shrink">Actions</th>
 					</tr>
 				</thead>
@@ -84,13 +92,19 @@
 						<td v-else>
 							<span uk-icon="close"></span>
 						</td>
+						<td v-if="product.maybe_not_available == true">
+							<span uk-icon="check"></span>
+						</td>
+						<td v-else>
+							<span uk-icon="close"></span>
+						</td>
 						<td>
-							<a
-								href="#"
+							<router-link
+								:to="{ name: 'citrus_update_product', params: { product_id: product.id }}"
 								:title="'Modifier le produit : ' + product.name"
 								uk-icon="icon: refresh; ratio: 1.20"
 								class="uk-margin-small-right"
-							></a>
+							></router-link>
 							<a :title="'Supprimer le produit : ' + product.name" uk-icon="icon: trash; ratio: 1.20"></a>
 						</td>
 					</tr>
@@ -247,7 +261,7 @@ export default {
 					} else {
 						this.query_error = true;
 					}
-			
+
 					if (response.body.next === null) {
 						this.display_button_get_more_product = false;
 					}

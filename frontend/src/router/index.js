@@ -21,9 +21,15 @@ const routes = [
   {
     path: '/agrumes/liste-des-produits',
     name: 'citrus_list_product',
-    props: (route) => ({ page: route.query.page }),
     component: function() {
       return import('../views/CitrusProductList.vue')
+    },
+  },
+  {
+    path: '/agrumes/modifier-un-produit/:product_id',
+    name: 'citrus_update_product',
+    component: function() {
+      return import('../views/CitrusProductUpdate.vue')
     },
   },
   {
@@ -39,7 +45,14 @@ const routes = [
     component: function() {
       return import('../views/CoffeeCommandList.vue')
     },
-  } /* '../views/About.vue')
+  },
+  {
+    path: '**',
+    redirect: to => {
+      window.location.href = '/'
+    }
+  },
+  /* '../views/About.vue')
     }
   },
   {
@@ -64,7 +77,7 @@ const routes = [
   {
     path: '*',
     redirect: '/'
-  }*/,
+  }*/
   /*{
     path: '/about',
     name: 'about',
@@ -77,7 +90,7 @@ const routes = [
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  base: '/',
   routes,
 })
 

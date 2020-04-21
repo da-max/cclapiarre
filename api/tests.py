@@ -102,7 +102,8 @@ class CitrusApiTestCase (CommandApiTestCase):
                             'maximum': 100,
                             'price': float(10),
                             'total': float(10),
-                            'display': True
+                            'display': True,
+                            'maybe_not_available': False
                         },
                     "amount": float(10)
                 }],

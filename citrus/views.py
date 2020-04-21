@@ -13,6 +13,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django_xhtml2pdf.utils import pdf_decorator
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 
 
 from citrus.models import Product, Command, Amount
@@ -67,3 +69,6 @@ def sommary_command(request):
 def command_citrus(request):
     ''' Vuejs app for command citrus.'''
     return render(request, 'app.html')
+
+class CitrusAppView(PermissionRequiredMixin, LoginRequiredMixin, TemplateView):
+    template_name = "app.html"

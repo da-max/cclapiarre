@@ -13,10 +13,9 @@
 
 			<message v-show="permission_error" :close="false" status="danger">
 				<template #header>Accès interdit</template>
-				<template #body>
-					Il semblerait qui vous n'ayez pas l'autorisation d'accéder à cette
-					fonctionnalité du site.
-				</template>
+				<template
+					#body
+				>Il semblerait qui vous n’ayez pas l’autorisation d’accéder à cette fonctionnalité du site.</template>
 			</message>
 
 			<message v-for="message in messages" :key="message.id" :status="message.status">
@@ -123,16 +122,16 @@ export default {
 			loading: false,
 			query_error: false,
 			permission_error: false,
-			messages: Object(),
+			messages: Array(),
 			display_button_get_more_product: true,
 
 			products: Array(),
 			action: String(),
 
-			offset: 0,
+			OFFSET: 10,
 
-			// LIMIT const is number of product add when an user click on button "Afficher plus de produit"
-			LIMIT: 10,
+			// limit is number of product add when an user click on button "Afficher plus de produit"
+			limit: 10,
 			ACTIONS: {
 				hide: "Cacher ces produits",
 				show: "Afficher ces produits"
@@ -160,43 +159,99 @@ export default {
 
 	methods: {
 		get_more_product() {
-			this.offset += parseInt(this.LIMIT);
-			this.$product
-				.query({ limit: this.LIMIT, offset: this.offset })
-				.then(response => {
-					this.products = this.products.concat(response.body.results);
-					if (response.next === undefined) {
-						this.display_button_get_more_product = false;
-					}
-				});
+			this.limit += parseInt(this.OFFSET);
+			this.$product.query({ limit: this.limit }).then(response => {
+				this.products = response.body.results;
+				console.log(response);
+				if (response.body.next === null) {
+					this.display_button_get_more_product = false;
+				}
+			});
 		},
 
 		apply_action() {
-			
-			if (this.products.find(product => product.check === true)  === undefined) {
-				UIkit.notification("Aucun produit sélctionné. <br>L’action ne peut être appliquée.", {status: "warning", pos: "bottom-right"})
-			}
-			else {
-				let products_check = this.products.filter(product => product.check === true)
-				if (this.action === 'hide') {
+			if (this.products.find(product => product.check === true) === undefined) {
+				UIkit.notification(
+					"Aucun produit sélctionné. <br>L’action ne peut être appliquée.",
+					{ status: "warning", pos: "bottom-right" }
+				);
+			} else {
+				let products_check = this.products.filter(
+					product => product.check === true
+				);
+				if (this.action === "hide") {
+					products_check = products_check.filter(product => {
+						return product.display == true;
+					});
+
 					products_check.forEach(product => {
-						product.display = false	
-					})
-				}
-				else if (this.action === 'show') {
+						product.display = false;
+					});
+				} else if (this.action === "show") {
+					products_check = products_check.filter(product => {
+						return product.display == false;
+					});
+
 					products_check.forEach(product => {
-						product.display = true
-					})
+						product.display = true;
+					});
 				}
 
 				products_check.forEach(product => {
-					this.$product.update({id: product.id}, product).then((response) => {
-						console.log(response);
-					})
-				})
+					this.$product.update({ id: product.id }, product).then(
+						response => {
+							console.log(response);
 
+							if (response.status !== 200) {
+								this.query_error = true;
+							}
+						},
+						response => {
+							if (
+								response.status === 403 &&
+								response.statusText === "Forbidden"
+							) {
+								this.permission_error = true;
+							} else {
+								this.query_error = true;
+							}
+						}
+					);
+				});
 
+				if (this.query_error !== true) {
+					this.messages.push({
+						id: parseInt(Math.random() * 1000),
+						status: "success",
+						header: "Produits modifiés",
+						body: "Les produits sélectionnés ont bien été modifiés."
+					});
+				}
+
+				this.get_products();
 			}
+		},
+
+		get_products() {
+			this.$product.query({ limit: this.limit }).then(
+				response => {
+					response.body.results.forEach(product => {
+						product.check = false;
+					});
+					this.products = response.body.results;
+				},
+				response => {
+					if (response.statusText === "Forbidden" && response.status === 403) {
+						this.permission_error = true;
+					} else {
+						this.query_error = true;
+					}
+			
+					if (response.body.next === null) {
+						this.display_button_get_more_product = false;
+					}
+				}
+			);
 		}
 	},
 
@@ -216,25 +271,7 @@ export default {
 			}
 		);
 
-		this.$product.query({ limit: this.LIMIT }).then(
-			response => {
-				response.body.results.forEach(product => {
-					product.check = false;
-				});
-				this.products = response.body.results;
-
-				if (response.next !== undefined) {
-					this.display_button_get_more_product = false;
-				}
-			},
-			response => {
-				if (this.status === "Forbidden" && this.status_code === 403) {
-					this.permission_error = true;
-				} else {
-					this.query_error = true;
-				}
-			}
-		);
+		this.get_products();
 	}
 };
 </script>

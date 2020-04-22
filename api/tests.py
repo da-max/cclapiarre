@@ -53,14 +53,14 @@ class CitrusApiTestCase (CommandApiTestCase):
             'id': id,
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande',
-            'body': f'{e}'
+            'body': e
         }
 
         self.update_error_response = lambda id, e: {
             'id': id,
             'status': 'danger',
             'header': 'Erreur lors de la modification de la commande',
-            'body': f'{e}'
+            'body': e
         }
 
         self.p1 = Product.objects.create(name='product1', weight=1,
@@ -314,7 +314,7 @@ class CitrusApiTestCase (CommandApiTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.update_error_response(
-            json.loads(response.content)['id'], Product.DoesNotExist(f'Une erreur est survenue, merci de réessayer. (ERREUR: Product matching query does not exist.)')))
+            json.loads(response.content)['id'], Product.DoesNotExist('Une erreur est survenue, merci de réessayer. (ERREUR: Product matching query does not exist.)')))
 
     def test_bad_data_update_command(self):
         """ Like add_command."""

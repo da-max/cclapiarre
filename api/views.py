@@ -120,8 +120,8 @@ class CommandViewSet(ModelViewSet):
         return {
             'id': int(random() * 1000),
             'status': 'danger',
-            'header': f'Erreur lors de {action} de la commande',
-            'body': f'{error}'
+            'header': 'Erreur lors de {} de la commande'.format(action),
+            'body': error
         }
 
     def check_command(self, request):
@@ -238,7 +238,7 @@ class CommandViewSet(ModelViewSet):
             return Response({
                 'status': 'success',
                 'header': 'Commande supprimée',
-                'body': f'La commande de {command.user.username} a bien été supprimé.'
+                'body': 'La commande de {} a bien été supprimé.'.format(command.user.username)
             })
 
     def update(self, request, pk):
@@ -268,7 +268,7 @@ class CommandViewSet(ModelViewSet):
             'id': int(random() * 1000),
             'status': 'success',
             'header': 'Commande modifiée',
-            'body': f'La commande de {command.user.username} a bien été modifié.'
+            'body': 'La commande de {} a bien été modifié.'.format(command.user.username)
         })
 
     @action(detail=False, methods=['delete'])

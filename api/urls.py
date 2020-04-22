@@ -4,7 +4,7 @@ from django.conf.urls import url
 
 from rest_framework.routers import DefaultRouter
 
-from api.views import CommandViewSet, AmoutViewSet, \
+from api.views import CommandViewSet, \
  ProductViewSet, CurrentUserView, CoffeeViewSet, CommandCoffeeViewSet
 
 urlpatterns = [
@@ -16,7 +16,6 @@ urlpatterns = [
 
 ROUTER = DefaultRouter(trailing_slash=False)
 ROUTER.register(r'citrus/command', CommandViewSet)
-ROUTER.register(r'citrus/amount', AmoutViewSet, basename='amount')
 ROUTER.register(r'citrus/product', ProductViewSet, basename='product')
 ROUTER.register(r'coffee/coffee', CoffeeViewSet, basename='coffee-coffee')
 ROUTER.register(r'coffee/command', CommandCoffeeViewSet, basename='coffee-command-coffee')

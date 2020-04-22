@@ -137,7 +137,11 @@ class CommandViewSet(ModelViewSet):
         data = request.data.copy()
 
         try:
-            mail = bool(data.pop('send_mail')[0])
+            mail = data.pop('send_mail')[0]
+            if int(mail) == 0:
+                mail = False
+            else:
+                mail = True
         except:
             # By default, a sommary mail is send.
             mail = True
@@ -213,9 +217,10 @@ class CommandViewSet(ModelViewSet):
 
         except Exception as e:
             return Response(self.error_response(e))
-
-        post_change_command.send(
-            sender=Command.product.through, instance=command, status='add')
+        
+        if mail:
+            post_change_command.send(
+                sender=Command.product.through, instance=command, status='add')
         return Response({
             'id': int(random() * 1000),
             'status': 'success',
@@ -256,8 +261,9 @@ class CommandViewSet(ModelViewSet):
             except Exception as e:
                 return Response(self.error_response(e))
 
-        post_change_command.send(
-            sender=Command.product.through, instance=command, status='update')
+        if command.send_mail:
+            post_change_command.send(
+                sender=Command.product.through, instance=command, status='update')
         return Response({
             'id': int(random() * 1000),
             'status': 'success',

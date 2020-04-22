@@ -14,6 +14,7 @@ class Product(Model):
                         help_text="Mettre 1 si ce produit n'est pas vendu au poids.")
     price = FloatField(default=1, verbose_name="Prix du produit")
     display = BooleanField(verbose_name="Afficher le produit")
+    maybe_not_available = BooleanField(verbose_name="Produit peut être non disponible", default=False, help_text="Cocher cette case si le produit peut ne pas être disponible.")
     step = FloatField(default=1, verbose_name="Pas d'augmentation du produit")
     maximum = IntegerField(
         default=100, verbose_name="Quantité maximal commandable par commande")
@@ -38,7 +39,7 @@ class Command(Model):
                           help_text="Merci de laisser la valeur par défaut.")
     user = ForeignKey(User, on_delete=CASCADE, related_name="utilisateur")
     product = ManyToManyField(
-        Product, through='Amount', related_name='product')
+        Product, through='Amount', related_name='commands')
     send_mail = BooleanField(verbose_name='Envoyer un mail', default=True,
                              help_text='Décocher cette case afin qu\'aucun mail ne soit envoyé à l\'utilisateur '
                              'lors de sa commande (ou de la modification de sa commande.')
@@ -60,8 +61,8 @@ class Command(Model):
 
 
 class Amount(Model):
-    product = ForeignKey(Product, on_delete=CASCADE, related_name="produit")
-    command = ForeignKey(Command, on_delete=CASCADE, related_name="commande")
+    product = ForeignKey(Product, on_delete=CASCADE, related_name="amounts")
+    command = ForeignKey(Command, on_delete=CASCADE, related_name="amounts")
     amount = FloatField(verbose_name="Quatité commandé")
 
     class Meta:

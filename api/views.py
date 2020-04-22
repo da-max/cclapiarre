@@ -17,9 +17,11 @@ from django.contrib.auth.models import User
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
+from cclapiarre.exceptions import BoxNumberException
 from api.serializers import CommandSerializer, AmountSerializer, ProductSerializer, UserSerializer, UserWithPermissionsSerializer, CoffeeSerializer, CommandCoffeeSerializer
-from command.models import Command, Amount, Product
+from citrus.models import Command, Amount, Product
 from coffee.models import Coffee, CommandCoffee, Quantity as AmountCoffee, Type
+from api.pagination import StandardLimitOffsetPagination
 
 
 # Created new signals
@@ -49,8 +51,8 @@ def command_send_mail(sender, instance, **kwargs):
             }
         SUBJECT = "Récapitulatif de votre commande"
         FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
-        HTML_TEXT = get_template('command/command_mail/sommary.html')
-        PLAIN_TEXT = get_template('command/command_mail/sommary.txt')
+        HTML_TEXT = get_template('citrus/command_mail/sommary.html')
+        PLAIN_TEXT = get_template('citrus/command_mail/sommary.txt')
 
         DATA = {
             'command_sommary': command_sommary,
@@ -114,37 +116,41 @@ class CommandViewSet(ModelViewSet):
     serializer_class = CommandSerializer
     queryset = Command.objects.all()
 
-    def list(self, request):
-        queryset = Command.objects.all()
-        serializer = CommandSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request):
-
-        def error_response(e): return {
+    def error_response(self, error=Exception, action="l’enregistrement"):
+        return {
             'id': int(random() * 1000),
             'status': 'danger',
-            'header': 'Erreur lors de l\'enregistrement des produits de votre commande',
-            'body': 'Une erreur est survenue lors de l\'enregistrement d\'un (ou plusieurs) produit⋅s, \
-                merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
-                (ERREUR : {})'.format(type(e))
+            'header': f'Erreur lors de {action} de la commande',
+            'body': f'{error}'
         }
-       # For format data.
-        amounts = dict()
 
-        # For send mail
-        command_sommary = dict()
+    def check_command(self, request):
+        """ Method for check if all information send when an user command are right (this method is use when an user command or update a command). """
+        BOX_LIMIT = 6
         # For count number of box (maximum=6)
         total_box = float()
+
+        # For format data.
+        amounts = dict()
 
         # Data
         data = request.data.copy()
 
         try:
-            user_id = data.pop('user')
-            mail = bool(int(data.pop('send_mail')[0]))
-        except (KeyError, Exception) as e:
-            return Response(error_response(e))
+            mail = data.pop('send_mail')[0]
+            if int(mail) == 0:
+                mail = False
+            else:
+                mail = True
+        except:
+            # By default, a sommary mail is send.
+            mail = True
+
+        try:
+            user_id = data.pop('user')[0]
+            user = User.objects.get(id=user_id)
+        except Exception as e:
+            raise
 
         for product_id, amount in data.items():
 
@@ -156,31 +162,39 @@ class CommandViewSet(ModelViewSet):
                 assert float(
                     amount % product.step) == 0
 
-            except (ObjectDoesNotExist, ValueError, Exception) as e:
-                return Response(error_response(e))
+            except (AssertionError, ObjectDoesNotExist, ValueError) as e:
+                raise type(e)(
+                    f"Une erreur est survenue, merci de réessayer. (ERREUR: {e})")
 
             else:
-                amounts[product.id] = (product, amount)
-                if product.weight != 1:
-                    total_box += amount
+                if amount != float(0):
+                    amounts[product.id] = {
+                        'product': product,
+                        'amount': amount
+                    }
+                    if product.weight != 1:
+                        total_box += amount
         try:
-            assert total_box <= 6
+            assert total_box <= BOX_LIMIT
         except AssertionError as e:
-            return Response({
-                'id': int(random() * 1000),
-                'status': 'warning',
-                'header': 'Nombre de caisse trop important',
-                'body': 'Le nombre de caisse que vous avez commandé est trop important. '
-                'Le nombre maximum de caisse est fixé à 6 par adhérent. Merci de modifier votre commande.'
-            })
+            raise BoxNumberException(
+                f"Le nombre de caisse est limité a {BOX_LIMIT}, vous avez commandé {total_box} caisses. Merci de modifier la commande.")
+
+        return (user, mail, amounts)
+
+    def list(self, request):
+        queryset = Command.objects.all()
+        serializer = CommandSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
 
         try:
-            user = User.objects.get(id=user_id[0])
-        except (ObjectDoesNotExist, AttributeError, KeyError, Exception) as e:
-            return Response(error_response(e))
-
+            user, mail, amounts = self.check_command(request)
+        except Exception as e:
+            return Response(self.error_response(error=e))
         try:
-            Command.objects.get(user=user)
+            Command.objects.get(user__id=user.id)
         except ObjectDoesNotExist:
             pass
         except Exception as e:
@@ -198,20 +212,15 @@ class CommandViewSet(ModelViewSet):
             command = Command.objects.create(user=user, send_mail=mail)
 
             for product_id, data in amounts.items():
-                product = data[0]
-                amount = data[1]
-                try:
-                    assert float(amount) != float(0)
-                except:
-                    pass
-                else:
-                    amount = Amount.objects.create(
-                        product=product, amount=amount, command=command)
+                amount = Amount.objects.create(
+                    product=data['product'], amount=data['amount'], command=command)
 
         except Exception as e:
-            return Response(error_response(e))
-
-        post_change_command.send(sender=Command.product.through, instance=command, status='add')
+            return Response(self.error_response(e))
+        
+        if mail:
+            post_change_command.send(
+                sender=Command.product.through, instance=command, status='add')
         return Response({
             'id': int(random() * 1000),
             'status': 'success',
@@ -220,83 +229,46 @@ class CommandViewSet(ModelViewSet):
         })
 
     def destroy(self, request, pk):
-        def error_response(e): return {
-            'id': int(random() * 1000),
-            'status': 'danger',
-            'header': 'Erreur lors de l\'enregistrement des produits de votre commande',
-            'body': 'Une erreur est survenue lors de l\'enregistrement d\'un (ou plusieurs) produit⋅s, \
-                merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
-                (ERREUR : {})'.format(e)
-        }
         try:
             command = Command.objects.get(id=pk)
         except (ObjectDoesNotExist, Exception) as e:
-            return Response(error_response(e))
+            return Response(self.error_response(error=e, action='la suppression'))
         else:
             command.delete()
             return Response({
                 'status': 'success',
                 'header': 'Commande supprimée',
-                'body': 'La commande de {} a bie été supprimé.'.format(command.user.username)})
+                'body': f'La commande de {command.user.username} a bien été supprimé.'
+            })
 
     def update(self, request, pk):
 
-        def error_response(e): return {
-            'id': int(random() * 1000),
-            'status': 'danger',
-            'header': 'Erreur lors de la modification de la commande',
-            'body': 'Une erreur est survenue lors de la modification de la commande'
-            'merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. '
-            '(ERREUR : {})'.format(type(e))
-        }
-        amounts = dict()
-        data = request.data.copy()
-        total_box = float()
         try:
-            user_id = data.pop('user_id')[0]
-            command = Command.objects.get(Q(id=pk) & Q(user_id=user_id))
+            user, mail, amounts = self.check_command(request)
+        except Exception as e:
+            return Response(self.error_response(error=e, action='la modification'))
+
+        try:
+            command = Command.objects.get(Q(id=pk) & Q(user=user))
             amount = Amount.objects.filter(command=command).delete()
         except Exception as e:
             return Response(error_response(e))
 
-        for product_id, amount in data.items():
-            try:
-                product = Product.objects.get(
-                    Q(id=product_id) & Q(display=True))
-                amount = float(amount)
-                assert float(
-                    amount % product.step) == 0
-            except (ObjectDoesNotExist, Exception) as e:
-                return Response(error_response(e))
-            else:
-                if product.weight != 1:
-                    total_box += amount
-                amounts[product] = amount
-        try:
-            assert total_box <= 6
-        except AssertionError as e:
-            return Response({
-                'id': int(random() * 1000),
-                'status': 'warning',
-                'header': 'Nombre de caisse trop important',
-                'body': 'Le nombre de caisse commandé est trop important. '
-                'Le nombre maximum de caisse est fixé à 6 par adhérent. Merci de modifier la commande.'
-            })
-
         for product, amount in amounts.items():
             try:
                 a = Amount.objects.create(
-                    command=command, product=product, amount=amount)
+                    command=command, product=amount['product'], amount=amount['amount'])
             except Exception as e:
-                return Response(error_response(e))
+                return Response(self.error_response(e))
 
-        post_change_command.send(
-            sender=Command.product.through, instance=command, status='update')
+        if command.send_mail:
+            post_change_command.send(
+                sender=Command.product.through, instance=command, status='update')
         return Response({
             'id': int(random() * 1000),
             'status': 'success',
             'header': 'Commande modifiée',
-            'body': 'La commande de {} a bien été modifié.'.format(command.user.username)
+            'body': f'La commande de {command.user.username} a bien été modifié.'
         })
 
     @action(detail=False, methods=['delete'])
@@ -311,7 +283,7 @@ class CommandViewSet(ModelViewSet):
                 'status': 'danger',
                 'header': 'Erreur interne',
                 'body': 'Une erreur est survenue lors de la suppression de toutes les commandes. '
-                'Merce de réessayer et de me contacter si besoin (ERREUR: {})'.format(
+                'Merci de réessayer et de me contacter si besoin (ERREUR: {})'.format(
                     type(e))
             })
         else:
@@ -323,110 +295,41 @@ class CommandViewSet(ModelViewSet):
             })
 
 
-class AmoutViewSet(ModelViewSet):
-    serializer_class = AmountSerializer
-    queryset = Amount.objects.all()
-
-    def list(self, request):
-        queryset = Amount.objects.all()
-        serializer = AmountSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request):
-
-        def error_response(e): return {
-            'id': int(random() * 1000),
-            'status': 'danger',
-            'header': 'Erreur lors de l\'enregistrement des produits de votre commande',
-            'body': 'Une erreur est survenue lors de l\'enregistrement d\'un (ou plusieurs) produit⋅s, \
-                merci de réessayer et de me contacter si vous rencontrez de nouveau cette erreur. \
-                (ERREUR : {})'.format(type(e))
-        }
-       # For format data.
-        amounts = dict()
-        # For count number of box (maximum=6)
-        total_box = float()
-
-        # Data
-        data = request.data.copy()
-
-        try:
-            user_id = data.pop('user')
-        except (KeyError, Exception) as e:
-            return Response(error_response(e))
-
-        for product_id, amount in data.items():
-            try:
-                product = Product.objects.get(id=product_id)
-                amount = float(amount)
-            except (ObjectDoesNotExist, ValueError, Exception) as e:
-                return Response(error_response(e))
-            else:
-                amounts[product.id] = (product, amount)
-                if product.weight != 1:
-                    total_box += amount
-        try:
-            assert total_box <= 6
-        except AssertionError as e:
-            return Response({
-                'id': int(random() * 1000),
-                'status': 'warning',
-                'header': 'Nombre de caisse trop important',
-                'header': 'Le nombre de caisse que vous avez commandé est trop important. Le nombre maximum de caisse est fixé \
-                à 6 par adhérent. Merci de modifier votre commande.'
-            })
-
-        try:
-            user = User.objects.get(id=user_id[0])
-        except (ObjectDoesNotExist, AttributeError, KeyError, Exception) as e:
-            return Response(error_response(e))
-
-        try:
-            Command.objects.get(user=user)
-        except ObjectDoesNotExist:
-            pass
-        except Exception as e:
-            return Response(error_response(e))
-        else:
-            return Response({
-                'id': int(random() * 1000),
-                'status': 'warning',
-                'header': 'Vous avez déjà commandé !',
-                'body': 'Une commande à votre nom a déjà été trouvé ! Merci de vérifier que votre commande \
-                n\'est pas déjà présente dans le tableau. Si cette commande n\'est pas de vous, merci de me contacter.'
-            })
-
-        command = Command.objects.create(user=user)
-
-        try:
-            for product_id, data in amounts.items():
-                amount = Amount.objects.create(
-                    product=data[0], amount=data[1])
-                command.product.add(amount)
-        except Exception as e:
-            return Response(error_response(e))
-        else:
-            return Response({
-                'status': 'success',
-                'header': 'Commande enregistrée',
-                'body': 'Votre commande a bien été enregistré.'
-            })
-
-
 class ProductViewSet(ModelViewSet):
+
     serializer_class = ProductSerializer
     queryset = Product.objects.filter(display=True)
+    pagination_class = StandardLimitOffsetPagination
 
-    def list(self, request, *args, **kwargs):
-        # queryset = Product.objects.all()
-        serializer = ProductSerializer(self.queryset, many=True)
+    def get_queryset(self):
+        queryset = self.queryset
+        query = self.request.query_params.get('query', None)
+        display = self.request.query_params.get('display', None)
+
+        if display is not None:
+            queryset = Product.objects.filter(display=True)
+        elif query == 'all':
+            queryset = Product.objects.all()
+
+        return queryset
+
+    def list(self, request):
+        super().list(request)
+        serializer = ProductSerializer(self.get_queryset(), many=True)
+        query = request.query_params.get('query', None)
+
+        # If query == all I paginated_queryset and return paginated response.
+        if query == 'all':
+            return self.get_paginated_response(self.paginate_queryset(serializer.data))
+
+        # Else I return classic response.
         return Response(serializer.data)
-
 
 class CurrentUserView(APIView):
     queryset = User.objects.all()
     serializer = UserWithPermissionsSerializer()
     permission_classes = [IsAuthenticated]
+
     def get(self, request):
         serializer = UserWithPermissionsSerializer(request.user)
         return Response(serializer.data)
@@ -550,8 +453,9 @@ class CommandCoffeeViewSet(ModelViewSet):
         for amount in sommary_command:
             a = AmountCoffee.objects.create(
                 coffee=amount['coffee'], quantity=amount['amount'], command=command, sort=amount['sort'], weight=amount['weight'])
-        
-        post_change_command.send(sender=CommandCoffee.coffee.through, instance=command, status='add')
+
+        post_change_command.send(
+            sender=CommandCoffee.coffee.through, instance=command, status='add')
 
         return Response({
             'id': int(random() * 1000),
@@ -587,8 +491,9 @@ class CommandCoffeeViewSet(ModelViewSet):
                     command=command, coffee=amount['coffee'], quantity=amount['amount'], weight=amount['weight'], sort=amount['sort'])
             except Exception as e:
                 return Response(self.error_response(error=e, action='la modification'))
-        
-        post_change_command.send(sender=CommandCoffee.coffee.through, instance=command, status='update')
+
+        post_change_command.send(
+            sender=CommandCoffee.coffee.through, instance=command, status='update')
 
         return Response({
             'id': int(random() * 1000),

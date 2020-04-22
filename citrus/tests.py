@@ -1,11 +1,12 @@
 from django.test import TestCase, TransactionTestCase, Client
 from django.template.loader import render_to_string
+from django.urls import reverse
 
 
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in
 
-from command.models import Amount, Command, Product
+from citrus.models import Amount, Command, Product
 from registration.views import connect
 
 
@@ -87,7 +88,7 @@ class ViewTest(TransactionTestCase):
     def test_command_citrus(self):
         """ Test if command_citrus display app.html template (vuejs app)."""
         
-        response = self.client.get('/commande/commander-des-agrumes')
+        response = self.client.get(reverse('citrus:new_command_citrus'))
         
         self.assertEqual(response.status_code, 200)
         with self.assertTemplateUsed('app.html'):
@@ -97,18 +98,8 @@ class ViewTest(TransactionTestCase):
     def test_sommary_command(self):
         """ Test if sommary_command display command/pdf/sommary_command template. """
         
-        response = self.client.get('/commande/recapitulatif-de-la-commande')
+        response = self.client.get(reverse('citrus:sommary_command'))
         
         self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('command/pdf/sommary_command.html'):
-            render_to_string('command/pdf/sommary_command.html')
-    
-    
-    def test_table_command(self):
-        """ Tets if table_command display command/command/table_command.html template."""
-        
-        response = self.client.get('/commande/commander')
-        
-        self.assertEqual(response.status_code, 200)
-        with self.assertTemplateUsed('command/command/table_command.html'):
-            render_to_string('command/command/table_command.html')
+        with self.assertTemplateUsed('citrus/pdf/sommary_command.html'):
+            render_to_string('citrus/pdf/sommary_command.html')

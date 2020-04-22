@@ -2,7 +2,7 @@
 from django.contrib.auth.models import User
 from rest_framework.serializers import ModelSerializer, BooleanField, FloatField, RelatedField, SerializerMethodField
 
-from command.models import Command, Amount, Product
+from citrus.models import Command, Amount, Product
 from coffee.models import Origin as CoffeeOrigin, Quantity as CoffeeAmount, Coffee, CommandCoffee, Type as CoffeeType
 
 
@@ -23,7 +23,6 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'last_name', 'first_name']
 
-
 class ProductSerializer(ModelSerializer):
     #display = BooleanField(required=False)
     total = SerializerMethodField()
@@ -31,20 +30,28 @@ class ProductSerializer(ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'name', 'weight', 'description',
-                  'step', 'maximum', 'price', 'total']
+                  'step', 'maximum', 'price', 'total', 'display', 'maybe_not_available']
 
     def get_total(self, product):
         return product.get_total()
+
+class AmountSerializer(ModelSerializer):
+    amount = FloatField()
+    product = ProductSerializer()
+
+    class Meta:
+        model = Amount
+        fields = ['id', 'product', 'amount']
 
 
 class CommandSerializer(ModelSerializer):
     total = SerializerMethodField()
     user = UserSerializer()
-    product = ProductSerializer(many=True)
+    amounts = AmountSerializer(many=True)
 
     class Meta:
         model = Command
-        fields = ['user', 'product', 'total', 'id']
+        fields = ['user', 'total', 'id', 'amounts']
 
     def get_total(self, command):
 
@@ -58,15 +65,6 @@ class CommandSmallSerializer(ModelSerializer):
         model = Command
         fields = ['id', 'user']
 
-
-class AmountSerializer(ModelSerializer):
-    amount = FloatField()
-    product = ProductSerializer()
-    command = CommandSmallSerializer()
-
-    class Meta:
-        model = Amount
-        fields = ['id', 'command', 'product', 'amount']
 
 
 """ Serializer for coffee app """

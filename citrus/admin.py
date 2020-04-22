@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 
-from command.models import Product, Command, Amount
+from citrus.models import Product, Command, Amount
 
 class ProductAdmin(ModelAdmin):
 

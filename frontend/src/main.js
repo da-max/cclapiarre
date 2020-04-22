@@ -2,26 +2,29 @@ import Vue from 'vue'
 import App from './App.vue'
 import VueResource from 'vue-resource'
 import router from './router'
+import CKEditor from '@ckeditor/ckeditor5-vue';
 
 function getCookie(name) {
-  var cookieValue = null;
+  var cookieValue = null
   if (document.cookie && document.cookie !== '') {
-      var cookies = document.cookie.split(';');
-      for (var i = 0; i < cookies.length; i++) {
-          var cookie = cookies[i].trim();
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-          }
+    var cookies = document.cookie.split(';')
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i].trim()
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === name + '=') {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+        break
       }
+    }
   }
-  return cookieValue;
+  return cookieValue
 }
 
 Vue.config.productionTip = false
 Vue.use(VueResource)
 Vue.http.options.root = 'http://localhost:8000/'
+
+Vue.use(CKEditor)
 
 Vue.http.headers.common['X-CSRFToken'] = getCookie('csrftoken')
 Vue.http.interceptors.push((request, next) => {
@@ -34,5 +37,7 @@ Vue.http.interceptors.push((request, next) => {
 
 new Vue({
   router,
-  render: function (h) { return h(App) },
+  render: function(h) {
+    return h(App)
+  },
 }).$mount('#app')

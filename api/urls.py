@@ -8,7 +8,8 @@ from api.views import CommandViewSet, AmoutViewSet, \
  ProductViewSet, CurrentUserView, CoffeeViewSet, CommandCoffeeViewSet
 
 urlpatterns = [
-    url(r'^users/current', CurrentUserView.as_view())
+    url(r'^users/current', CurrentUserView.as_view()),
+    url(r'^citrus/product\?query=all', ProductViewSet.as_view({'get': 'list_all'}))
 
 ]
 

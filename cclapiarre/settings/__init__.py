@@ -49,7 +49,7 @@ INSTALLED_APPS =[
     'registration',
     'article',
     'event',
-    'command',
+    'citrus',
     'carousel',
     'coffee',
     'pasta'

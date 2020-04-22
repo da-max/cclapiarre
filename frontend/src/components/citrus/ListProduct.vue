@@ -165,8 +165,6 @@ import Drop from "../utility/Drop";
 export default {
 	name: "ListProduct",
 
-	props: ["page"],
-
 	data() {
 		return {
 			// Utility
@@ -184,6 +182,8 @@ export default {
 			// limit is number of product add when an user click on button "Afficher plus de produit"
 			limit: 10,
 			ACTIONS: {
+				maybe_not_available: "Produit potentiellement indisponble",
+				available: "Produit disponible",
 				hide: "Cacher ces produits",
 				show: "Afficher ces produits"
 			}
@@ -246,6 +246,21 @@ export default {
 
 					products_check.forEach(product => {
 						product.display = true;
+					});
+				} else if (this.action === "maybe_not_available") {
+					products_check = products_check.filter(product => {
+						return product.maybe_not_available == false;
+					});
+
+					products_check.forEach(product => {
+						product.maybe_not_available = true;
+					});
+				} else if (this.action === "available") {
+					products_check = products_check.filter(product => {
+						return product.maybe_not_available == true;
+					});
+					products_check.forEach(product => {
+						product.maybe_not_available = false;
 					});
 				}
 

@@ -18,11 +18,6 @@ import Breadcrumd from '../components/utility/Breadcrumb'
 
 export default {
     name: "CitrusProductList",
-
-    props: {
-        page: {type: Number, default() { return 1}}
-    },
-
     data() {
         return {
             breadcrumb: [

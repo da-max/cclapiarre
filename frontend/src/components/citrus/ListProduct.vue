@@ -82,7 +82,19 @@
 						<td>
 							<input type="checkbox" class="uk-checkbox" v-model="product.check" />
 						</td>
-						<td>{{ product.name }}</td>
+						<td>
+							<drop pos="right">
+								<template #button>{{ product.name }}</template>
+								<template #header>{{ product.name }}</template>
+								<template #body>
+									Prix : {{ product.price }} €
+									<br />
+									<span v-if="product.weight !== 1">Poids: {{ product.weight }} kg</span>
+									<span v-else>Vendu à l’unité (poids : 1)</span>
+									<div v-html="product.description"></div>
+								</template>
+							</drop>
+						</td>
 						<td v-if="product.weight === 1">Vendu à l’unité</td>
 						<td v-else>{{ product.weight }} kg</td>
 						<td>{{ product.price }} €</td>
@@ -99,13 +111,35 @@
 							<span uk-icon="close"></span>
 						</td>
 						<td>
-							<router-link
-								:to="{ name: 'citrus_update_product', params: { product_id: product.id }}"
+							<modal :id="'confirm_delete_' + product.id">
+								<template #header>
+									<h3>Supprimer {{ product.name }} ?</h3>
+								</template>
+								<template #body>
+									Vous êtes sur le point de supprimer le produit : {{ product.name }},
+									<span
+										class="uk-text-bold"
+									>il est recommandé de cacher le produit plutôt que de le supprimer.</span>
+								</template>
+								<template #footer>
+									<button
+										class="uk-button uk-button-danger"
+										@click.prevent="delete_product(product.id)"
+									>Supprimer le produit</button>
+									<button class="uk-button uk-button-default uk-modal-close uk-margin-medium-left">Annuler</button>
+								</template>
+							</modal>
+							<a
+								:href="'/agrumes/modifier-un-produit/' + product.id"
 								:title="'Modifier le produit : ' + product.name"
 								uk-icon="icon: refresh; ratio: 1.20"
 								class="uk-margin-small-right"
-							></router-link>
-							<a :title="'Supprimer le produit : ' + product.name" uk-icon="icon: trash; ratio: 1.20"></a>
+							></a>
+							<a
+								:uk-toggle="'target: #confirm_delete_' + product.id"
+								:title="'Supprimer le produit : ' + product.name"
+								uk-icon="icon: trash; ratio: 1.20"
+							></a>
 						</td>
 					</tr>
 				</tbody>
@@ -125,6 +159,8 @@
 <script>
 import Loader from "../utility/Loader";
 import Message from "../utility/Message";
+import Modal from "../utility/Modal";
+import Drop from "../utility/Drop";
 
 export default {
 	name: "ListProduct",
@@ -156,7 +192,9 @@ export default {
 
 	components: {
 		Loader,
-		Message
+		Message,
+		Modal,
+		Drop
 	},
 
 	computed: {
@@ -177,14 +215,13 @@ export default {
 			this.limit += parseInt(this.OFFSET);
 			this.$product.query({ limit: this.limit }).then(response => {
 				this.products = response.body.results;
-				console.log(response);
 				if (response.body.next === null) {
 					this.display_button_get_more_product = false;
 				}
 			});
 		},
 
-		apply_action() {
+		async apply_action() {
 			if (this.products.find(product => product.check === true) === undefined) {
 				UIkit.notification(
 					"Aucun produit sélctionné. <br>L’action ne peut être appliquée.",
@@ -212,11 +249,10 @@ export default {
 					});
 				}
 
-				products_check.forEach(product => {
+				await products_check.forEach(product => {
 					this.$product.update({ id: product.id }, product).then(
 						response => {
 							console.log(response);
-
 							if (response.status !== 200) {
 								this.query_error = true;
 							}
@@ -254,6 +290,9 @@ export default {
 						product.check = false;
 					});
 					this.products = response.body.results;
+					if (response.body.next === null) {
+						this.display_button_get_more_product = false;
+					}
 				},
 				response => {
 					if (response.statusText === "Forbidden" && response.status === 403) {
@@ -261,12 +300,42 @@ export default {
 					} else {
 						this.query_error = true;
 					}
+				}
+			);
+		},
 
-					if (response.body.next === null) {
-						this.display_button_get_more_product = false;
+		async delete_product(product_id) {
+			UIkit.modal("#confirm_delete_" + product_id).hide();
+			await this.$product.delete({ id: product_id }).then(
+				response => {
+					this.messages.push({
+						id: parseInt(Math.round() * 1000),
+						header: "Produit supprimé",
+						body: "Le produit a bien été supprimé.",
+						status: "success"
+					});
+				},
+				response => {
+					if (response.status === 400) {
+						this.messages.push({
+							id: parseInt(Math.round() * 1000),
+							header: "Erreur",
+							bdoy:
+								"Une erreur est survenue, le produit n’a pas pu être supprimé, merci d’actualiser la page, puis réessayer.",
+							status: "danger"
+						});
+					} else if (
+						response.status === 403 &&
+						response.statusText === "Frobidden"
+					) {
+						this.permission_error = true;
+					} else {
+						this.query_error = true;
 					}
 				}
 			);
+			this.get_products();
+			UIkit.scroll("", { offset: 150 }).scrollTo("#vue-messages");
 		}
 	},
 

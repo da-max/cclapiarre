@@ -1,6 +1,29 @@
 <template>
 	<div id="update-citrus">
 		<loader v-show="loading" />
+
+		<modal id="warning-display">
+			<template #header>
+				<h3>Enregistrer ?</h3>
+			</template>
+			<template #body>
+				<p
+					class="uk-text-bold uk-text-warning"
+				>Attention, le produit que vous venez de modifier a l’option « afficher ce produit » désactivé. Ainsi, il ne sera pas affiché sur le tableau des commandes, et ne pourra donc pas être commandé.<br>
+				Êtes-vous sûr de vouloir modifier ce produit ?</p>
+				<p v-if="product.display == false" >Cliquez <a class="uk-text-bold uk-text-primary" @click.prevent='product.display = true'>ici</a> afin d’afficher le produit sur le tableau des commandes.</p>
+			</template>
+			<template #footer>
+				<button
+					class="uk-button uk-button-primary uk-margin-large-right"
+					type="submit"
+					@click.prevent="update_product(false)"
+				>Commander</button>
+				<button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
+
+			</template>
+		</modal>
+
 		<div id="vue-messages" class="uk-width-2-5@l uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom">
 			<message v-show="query_error" :close="false" status="danger">
 				<template #header>Erreur interne</template>
@@ -150,7 +173,7 @@
 					value="Modifier le produit"
 					@click.prevent="update_product()"
 					class="uk-button uk-button-primary"
-                    id="submit_button"
+					id="submit_button"
 				/>
 			</div>
 		</form>
@@ -161,6 +184,8 @@
 import Loader from "../utility/Loader";
 import Message from "../utility/Message";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import Breadcrumb from "../utility/Breadcrumb";
+import Modal from "../utility/Modal";
 
 export default {
 	name: "UpdateCitrus",
@@ -180,41 +205,53 @@ export default {
 
 	components: {
 		Loader,
-		Message
+		Message,
+		Modal
 	},
 
 	props: ["product_id"],
 
 	methods: {
-		update_product() {
-			this.$product.update({ id: this.product_id }, this.product).then(
-				response => {
-					this.messages.push({
-						id: parseInt(Math.random() * 1000),
-						header: "Produit enregistré",
-						body: "Le produit a bien été modifé.",
-						status: "success"
-                    });
-                    UIkit.scroll("#submit_button", {offset: 150}).scrollTo("#vue-messages")
-				},
-				response => {
-                    if (response.status === 403 && response.statusText === "Forbidden") {
-                        this.permission_error = true
-                    }
-                    else if (response.status === 400) {
-                        this.messages.push({
-                            id: parseInt(Math.random() * 1000),
-                            header: "Erreur",
-                            body: "Une erreur est survenue lors de l’enregistrement du produit, merci d’actualiser la page puis de réessayer.",
-                            status: "danger"
-                        })
-                    }
-                    else {
-                        this.query_error = true
-                    }
-                    UIkit.scroll("#submit_button", {offset: 150}).scrollTo("#vue-messages")
-                }
-			);
+		update_product(first = true) {
+			if (this.product.display === false && first === true) {
+				UIkit.modal("#warning-display").show();
+			} else {
+				UIkit.modal("#warning-display").hide();
+				this.$product.update({ id: this.product_id }, this.product).then(
+					response => {
+						this.messages.push({
+							id: parseInt(Math.random() * 1000),
+							header: "Produit enregistré",
+							body: "Le produit a bien été modifé.",
+							status: "success"
+						});
+						UIkit.scroll("#submit_button", { offset: 150 }).scrollTo(
+							"#vue-messages"
+						);
+					},
+					response => {
+						if (
+							response.status === 403 &&
+							response.statusText === "Forbidden"
+						) {
+							this.permission_error = true;
+						} else if (response.status === 400) {
+							this.messages.push({
+								id: parseInt(Math.random() * 1000),
+								header: "Erreur",
+								body:
+									"Une erreur est survenue lors de l’enregistrement du produit, merci d’actualiser la page puis de réessayer.",
+								status: "danger"
+							});
+						} else {
+							this.query_error = true;
+						}
+						UIkit.scroll("#submit_button", { offset: 150 }).scrollTo(
+							"#vue-messages"
+						);
+					}
+				);
+			}
 		}
 	},
 

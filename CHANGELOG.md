@@ -1,6 +1,12 @@
 # Changements
 Tous les changements de ce projet sont documentés ici, ce fichier est affiché sur cette page : [https://cclapiarre.deblan.fr/changements/](https://cclapiarre.deblan.fr/changements/) il est donc écrit en français.
 
+## 22 avril 2020 : Sortie de la version 5.4.5
+### Ajout
+* Ajout d’une fonctionnalité permettant de modifier ou de supprimer un produit pour la commande d’agrumes.
+* Il est également possible de modifier les status des produits directement depuis la page listant les produits.
+
+
 ## 12 avril 2020 : Sortie de la version 5.4.4
 
 ### Ajout

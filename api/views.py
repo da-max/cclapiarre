@@ -121,7 +121,7 @@ class CommandViewSet(ModelViewSet):
             'id': int(random() * 1000),
             'status': 'danger',
             'header': 'Erreur lors de {} de la commande'.format(action),
-            'body': error
+            'body': str(error)
         }
 
     def check_command(self, request):
@@ -164,7 +164,7 @@ class CommandViewSet(ModelViewSet):
 
             except (AssertionError, ObjectDoesNotExist, ValueError) as e:
                 raise type(e)(
-                    f"Une erreur est survenue, merci de réessayer. (ERREUR: {e})")
+                    "Une erreur est survenue, merci de réessayer. (ERREUR: {})".format(e))
 
             else:
                 if amount != float(0):
@@ -178,7 +178,7 @@ class CommandViewSet(ModelViewSet):
             assert total_box <= BOX_LIMIT
         except AssertionError as e:
             raise BoxNumberException(
-                f"Le nombre de caisse est limité a {BOX_LIMIT}, vous avez commandé {total_box} caisses. Merci de modifier la commande.")
+                "Le nombre de caisse est limité a {}, vous avez commandé {} caisses. Merci de modifier la commande.".format(BOX_LIMIT, total_box))
 
         return (user, mail, amounts)
 

@@ -3,7 +3,7 @@ from random import random
 from django.urls import reverse, path, include
 from django.db.models import ObjectDoesNotExist
 
-from rest_framework.test import APITransactionTestCase, URLPatternsTestCase, APIClient
+from rest_framework.test import APITransactionTestCase, URLPatternsTestCase, APIClient, APIRequestFactory
 from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth.models import User
 
@@ -79,9 +79,9 @@ class CitrusApiTestCase (CommandApiTestCase):
     def test_list_command(self):
         """ For test if list command display good value. """
 
-        response = self.client.get(reverse('command-list'))
-        content = json.loads(response.content)[0]
-        self.assertJSONEqual(response.content, [
+        response = self.client.get('/api/citrus/command')
+        content = response.data[0]
+        self.assertJSONEqual(str(response.content, encoding='utf8'), [
             {
                 'user': {
                     'id': content['user']['id'],
@@ -124,9 +124,8 @@ class CitrusApiTestCase (CommandApiTestCase):
         }
 
         response = self.client.post(reverse('command-list'), data)
-
-        self.assertJSONEqual(response.content, {
-            'id': float(json.loads(response.content)['id']),
+        self.assertEqual(response.data, {
+            'id': int(response.data['id']),
             'status': 'success',
             'header': 'Commande enregistrée',
             'body': 'Votre commande a bien été enregistrée.'
@@ -148,8 +147,8 @@ class CitrusApiTestCase (CommandApiTestCase):
         response = self.client.post(reverse('command-list'), data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': json.loads(response.content)['id'],
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': response.data['id'],
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande',
             'body': 'Le nombre de caisse est limité a 6, vous avez commandé 7.0 caisses. Merci de modifier la commande.'
@@ -166,10 +165,9 @@ class CitrusApiTestCase (CommandApiTestCase):
         }
 
         response = self.client.post(reverse('command-list'), data)
-
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.add_error_response(
-            json.loads(response.content)['id'], Product.DoesNotExist('Une erreur est survenue, merci de réessayer. (ERREUR: Product matching query does not exist.)')))
+        self.assertJSONEqual(str(response.content, encoding='utf8'), self.add_error_response(
+            response.data['id'], 'Une erreur est survenue, merci de réessayer. (ERREUR: Product matching query does not exist.)'))
 
     def test_bad_user_add_command(self):
         """ Test if user send bad user_id (random number for example). """
@@ -183,8 +181,8 @@ class CitrusApiTestCase (CommandApiTestCase):
 
         response = self.client.post(reverse('command-list'), data)
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.add_error_response(
-            json.loads(response.content)['id'], User.DoesNotExist('User matching query does not exist.')))
+        self.assertJSONEqual(str(response.content, encoding='utf8'), self.add_error_response(
+            response.data['id'], 'User matching query does not exist.'))
 
     def test_bad_key_add_command(self):
         """ Test if user send bad key. """
@@ -195,10 +193,9 @@ class CitrusApiTestCase (CommandApiTestCase):
         }
 
         response = self.client.post(reverse('command-list'), data)
-
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.add_error_response(
-            json.loads(response.content)['id'], KeyError('user')))
+        self.assertJSONEqual(str(response.content, encoding='utf8'), self.add_error_response(
+            response.data['id'], "'user'"))
 
     def test_bad_data_add_command(self):
         """ Test if user send bad Value of key. """
@@ -210,10 +207,9 @@ class CitrusApiTestCase (CommandApiTestCase):
         }
 
         response = self.client.post(reverse('command-list'), data)
-
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.add_error_response(
-            json.loads(response.content)['id'], ValueError("invalid literal for int() with base 10: 'wrong_id'")))
+        self.assertJSONEqual(str(response.content, encoding='utf8'), self.add_error_response(
+            response.data['id'], "invalid literal for int() with base 10: 'wrong_id'"))
 
     def test_bad_amount_add_command(self):
         """ Test if user send bad amount for a product.
@@ -228,8 +224,8 @@ class CitrusApiTestCase (CommandApiTestCase):
             reverse('command-list'), data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.add_error_response(
-            json.loads(response.content)['id'], AssertionError('Une erreur est survenue, merci de réessayer. (ERREUR: )')))
+        self.assertJSONEqual(str(response.content, encoding='utf8'), self.add_error_response(
+            response.data['id'], 'Une erreur est survenue, merci de réessayer. (ERREUR: )'))
 
     def test_also_command(self):
         """ Test if user as also command. """
@@ -254,8 +250,8 @@ class CitrusApiTestCase (CommandApiTestCase):
         response = self.client.post(reverse('command-list'), data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': json.loads(response.content)['id'],
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': int(response.data['id']),
             'status': 'warning',
             'header': 'Vous avez déjà commandé !',
             'body': 'Une commande à votre nom a déjà été trouvé ! '
@@ -276,8 +272,8 @@ class CitrusApiTestCase (CommandApiTestCase):
             reverse('command-detail', kwargs={'pk': self.command.id}), data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': json.loads(response.content)['id'],
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': response.data['id'],
             'status': 'success',
             'header': 'Commande modifiée',
             'body': 'La commande de {} a bien été modifié.'.format(self.super_user.username)
@@ -294,8 +290,8 @@ class CitrusApiTestCase (CommandApiTestCase):
             reverse('command-detail', kwargs={'pk': self.command.id}), data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': json.loads(response.content)['id'],
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': response.data['id'],
             'status': 'danger',
             'header': 'Erreur lors de la modification de la commande',
             'body': 'Le nombre de caisse est limité a 6, vous avez commandé 7.0 caisses. Merci de modifier la commande.'
@@ -313,8 +309,8 @@ class CitrusApiTestCase (CommandApiTestCase):
             reverse('command-detail', kwargs={'pk': self.command.id}), data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.update_error_response(
-            json.loads(response.content)['id'], Product.DoesNotExist('Une erreur est survenue, merci de réessayer. (ERREUR: Product matching query does not exist.)')))
+        self.assertJSONEqual(str(response.content, encoding='utf8'), self.update_error_response(
+            response.data['id'], 'Une erreur est survenue, merci de réessayer. (ERREUR: Product matching query does not exist.)'))
 
     def test_bad_data_update_command(self):
         """ Like add_command."""
@@ -326,10 +322,9 @@ class CitrusApiTestCase (CommandApiTestCase):
 
         response = self.client.put(
             reverse('command-detail', kwargs={'pk': self.command.id}), data)
-
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.update_error_response(
-            json.loads(response.content)['id'], ValueError("invalid literal for int() with base 10: 'wrong_id'")))
+        self.assertJSONEqual(str(response.content, encoding='utf8'), self.update_error_response(
+            response.data['id'], "invalid literal for int() with base 10: 'wrong_id'"))
 
     def test_bad_amount_update_command(self):
         """ Like add_command."""
@@ -342,8 +337,8 @@ class CitrusApiTestCase (CommandApiTestCase):
             reverse('command-detail', kwargs={'pk': self.command.id}), data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.update_error_response(
-            json.loads(response.content)['id'], AssertionError('Une erreur est survenue, merci de réessayer. (ERREUR: )')))
+        self.assertJSONEqual(str(response.content, encoding='utf8'), self.update_error_response(
+            response.data['id'], 'Une erreur est survenue, merci de réessayer. (ERREUR: )'))
 
 
 class CoffeeApiTestCase (CommandApiTestCase):
@@ -410,8 +405,8 @@ class CoffeeApiTestCase (CommandApiTestCase):
 
         response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': int(json.loads(response.content)['id']),
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': int(response.data['id']),
             'status': 'success',
             'header': 'Commande enregistrée !',
             'body': 'Votre commande a bien été enregistré, merci d’envoyer un mail à l’adresse da-max@tutanota.com si vous souhaitez la modifier.'
@@ -442,8 +437,8 @@ class CoffeeApiTestCase (CommandApiTestCase):
         response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': int(json.loads(response.content)['id']),
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': int(response.data['id']),
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande de café',
             'body':'L’email rentré ou le numéro  de télephone n’est pas valide, merci de vérifier qu’ils sont corrects et de réessayer. (ERREUR : )'
@@ -474,8 +469,8 @@ class CoffeeApiTestCase (CommandApiTestCase):
         response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': int(json.loads(response.content)['id']),
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': int(response.data['id']),
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande de café',
             'body':'L’email rentré ou le numéro  de télephone n’est pas valide, merci de vérifier qu’ils sont corrects et de réessayer. (ERREUR : )'
@@ -506,8 +501,8 @@ class CoffeeApiTestCase (CommandApiTestCase):
         response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': int(json.loads(response.content)['id']),
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': int(response.data['id']),
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande de café',
             'body':'Un ou plusieurs café commandé n’existe pas, merci de vérifier la commande, est de réessayer. (ERREUR : Coffee matching query does not exist.)'
@@ -538,8 +533,8 @@ class CoffeeApiTestCase (CommandApiTestCase):
         response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': int(json.loads(response.content)['id']),
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': int(response.data['id']),
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande de café',
             'body':'Un ou plusieurs café commandé n’existe pas, merci de vérifier la commande, est de réessayer. (ERREUR : Type matching query does not exist.)'
@@ -570,8 +565,8 @@ class CoffeeApiTestCase (CommandApiTestCase):
         response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': int(json.loads(response.content)['id']),
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': int(response.data['id']),
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande de café',
             'body': 'La quantité ou le poids commandé n’est pas valide, merci de vérifier la commande et de réessayer. (ERREUR : )'
@@ -602,8 +597,8 @@ class CoffeeApiTestCase (CommandApiTestCase):
         response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': int(json.loads(response.content)['id']),
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': int(response.data['id']),
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande de café',
             'body': 'La quantité ou le poids commandé n’est pas valide, merci de vérifier la commande et de réessayer. (ERREUR : )'
@@ -634,11 +629,11 @@ class CoffeeApiTestCase (CommandApiTestCase):
         response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': int(json.loads(response.content)['id']),
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': int(response.data['id']),
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande de café',
-            'body': "('Erreur', KeyError('quantity'))"
+            'body': "('Erreur', KeyError('quantity',))"
         })
 
     def test_not_name_create_command(self):
@@ -665,8 +660,8 @@ class CoffeeApiTestCase (CommandApiTestCase):
 
         response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': int(json.loads(response.content)['id']),
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': int(response.data['id']),
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande de café',
             'body': '"Les champs nom, prénom, email ou numéro de télephone n’ont pas été rentrés, merci de vérifier qu’ils sont correctement renseignés, puis réessayer. (ERREUR : \'name\')"'
@@ -697,11 +692,11 @@ class CoffeeApiTestCase (CommandApiTestCase):
         response = self.client.post(reverse('coffee-command-coffee-list'), data, format='json')
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': int(json.loads(response.content)['id']),
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': int(response.data['id']),
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande de café',
-            'body': "('Erreur', KeyError('id_coffee'))"
+            'body': "('Erreur', KeyError('id_coffee',))"
         })
     
     def test_bad_pk_update_command(self):
@@ -729,7 +724,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
 
         response = self.client.put(reverse('coffee-command-coffee-detail', kwargs={'pk': int(random() * 10000)}), data, format='json')
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], 'CommandCoffee matching query does not exist.', 'la modification'))
+        self.assertJSONEqual(str(response.content, encoding='utf8'), self.error_response(response.data['id'], 'CommandCoffee matching query does not exist.', 'la modification'))
     
     def test_delete_command(self):
         """ Test if user want delete CoffeeCommand. """
@@ -737,8 +732,8 @@ class CoffeeApiTestCase (CommandApiTestCase):
         response = self.client.delete(reverse('coffee-command-coffee-detail', kwargs={'pk': self.command.id}))
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'id': int(json.loads(response.content)['id']),
+        self.assertJSONEqual(str(response.content, encoding='utf8'), {
+            'id': int(response.data['id']),
             'status': 'success',
             'header': 'Commande supprimée',
             'body': 'La commande de {} {} a bien été supprimé.'.format(self.command.first_name, self.command.name)
@@ -750,4 +745,4 @@ class CoffeeApiTestCase (CommandApiTestCase):
         response = self.client.delete(reverse('coffee-command-coffee-detail', kwargs={'pk': int(random() * 1000)}))
 
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.error_response(json.loads(response.content)['id'], 'CommandCoffee matching query does not exist.', 'la suppression'))
+        self.assertJSONEqual(str(response.content, encoding='utf8'), self.error_response(response.data['id'], 'CommandCoffee matching query does not exist.', 'la suppression'))

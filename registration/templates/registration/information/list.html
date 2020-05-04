@@ -2,7 +2,7 @@
 {% load static %}
 {% load cache %}
 
-{% block title %}Liste des utilisateurs{% endblock title %}
+{% block title %}Liste des adhérents{% endblock title %}
 
 {% block header %}<h1 class="uk-text-center uk-margin-large-top">Liste des adhérents</h1>
 {% endblock header %}
@@ -10,12 +10,12 @@
 {% block breadcrumb %}
 	<li><a href="{% url 'home' %}">Accueil</a></li>
 	<li class="uk-disabled"><a href="#">{{ request.user.username }}</a></li>
-    <li><span>Liste des utilisateurs</span></li>
+    <li><span>Liste des adhérents</span></li>
 {% endblock breadcrumb %}
 
 {% block content %}
 	{% cache 60 * 120 %}
-	<section class="uk-width-3-5 uk-margin-auto uk-card uk-card-default uk-padding-large uk-margin-large-top" uk-scrollspy="cls: uk-animation-scale-down; delay: 100;">
+	<section class="uk-width-3-5@l uk-margin-auto uk-card uk-card-default uk-padding-large uk-margin-large-top" uk-scrollspy="cls: uk-animation-scale-down; delay: 100;">
 		<table class="uk-table uk-table-large uk-table-divider uk-table-striped uk-table-hover uk-table uk-text-center">
 			<thead>
 				<tr>

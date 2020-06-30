@@ -217,7 +217,7 @@ class CommandViewSet(ModelViewSet):
 
         except Exception as e:
             return Response(self.error_response(e))
-        
+
         if mail:
             post_change_command.send(
                 sender=Command.product.through, instance=command, status='add')
@@ -305,10 +305,10 @@ class ProductViewSet(ModelViewSet):
         queryset = self.queryset
         query = self.request.query_params.get('query', None)
         display = self.request.query_params.get('display', None)
+        
+        queryset = Product.objects.filter(display=True)
 
-        if display is not None:
-            queryset = Product.objects.filter(display=True)
-        elif query == 'all':
+        if query == 'all':
             queryset = Product.objects.all()
 
         return queryset
@@ -324,6 +324,7 @@ class ProductViewSet(ModelViewSet):
 
         # Else I return classic response.
         return Response(serializer.data)
+
 
 class CurrentUserView(APIView):
     queryset = User.objects.all()

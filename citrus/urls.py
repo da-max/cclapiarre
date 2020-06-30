@@ -8,5 +8,5 @@ urlpatterns = [
    re_path(r'^commander-des-agrumes$', command_citrus, name='new_command_citrus'),
    url(r'^liste-des-produits$', CitrusAppView.as_view(permission_required='citrus.view_product'), name='list_product'),
    url(r'^modifier-un-produit/(?P<id_product>\d{1,})', CitrusAppView.as_view(permission_required='citrus.change_product'), name='update_product'),
-   url(r'^ajouter-un-produit$', CitrusAppView.as_view(permission_required='citrus.add_product'), name="add_product")
+   url(r'^ajouter-un-produit$', CitrusAppView.as_view(permission_required='citrus.add_product'), name="create_product")
 ]

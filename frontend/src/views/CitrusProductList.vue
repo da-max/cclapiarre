@@ -12,34 +12,37 @@
 </template>
 
 <script>
-import ListProduct from '../components/citrus/ListProduct'
-import Breadcrumd from '../components/utility/Breadcrumb'
-
+import ListProduct from "../components/citrus/ListProduct";
+import Breadcrumd from "../components/utility/Breadcrumb";
 
 export default {
-    name: "CitrusProductList",
-    data() {
-        return {
-            breadcrumb: [
-                {
-                    name: 'Accueil',
-                    link: '/'
-                },
-                {
-                    name: 'Agrumes',
-                    link: '#',
-                    class: 'uk-disabled'
-                },
-                {
-                    name: 'Liste des produits'
-                }
-            ]
-        }
-    },
+  name: "CitrusProductList",
+  data() {
+    return {
+      breadcrumb: [
+        {
+          name: "Accueil",
+          link: "/",
+        },
+        {
+          name: "Agrumes",
+          link: "#",
+          class: "uk-disabled",
+        },
+        {
+          name: "Liste des produits",
+        },
+      ],
+    };
+  },
 
-    components: {
-        ListProduct,
-        Breadcrumd
-    },
+  components: {
+    ListProduct,
+    Breadcrumd,
+  },
+
+  mounted() {
+    document.title = "Liste des produits | CC La Piarre";
+  },
 };
 </script>

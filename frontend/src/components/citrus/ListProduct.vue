@@ -275,7 +275,7 @@ export default {
             return product.display == true;
           });
 
-          products_check.forEach((product) => {
+          await products_check.forEach((product) => {
             product.display = false;
           });
         } else if (this.action === "show") {
@@ -283,7 +283,7 @@ export default {
             return product.display == false;
           });
 
-          products_check.forEach((product) => {
+          await products_check.forEach((product) => {
             product.display = true;
           });
         } else if (this.action === "maybe_not_available") {
@@ -291,14 +291,14 @@ export default {
             return product.maybe_not_available == false;
           });
 
-          products_check.forEach((product) => {
+          await products_check.forEach((product) => {
             product.maybe_not_available = true;
           });
         } else if (this.action === "available") {
           products_check = products_check.filter((product) => {
             return product.maybe_not_available == true;
           });
-          products_check.forEach((product) => {
+          await products_check.forEach((product) => {
             product.maybe_not_available = false;
           });
         }

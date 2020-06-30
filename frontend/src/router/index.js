@@ -1,56 +1,63 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from "vue";
+import VueRouter from "vue-router";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/cafe/commander-du-cafe',
-    name: 'coffee_command',
+    path: "/cafe/commander-du-cafe",
+    name: "coffee_command",
     component: function() {
-      return import('../views/CoffeeCommand.vue')
+      return import("../views/CoffeeCommand.vue");
     },
   },
   {
-    path: '/agrumes/commander-des-agrumes',
-    name: 'citrus_command',
+    path: "/agrumes/commander-des-agrumes",
+    name: "citrus_command",
     component: function() {
-      return import('../views/CitrusCommand.vue')
+      return import("../views/CitrusCommand.vue");
     },
   },
   {
-    path: '/agrumes/liste-des-produits',
-    name: 'citrus_list_product',
+    path: "/agrumes/liste-des-produits",
+    name: "citrus_list_product",
     component: function() {
-      return import('../views/CitrusProductList.vue')
+      return import("../views/CitrusProductList.vue");
     },
   },
   {
-    path: '/agrumes/modifier-un-produit/:product_id',
-    name: 'citrus_update_product',
+    path: "/agrumes/modifier-un-produit/:product_id",
+    name: "citrus_update_product",
     component: function() {
-      return import('../views/CitrusProductUpdate.vue')
+      return import("../views/CitrusProductUpdate.vue");
     },
   },
   {
-    path: '/pate/commander-des-pates',
-    name: 'pasta_command',
+    path: "/agrumes/ajouter-un-produit",
+    name: "citrus_add_product",
     component: function() {
-      return import('../views/PastaCommand.vue')
+      return import("../views/CitrusProductAdd.vue");
     },
   },
   {
-    path: '/cafe/liste-des-commandes',
-    name: 'coffee_list',
+    path: "/pate/commander-des-pates",
+    name: "pasta_command",
     component: function() {
-      return import('../views/CoffeeCommandList.vue')
+      return import("../views/PastaCommand.vue");
     },
   },
   {
-    path: '**',
-    redirect: to => {
-      window.location.href = '/'
-    }
+    path: "/cafe/liste-des-commandes",
+    name: "coffee_list",
+    component: function() {
+      return import("../views/CoffeeCommandList.vue");
+    },
+  },
+  {
+    path: "**",
+    redirect: (to) => {
+      window.location.href = "/";
+    },
   },
   /* '../views/About.vue')
     }
@@ -86,12 +93,12 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: function () {
       return import(/* webpackChunkName: "about" */
-]
+];
 
 const router = new VueRouter({
-  mode: 'history',
-  base: '/',
+  mode: "history",
+  base: "/",
   routes,
-})
+});
 
-export default router
+export default router;

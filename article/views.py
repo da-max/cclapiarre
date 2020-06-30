@@ -149,7 +149,8 @@ def home(request, filtered):
     return render(request, "article/home.html", {
         'event': event,
         'article': article,
-        'carousels': carousels
+        'carousels': carousels,
+        'filtered': filtered
     })
 
 
@@ -172,7 +173,7 @@ def delete_article(request, id_article):
         messages.success(request, "Votre article a bien été supprimé.")
 
     else:
-        messages.warning(request, "Votre article n'a pas pu être modifié.")
+        messages.warning(request, "Votre article n'a pas pu être supprimé.")
 
     return HttpResponseRedirect(success_url)
 

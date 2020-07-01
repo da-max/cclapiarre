@@ -185,7 +185,6 @@ class CommandViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        print(request.data)
 
         try:
             user, mail, amounts = self.check_command(request)

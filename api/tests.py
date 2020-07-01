@@ -650,7 +650,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
             'id': int(response.data['id']),
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande de café',
-            'body': "('Erreur', KeyError('quantity',))"
+            'body': "('Erreur', KeyError('quantity'))"
         })
 
     def test_not_name_create_command(self):
@@ -715,7 +715,7 @@ class CoffeeApiTestCase (CommandApiTestCase):
             'id': int(response.data['id']),
             'status': 'danger',
             'header': 'Erreur lors de l’enregistrement de la commande de café',
-            'body': "('Erreur', KeyError('id_coffee',))"
+            'body': "('Erreur', KeyError('id_coffee'))"
         })
 
     def test_bad_pk_update_command(self):

@@ -133,11 +133,8 @@ class CommandViewSet(ModelViewSet):
         # For format data.
         amounts = dict()
 
-        # Data
-        data = request.data.copy()
-
         try:
-            mail = data.pop('send_mail')[0]
+            mail = request.data['send_mail']
             if int(mail) == 0:
                 mail = False
             else:
@@ -147,12 +144,12 @@ class CommandViewSet(ModelViewSet):
             mail = True
 
         try:
-            user_id = data.pop('user')[0]
+            user_id = request.data['user']
             user = User.objects.get(id=user_id)
         except Exception as e:
             raise
 
-        for product_id, amount in data.items():
+        for product_id, amount in request.data['amounts'].items():
 
             try:
                 product = Product.objects.get(
@@ -178,7 +175,7 @@ class CommandViewSet(ModelViewSet):
             assert total_box <= BOX_LIMIT
         except AssertionError as e:
             raise BoxNumberException(
-                "Le nombre de caisse est limité a {}, vous avez commandé {} caisses. Merci de modifier la commande.".format(BOX_LIMIT, total_box))
+                "Le nombre de caisse est limité à {}, vous avez commandé {} caisses. Merci de modifier la commande.".format(BOX_LIMIT, total_box))
 
         return (user, mail, amounts)
 
@@ -188,11 +185,13 @@ class CommandViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
+        print(request.data)
 
         try:
             user, mail, amounts = self.check_command(request)
         except Exception as e:
             return Response(self.error_response(error=e))
+
         try:
             Command.objects.get(user__id=user.id)
         except ObjectDoesNotExist:
@@ -210,17 +209,16 @@ class CommandViewSet(ModelViewSet):
 
         try:
             command = Command.objects.create(user=user, send_mail=mail)
-
             for product_id, data in amounts.items():
                 amount = Amount.objects.create(
                     product=data['product'], amount=data['amount'], command=command)
-
         except Exception as e:
             return Response(self.error_response(e))
 
         if mail:
             post_change_command.send(
                 sender=Command.product.through, instance=command, status='add')
+
         return Response({
             'id': int(random() * 1000),
             'status': 'success',
@@ -238,7 +236,7 @@ class CommandViewSet(ModelViewSet):
             return Response({
                 'status': 'success',
                 'header': 'Commande supprimée',
-                'body': 'La commande de {} a bien été supprimé.'.format(command.user.username)
+                'body': 'La commande de {} a bien été supprimée.'.format(command.user.username)
             })
 
     def update(self, request, pk):
@@ -268,7 +266,7 @@ class CommandViewSet(ModelViewSet):
             'id': int(random() * 1000),
             'status': 'success',
             'header': 'Commande modifiée',
-            'body': 'La commande de {} a bien été modifié.'.format(command.user.username)
+            'body': 'La commande de {} a bien été modifiée.'.format(command.user.username)
         })
 
     @action(detail=False, methods=['delete'])
@@ -305,7 +303,7 @@ class ProductViewSet(ModelViewSet):
         queryset = self.queryset
         query = self.request.query_params.get('query', None)
         display = self.request.query_params.get('display', None)
-        
+
         queryset = Product.objects.filter(display=True)
 
         if query == 'all':
@@ -375,7 +373,7 @@ class CommandCoffeeViewSet(ModelViewSet):
             raise KeyError('Les champs nom, prénom, email ou numéro de télephone n’ont pas été rentrés, merci de vérifier qu’ils sont correctement renseignés, puis réessayer. (ERREUR : {})'.format(key_exception))
         except AssertionError as assertion_exception:
             raise AssertionError(
-                'L’email rentré ou le numéro  de télephone n’est pas valide, merci de vérifier qu’ils sont corrects et de réessayer. (ERREUR : {})'.format(assertion_exception))
+                'L’email rentré ou le numéro de télephone n’est pas valide, merci de vérifier qu’ils sont corrects et de réessayer. (ERREUR : {})'.format(assertion_exception))
         else:
             personnal_data['name'] = name
             personnal_data['first_name'] = first_name
@@ -391,7 +389,7 @@ class CommandCoffeeViewSet(ModelViewSet):
                 assert amount['quantity'] == int(amount['quantity'])
             except ObjectDoesNotExist as object_excetion:
                 raise ObjectDoesNotExist(
-                    'Un ou plusieurs café commandé n’existe pas, merci de vérifier la commande, est de réessayer. (ERREUR : {})'.format(object_excetion))
+                    'Un ou plusieurs café commandé n’existe pas, merci de vérifier la commande et de réessayer. (ERREUR : {})'.format(object_excetion))
             except AssertionError as assertion_exception:
                 raise AssertionError(
                     'La quantité ou le poids commandé n’est pas valide, merci de vérifier la commande et de réessayer. (ERREUR : {})'.format(assertion_exception))
@@ -428,7 +426,7 @@ class CommandCoffeeViewSet(ModelViewSet):
                 'id': int(random() * 1000),
                 'status': 'success',
                 'header': 'Commande supprimée',
-                'body': 'La commande de {} {} a bien été supprimé.'.format(command_coffee.first_name, command_coffee.name)})
+                'body': 'La commande de {} {} a bien été supprimée.'.format(command_coffee.first_name, command_coffee.name)})
 
     def create(self, request):
 
@@ -462,7 +460,7 @@ class CommandCoffeeViewSet(ModelViewSet):
             'id': int(random() * 1000),
             'status': 'success',
             'header': 'Commande enregistrée !',
-            'body': 'Votre commande a bien été enregistré, merci d’envoyer un mail à l’adresse da-max@tutanota.com si vous souhaitez la modifier.'
+            'body': 'Votre commande a bien été enregistrée, merci d’envoyer un mail à l’adresse da-max@tutanota.com si vous souhaitez la modifier.'
         })
 
     def update(self, request, pk):
@@ -500,7 +498,7 @@ class CommandCoffeeViewSet(ModelViewSet):
             'id': int(random() * 1000),
             'status': 'success',
             'header': 'Commande modifiée',
-            'body': 'La commande de {} {} a bien été modifié.'.format(command.first_name, command.name)
+            'body': 'La commande de {} {} a bien été modifiée.'.format(command.first_name, command.name)
         })
 
     @action(detail=False, methods=['delete'])

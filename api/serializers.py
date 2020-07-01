@@ -47,7 +47,7 @@ class AmountSerializer(ModelSerializer):
 class CommandSerializer(ModelSerializer):
     total = SerializerMethodField()
     user = UserSerializer()
-    amounts = AmountSerializer(many=True)
+    amounts = AmountSerializer(many=True, read_only=True)
 
     class Meta:
         model = Command

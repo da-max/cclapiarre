@@ -1,4 +1,4 @@
-image: nikolaik/python-nodejs
+image: nikolaik/python-nodejs:python3.5-nodejs14
 
 services:
   - nouchka/sqlite3
@@ -13,5 +13,5 @@ before_script:
   - python ./manage.py migrate
 
 test:
-  script: 
+  script:
     - python ./manage.py test

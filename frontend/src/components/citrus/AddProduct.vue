@@ -75,9 +75,7 @@
     </div>
 
     <form
-      method="post"
       class="uk-width-3-5@m uk-width-4-5@s uk-margin-auto uk-form-horizontal"
-      @submit.prevent="addProduct()"
     >
       <div uk-grid class="uk-child-width-1-2@l uk-grid-large uk-grid-divider">
         <div>
@@ -101,6 +99,7 @@
               name="price"
               :class="['uk-input', { 'uk-form-danger': product.price <= '0' }]"
               min="0"
+              step="0.01"
               v-model="product.price"
             />
           </div>
@@ -210,6 +209,7 @@
       </div>
       <div class="uk-text-center uk-margin-large-top">
         <input
+          @click.prevent="addProduct()"
           type="submit"
           value="Enregistrer le produit"
           class="uk-button uk-button-primary"
@@ -251,6 +251,7 @@ export default {
 
   methods: {
     addProduct(first = true) {
+      console.log("add");
       if (first === true && this.product.display !== true) {
         this.product.display = false;
         UIkit.modal("#warning-display").show();

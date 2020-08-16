@@ -179,16 +179,6 @@
           </tr>
         </tbody>
       </table>
-      <div class="uk-text-center uk-margin-large-top">
-        <button
-          class="uk-button uk-button-default"
-          type="button"
-          @click="get_more_product()"
-          v-show="display_button_get_more_product"
-        >
-          Afficher plus de produit
-        </button>
-      </div>
     </div>
   </div>
 </template>
@@ -209,15 +199,10 @@ export default {
       query_error: false,
       permission_error: false,
       messages: Array(),
-      display_button_get_more_product: true,
 
       products: Array(),
       action: String(),
 
-      OFFSET: 10,
-
-      // limit is number of product add when an user click on button "Afficher plus de produit"
-      limit: 10,
       ACTIONS: {
         maybe_not_available: "Produit potentiellement indisponble",
         available: "Produit disponible",
@@ -248,16 +233,6 @@ export default {
   },
 
   methods: {
-    get_more_product() {
-      this.limit += parseInt(this.OFFSET);
-      this.$product.query({ limit: this.limit }).then((response) => {
-        this.products = response.body.results;
-        if (response.body.next === null) {
-          this.display_button_get_more_product = false;
-        }
-      });
-    },
-
     async apply_action() {
       if (
         this.products.find((product) => product.check === true) === undefined
@@ -338,15 +313,12 @@ export default {
     },
 
     get_products() {
-      this.$product.query({ limit: this.limit }).then(
+      this.$product.query().then(
         (response) => {
-          response.body.results.forEach((product) => {
+          response.body.forEach((product) => {
             product.check = false;
           });
-          this.products = response.body.results;
-          if (response.body.next === null) {
-            this.display_button_get_more_product = false;
-          }
+          this.products = response.body;
         },
         (response) => {
           if (response.statusText === "Forbidden" && response.status === 403) {

@@ -307,7 +307,7 @@ class ProductViewSet(ModelViewSet):
 
         if query == 'all':
             queryset = Product.objects.all()
-
+        print(queryset)
         return queryset
 
     def list(self, request):
@@ -315,11 +315,6 @@ class ProductViewSet(ModelViewSet):
         serializer = ProductSerializer(self.get_queryset(), many=True)
         query = request.query_params.get('query', None)
 
-        # If query == all I paginated_queryset and return paginated response.
-        if query == 'all':
-            return self.get_paginated_response(self.paginate_queryset(serializer.data))
-
-        # Else I return classic response.
         return Response(serializer.data)
 
 

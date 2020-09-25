@@ -27,7 +27,7 @@
         <button
           class="uk-button uk-button-primary uk-margin-large-right"
           type="submit"
-          @click.prevent="update_product(false)"
+          @click.prevent="updateProduct(false)"
         >
           Modifier le produit
         </button>
@@ -44,7 +44,7 @@
       id="vue-messages"
       class="uk-width-2-5@l uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom"
     >
-      <message v-show="query_error" :close="false" status="danger">
+      <message v-show="queryError" :close="false" status="danger">
         <template #header>Erreur interne</template>
         <template #body>
           Une erreur est survenue, cela vient de nous, merci d'actualiser la
@@ -52,7 +52,7 @@
         </template>
       </message>
 
-      <message v-show="permission_error" :close="false" status="danger">
+      <message v-show="permissionError" :close="false" status="danger">
         <template #header>Accès interdit</template>
         <template #body
           >Il semblerait qui vous n’ayez pas l’autorisation d’accéder à cette
@@ -132,15 +132,15 @@
             >
           </p>
           <br />
-          <label for="maybe_not_available" class="uk-form-label"
+          <label for="maybe-not-available" class="uk-form-label"
             >Produit peut être indisponible</label
           >
           <div class="uk-form-controls">
             <input
               type="checkbox"
-              name="maybe_bot_available"
+              name="maybe-not-available"
               class="uk-checkbox"
-              v-model="product.maybe_not_available"
+              v-model="product.maybeNotAvailable"
             />
           </div>
           <p class="uk-text-muted">
@@ -180,7 +180,7 @@
               name="maximum"
               :class="[
                 'uk-input',
-                { 'uk-form-danger': product.maximum <= '0' },
+                { 'uk-form-danger': product.maximum <= '0' }
               ]"
               v-model="product.maximum"
               min="0"
@@ -223,9 +223,9 @@
         <input
           type="button"
           value="Modifier le produit"
-          @click.prevent="update_product()"
+          @click.prevent="updateProduct()"
           class="uk-button uk-button-primary"
-          id="submit_button"
+          id="submit-button"
         />
       </div>
     </form>
@@ -233,14 +233,14 @@
 </template>
 
 <script>
-import Loader from "../utility/Loader";
-import Message from "../utility/Message";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import Breadcrumb from "../utility/Breadcrumb";
-import Modal from "../utility/Modal";
+import Loader from '../utility/Loader';
+import Message from '../utility/Message';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import Breadcrumb from '../utility/Breadcrumb';
+import Modal from '../utility/Modal';
 
 export default {
-  name: "UpdateCitrus",
+  name: 'UpdateCitrus',
 
   data() {
     return {
@@ -251,66 +251,66 @@ export default {
       query_error: false,
       permission_error: false,
       messages: Array(),
-      loading: false,
+      loading: false
     };
   },
 
   components: {
     Loader,
     Message,
-    Modal,
+    Modal
   },
 
-  props: ["product_id"],
+  props: ['productId'],
 
   methods: {
-    update_product(first = true) {
-      if (this.product.display === false && first === true) {
-        UIkit.modal("#warning-display").show();
+    updateProduct(first = true) {
+      if (!this.product.display && first) {
+        UIkit.modal('#warning-display').show();
       } else {
-        UIkit.modal("#warning-display").hide();
-        this.$product.update({ id: this.product_id }, this.product).then(
-          (response) => {
+        UIkit.modal('#warning-display').hide();
+        this.$product.update({ id: this.productId }, this.product).then(
+          response => {
             this.messages.push({
               id: parseInt(Math.random() * 1000),
-              header: "Produit enregistré",
-              body: "Le produit a bien été modifé.",
-              status: "success",
+              header: 'Produit enregistré',
+              body: 'Le produit a bien été modifé.',
+              status: 'success'
             });
-            UIkit.scroll("#submit_button", { offset: 150 }).scrollTo(
-              "#vue-messages"
+            UIkit.scroll('#submit-button', { offset: 150 }).scrollTo(
+              '#vue-messages'
             );
           },
-          (response) => {
+          response => {
             if (
               response.status === 403 &&
-              response.statusText === "Forbidden"
+              response.statusText === 'Forbidden'
             ) {
               this.permission_error = true;
             } else if (response.status === 400) {
               this.messages.push({
                 id: parseInt(Math.random() * 1000),
-                header: "Erreur",
+                header: 'Erreur',
                 body:
-                  "Une erreur est survenue lors de l’enregistrement du produit, merci d’actualiser la page puis de réessayer.",
-                status: "danger",
+                  'Une erreur est survenue lors de l’enregistrement du produit, merci d’actualiser la page puis de réessayer.',
+                status: 'danger'
               });
             } else {
-              this.query_error = true;
+              this.queryError = true;
             }
-            UIkit.scroll("#submit_button", { offset: 150 }).scrollTo(
-              "#vue-messages"
+            UIkit.scroll('#submit-button', { offset: 150 }).scrollTo(
+              '#vue-messages'
             );
           }
         );
       }
-    },
+    }
   },
 
   mounted() {
     this.$product = this.$resource(
-      "api/citrus/product{/id}",
-      { id: this.product_id, query: "all" },
+      'api/citrus/product{/id}',
+      { id: this.productId, query: 'all' },
       {},
       {
         before: () => {
@@ -319,22 +319,22 @@ export default {
 
         after: () => {
           this.loading = false;
-        },
+        }
       }
     );
 
     this.$product.query().then(
-      (response) => {
+      response => {
         this.product = response.body;
       },
-      (response) => {
-        if (response.status === 403 && response.statusText === "Frobidden") {
-          this.permission_error = true;
+      response => {
+        if (response.status === 403 && response.statusText === 'Frobidden') {
+          this.permissionError = true;
         } else {
-          this.query_error = true;
+          this.queryError = true;
         }
       }
     );
-  },
+  }
 };
 </script>

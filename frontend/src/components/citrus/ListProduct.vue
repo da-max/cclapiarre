@@ -6,7 +6,7 @@
       id="vue-messages"
       class="uk-width-2-5@m uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom"
     >
-      <message v-show="query_error" :close="false" status="danger">
+      <message v-show="queryError" :close="false" status="danger">
         <template #header>Erreur interne</template>
         <template #body>
           Une erreur est survenue, cela vient de nous, merci d'actualiser la
@@ -14,7 +14,7 @@
         </template>
       </message>
 
-      <message v-show="permission_error" :close="false" status="danger">
+      <message v-show="permissionError" :close="false" status="danger">
         <template #header>Accès interdit</template>
         <template #body
           >Il semblerait qui vous n’ayez pas l’autorisation d’accéder à cette
@@ -56,7 +56,7 @@
           value="Appliquer"
           class="uk-button uk-button-primary uk-margin-medium-left"
           id="action-button"
-          @click="apply_action()"
+          @click="applyAction()"
         />
       </div>
 
@@ -69,8 +69,8 @@
               <input
                 type="checkbox"
                 class="uk-checkbox"
-                title="Sélectionner tous les produits"
-                v-model="check_all"
+                title="Sélectionner tout les produits"
+                v-model="checkAll"
               />
             </th>
             <th>Nom du produit</th>
@@ -89,7 +89,7 @@
             </th>
             <th>
               <span
-                uk-tooltip="Permet d’afficher un message d’alerte sur le tableau de commande, afin de prévenir les adhérents que le produit sera, peut être, pas disponible."
+                uk-tooltip="Permet d’afficher un message d’alerte sur le tableau de commande, afin de prévenir les adhérents que le produit sera, peut-être, pas disponible."
               >
                 Produit peut être
                 <br />non disponible
@@ -131,14 +131,14 @@
             <td v-else>
               <span uk-icon="close"></span>
             </td>
-            <td v-if="product.maybe_not_available == true">
+            <td v-if="product.maybeNotAvailable === true">
               <span uk-icon="check"></span>
             </td>
             <td v-else>
               <span uk-icon="close"></span>
             </td>
             <td>
-              <modal :id="'confirm_delete_' + product.id">
+              <modal :id="'confirm-delete-' + product.id">
                 <template #header>
                   <h3>Supprimer {{ product.name }} ?</h3>
                 </template>
@@ -153,7 +153,7 @@
                 <template #footer>
                   <button
                     class="uk-button uk-button-danger"
-                    @click.prevent="delete_product(product.id)"
+                    @click.prevent="deleteProduct(product.id)"
                   >
                     Supprimer le produit
                   </button>
@@ -184,31 +184,31 @@
 </template>
 
 <script>
-import Loader from "../utility/Loader";
-import Message from "../utility/Message";
-import Modal from "../utility/Modal";
-import Drop from "../utility/Drop";
+import Loader from '../utility/Loader';
+import Message from '../utility/Message';
+import Modal from '../utility/Modal';
+import Drop from '../utility/Drop';
 
 export default {
-  name: "ListProduct",
+  name: 'ListProduct',
 
   data() {
     return {
       // Utility
       loading: false,
-      query_error: false,
-      permission_error: false,
+      queryError: false,
+      permissionError: false,
       messages: Array(),
 
       products: Array(),
       action: String(),
 
       ACTIONS: {
-        maybe_not_available: "Produit potentiellement indisponble",
-        available: "Produit disponible",
-        hide: "Cacher ces produits",
-        show: "Afficher ces produits",
-      },
+        maybeNotAvailable: 'Produit potentiellement indisponible',
+        available: 'Produit disponible',
+        hide: 'Cacher ces produits',
+        show: 'Afficher ces produits'
+      }
     };
   },
 
@@ -216,159 +216,158 @@ export default {
     Loader,
     Message,
     Modal,
-    Drop,
+    Drop
   },
 
   computed: {
-    check_all: {
+    checkAll: {
       get() {
         return false;
       },
       set(value) {
-        this.products.forEach((product) => {
+        this.products.forEach(product => {
           product.check = value;
         });
-      },
-    },
+      }
+    }
   },
 
   methods: {
-    async apply_action() {
-      if (
-        this.products.find((product) => product.check === true) === undefined
-      ) {
+    async applyAction() {
+      if (this.products.find(product => product.check === true) === undefined) {
         UIkit.notification(
-          "Aucun produit sélctionné. <br>L’action ne peut être appliquée.",
-          { status: "warning", pos: "bottom-right" }
+          'Aucun produit sélctionné. <br>L’action ne peut être appliquée.',
+          { status: 'warning', pos: 'bottom-right' }
         );
       } else {
-        let products_check = this.products.filter(
-          (product) => product.check === true
+        let productsCheck = this.products.filter(
+          product => product.check === true
         );
-        if (this.action === "hide") {
-          products_check = products_check.filter((product) => {
+        if (this.action === 'hide') {
+          productsCheck = productsCheck.filter(product => {
             return product.display == true;
           });
 
-          await products_check.forEach((product) => {
+          await productsCheck.forEach(product => {
             product.display = false;
           });
-        } else if (this.action === "show") {
-          products_check = products_check.filter((product) => {
+        } else if (this.action === 'show') {
+          productsCheck = productsCheck.filter(product => {
             return product.display == false;
           });
 
-          await products_check.forEach((product) => {
+          await productsCheck.forEach(product => {
             product.display = true;
           });
-        } else if (this.action === "maybe_not_available") {
-          products_check = products_check.filter((product) => {
-            return product.maybe_not_available == false;
+        } else if (this.action === 'maybeNotAvailable') {
+          productsCheck = productsCheck.filter(product => {
+            return product.maybeNotAvailable == false;
           });
 
-          await products_check.forEach((product) => {
-            product.maybe_not_available = true;
+          await productsCheck.forEach(product => {
+            product.maybeNotAvailable = true;
           });
-        } else if (this.action === "available") {
-          products_check = products_check.filter((product) => {
-            return product.maybe_not_available == true;
+        } else if (this.action === 'available') {
+          productsCheck = productsCheck.filter(product => {
+            return product.maybeNotAvailable == true;
           });
-          await products_check.forEach((product) => {
-            product.maybe_not_available = false;
+
+          await productsCheck.forEach(product => {
+            product.maybeNotAvailable = false;
           });
         }
 
-        await products_check.forEach((product) => {
+        await productsCheck.forEach(product => {
           this.$product.update({ id: product.id }, product).then(
-            (response) => {
+            response => {
               console.log(response);
               if (response.status !== 200) {
-                this.query_error = true;
+                this.queryError = true;
               }
             },
-            (response) => {
+            response => {
               if (
                 response.status === 403 &&
-                response.statusText === "Forbidden"
+                response.statusText === 'Forbidden'
               ) {
-                this.permission_error = true;
+                this.permissionError = true;
               } else {
-                this.query_error = true;
+                this.queryError = true;
               }
             }
           );
         });
 
-        if (this.query_error !== true) {
+        if ((this.queryError || this.permissionError) !== true) {
           this.messages.push({
             id: parseInt(Math.random() * 1000),
-            status: "success",
-            header: "Produits modifiés",
-            body: "Les produits sélectionnés ont bien été modifiés.",
+            status: 'success',
+            header: 'Produits modifiés',
+            body: 'Les produits sélectionnés ont bien été modifiés.'
           });
         }
 
-        this.get_products();
+        this.getProducts();
       }
     },
 
-    get_products() {
+    getProducts() {
       this.$product.query().then(
-        (response) => {
-          response.body.forEach((product) => {
+        response => {
+          response.body.forEach(product => {
             product.check = false;
           });
           this.products = response.body;
         },
-        (response) => {
-          if (response.statusText === "Forbidden" && response.status === 403) {
-            this.permission_error = true;
+        response => {
+          if (response.statusText === 'Forbidden' && response.status === 403) {
+            this.permissionError = true;
           } else {
-            this.query_error = true;
+            this.queryError = true;
           }
         }
       );
     },
 
-    async delete_product(product_id) {
-      UIkit.modal("#confirm_delete_" + product_id).hide();
-      await this.$product.delete({ id: product_id }).then(
-        (response) => {
+    async deleteProduct(productId) {
+      UIkit.modal('#confirm-delete-' + productId).hide();
+      await this.$product.delete({ id: productId }).then(
+        response => {
           this.messages.push({
             id: parseInt(Math.round() * 1000),
-            header: "Produit supprimé",
-            body: "Le produit a bien été supprimé.",
-            status: "success",
+            header: 'Produit supprimé',
+            body: 'Le produit a bien été supprimé.',
+            status: 'success'
           });
         },
-        (response) => {
+        response => {
           if (response.status === 400) {
             this.messages.push({
               id: parseInt(Math.round() * 1000),
-              header: "Erreur",
+              header: 'Erreur',
               bdoy:
-                "Une erreur est survenue, le produit n’a pas pu être supprimé, merci d’actualiser la page, puis réessayer.",
-              status: "danger",
+                'Une erreur est survenue, le produit n’a pas pu être supprimé, merci d’actualiser la page, puis réessayer.',
+              status: 'danger'
             });
           } else if (
             response.status === 403 &&
-            response.statusText === "Frobidden"
+            response.statusText === 'Frobidden'
           ) {
-            this.permission_error = true;
+            this.permissionError = true;
           } else {
-            this.query_error = true;
+            this.queryError = true;
           }
         }
       );
-      this.get_products();
-      UIkit.scroll("", { offset: 150 }).scrollTo("#vue-messages");
-    },
+      this.getProducts();
+      UIkit.scroll('', { offset: 150 }).scrollTo('#vue-messages');
+    }
   },
 
   mounted() {
     this.$product = this.$resource(
-      "api/citrus/product{/id}",
-      { query: "all" },
+      'api/citrus/product{/id}',
+      { query: 'all' },
       {},
       {
         before: () => {
@@ -377,11 +376,11 @@ export default {
 
         after: () => {
           this.loading = false;
-        },
+        }
       }
     );
 
-    this.get_products();
-  },
+    this.getProducts();
+  }
 };
 </script>

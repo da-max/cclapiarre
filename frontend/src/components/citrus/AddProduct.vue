@@ -13,7 +13,7 @@
           commandes et ne pourra donc pas être commandé.<br />
           Êtes-vous sûr de vouloir ajouter ce produit ?
         </p>
-        <p v-if="product.display == false">
+        <p v-if="!product.display">
           Cliquez
           <a
             class="uk-text-bold uk-text-primary"
@@ -128,7 +128,7 @@
               type="checkbox"
               name="maybe_bot_available"
               class="uk-checkbox"
-              v-model="product.maybe_not_available"
+              v-model="product.maybeNotAvailable"
             />
           </div>
           <p class="uk-text-muted">
@@ -168,7 +168,7 @@
               name="maximum"
               :class="[
                 'uk-input',
-                { 'uk-form-danger': product.maximum <= '0' },
+                { 'uk-form-danger': product.maximum <= '0' }
               ]"
               v-model="product.maximum"
               min="0"
@@ -213,7 +213,7 @@
           type="submit"
           value="Enregistrer le produit"
           class="uk-button uk-button-primary"
-          id="submit_button"
+          id="submit-button"
         />
       </div>
     </form>
@@ -221,82 +221,91 @@
 </template>
 
 <script>
-import Loader from "../utility/Loader";
-import Modal from "../utility/Modal";
-import Message from "../utility/Message";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import Loader from '../utility/Loader';
+import Modal from '../utility/Modal';
+import Message from '../utility/Message';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default {
-  name: "AddProduct",
+  name: 'AddProduct',
 
   components: {
     Loader,
     Message,
     ClassicEditor,
-    Modal,
+    Modal
   },
 
   data() {
     return {
-      product: Object(),
+      product: {
+        name: '',
+        weight: 1,
+        price: 1,
+        display: false,
+        maximum: 100,
+        step: 1,
+        maybeNotAvailable: false,
+        descrition: ''
+      },
 
       // Utility
       editor: ClassicEditor,
       queryError: false,
       permissionError: false,
       messages: Array(),
-      loading: false,
+      loading: false
     };
   },
 
   methods: {
     addProduct(first = true) {
-      console.log("add");
+      console.log('add');
       if (first === true && this.product.display !== true) {
         this.product.display = false;
-        UIkit.modal("#warning-display").show();
+        UIkit.modal('#warning-display').show();
       } else {
         this.$product.save(this.product).then(
-          (response) => {
+          response => {
             this.messages.push({
               id: Date.now(),
-              header: "Produit enregistré",
-              body: "Le produit a bien été ajouté.",
-              status: "success",
+              header: 'Produit enregistré',
+              body: 'Le produit a bien été ajouté.',
+              status: 'success'
             });
-            UIkit.scroll("#submit_button", { offset: 150 }).scrollTo(
-              "#vue-messages"
+            UIkit.scroll('#submit-button', { offset: 150 }).scrollTo(
+              '#vue-messages'
             );
           },
-          (response) => {
+          response => {
             if (
               response.status === 403 &&
-              response.statusText === "Forbidden"
+              response.statusText === 'Forbidden'
             ) {
               this.permission_error = true;
             } else if (response.status === 400) {
               this.messages.push({
                 id: parseInt(Math.random() * 1000),
-                header: "Erreur",
+                header: 'Erreur',
                 body:
-                  "Une erreur est survenue lors de l’enregistrement du produit, merci d’actualiser la page puis de réessayer.",
-                status: "danger",
+                  'Une erreur est survenue lors de l’enregistrement du produit, merci d’actualiser la page puis de réessayer.',
+                status: 'danger'
               });
             } else {
               this.query_error = true;
             }
-            UIkit.scroll("#submit_button", { offset: 150 }).scrollTo(
-              "#vue-messages"
+            UIkit.scroll('#submit-button', { offset: 150 }).scrollTo(
+              '#vue-messages'
             );
           }
         );
       }
-    },
+    }
   },
 
   mounted() {
     this.$product = this.$resource(
-      "api/citrus/product",
+      'api/citrus/product',
       {},
       {},
       {
@@ -305,9 +314,9 @@ export default {
         },
         after: () => {
           this.loading = false;
-        },
+        }
       }
     );
-  },
+  }
 };
 </script>

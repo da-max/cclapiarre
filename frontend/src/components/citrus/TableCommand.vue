@@ -72,7 +72,7 @@
     <modal
       id="confirm-update"
       v-if="updateCommand.user !== undefined"
-      :close_button="true"
+      :close-button="true"
     >
       <template v-slot:header>
         <h3>Modifier la commande ?</h3>
@@ -101,7 +101,7 @@
       :center="true"
       id="update-command"
       :container="true"
-      :close_button="true"
+      :close-button="true"
     >
       <template v-slot:header>
         <h3 v-if="updateCommand.user !== undefined">
@@ -124,7 +124,7 @@
           <tbody>
             <tr v-for="product in products" :key="product.id">
               <td>
-                <drop button_style="secondary" pos="right">
+                <drop button-style="secondary" pos="right">
                   <template v-slot:button>{{ product.name }}</template>
                   <template v-slot:header>{{ product.name }}</template>
                   <template v-slot:body>
@@ -221,7 +221,7 @@
         v-if="
           currentUser.permissions &&
             currentUser.permissions.find(
-              (permission) => permission === 'command.delete_command'
+              permission => permission === 'citrus.delete_command'
             )
         "
         type="button"
@@ -327,7 +327,7 @@
                   v-if="
                     currentUser.permissions &&
                       currentUser.permissions.find(
-                        (permission) => permission === 'command.delete_command'
+                        permission => permission === 'citrus.delete_command'
                       )
                   "
                 ></a>
@@ -337,19 +337,19 @@
                   v-if="
                     currentUser.permissions &&
                       currentUser.permissions.find(
-                        (permission) => permission === 'command.change_command'
+                        permission => permission === 'citrus.change_command'
                       )
                   "
                   @click.prevent="getCommandForUpdate(c.id)"
                 ></a>
 
                 <modal
-                  :close_button="true"
+                  :close-button="true"
                   :id="'confirm-delete-command-' + c.id"
                   v-if="
                     currentUser.permissions &&
                       currentUser.permissions.find(
-                        (permission) => permission === 'command.delete_command'
+                        permission => permission === 'citrus.delete_command'
                       )
                   "
                 >
@@ -389,7 +389,7 @@
           <tbody>
             <tr v-for="product in products" :key="product.id">
               <td>
-                <drop button_style="secondary" pos="right">
+                <drop button-style="secondary" pos="right">
                   <template v-slot:button>{{ product.name }}</template>
                   <template v-slot:header>{{ product.name }}</template>
                   <template v-slot:body>
@@ -415,8 +415,10 @@
               </td>
               <td>
                 <span v-if="product.weight != 1">
-                  {{ product.total }} caisse
-                  <span v-if="product.total > 1">s</span>
+                  <!-- eslint disable next-line -->
+                  {{ product.total }} caisse<span v-if="product.total > 1"
+                    >s</span
+                  >
                   (soit
                   {{ Math.round(product.total * product.weight * 100) / 100 }}
                   kg)
@@ -445,19 +447,19 @@
 </template>
 
 <script>
-import Drop from "../utility/Drop";
-import Message from "../utility/Message";
-import Modal from "../utility/Modal";
-import Loader from "../utility/Loader";
+import Drop from '../utility/Drop';
+import Message from '../utility/Message';
+import Modal from '../utility/Modal';
+import Loader from '../utility/Loader';
 
 export default {
-  name: "TableCommand",
+  name: 'TableCommand',
 
   components: {
     Drop,
     Message,
     Modal,
-    Loader,
+    Loader
   },
 
   data() {
@@ -478,7 +480,7 @@ export default {
 
       // Error
       queryError: false,
-      permissionError: false,
+      permissionError: false
     };
   },
 
@@ -486,16 +488,16 @@ export default {
     totalCommand() {
       if (this.hasCommand === true) {
         const command = this.commands.filter(
-          (c) => c.user.id === this.currentUser.id
+          c => c.user.id === this.currentUser.id
         );
         return command[0].total;
       }
 
       let totalCommand = Number();
-      let commandEntries = Object.entries(this.command);
+      const commandEntries = Object.entries(this.command);
 
-      commandEntries.forEach((command) => {
-        this.products.forEach((product) => {
+      commandEntries.forEach(command => {
+        this.products.forEach(product => {
           if (product.id === Number(command[0])) {
             totalCommand += product.price * command[1];
           }
@@ -517,10 +519,10 @@ export default {
 
     totalUpdateCommand() {
       let totalCommand = Number();
-      let commandEntries = Object.entries(this.updateCommand);
+      const commandEntries = Object.entries(this.updateCommand);
 
-      commandEntries.forEach((command) => {
-        this.products.forEach((product) => {
+      commandEntries.forEach(command => {
+        this.products.forEach(product => {
           if (product.id == command[0]) {
             totalCommand += product.price * command[1];
           }
@@ -533,14 +535,18 @@ export default {
     hasCommand() {
       const command = Object.values(this.commands);
 
-      for (let i = 0; i < command.length; i++) {
-        const c = command[i];
-        if (c.user.id == this.currentUser.id) {
-          return true;
-        }
-      }
-      return false;
-    },
+      return command.find(c => c.user.id === this.currentUser.id)
+        ? true
+        : false;
+
+      // for (let i = 0; i <= command.length; i++) {
+      //   const c = command[i]
+      //   if (c.user.id == this.currentUser.id) {
+      //     return true
+      //   }
+      // }
+      // return false
+    }
   },
 
   methods: {
@@ -554,16 +560,16 @@ export default {
     },
 
     quantity(user, product) {
-      let command = this.commands.find((command) => command.user.id == user.id);
-      let amount = command.amounts.find(
-        (amount) => amount.product.id == product.id
+      const command = this.commands.find(command => command.user.id == user.id);
+      const amount = command.amounts.find(
+        amount => amount.product.id == product.id
       );
       if (amount) {
         return amount.amount;
       } else {
         return 0;
       }
-      //for (let i = 0; i < this.amounts.length; i++) {
+      // for (let i = 0; i < this.amounts.length; i++) {
       //  const amount = this.amounts[i];
       //  if (
       //    user.id === amount.command.user.id &&
@@ -571,35 +577,35 @@ export default {
       //  ) {
       //    return amount.amount;
       //  }
-      //}
-      //return 0;
+      // }
+      // return 0;
     },
 
     showRecap() {
-      UIkit.modal("#command-recap").show();
+      UIkit.modal('#command-recap').show();
     },
 
     addCommandCitrus() {
-      UIkit.modal("#command-recap").hide();
-      let formData = new Object();
-      formData["user"] = this.currentUser.id;
-      formData["send_mail"] = this.sendMail;
+      UIkit.modal('#command-recap').hide();
+      const formData = new Object();
+      formData.user = this.currentUser.id;
+      formData.send_mail = this.sendMail;
       formData.amounts = {};
-      Object.entries(this.command).forEach((c) => {
+      Object.entries(this.command).forEach(c => {
         formData.amounts[Number(c[0])] = Number(c[1]);
       });
 
       this.$command.save({}, formData).then(
-        (response) => {
+        response => {
           this.messages.push(response.data);
 
-          if (response.data["status"] == "success") {
+          if (response.data.status == 'success') {
             this.getCommand();
             this.command = {};
           }
         },
-        (response) => {
-          if (response.status == 403 && response.statusText == "Forbidden") {
+        response => {
+          if (response.status == 403 && response.statusText == 'Forbidden') {
             this.permissionError = true;
           } else {
             this.queryError = true;
@@ -608,19 +614,19 @@ export default {
       );
     },
 
-    deleteCommand(id_command) {
-      UIkit.modal("#confirm-delete-command-" + id_command).hide();
-      this.$command.remove({ id: id_command }, {}).then(
-        (response) => {
+    deleteCommand(idCommand) {
+      UIkit.modal('#confirm-delete-command-' + idCommand).hide();
+      this.$command.remove({ id: idCommand }, {}).then(
+        response => {
           this.messages.push(response.data);
 
-          if (response.data["status"] == "success") {
+          if (response.data.status == 'success') {
             this.getCommand();
             this.command = {};
           }
         },
-        (response) => {
-          if (response.status == 403 && response.statusText == "Forbidden") {
+        response => {
+          if (response.status == 403 && response.statusText == 'Forbidden') {
             this.permissionError = true;
           } else {
             this.queryError = true;
@@ -630,27 +636,27 @@ export default {
     },
 
     updateCommandCitrus(idCommand) {
-      UIkit.modal("#confirm-update").hide();
+      UIkit.modal('#confirm-update').hide();
 
-      let formData = {};
-      formData["user"] = this.updateCommand.user.id;
+      const formData = {};
+      formData.user = this.updateCommand.user.id;
       formData.amounts = {};
 
-      Object.entries(this.updateCommand).forEach((update) => {
-        if (update[0] != "user" && update[0] != "id") {
+      Object.entries(this.updateCommand).forEach(update => {
+        if (update[0] != 'user' && update[0] != 'id') {
           formData.amounts[update[0]] = update[1];
         }
       });
 
       this.$command.update({ id: idCommand }, formData).then(
-        (response) => {
+        response => {
           this.messages.push(response.data);
-          if (response.data["status"] == "success") {
+          if (response.data.status == 'success') {
             this.getCommand();
           }
         },
-        (response) => {
-          if (response.status == 403 && response.statusText == "Forbidden") {
+        response => {
+          if (response.status == 403 && response.statusText == 'Forbidden') {
             this.permissionError = true;
           } else {
             this.queryError = true;
@@ -660,40 +666,40 @@ export default {
     },
 
     showWarningDeleteAllCommand() {
-      UIkit.modal("#warning-delete-all-command").show();
+      UIkit.modal('#warning-delete-all-command').show();
     },
 
     deleteAllCommand() {
-      UIkit.modal("#warning-delete-all-command").hide();
-      this.$command.remove({ id: "destroy_all" }).then(
-        (response) => {
+      UIkit.modal('#warning-delete-all-command').hide();
+      this.$command.remove({ id: 'destroy_all' }).then(
+        response => {
           this.messages.push(response.data);
           this.getCommand();
         },
-        (response) => {
+        response => {
           this.queryError = true;
         }
       );
     },
 
     getCommandForUpdate(idCommand) {
-      let com = Object();
-      let command = this.commands.find((c) => c.id == idCommand);
-      command.amounts.forEach((a) => (com[a.product.id] = a.amount));
+      const com = Object();
+      const command = this.commands.find(c => c.id == idCommand);
+      command.amounts.forEach(a => (com[a.product.id] = a.amount));
       com.id = command.id;
       com.user = command.user;
       this.updateCommand = com;
-      UIkit.modal("#update-command").show();
+      UIkit.modal('#update-command').show();
     },
 
     getCommand() {
       // Get citrus list
       this.$citrus.query().then(
-        (response) => {
+        response => {
           this.products = response.data;
         },
-        (response) => {
-          if (response.status == 403 && response.statusText == "Forbidden") {
+        response => {
+          if (response.status == 403 && response.statusText == 'Forbidden') {
             this.permissionError = true;
           } else {
             this.queryError = true;
@@ -703,11 +709,11 @@ export default {
 
       // Get command list
       this.$command.query().then(
-        (response) => {
+        response => {
           this.commands = response.data;
         },
-        (response) => {
-          if (response.status == 403 && response.statusText == "Forbidden") {
+        response => {
+          if (response.status == 403 && response.statusText == 'Forbidden') {
             this.permissionError = true;
           } else {
             this.queryError = true;
@@ -716,7 +722,7 @@ export default {
       );
 
       // Get amounts
-      //this.$amount.query().then(
+      // this.$amount.query().then(
       //	response => {
       //		this.amounts = response.data;
       //	},
@@ -727,14 +733,14 @@ export default {
       //			this.queryError = true;
       //		}
       //	}
-      //);
-    },
+      // );
+    }
   },
 
   mounted() {
     // Define all resourcev (vue-resource)
     this.$citrus = this.$resource(
-      "api/citrus/product",
+      'api/citrus/product',
       {},
       {},
       {
@@ -743,12 +749,12 @@ export default {
         },
         after: () => {
           this.loading = false;
-        },
+        }
       }
     );
 
     this.$command = this.$resource(
-      "api/citrus/command{/id}",
+      'api/citrus/command{/id}',
       {},
       {},
       {
@@ -758,13 +764,13 @@ export default {
         after: () => {
           this.loading = false;
           if (this.messages.length !== 0) {
-            UIkit.scroll("#footer", { offset: 100 }).scrollTo("#vue-messages");
+            UIkit.scroll('#footer', { offset: 100 }).scrollTo('#vue-messages');
           }
-        },
+        }
       }
     );
 
-    //this.$amount = this.$resource(
+    // this.$amount = this.$resource(
     //	"api/citrus/amount{/id}",
     //	{},
     //	{},
@@ -776,11 +782,11 @@ export default {
     //			this.loading = false;
     //		}
     //	}
-    //);
+    // );
 
     // Get current user
     this.$user = this.$resource(
-      "api/users/current",
+      'api/users/current',
       {},
       {},
       {
@@ -789,23 +795,23 @@ export default {
         },
         after: () => {
           this.loading = false;
-        },
+        }
       }
     );
     this.$user.query().then(
-      (response) => {
+      response => {
         this.currentUser = response.data;
         // Get all informations to display on the table
         this.getCommand();
       },
-      (response) => {
-        if (response.status == 403 && response.statusText == "Forbidden") {
+      response => {
+        if (response.status == 403 && response.statusText == 'Forbidden') {
           this.permissionError = true;
         } else {
           this.queryError = true;
         }
       }
     );
-  },
+  }
 };
 </script>

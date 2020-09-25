@@ -18,42 +18,42 @@
 </template>
 
 <script>
-import Breadcrumb from "../components/utility/Breadcrumb";
-import LayoutBoxe from "../components/utility/LayoutBoxe";
-import AddProduct from "../components/citrus/AddProduct";
+import Breadcrumb from '../components/utility/Breadcrumb';
+import LayoutBoxe from '../components/utility/LayoutBoxe';
+import AddProduct from '../components/citrus/AddProduct';
 
 export default {
-  name: "CitrusProductAdd",
+  name: 'CitrusProductAdd',
 
   components: {
     Breadcrumb,
     LayoutBoxe,
-    AddProduct,
+    AddProduct
   },
 
   data() {
     return {
       breadcrumb: [
         {
-          name: "Accueil",
-          link: "/",
+          name: 'Accueil',
+          link: '/'
         },
         {
-          name: "Agrumes",
-          link: "uk-disabled",
+          name: 'Agrumes',
+          link: 'uk-disabled'
         },
         {
-          name: "Liste des produits",
-          link: "/agrumes/liste-des-produits",
+          name: 'Liste des produits',
+          link: '/agrumes/liste-des-produits'
         },
         {
-          name: "Ajouter un produit",
-        },
-      ],
+          name: 'Ajouter un produit'
+        }
+      ]
     };
   },
   mounted() {
-    document.title = "Ajouter un produit | CC La Piarre";
-  },
+    document.title = 'Ajouter un produit | CC La Piarre';
+  }
 };
 </script>

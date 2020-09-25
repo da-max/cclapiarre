@@ -13,49 +13,49 @@
         </span>
       </template>
     </layout-boxe>
-    <update-product :product_id="$route.params.product_id"></update-product>
+    <update-product :productId="$route.params.productId"></update-product>
   </div>
 </template>
 
 <script>
-import LayoutBoxe from "../components/utility/LayoutBoxe";
-import UpdateProduct from "../components/citrus/UpdateCitrus";
-import Breadcrumd from "../components/utility/Breadcrumb";
+import LayoutBoxe from '../components/utility/LayoutBoxe';
+import UpdateProduct from '../components/citrus/UpdateCitrus';
+import Breadcrumd from '../components/utility/Breadcrumb';
 
 export default {
-  name: "CitrusProductUpdate",
+  name: 'CitrusProductUpdate',
 
   components: {
     LayoutBoxe,
     UpdateProduct,
-    Breadcrumd,
+    Breadcrumd
   },
 
   data() {
     return {
       breadcrumb: [
         {
-          name: "Accueil",
-          link: "/",
+          name: 'Accueil',
+          link: '/'
         },
         {
-          name: "Agrumes",
-          link: "#",
-          class: "uk-disabled",
+          name: 'Agrumes',
+          link: '#',
+          class: 'uk-disabled'
         },
         {
-          name: "Liste des produits",
-          link: "/agrumes/liste-des-produits",
+          name: 'Liste des produits',
+          link: '/agrumes/liste-des-produits'
         },
         {
-          name: "Modifier un produit",
-        },
-      ],
+          name: 'Modifier un produit'
+        }
+      ]
     };
   },
 
   mounted() {
-    document.title = "Modifier un produit | CC La Piarre";
-  },
+    document.title = 'Modifier un produit | CC La Piarre';
+  }
 };
 </script>

@@ -11,10 +11,10 @@
 
 <script>
 export default {
-    name: 'Breadcrumb',
+  name: 'Breadcrumb',
 
-    props: {
-        elements: {type: Array, default: Array}
-    }
+  props: {
+    elements: { type: Array, default: Array }
+  }
 }
 </script>

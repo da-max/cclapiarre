@@ -14,7 +14,8 @@ import os
 from django.conf.global_settings import LOGIN_URL, DATETIME_INPUT_FORMATS
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -29,7 +30,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS =[
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,6 +46,7 @@ INSTALLED_APPS =[
     'ckeditor',
     'phonenumber_field',
     'webpack_loader',
+    'application',
     'stats',
     'registration',
     'article',
@@ -146,7 +148,7 @@ STATICFILES_DIRS = (
 
 LOGIN_URL = "connection"
 
-#CACHE
+# CACHE
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',

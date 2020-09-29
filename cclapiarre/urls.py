@@ -25,6 +25,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.contrib import admin
 from django.contrib.flatpages import views
 from django.views.generic import TemplateView
+from graphene_django.views import GraphQLView
 
 
 from article import views as a_views
@@ -38,19 +39,20 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path("", home, {"filtered":"Public"}, name="home"),
+    path("", home, {"filtered": "Public"}, name="home"),
     path('admin/', admin.site.urls),
     path('compte/', include("registration.urls")),
     path('article/', include("article.urls")),
     path('evenement/', include("event.urls")),
     path('agrumes/', include(('citrus.urls', 'citrus'), namespace='citrus')),
-    path('a-propos-du-site/', views.flatpage, {'url': "/a-propos-du-site/"}, name="a_propos"),
+    path('a-propos-du-site/', views.flatpage,
+         {'url': "/a-propos-du-site/"}, name="a_propos"),
     path('carousel/', include("carousel.urls")),
     path("cafe/", include("coffee.urls")),
     path('pate/', include("pasta.urls")),
     path('parametre/', include('stats.urls')),
     path('pages/', include('django.contrib.flatpages.urls')),
-    
+
     # Page for display content of CHANGELOG.md files
     path('changements', a_views.changelog, name='changelog'),
 
@@ -61,8 +63,11 @@ urlpatterns = [
 
     # Utility
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
-     name='django.contrib.sitemaps.views.sitemap'),
-    url(r'^robots.txt$', TemplateView.as_view(template_name="robots.txt", content_type="text/plain"), name="robots_file")
+         name='django.contrib.sitemaps.views.sitemap'),
+    url(r'^robots.txt$', TemplateView.as_view(template_name="robots.txt",
+                                              content_type="text/plain"), name="robots_file"),
+
+    path('graphql/', GraphQLView.as_view(graphiql=True))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

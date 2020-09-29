@@ -14,7 +14,8 @@ import os
 from django.conf.global_settings import LOGIN_URL, DATETIME_INPUT_FORMATS
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -29,7 +30,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS =[
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,7 @@ INSTALLED_APPS =[
     'django.contrib.flatpages',
     'django.contrib.humanize',
     'rest_framework',
+    'graphene_django',
     'markdown_deux',
     'ckeditor',
     'phonenumber_field',
@@ -146,7 +148,7 @@ STATICFILES_DIRS = (
 
 LOGIN_URL = "connection"
 
-#CACHE
+# CACHE
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -186,4 +188,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'cclapiarre.permissions.CustomObjectPermissions'
     ]
+}
+
+# Graphene configuration
+GRAPHENE = {
+    "SCHEMA": "cclapiarre.schema.schema"
 }

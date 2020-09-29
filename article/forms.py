@@ -12,9 +12,9 @@ class ArticleForm(models.ModelForm):
     """
     class Meta:
         model = Article
-        fields = ('title', "contents", "categorie")
+        fields = ('title', "content", "category")
         widgets = {
-            "title" : TextInput(attrs={"class" : "uk-input"}),
-            "contents" : Textarea(attrs={"class": "uk-textarea"}),
-            "categorie" : Select({"class":"uk-select"})
+            "title": TextInput(attrs={"class": "uk-input"}),
+            "content": Textarea(attrs={"class": "uk-textarea"}),
+            "category": Select({"class": "uk-select"})
         }

@@ -17,13 +17,13 @@ class Article(models.Model):
     """
     title = models.CharField(verbose_name="Titre de l'article",
                              max_length=60, help_text="60 caractéres maximum.")
-    contents = RichTextField(verbose_name="Contenu de l'article",
+    content = RichTextField(verbose_name="Contenu de l'article",
                              config_name='awesome_ckeditor')
     date_creation = models.DateTimeField(verbose_name="Date de création de l'article",
                                          default=timezone.now, help_text="Laisser vide pour "
                                          "la date actuel")
-    categorie = models.ForeignKey("Categorie", on_delete=models.CASCADE,
-                                  help_text="La catégorie privée ne sera accéssible qu'aux "
+    category = models.ForeignKey("Category", on_delete=models.CASCADE,
+                                  help_text="La catégorie privée ne sera accessible qu'aux "
                                   "personnes ayant un compte.")
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -35,8 +35,8 @@ class Article(models.Model):
         verbose_name = "Article"
 
 
-class Categorie(models.Model):
-    """ Categorie models for article app. """
+class Category(models.Model):
+    """ Category models for article app. """
     name = models.CharField(max_length=100, verbose_name="Nom de la catégorie")
 
     def __str__(self):

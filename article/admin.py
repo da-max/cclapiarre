@@ -1,4 +1,4 @@
-from article.models import Article, Categorie
+from article.models import Article, Category
 from django.utils.text import Truncator
 
 from django.contrib import admin
@@ -12,16 +12,16 @@ class ArticleAdmin(ModelAdmin):
         super().save_model(request, obj, form, change)
 
     fieldsets = [
-        ("Contenu", {'fields': ['title', 'contents']}),
-        ("Catégorie (obligatoire)", {'fields': ['categorie']})
+        ("Contenu", {'fields': ['title', 'content']}),
+        ("Catégorie (obligatoire)", {'fields': ['category']})
         ]
 
     exclude = ['date_creation', 'author']
     list_display = ('title', 'author', "date_creation")
-    list_filter = ('categorie',)
+    list_filter = ('category',)
     date_hierarchy = 'date_creation'
     ordering = ("date_creation", )
-    search_fields = ['title', "contents"]
+    search_fields = ['title', "content"]
 
 class CategorieAdmin(ModelAdmin):
     
@@ -32,4 +32,4 @@ class CategorieAdmin(ModelAdmin):
     
 
 admin.site.register(Article, ArticleAdmin)
-admin.site.register(Categorie, CategorieAdmin)
+admin.site.register(Category, CategorieAdmin)

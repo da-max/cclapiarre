@@ -2,7 +2,7 @@ from django.utils import timezone
 
 import graphene
 from graphene_django import DjangoObjectType
-from graphene_django.forms.mutation import DjangoFormMutation, DjangoModelFormMutation
+from graphene_django.forms.mutation import DjangoModelFormMutation
 from graphene_django.fields import Field
 
 from article.models import Article, Category

@@ -2,9 +2,10 @@ from graphene import ObjectType, Schema
 
 from article.schema import Query as article_query, Mutation as article_mutation
 from carousel.schema import Query as carousel_query
+from event.schema import Query as event_query
 
 
-class Query(article_query, carousel_query, ObjectType):
+class Query(article_query, carousel_query, event_query, ObjectType):
     pass
 
 

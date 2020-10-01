@@ -5,7 +5,7 @@ from django.db.models.fields import CharField, BooleanField, URLField
 from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 
-class Informations(Model) :
+class Information(Model) :
 
     user = ForeignKey(User, verbose_name="Utilisateur", on_delete=CASCADE)
     phone_number = PhoneNumberField(verbose_name="Numéro de téléphone")

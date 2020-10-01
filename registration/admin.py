@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from registration.models import Informations
+from registration.models import Information
 
-admin.site.register(Informations)
+admin.site.register(Information)

@@ -14,21 +14,21 @@ from django.contrib.auth.models import User
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from rest_framework import permissions
 
-from registration.models import Informations
+from registration.models import Information
 from registration.forms import ConnectionForm, CourtCircuitConnectionForm
 
 
 
 class ListUser(PermissionRequiredMixin, LoginRequiredMixin, ListView):
 
-	permission_required = "registration.view_informations"
-	model = Informations
-	context_object_name = "informations"
+	permission_required = "registration.view_information"
+	model = Information
+	context_object_name = "information"
 	template_name = "registration/list.html"
 
 	def get_queryset(self):
 
-		return Informations.objects.all().order_by("user__last_name")
+		return Information.objects.all().order_by("user__last_name")
 
 
 

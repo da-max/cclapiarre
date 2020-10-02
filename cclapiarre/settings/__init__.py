@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'citrus',
     'carousel',
     'coffee',
-    'pasta'
+    'pasta',
+    'application'
 ]
 
 MIDDLEWARE = [

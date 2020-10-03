@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.flatpages',
     'django.contrib.humanize',
+    'django_filters',
     'rest_framework',
     'graphene_django',
     'markdown_deux',

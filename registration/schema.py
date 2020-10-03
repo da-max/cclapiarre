@@ -1,9 +1,13 @@
 import graphene
+from graphene import relay
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from graphene_django import DjangoObjectType
+from graphene_permissions.permissions import AllowAuthenticated
+from graphene_permissions.mixins import AuthNode, AuthFilter
 
 from registration.models import Information
+from registration.decorators import login_required
 
 
 class ContentTypeType(DjangoObjectType):
@@ -32,13 +36,16 @@ class UserType(DjangoObjectType):
 
 
 class InformationUserType(DjangoObjectType):
+
     class Meta:
         model = Information
         fields = ('id', 'phone_number', 'user')
 
 
 class Query(graphene.ObjectType):
-    all_informations_users = graphene.List(InformationUserType)
+    all_informations_users = graphene.List(
+        InformationUserType)
 
+    @login_required
     def resolve_all_informations_users(self, info):
         return Information.objects.select_related('user').all()

@@ -65,7 +65,7 @@ def sommary_command(request):
 
 
 @login_required
-@permission_required('citrus.add_command', raise_exception=True)
+@permission_required('citrus.view_product', raise_exception=True)
 def command_citrus(request):
     ''' Vuejs app for command citrus.'''
     return render(request, 'app.html')

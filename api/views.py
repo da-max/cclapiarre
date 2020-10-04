@@ -307,7 +307,6 @@ class ProductViewSet(ModelViewSet):
 
         if query == 'all':
             queryset = Product.objects.all()
-        print(queryset)
         return queryset
 
     def list(self, request):

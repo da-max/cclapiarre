@@ -643,7 +643,7 @@ def pdf_list_command(request):
 
 
 @login_required
-@permission_required('coffee.add_commandcoffee', raise_exception=True)
+@permission_required('coffee.view_coffee', raise_exception=True)
 def command_coffee(request):
 
     return render(request, "app.html")

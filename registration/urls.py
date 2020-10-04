@@ -27,5 +27,5 @@ urlpatterns = [
         UpdateUser.as_view(), name="update_user"),
     url(r'^supprimer-un-utilisateur/(?P<id_user>[\d]+)',
         delete_user, name="delete_user"),
-    url(r'^ajouter-un-utilisateur', CreateUser.as_view(), name="create_user")
+    url(r'^creer-un-utilisateur', CreateUser.as_view(), name="create_user")
 ]

@@ -9,7 +9,8 @@
 
 {% block breadcrumb %}
 	<li><a href="{% url 'home' %}">Accueil</a></li>
-	<li class="uk-disabled"><a href="#">{{ request.user.username }}</a></li>
+  <li class="uk-disabled"><a href="#">{{ request.user.username }}</a></li>
+  <li><a href="{% url 'list_all_user' %}">Liste des utilisateurs</a></li>
   <li><span>Modifier un utilisateur</span></li>
 {% endblock breadcrumb %}
 

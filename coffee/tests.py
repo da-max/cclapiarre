@@ -470,17 +470,23 @@ class PermissionsCoffeeTest(TestCase):
         self.assertEqual(response3.status_code, 403)
         self.assertEqual(response4.status_code, 403)
 
-    
+    def test_view_command_coffee(self):
+        permission = Permission.objects.get(Q(codename='view_coffee') & Q(content_type=self.content_type.get(model='coffee')))
+        self.user.user_permissions.set([permission])
+        
+        response = self.client.get('/cafe/commander-du-cafe')
+
+        self.assertEqual(response.status_code, 200)
+
     def test_command_coffee(self):
         """ Test if user has add_commandcoffee permission for access to command_coffee view."""
         permission = Permission.objects.get(Q(codename='add_commandcoffee') & Q(content_type=self.content_type.get(model='commandcoffee')))
         self.user.user_permissions.set([permission])
         
-        response1 = self.client.get('/cafe/commander-du-cafe')
         response2 = self.client.get('/cafe/coffees-formate')
         response3 = self.client.get('/cafe/create-command')
         
-        self.assertEqual(response1.status_code, 200)
+        
         self.assertEqual(response2.status_code, 200)
         self.assertEqual(response3.status_code, 302)
 

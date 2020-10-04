@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1 class="uk-text-center uk-margin-xlarge-top">Créer un utilisateur</h1>
+{% endblock header %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+	<li class="uk-disabled"><a href="#">{{ request.user.username }}</a></li>
+    <li><a href="{% url 'list_all_user' %}">Liste des utilisateurs</a></li>
+    <li><span>Créer un utilisateur</span></li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="uk-width-3-5@m uk-width-4-5@s uk-margin-auto">
+  <form action="" method="post" class="uk-form-stacked">
+    {% csrf_token %}
+    <fieldset class="uk-fieldset">
+      <legend class="uk-legend">Connexion de l’utilisateur</legend>
+      <div uk-grid class="uk-grid-large uk-child-width-1-2@l uk-margin-medium-top">
+        <div>
+          <label for="username" class="uk-form-label">{{ form.username.label }}</label>
+          <div class="uk-form-controls">{{ form.username }}</div>
+          <p class="uk-text-warning"> {{ form.username.errors }} </p>
+          <p class="uk-text-muted">{{ form.username.help_text }}</p>
+        </div>
+        <div>
+          <label for="password1" class="uk-form-label"> {{ form.password1.label }}</label>
+          <div class="uk-form-controls">{{ form.password1 }} </div>
+          <div class="uk-text-muted">{{ form.password1.help_text }}</div>
+          <label for="password2" class="uk-form-label">{{ form.password2.label }}</label>
+          <div class="uk-form-controls">{{ form.password2 }}</div>
+          <p class="uk-text-muted">{{ form.password2.help_text }}</p>
+          <div class="uk-text-danger">{{ form.password2.errors }}</div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset class="uk-fieldset uk-margin-large-top">
+        <legend class="uk-legend">A propos de l’utilisateur</legend>
+        <div class="uk-grid-large uk-child-width-1-2@l uk-margin-medium-top" uk-grid>
+          <div>
+            <label for="last_name" class="uk-form-label">{{ form.last_name.label }}</label>
+            <div class="uk-form-controls">{{ form.last_name }}</div>
+          </div>
+          <div>
+            <label for="first_name" class="uk-form-label">{{ form.first_name.label }}</label>
+            <div class="uk-form-controls">{{ form.first_name }}</div>
+          </div>
+          <div>
+            <label for="first_name" class="uk-form-label">{{ form.email.label }}</label>
+            <div class="uk-form-controls">{{ form.email }}</div>
+          </div>
+          <div class='uk-text-center'>
+            <label for="first_name" class="uk-form-label">{{ form.groups.label }}</label>
+            <div class="uk-form-controls">
+                {{ form.groups }}
+            </div>
+            <p class="uk-text-muted">{{ form.groups.help_text }}</p>
+          </div>
+        </div>
+      </fieldset>
+      <div class="uk-text-center uk-margin-large-top">
+        <button class="uk-button uk-button-primary">Ajouter l’utilisateur</button>
+      </div>
+  </form>
+</div>
+{% endblock content %}

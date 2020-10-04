@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des utilisateurs{% endblock title %}
+
+
+{% block header %}
+  <h1 class="uk-margin-xlarge-top uk-text-center">Liste des utilisateurs</h1>
+  <aside class="uk-text-justify uk-margin-large-top uk-tile uk-tile-default uk-width-3-5@l uk-margin-auto">
+    Ci-dessous se trouve l’ensemble des utilisateurs inscrits sur le site de cclapiarre, 
+    certains de ces utilisateurs sont spécifiques à certaines fonctionnalités du site 
+    (par exemple l’utilisateur « court-circuit » qui sert aux commandes de café et de pâtes).
+    Si vous souhaitez modifier un utilisateur, vous pouvez cliquer sur le bouton <span uk-icon="icon: refresh"></span>. 
+    Pour supprimer un utilisateur, il faut cliquer sur le bouton <span uk-icon="trash"></span>, 
+    <span class="uk-text-warning uk-text-bold">
+      attention, une fois un utilisateur supprimé, aucun retour en arrière sera possible, de plus, tous les potentiels articles ou commandes fait par l’utilisateur
+      seront également supprimés.
+    </span>
+  </aside>
+{% endblock header %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+	<li class="uk-disabled"><a href="#">{{ request.user.username }}</a></li>
+    <li><span>Liste des utilisateurs</span></li>
+{% endblock breadcrumb %}
+
+{% block content %}
+  <section class="uk-width-3-5@l uk-margin-auto uk-section uk-section-default">
+    <div class="uk-container">
+      <table class="uk-table uk-table-large uk-table-divider uk-table-striped uk-table-hover uk-table-center">
+        <thead>
+          <tr>
+            <th>Nom d’utilisateur</th>
+            <th>Email</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+            <div id="a{{ user.id }}" uk-modal>
+	          	<div class="uk-modal-dialog uk-modal-body">
+	          		<h2 class="uk-modal-title">Supprimer ?</h2>
+	          		<p>Êtes-vous sûr de vouloir supprimer cet article, aucun retour en arrière ne sera possible !</p>
+	          		<p class="uk-text-right">
+	          			<button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
+	          			<a class="uk-button uk-button-primary uk-margin-small-left" type="link" href="{% url 'delete_user' id_user=user.id %}">Supprimer</a>
+	          		</p>
+	          	</div>
+	          </div>
+            <tr>
+              <td>{{ user.username|default:"Non renseigné" }}</td>
+              <td>{{ user.email|default:"Non renseigné" }}</td>
+              <td>{{ user.last_name|default:"Non renseigné" }}</td>
+              <td>{{ user.first_name|default:"Non renseigné" }}</td>
+              <td>
+                <a uk-icon='icon: refresh; ratio: 1.25' class="uk-icon-link" href="{% url 'update_user' pk=user.id %}"></a>
+                <a uk-icon='icon: trash; ratio: 1.25' class="uk-margin-left uk-icon-link" uk-toggle href='#a{{ user.id }}'></a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock content %}

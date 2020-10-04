@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1 class="uk-text-center uk-margin-xlarge-top">Modifier un utilisateur</h1>
+{% endblock header %}
+
+
+{% block breadcrumb %}
+	<li><a href="{% url 'home' %}">Accueil</a></li>
+	<li class="uk-disabled"><a href="#">{{ request.user.username }}</a></li>
+  <li><span>Modifier un utilisateur</span></li>
+{% endblock breadcrumb %}
+
+{% block content %}
+  <section class="uk-width-3-5@l uk-margin-auto">
+    <form method="post" action="#" class="uk-form-stacked">
+      {% csrf_token %}
+      <div uk-grid class="uk-child-width-1-2@l uk-grid-large">
+        <div>
+          <label for="username" class="uk-form-label">{{ form.username.label }}</label>
+          <div class="uk-form-controls">{{ form.username }}</div>
+        </div>
+        <div>
+          <label for="first_name" class="uk-form-label">{{ form.first_name.label }}</label>
+          <div class="uk-form-controls">{{ form.first_name }}</div>
+        </div>
+        <div>
+          <label for="last_name" class="uk-form-label">{{ form.last_name.label }}</label>
+          <div class="uk-form-controls">{{ form.last_name }}</div>
+        </div>
+        <div>
+          <label for="email" class="uk-form-label">{{ form.email.label }}</label>
+          <div class="uk-form-controls">{{ form.email }}</div>
+        </div>
+      </div>
+      <div class="uk-margin-large-top uk-child-width-1-2@l uk-text-center" uk-grid> 
+      <div>
+        <label for="groups" class="uk-form-label">{{ form.groups.label }}</label>
+        <div class="uk-form-controls">{{ form.groups }}</div>
+        <p class="uk-text-muted">{{ form.groups.help_text }}</p>
+      </div>
+      <div>
+        <label for="is_active" class="uk-form-label">{{ form.is_active.label }}</label>
+        <div class="uk-form-controls">{{ form.is_active }}</div>
+        <p class="uk-text-muted">{{ form.is_active.help_text }}</p>
+      </div>
+      </div>
+      <div class="uk-margin-medium-top uk-text-center">
+        <input type="submit" class="uk-button uk-button-primary" value='Modifier l’utilisateur'>
+      </div>
+    </form>
+  </section>
+{% endblock content %}

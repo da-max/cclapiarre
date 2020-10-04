@@ -1,6 +1,17 @@
 # Changements
 Tous les changements de ce projet sont documentés ici, ce fichier est affiché sur cette page : [https://cclapiarre.deblan.fr/changements/](https://cclapiarre.deblan.fr/changements/) il est donc écrit en français.
 
+## 4 octobre 2020 : Sortie de la version 5.5.0
+### Ajout
+* Ajout d’une interface permettant de créer, de supprimer ou de modifier des utilisateurs.
+
+### Résolution de bogue
+* Des corrections ont été faites sur le système de modification et d’ajout des agrumes. Le système de pagination a été retiré.
+
+### Modification
+* Les permissions des pages permettant de commander des agrumes ou du café ont été modifiées ce qui permet de voir les pages sans pour autant accepter les commandes.
+* Le bas de page a été modifié afin de prendre en compte les récentes modifications de status du groupe de court-circuit La Piarre, qui n’est, désormais, plus rattaché à l’association court-circuit mais à l’association court-circuit Buëch Méouge.
+
 ## 22 avril 2020 : Sortie de la version 5.4.5
 ### Ajout
 * Ajout d’une fonctionnalité permettant de modifier ou de supprimer un produit pour la commande d’agrumes.

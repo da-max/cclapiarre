@@ -42,7 +42,7 @@
 
     <div
       id="vue-messages"
-      class="uk-width-2-5@l uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom"
+      class="uk-width-3-5@l uk-width-3-4 uk-margin-auto uk-margin-xlarge-bottom"
     >
       <message v-show="queryError" :close="false" status="danger">
         <template #header>Erreur interne</template>
@@ -75,7 +75,7 @@
     </div>
 
     <form
-      class="uk-width-3-5@m uk-width-4-5@s uk-margin-auto uk-form-horizontal"
+      class="uk-width-3-5@xl uk-width-4-5@s uk-margin-auto uk-form-horizontal"
     >
       <div uk-grid class="uk-child-width-1-2@l uk-grid-large uk-grid-divider">
         <div>

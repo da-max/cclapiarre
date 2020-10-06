@@ -40,7 +40,7 @@ def application_permissions_required(group_type="admins"):
     permission under the form Admin/Member <application_name>.
     """
     def decorator(func):
-        def wrapper(root, info, application__name):
+        def wrapper(root, info, application__name, *args, **kwargs):
             user = info.context.user
             try:
                 app = Application.objects.get(name=application__name)
@@ -62,7 +62,7 @@ def application_permissions_required(group_type="admins"):
                 except AssertionError:
                     raise PermissionDenied("Permission Denied")
 
-            return func(root, info, application__name)
+            return func(root, info, application__name, *args, **kwargs)
 
         return wrapper
     return decorator

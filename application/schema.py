@@ -26,7 +26,7 @@ class OptionType(DjangoObjectType):
         model = Option
         fields = '__all__'
         interfaces = (Node, )
-        filter_fields = ['id', 'application']
+        filter_fields = ['id', 'application__name']
 
 
 class AmountType(DjangoObjectType):
@@ -40,7 +40,7 @@ class OrderType(DjangoObjectType):
         interfaces = (Node, )
         model = Order
         fields = '__all__'
-        filter_fields = ['id', 'application', 'user']
+        filter_fields = ['id', 'application__name', 'user']
 
 
 class ProductType(DjangoObjectType):
@@ -48,7 +48,7 @@ class ProductType(DjangoObjectType):
         interfaces = (Node, )
         model = Product
         fields = '__all__'
-        filter_fields = ['id', 'application__name']
+        filter_fields = ['id', 'application__name', 'display']
 
 
 class WeightType(DjangoObjectType):
@@ -56,7 +56,7 @@ class WeightType(DjangoObjectType):
         interfaces = (Node, )
         model = Weight
         fields = '__all__'
-        filter_fields = ['id', 'application']
+        filter_fields = ['id', 'application__name']
 
 
 class Query(graphene.ObjectType):
@@ -67,12 +67,13 @@ class Query(graphene.ObjectType):
     all_weight = DjangoFilterConnectionField(WeightType)
 
     @login_required
-    def resolve_all_options(self, info, *args, **kwargs):
+    @application_permissions_required('members')
+    def resolve_all_options(self, info, application__name, *args, **kwargs):
         return Option.objects.all()
 
     @login_required
     @application_permissions_required('members')
-    def resolve_application_products(self, info, application_name):
+    def resolve_application_products(self, info, application_name, *args, **kwargs):
         try:
             return Product.objects.all()
         except Product.DoesNotExist:
@@ -82,5 +83,6 @@ class Query(graphene.ObjectType):
         return Application.objects.all()
 
     @login_required
-    def resolve_all_weight(self, info):
+    @application_permissions_required('members')
+    def resolve_all_weight(self, info, application__name, *args, **kwargs):
         return Weight.objects.all()

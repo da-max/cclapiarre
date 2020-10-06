@@ -18,7 +18,7 @@ class ApplicationImage(models.Model):
     """
     alt = models.CharField(verbose_name='Texte alternatif', max_length=60,
                            help_text='Texte affiché si l’image ne peut pas être affichée.')
-    image = models.ImageField(verbose_name='Image a affiché',)
+    image = models.ImageField(verbose_name='Image a affiché')
 
     def __str__(self):
         return self.alt
@@ -40,6 +40,9 @@ class Application(models.Model):
     description = RichTextField(verbose_name='Description de l’application',
                                 help_text="Cette description s’affichera sur l’entête de la page permettant de commander.")
     images = models.ManyToManyField('ApplicationImage', related_name='images')
+    table = models.BooleanField(verbose_name='Mode d’affichage de l’application',
+                                help_text='Défini si l’application doit être affichée sous forme de tableau \
+                                    (convient pour les applications dont les produits n’ont pas d’options).', default=False)
     admins = models.ManyToManyField(User, related_name='admin_application')
     members = models.ManyToManyField(User, related_name='member_application')
 

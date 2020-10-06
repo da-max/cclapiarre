@@ -5,6 +5,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 
 from application.models import Application, ApplicationImage, \
     Option, Order, Product, Weight, Amount
+from registration.decorators import login_required, permissions_required, application_permissions_required
 
 
 class ApplicationImageType(DjangoObjectType):
@@ -24,6 +25,8 @@ class OptionType(DjangoObjectType):
     class Meta:
         model = Option
         fields = '__all__'
+        interfaces = (Node, )
+        filter_fields = ['id', 'application']
 
 
 class AmountType(DjangoObjectType):
@@ -37,7 +40,7 @@ class OrderType(DjangoObjectType):
         interfaces = (Node, )
         model = Order
         fields = '__all__'
-        filter_fields = ('id', 'application', 'user')
+        filter_fields = ['id', 'application', 'user']
 
 
 class ProductType(DjangoObjectType):
@@ -45,22 +48,39 @@ class ProductType(DjangoObjectType):
         interfaces = (Node, )
         model = Product
         fields = '__all__'
-        filter_fields = ['id', 'application']
+        filter_fields = ['id', 'application__name']
 
 
 class WeightType(DjangoObjectType):
     class Meta:
+        interfaces = (Node, )
         model = Weight
         fields = '__all__'
+        filter_fields = ['id', 'application']
 
 
 class Query(graphene.ObjectType):
     all_applications = graphene.List(ApplicationType)
     product = Node.Field(ProductType)
-    all_products = DjangoFilterConnectionField(ProductType)
+    application_products = DjangoFilterConnectionField(ProductType)
+    all_options = DjangoFilterConnectionField(OptionType)
+    all_weight = DjangoFilterConnectionField(WeightType)
 
-    def resolve_all_products(self, info, *args, **kwargs):
-        return Product.objects.all()
+    @login_required
+    def resolve_all_options(self, info, *args, **kwargs):
+        return Option.objects.all()
+
+    @login_required
+    @application_permissions_required('members')
+    def resolve_application_products(self, info, application_name):
+        try:
+            return Product.objects.all()
+        except Product.DoesNotExist:
+            return None
 
     def resolve_all_applications(self, info):
         return Application.objects.all()
+
+    @login_required
+    def resolve_all_weight(self, info):
+        return Weight.objects.all()

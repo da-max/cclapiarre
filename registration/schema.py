@@ -3,8 +3,6 @@ from graphene import relay
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from graphene_django import DjangoObjectType
-from graphene_permissions.permissions import AllowAuthenticated
-from graphene_permissions.mixins import AuthNode, AuthFilter
 
 from registration.models import Information
 from registration.decorators import login_required
@@ -32,7 +30,7 @@ class UserType(DjangoObjectType):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'first_name',
-                  'last_name', 'user_permissions', 'groups')
+                  'last_name', 'user_permissions', 'groups', 'is_superuser')
 
 
 class InformationUserType(DjangoObjectType):

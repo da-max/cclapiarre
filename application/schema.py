@@ -2,9 +2,11 @@ import graphene
 from graphene.relay import Node
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
+from graphene_django.forms.mutation import DjangoModelFormMutation
 
 from application.models import Application, ApplicationImage, \
     Option, Order, Product, Weight, Amount
+from application.forms import ProductForm
 from registration.decorators import login_required, permissions_required, application_permissions_required
 
 
@@ -59,6 +61,26 @@ class WeightType(DjangoObjectType):
         filter_fields = ['id', 'application__name']
 
 
+class AddProduct(DjangoModelFormMutation):
+
+    product = graphene.Field(ProductType)
+
+    class Meta:
+        form_class = ProductForm
+
+    def perform_mutate(form, info):
+        print(form)
+        return True
+
+    def resolve_product(self, info, **kwargs):
+        return self
+
+    # @staticmethod
+    # def mutate(self, info, *args, **kwargs):
+    #     print(self)
+    #     return True
+
+
 class Query(graphene.ObjectType):
     all_applications = graphene.List(ApplicationType)
     product = Node.Field(ProductType)
@@ -86,3 +108,7 @@ class Query(graphene.ObjectType):
     @application_permissions_required('members')
     def resolve_all_weight(self, info, application__name, *args, **kwargs):
         return Weight.objects.all()
+
+
+class Mutation(graphene.ObjectType):
+    add_product = AddProduct.Field()

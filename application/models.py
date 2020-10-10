@@ -158,8 +158,8 @@ def manage_application_permissions(sender, instance, created, **kwargs):
     Description --- This signal is calling when an application is creating,
     this signal create permissions and groups specific for this application. 
     """
-    format_name, title_name = instance.name.replace(
-        ' ', '_').lower(), instance.name.title()
+    format_name = instance.name.replace(
+        ' ', '_').lower()
 
     if created:
         content_type = ContentType.objects.get_for_model(Application)

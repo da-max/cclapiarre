@@ -4,7 +4,7 @@ from article.schema import Query as article_query, Mutation as article_mutation
 from carousel.schema import Query as carousel_query
 from event.schema import Query as event_query
 from registration.schema import Query as registration_query
-from application.schema import Query as application_query
+from application.schema import Query as application_query, Mutation as application_mutation
 
 
 class Query(article_query, carousel_query, event_query,
@@ -12,7 +12,7 @@ class Query(article_query, carousel_query, event_query,
     pass
 
 
-class Mutation(article_mutation, ObjectType):
+class Mutation(article_mutation, application_mutation, ObjectType):
     pass
 
 

@@ -87,6 +87,7 @@ class Query(graphene.ObjectType):
     application_products = DjangoFilterConnectionField(ProductType)
     all_options = DjangoFilterConnectionField(OptionType)
     all_weight = DjangoFilterConnectionField(WeightType)
+    application_order = DjangoFilterConnectionField(OrderType)
 
     @login_required
     @application_permissions_required('members')
@@ -96,10 +97,7 @@ class Query(graphene.ObjectType):
     @login_required
     @application_permissions_required('members')
     def resolve_application_products(self, info, application_name, *args, **kwargs):
-        try:
-            return Product.objects.all()
-        except Product.DoesNotExist:
-            return None
+        return Product.objects.all()
 
     def resolve_all_applications(self, info):
         return Application.objects.all()
@@ -108,6 +106,11 @@ class Query(graphene.ObjectType):
     @application_permissions_required('members')
     def resolve_all_weight(self, info, application__name, *args, **kwargs):
         return Weight.objects.all()
+
+    @login_required
+    @application_permissions_required('admins')
+    def resolve_application_order(self, info, application__name, *args, **kwargs):
+        return Order.objects.all()
 
 
 class Mutation(graphene.ObjectType):

@@ -179,9 +179,12 @@ PHONENUMBER_DEFAULT_REGION = 'FR'
 # WebPack Loader configuration
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'CACHE': DEBUG,
+        'CACHE': not DEBUG,
         'BUNDLE_DIR_NAME': '/bundles/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'frontend', 'webpack-stats.json')
+        'STATS_FILE': os.path.join(BASE_DIR, 'frontend', 'dist', 'webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'TIMEOUT': None,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
     }
 }
 

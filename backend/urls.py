@@ -30,7 +30,6 @@ from graphene_django.views import GraphQLView
 
 from backend.article import views as a_views
 from backend.article.sitemaps import StaticViewSitemap
-from backend.article.views import home
 from backend.api.apps import ApiConfig
 
 
@@ -39,7 +38,6 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path("", home, {"filtered": "Public"}, name="home"),
     path('admin/', admin.site.urls),
     path('compte/', include("backend.registration.urls")),
     path('article/', include("backend.article.urls")),
@@ -67,7 +65,8 @@ urlpatterns = [
     url(r'^robots.txt$', TemplateView.as_view(template_name="robots.txt",
                                               content_type="text/plain"), name="robots_file"),
 
-    path('graphql/', GraphQLView.as_view(graphiql=True))
+    path('graphql/', GraphQLView.as_view(graphiql=True)),
+    path('', TemplateView.as_view(template_name='app.html'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

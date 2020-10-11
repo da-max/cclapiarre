@@ -36,24 +36,6 @@
     "eslint-plugin-vue": "^7.0.1",
     "typescript": "~3.9.3"
   },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended",
-      "@vue/typescript"
-    ],
-    "parserOptions": {
-      "parser": "@typescript-eslint/parser"
-    },
-    "rules": {
-      "semi": "off",
-      "quotes": "off"
-    }
-  },
   "browserslist": [
     "> 1%",
     "last 2 versions",

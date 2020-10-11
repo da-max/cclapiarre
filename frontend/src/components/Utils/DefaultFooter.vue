@@ -8,24 +8,14 @@
       class="uk-child-width-expand@s uk-grid-large uk-text-center uk-padding uk-padding-bottom"
       uk-grid
     >
-      <li>
-        <a
-          class="uk-button uk-button-text"
-          href="https://www.court-circuit-05.com/"
-          >Lien vers Court Circuit buëch</a
-        >
-      </li>
-      <li>
-        <a class="uk-button uk-button-text" href="">A propos du site</a>
-      </li>
-      <li>
-        <a class="uk-button uk-button-text" href="mailto:da-max@tutanota.com"
-          >Contacter Court-circuit La Piarre : <br />da-max@tutanota.com</a
-        >
+      <li v-for="utilsLink in utilsLinks" :key="utilsLink.name">
+        <a class="uk-button uk-button-text" :href="utilsLink.link">{{
+          utilsLink.name
+        }}</a>
       </li>
     </ul>
     <ul
-      class="uk-padding-bottom uk-text-muted uk-text-small uk-margin-auto uk-text-center uk-width-1-3 uk-list"
+      class="uk-padding-bottom uk-text-muted uk-text-small uk-margin-auto uk-text-center uk-list"
     >
       <li>
         Ce site est gracieusement hébergé par
@@ -50,7 +40,29 @@
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-class-component'
+import { Options, Vue } from 'vue-class-component'
 
+@Options({
+  data (): Object {
+    return {
+      utilsLinks: [
+        {
+          name:
+            'Contacter court-circuit buëch méouge : ccbuechmeouge@gmail.com',
+          link: 'mailto:ccbuechmeouge@gmail.com'
+        },
+        {
+          name: 'À propos du site',
+          link: '/changements'
+        },
+        {
+          name:
+            'Contacter Court-circuit La Piarre : courtcircuit.lapiarre@gmail.com',
+          link: 'mailto:courtcircuit.lapiarre@gmail.com'
+        }
+      ]
+    }
+  }
+})
 export default class DefaultFooter extends Vue {}
 </script>

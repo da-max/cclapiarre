@@ -1,7 +1,7 @@
 <template>
   <main>
+    <DefaultNavbar></DefaultNavbar>
     <div id="nav">
-      dadoiajdzaio
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div>
@@ -13,10 +13,12 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
 import DefaultFooter from '@/components/Utils/DefaultFooter.vue'
+import DefaultNavbar from '@/components/Utils/DefaultNavbar.vue'
 
 @Options({
   components: {
-    DefaultFooter
+    DefaultFooter,
+    DefaultNavbar
   }
 })
 export default class App extends Vue {}

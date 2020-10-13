@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <div>
     <DefaultNavbar></DefaultNavbar>
     <div id="nav">
       <router-link to="/">Home</router-link> |
@@ -7,7 +7,7 @@
     </div>
     <router-view />
     <DefaultFooter></DefaultFooter>
-  </main>
+  </div>
 </template>
 
 <script lang="ts">

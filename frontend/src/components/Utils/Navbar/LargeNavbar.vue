@@ -14,9 +14,9 @@
             <li><a href="{% url 'home' %}">Accueil</a></li>
             <a class="uk-navbar-item uk-logo"
               ><img
-                src="{% static 'Images/logo.png' %}"
-                width="75px"
-                height="75px"
+                src="../../../assets/logo.png"
+                width="75"
+                height="75"
             /></a>
             <li>
               <a href="#">Espace adhérent</a>

@@ -29,7 +29,7 @@
         Ce projet est placé sous licence libre
         <a href="https://www.gnu.org/licenses/agpl-3.0.html">AGPL-3</a>.
       </li>
-      <li>Version :</li>
+      <li>Version : {{ version }}</li>
       <li>
         <a href="https://gitlab.com/Damax/cclapiarre"
           ><i class="fab fa-gitlab fa-2x uk-link-heading"></i
@@ -41,6 +41,8 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
+
+import { version } from '../../../package.json'
 
 @Options({
   data (): Object {
@@ -60,7 +62,8 @@ import { Options, Vue } from 'vue-class-component'
             'Contacter Court-circuit La Piarre : courtcircuit.lapiarre@gmail.com',
           link: 'mailto:courtcircuit.lapiarre@gmail.com'
         }
-      ]
+      ],
+      version
     }
   }
 })

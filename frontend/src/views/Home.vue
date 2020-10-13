@@ -1,17 +1,28 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
-  </div>
+  <main>
+    Carousel
+
+    <div
+      uk-grid
+      class="uk-margin-auto uk-width-4-5@xl uk-width-expands uk-position-relative"
+    >
+      <div class="uk-width-2-3@l uk-width-auto">
+        Article
+      </div>
+      <div class="uk-width-1-3@l uk-width-auto uk-text-justify uk-padding">
+        <PresentationCard></PresentationCard>
+      </div>
+    </div>
+  </main>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
-import HelloWorld from '@/components/HelloWorld.vue' // @ is an alias to /src
+import PresentationCard from '@/components/Home/PresentationCard.vue' // @ is an alias to /src
 
 @Options({
   components: {
-    HelloWorld
+    PresentationCard
   }
 })
 export default class Home extends Vue {}

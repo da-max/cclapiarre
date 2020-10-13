@@ -15,7 +15,6 @@
             <span class="uk-margin-small-left">Menu</span>
           </a>
         </div>
-        User
         <UserOptions class="uk-navbar-right uk-margin-right"></UserOptions>
       </nav>
     </div>

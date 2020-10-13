@@ -56,11 +56,11 @@
                 </ul>
               </div>
             </li>
-            <li
+
+            <UserOptions
+              :li="true"
               class="uk-position-relative uk-position-right uk-margin-right uk-margin-large-left"
-            >
-              <UserOptions></UserOptions>
-            </li>
+            ></UserOptions>
           </ul>
         </div>
       </nav>
@@ -109,8 +109,7 @@ import UserOptions from '@/components/Utils/Navbar/UserOptions.vue'
     UserOptions
   }
 })
-
 export default class LargeNavbar extends Vue {
-  adminPanelItems!: Array<NavbarItem>
+  adminPanelItems!: Array<NavbarItem>;
 }
 </script>

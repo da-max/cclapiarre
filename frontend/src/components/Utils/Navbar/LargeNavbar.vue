@@ -13,23 +13,10 @@
           <ul class="uk-navbar-nav">
             <li><a href="{% url 'home' %}">Accueil</a></li>
             <a class="uk-navbar-item uk-logo"
-              ><img
-                src="../../../assets/logo.png"
-                width="75"
-                height="75"
+              ><img src="../../../assets/logo.png" width="75" height="75"
             /></a>
             <li>
-              <a href="#">Espace adhérent</a>
-              <div class="uk-navbar-dropdown">
-                <ul class="uk-nav uk-navbar-dropdown-nav">
-                  <li>
-                    <a href="{% url 'list_user' %}">Liste des adhérents</a>
-                  </li>
-                  <li>
-                    <a href="{% url 'list_article_private' %}">Actualité</a>
-                  </li>
-                </ul>
-              </div>
+              <a href="{% url 'list_user' %}">Liste des adhérents</a>
             </li>
             <li>
               <a href="#administration-space" uk-toggle

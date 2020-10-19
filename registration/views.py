@@ -34,7 +34,7 @@ class ListUser(PermissionRequiredMixin, LoginRequiredMixin, ListView):
 
 
 class ListAllUser(PermissionRequiredMixin, LoginRequiredMixin, ListView):
-    permission_required = "registration.view_user"
+    permission_required = "auth.view_user"
     model = User
     context_object_name = "users"
     template_name = "registration/user/list.html"
@@ -73,7 +73,8 @@ class CreateUser(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     def form_invalid(self, form):
         print(form.errors.keys())
         for field in form.errors.keys():
-            form.fields[field].widget.attrs.update({"class": "uk-input uk-form-danger"})
+            form.fields[field].widget.attrs.update(
+                {"class": "uk-input uk-form-danger"})
         messages.warning(
             self.request, "L’utilisateur n’a pas pu être ajouté, merci de vérifier que tous les champs sont bien remplis, puis réessayer")
         return super().form_invalid(form)

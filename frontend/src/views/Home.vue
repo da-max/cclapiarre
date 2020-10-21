@@ -25,7 +25,7 @@ export default {
     Carousels,
     PresentationCard
   },
-  data() {
+  data () {
     return {
       allCarousels: []
     }

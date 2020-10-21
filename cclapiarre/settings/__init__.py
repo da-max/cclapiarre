@@ -14,7 +14,8 @@ import os
 from django.conf.global_settings import LOGIN_URL, DATETIME_INPUT_FORMATS
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -29,7 +30,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS =[
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -146,7 +147,7 @@ STATICFILES_DIRS = (
 
 LOGIN_URL = "connection"
 
-#CACHE
+# CACHE
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -175,9 +176,9 @@ PHONENUMBER_DEFAULT_REGION = 'FR'
 # WebPack Loader configuration
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'CACHE': DEBUG,
+        'CACHE': not DEBUG,
         'BUNDLE_DIR_NAME': '/bundles/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'frontend', 'webpack-stats.json')
+        'STATS_FILE': os.path.join(BASE_DIR, 'frontend', 'bundles',  'webpack-stats.json')
     }
 }
 

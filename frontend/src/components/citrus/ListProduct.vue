@@ -204,7 +204,7 @@ export default {
       action: String(),
 
       ACTIONS: {
-        maybe_not_available: "Produit potentiellement indisponible",
+        maybe_not_available: "Produit potentiellement indisponble",
         available: "Produit disponible",
         hide: "Cacher ces produits",
         show: "Afficher ces produits",

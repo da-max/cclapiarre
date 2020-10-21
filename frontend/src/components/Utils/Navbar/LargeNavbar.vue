@@ -11,12 +11,12 @@
       >
         <div class="uk-navbar-center">
           <ul class="uk-navbar-nav">
-            <li><a href="{% url 'home' %}">Accueil</a></li>
+            <li><router-link :to="{name: 'Home'}">Accueil</router-link></li>
             <a class="uk-navbar-item uk-logo"
               ><img src="../../../assets/logo.png" width="75" height="75"
             /></a>
             <li>
-              <a href="{% url 'list_user' %}">Liste des adhérents</a>
+              <router-link :to="{name: 'MembersList'}">Liste des adhérents</router-link>
             </li>
             <li>
               <a href="#administration-space" uk-toggle

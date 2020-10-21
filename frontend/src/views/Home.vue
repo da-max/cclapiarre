@@ -1,6 +1,6 @@
 <template>
   <main>
-    <Carousels :carousels='carousels'></Carousels>
+    <Carousels :carousels='allCarousels'></Carousels>
     <div
       uk-grid
       class="uk-margin-auto uk-width-4-5@xl uk-width-expands uk-position-relative"
@@ -15,34 +15,31 @@
   </main>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component'
-import PresentationCard from '@/components/Home/PresentationCard.vue'
-import Carousels from '@/components/Home/Carousels.vue'
+<script>
+import PresentationCard from '@/components/Home/PresentationCard'
+import Carousels from '@/components/Home/Carousels'
+import gql from 'graphql-tag'
 
-@Options({
+export default {
   components: {
     Carousels,
     PresentationCard
   },
-  data (): Object {
+  data() {
     return {
-      carousels: [
-        {
-          title: 'Name',
-          content: 'Content',
-          alt: 'Alt',
-          imageUrl: 'news/fe16.jpg'
-        },
-        {
-          title: 'Name',
-          content: 'Content',
-          alt: 'Alt 2',
-          imageUrl: 'news/fe16.jpg'
-        }
-      ]
+      allCarousels: []
     }
+  },
+  apollo: {
+    allCarousels: gql`query {
+      allCarousels {
+        id,
+        title,
+        position,
+        description,
+        image
+      }
+    }`
   }
-})
-export default class Home extends Vue {}
+}
 </script>

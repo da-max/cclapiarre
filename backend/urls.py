@@ -24,6 +24,7 @@ from django.views.i18n import JavaScriptCatalog
 from django.contrib.sitemaps.views import sitemap
 from django.contrib import admin
 from django.contrib.flatpages import views
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from graphene_django.views import GraphQLView
 
@@ -65,7 +66,7 @@ urlpatterns = [
     url(r'^robots.txt$', TemplateView.as_view(template_name="robots.txt",
                                               content_type="text/plain"), name="robots_file"),
 
-    path('graphql/', GraphQLView.as_view(graphiql=True)),
+    path('graphql/', csrf_exempt(GraphQLView.as_view(graphiql=True))),
     path('', TemplateView.as_view(template_name='app.html'))
 ]
 

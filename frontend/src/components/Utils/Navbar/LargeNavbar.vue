@@ -82,21 +82,16 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component'
-import { NavbarItem } from '@/types/index'
 
-import UserOptions from '@/components/Utils/Navbar/UserOptions.vue'
+<script>
+import UserOptions from '@/components/Utils/Navbar/UserOptions'
 
-@Options({
+export default {
   props: {
     adminPanelItems: Array
   },
   components: {
     UserOptions
   }
-})
-export default class LargeNavbar extends Vue {
-  adminPanelItems!: Array<NavbarItem>;
 }
 </script>

@@ -33,19 +33,14 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component'
-
-@Options({
+<script>
+export default {
+  name: 'Carousels',
   props: {
     carousels: {
       required: true,
       type: Array
     }
   }
-})
-
-export default class Carousels extends Vue {
-  carousels!: object[]
 }
 </script>

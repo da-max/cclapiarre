@@ -39,13 +39,11 @@
   </footer>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component'
-
+<script>
 import { version } from '../../../package.json'
 
-@Options({
-  data (): Object {
+export default {
+  data () {
     return {
       utilsLinks: [
         {
@@ -66,6 +64,5 @@ import { version } from '../../../package.json'
       version
     }
   }
-})
-export default class DefaultFooter extends Vue {}
+}
 </script>

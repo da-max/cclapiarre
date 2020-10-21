@@ -36,8 +36,7 @@
   </aside>
 </template>
 
-<script lang="ts">
-import { Vue } from 'vue-class-component'
+<script>
 
-export default class PresentationCard extends Vue {}
+export default {}
 </script>

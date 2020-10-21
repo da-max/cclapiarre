@@ -1,21 +1,18 @@
 <template>
-  <div>
-    <DefaultNavbar></DefaultNavbar>
-    <router-view />
-    <DefaultFooter></DefaultFooter>
+  <div id="app">
+    <DefaultNavbar />
+    <router-view/>
+    <DefaultFooter />
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component'
-import DefaultFooter from '@/components/Utils/DefaultFooter.vue'
-import DefaultNavbar from '@/components/Utils/DefaultNavbar.vue'
-
-@Options({
+<script>
+import DefaultNavbar from '@/components/Utils/DefaultNavbar'
+import DefaultFooter from '@/components/Utils/DefaultFooter'
+export default {
   components: {
-    DefaultFooter,
-    DefaultNavbar
+    DefaultNavbar,
+    DefaultFooter
   }
-})
-export default class App extends Vue {}
+}
 </script>

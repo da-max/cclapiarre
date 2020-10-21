@@ -15,15 +15,13 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component'
-import { NavbarItem } from '@/types/index'
-import MobileNavbar from '@/components/Utils/Navbar/MobileNavbar.vue'
-import LargeNavbar from '@/components/Utils/Navbar/LargeNavbar.vue'
-import SmallNavbar from '@/components/Utils/Navbar/SmallNavbar.vue'
+<script>
+import MobileNavbar from '@/components/Utils/Navbar/MobileNavbar'
+import LargeNavbar from '@/components/Utils/Navbar/LargeNavbar'
+import SmallNavbar from '@/components/Utils/Navbar/SmallNavbar'
 
-@Options({
-  data (): Object {
+export default {
+  data () {
     return {
       adminPanelItems: [
         {
@@ -65,7 +63,7 @@ import SmallNavbar from '@/components/Utils/Navbar/SmallNavbar.vue'
             }
           ]
         }
-      ] as NavbarItem[]
+      ]
     }
   },
   components: {
@@ -73,6 +71,5 @@ import SmallNavbar from '@/components/Utils/Navbar/SmallNavbar.vue'
     LargeNavbar,
     SmallNavbar
   }
-})
-export default class DefaultNavbar extends Vue {}
+}
 </script>

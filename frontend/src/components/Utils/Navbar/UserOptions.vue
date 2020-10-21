@@ -8,7 +8,7 @@
           v-for="userOptionItem in userOptionsItems"
           :key="userOptionItem.title"
         >
-          <a href="{% url 'change_password' %}">{{ userOptionItem.title }}</a>
+          <a href="">{{ userOptionItem.title }}</a>
         </li>
       </ul>
     </div>
@@ -22,18 +22,15 @@
           v-for="userOptionItem in userOptionsItems"
           :key="userOptionItem.title"
         >
-          <a href="{% url 'change_password' %}">{{ userOptionItem.title }}</a>
+          <a href="">{{ userOptionItem.title }}</a>
         </li>
       </ul>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component'
-import { NavbarItem } from '@/types/index'
-
-@Options({
+<script>
+export default {
   data () {
     return {
       userOptionsItems: [
@@ -49,7 +46,7 @@ import { NavbarItem } from '@/types/index'
           title: 'Déconnexion',
           link: '#'
         }
-      ] as NavbarItem[]
+      ]
     }
   },
   props: {
@@ -58,8 +55,5 @@ import { NavbarItem } from '@/types/index'
       required: false
     }
   }
-})
-export default class UserOptions extends Vue {
-  li?: boolean
 }
 </script>

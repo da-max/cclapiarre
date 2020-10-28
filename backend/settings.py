@@ -91,6 +91,11 @@ TEMPLATES = [
     },
 ]
 
+AUTHENTIFICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend'
+]
+
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
@@ -194,5 +199,8 @@ REST_FRAMEWORK = {
 
 # Graphene configuration
 GRAPHENE = {
-    "SCHEMA": "backend.schema.schema"
+    'SCHEMA': 'backend.schema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware'
+    ]
 }

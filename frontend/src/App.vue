@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <DefaultNavbar />
-    <router-view uk-height-viewport="offset-top: true; offset-top: true" />
+    <router-view uk-height-viewport="offset-top: true; offset-bottom: true" />
     <DefaultFooter />
   </div>
 </template>

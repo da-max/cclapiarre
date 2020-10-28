@@ -9,11 +9,27 @@ Vue.use(VueApollo)
 const AUTH_TOKEN = 'apollo-token'
 
 // Http endpoint
-const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:4000/graphql'
+const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:3000/graphql'
 // Files URL root
 export const filesRoot = process.env.VUE_APP_FILES_ROOT || httpEndpoint.substr(0, httpEndpoint.indexOf('/graphql'))
 
 Vue.prototype.$filesRoot = filesRoot
+
+function getCookie (name) {
+  var cookieValue = null
+  if (document.cookie && document.cookie !== '') {
+    var cookies = document.cookie.split(';')
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i].trim()
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === name + '=') {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+        break
+      }
+    }
+  }
+  return cookieValue
+}
 
 // Config
 const defaultOptions = {
@@ -30,8 +46,13 @@ const defaultOptions = {
   // You need to pass a `wsEndpoint` for this to work
   websocketsOnly: false,
   // Is being rendered on the server?
-  ssr: false
+  ssr: false,
 
+  httpLinkOptions: {
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken')
+    }
+  }
   // Override default apollo link
   // note: don't override httpLink here, specify httpLink options in the
   // httpLinkOptions property of defaultOptions.
@@ -50,14 +71,20 @@ const defaultOptions = {
   // clientState: { resolvers: { ... }, defaults: { ... } }
 }
 
-// Call this in the Vue app file
-export function createProvider (options = {}) {
+export function createClient (options = {}) {
   // Create apollo client
   const { apolloClient, wsClient } = createApolloClient({
     ...defaultOptions,
     ...options
   })
   apolloClient.wsClient = wsClient
+
+  return apolloClient
+}
+
+// Call this in the Vue app file
+export function createProvider (options = {}) {
+  const apolloClient = createClient(options)
 
   // Create vue apollo provider
   const apolloProvider = new VueApollo({
@@ -103,3 +130,7 @@ export async function onLogout (apolloClient) {
     console.log('%cError on cache reset (logout)', 'color: orange;', e.message)
   }
 }
+
+const apolloClient = createClient()
+
+export { apolloClient }

@@ -45,7 +45,7 @@
             </li>
 
             <UserOptions
-              v-if="currentUser.name"
+              v-if="currentUser.username"
               :li="true"
               class="uk-position-relative uk-position-right uk-margin-right uk-margin-large-left"
             ></UserOptions>

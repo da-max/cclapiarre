@@ -1,8 +1,8 @@
 <template>
   <li v-if="li">
-    <a href="#">
+    <a href="#" class="uk-text">
       <span uk-icon="icon: user; ratio: 1.5" class="uk-icon-link"></span
-      >{{ currentUser.name }}</a
+      >{{ currentUser.name ? currentUser.name : currentUser.username }}</a
     >
     <div class="uk-navbar-dropdown">
       <ul class="uk-nav uk-navbar-dropdown-nav">
@@ -20,11 +20,10 @@
     </div>
   </li>
   <div v-else>
-    <a
-      href="#"
-      uk-icon="icon: user; ratio: 1.5"
-      class="uk-icon-link uk-navbar-toggle"
-    ></a>
+    <a class="uk-text uk-navbar-toggle" href="#">
+      <span uk-icon="icon: user; ratio: 1.5" class="uk-icon-link"></span
+      >{{ currentUser.name ? currentUser.name : currentUser.username }}</a
+    >
     <div class="uk-navbar-dropdown" uk-dropdown>
       <ul class="uk-nav uk-navbar-dropdown-nav">
         <li class="uk-nav-header"></li>

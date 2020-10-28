@@ -15,7 +15,10 @@
             <span class="uk-margin-small-left">Menu</span>
           </a>
         </div>
-        <UserOptions class="uk-navbar-right uk-margin-right"></UserOptions>
+        <UserOptions
+          v-if="currentUser.name"
+          class="uk-navbar-right uk-margin-right"
+        ></UserOptions>
       </nav>
     </div>
 
@@ -23,7 +26,7 @@
       <div class="uk-offcanvas-bar uk-flex uk-flex-column">
         <ul class="uk-nav uk-nav-center uk-margin-auto-vertical" uk-nav>
           <li class="uk-parent">
-            <router-link :to="{name: 'Home'}">Accueil</router-link>
+            <router-link :to="{ name: 'Home' }">Accueil</router-link>
           </li>
           <li class="uk-parent">
             <a href="#" class="uk-nav-header">Liste des adhérents</a>
@@ -88,11 +91,15 @@
 
 <script>
 import UserOptions from '@/components/Utils/Navbar/UserOptions'
+import { mapState } from 'vuex'
 
 export default {
   props: { adminPanelItems: Array },
   components: {
     UserOptions
+  },
+  computed: {
+    ...mapState(['currentUser'])
   }
 }
 </script>

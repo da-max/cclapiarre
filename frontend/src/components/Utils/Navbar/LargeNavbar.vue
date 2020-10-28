@@ -45,6 +45,7 @@
             </li>
 
             <UserOptions
+              v-if="currentUser.name"
               :li="true"
               class="uk-position-relative uk-position-right uk-margin-right uk-margin-large-left"
             ></UserOptions>
@@ -84,6 +85,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import UserOptions from '@/components/Utils/Navbar/UserOptions'
 
 export default {
@@ -92,6 +94,9 @@ export default {
   },
   components: {
     UserOptions
+  },
+  computed: {
+    ...mapState(['currentUser'])
   }
 }
 </script>

@@ -26,8 +26,6 @@ from django.contrib import admin
 from django.contrib.flatpages import views
 from django.views.generic import TemplateView
 from graphene_django.views import GraphQLView
-from graphql_jwt.decorators import jwt_cookie
-
 
 from backend.article import views as a_views
 from backend.article.sitemaps import StaticViewSitemap
@@ -66,7 +64,7 @@ urlpatterns = [
     url(r'^robots.txt$', TemplateView.as_view(template_name="robots.txt",
                                               content_type="text/plain"), name="robots_file"),
 
-    path('graphql/', jwt_cookie(GraphQLView.as_view(graphiql=True))),
+    path('graphql/', GraphQLView.as_view(graphiql=True)),
     url(r'/*', TemplateView.as_view(template_name='app.html'))
 ]
 

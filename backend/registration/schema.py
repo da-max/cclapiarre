@@ -1,12 +1,14 @@
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth import authenticate, login
 
 import graphene
 from graphene import relay
 from graphene_django import DjangoObjectType
 
 import graphql_jwt
-from graphql_jwt.decorators import login_required
+from graphql_jwt.decorators import login_required, token_auth
+from graphql_jwt.shortcuts import get_token
 
 from backend.registration.models import Information
 from backend.registration.decorators import login_required as personnal_login_required
@@ -44,10 +46,32 @@ class InformationUserType(DjangoObjectType):
         fields = ('id', 'phone_number', 'user')
 
 
+class Login(graphene.Mutation):
+    token = graphene.String()
+    user = graphene.Field(UserType)
+
+    class Arguments:
+        username = graphene.String()
+        password = graphene.String()
+
+    @classmethod
+    def mutate(cls, root, info, username, password):
+        user = authenticate(username=username, password=password)
+        if user is None:
+            raise Exception('Username or password are unavailable.')
+
+        if not user.is_active:
+            raise Exception('User are inactive.')
+
+        login(info.context, user)
+
+        return cls(token=get_token(user), user=user)
+
+
 class Query(graphene.ObjectType):
     all_informations_users = graphene.List(
         InformationUserType)
-    user = graphene.Field(UserType, token=graphene.String(required=True))
+    user = graphene.Field(UserType)
 
     @login_required
     def resolve_user(self, info, **kwargs):
@@ -59,6 +83,4 @@ class Query(graphene.ObjectType):
 
 
 class Mutation(graphene.ObjectType):
-    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
-    verify_token = graphql_jwt.Verify.Field()
-    refresh_token = graphql_jwt.Refresh.Field()
+    login = Login.Field()

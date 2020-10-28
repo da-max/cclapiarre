@@ -21,7 +21,12 @@ const routes = [
   {
     path: '/compte/liste-des-adherents',
     name: 'MembersList',
-    component: () => import('../views/Members/List.vue')
+    component: () => import('../views/Registration/MembersList.vue')
+  },
+  {
+    path: '/compte/connexion',
+    name: 'Login',
+    component: () => import('../views/Registration/Login.vue')
   }
 ]
 

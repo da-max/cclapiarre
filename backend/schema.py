@@ -1,3 +1,4 @@
+import graphql_jwt
 from graphene import ObjectType, Schema
 
 from backend.article.schema import Query as article_query, Mutation as article_mutation
@@ -13,7 +14,9 @@ class Query(article_query, carousel_query, event_query,
 
 
 class Mutation(article_mutation, application_mutation, registration_mutation, ObjectType):
-    pass
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
 
 
 schema = Schema(query=Query, mutation=Mutation)

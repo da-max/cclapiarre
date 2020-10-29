@@ -2,5 +2,11 @@ query UserCurrent {
   user {
     id
     username
+    email
+    isSuperuser
+    groups {
+      id
+      name
+    }
   }
 }

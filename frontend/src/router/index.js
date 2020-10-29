@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import store from '../store/index'
+import { groupRequired } from '@/router/utils'
 import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
@@ -25,12 +25,7 @@ const routes = [
     name: 'MembersList',
     component: () => import('../views/Registration/MembersList.vue'),
     beforeEnter: (to, from, next) => {
-      const currentUser = store.state.auth.currentUser
-      if (currentUser && currentUser.username) {
-        next()
-      } else {
-        next(`/compte/connexion?next=${to.path}`)
-      }
+      groupRequired(to, from, next, 'members')
     }
   },
   {

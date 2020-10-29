@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
+import store from '../store/index'
 import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
@@ -21,7 +23,15 @@ const routes = [
   {
     path: '/compte/liste-des-adherents',
     name: 'MembersList',
-    component: () => import('../views/Registration/MembersList.vue')
+    component: () => import('../views/Registration/MembersList.vue'),
+    beforeEnter: (to, from, next) => {
+      const currentUser = store.state.auth.currentUser
+      if (currentUser && currentUser.username) {
+        next()
+      } else {
+        next(`/compte/connexion?next=${to.path}`)
+      }
+    }
   },
   {
     path: '/compte/connexion',

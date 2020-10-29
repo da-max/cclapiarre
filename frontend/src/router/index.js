@@ -22,10 +22,10 @@ const routes = [
   },
   {
     path: '/compte/liste-des-adherents',
-    name: 'MembersList',
-    component: () => import('../views/Registration/MembersList.vue'),
-    beforeEnter: (to, from, next) => {
-      groupRequired(to, from, next, 'members')
+    name: 'MemberList',
+    component: () => import('../views/Registration/MemberList.vue'),
+    beforeEnter: async (to, from, next) => {
+      await groupRequired(to, from, next, 'member')
     }
   },
   {
@@ -37,7 +37,7 @@ const routes = [
 
 const router = new VueRouter({
   routes,
-  mode: 'history'
+  mode: 'hash'
 })
 
 export default router

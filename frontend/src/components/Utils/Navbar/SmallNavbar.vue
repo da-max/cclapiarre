@@ -29,7 +29,7 @@
             <router-link :to="{ name: 'Home' }">Accueil</router-link>
           </li>
           <li class="uk-parent">
-            <a href="#" class="uk-nav-header">Liste des adhérents</a>
+            <router-link :to="{name: 'MemberList'}" class="uk-nav-header">Liste des adhérents</router-link>
           </li>
 
           <li class="uk-parent">
@@ -99,7 +99,7 @@ export default {
     UserOptions
   },
   computed: {
-    ...mapState({ currentUser: state => state.auth.currentUser })
+    ...mapState({ currentUser: (state) => state.auth.currentUser })
   }
 }
 </script>

@@ -16,7 +16,7 @@
               ><img src="../../../assets/logo.png" width="75" height="75"
             /></a>
             <li>
-              <router-link :to="{name: 'MembersList'}">Liste des adhérents</router-link>
+              <router-link :to="{name: 'MemberList'}">Liste des adhérents</router-link>
             </li>
             <li>
               <a href="#administration-space" uk-toggle

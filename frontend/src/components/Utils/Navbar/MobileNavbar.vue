@@ -29,7 +29,7 @@
             <router-link :to="{ name: 'Home' }">Accueil</router-link>
           </li>
           <li class="uk-parent">
-            <router-link :to="{ name: 'MembersList' }" class="uk-nav-header"
+            <router-link :to="{ name: 'MemberList' }" class="uk-nav-header"
               >Liste des adhérents</router-link
             >
           </li>

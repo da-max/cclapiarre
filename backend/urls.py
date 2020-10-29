@@ -19,6 +19,7 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.views.i18n import JavaScriptCatalog
+from django.views.decorators.csrf import csrf_exempt
 
 
 from django.contrib.sitemaps.views import sitemap
@@ -37,7 +38,7 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    url(r'^admin/?', admin.site.urls),
     # path('compte/', include("backend.registration.urls")),
     path('article/', include("backend.article.urls")),
     path('evenement/', include("backend.event.urls")),
@@ -64,7 +65,7 @@ urlpatterns = [
     url(r'^robots.txt$', TemplateView.as_view(template_name="robots.txt",
                                               content_type="text/plain"), name="robots_file"),
 
-    path('graphql/', GraphQLView.as_view(graphiql=True)),
+    url(r'^graphql/?', csrf_exempt(GraphQLView.as_view(graphiql=True))),
     url(r'/*', TemplateView.as_view(template_name='app.html'))
 ]
 

@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User, Group, Permission
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 import graphene
 from graphene import relay
@@ -47,7 +47,6 @@ class InformationUserType(DjangoObjectType):
 
 
 class Login(graphene.Mutation):
-    token = graphene.String()
     user = graphene.Field(UserType)
 
     class Arguments:
@@ -65,7 +64,21 @@ class Login(graphene.Mutation):
 
         login(info.context, user)
 
-        return cls(token=get_token(user), user=user)
+        return cls(user=user)
+
+
+class Logout(graphene.Mutation):
+    ok = graphene.Boolean()
+
+    @classmethod
+    def mutate(cls, root, info):
+        ok = True
+        if not info.context.user.is_anonymous:
+            try:
+                logout(info.context)
+            except Exception:
+                ok = False
+        return cls(ok=ok)
 
 
 class Query(graphene.ObjectType):
@@ -77,10 +90,11 @@ class Query(graphene.ObjectType):
     def resolve_user(self, info, **kwargs):
         return info.context.user
 
-    @personnal_login_required
+    @login_required
     def resolve_all_informations_users(self, info):
         return Information.objects.select_related('user').all()
 
 
 class Mutation(graphene.ObjectType):
     login = Login.Field()
+    logout = Logout.Field()

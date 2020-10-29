@@ -1,6 +1,7 @@
 <template>
   <div>
     <form action="#">
+      <p class="uk-text-danger uk-text-bold" v-if="error">Utilisateur inconnu ou mot de passe incorrect.</p>
       <FormInput
         :type="username.type"
         :name="username.name"
@@ -16,9 +17,7 @@
         v-model="user.password"
       />
 
-      <UtilsButton @click="loginUser">
-        Se connecter
-      </UtilsButton>
+      <UtilsButton @click="loginUser"> Se connecter </UtilsButton>
     </form>
   </div>
 </template>
@@ -35,6 +34,7 @@ export default {
   },
   data () {
     return {
+      error: false,
       password: {
         type: 'password',
         name: 'password',
@@ -55,11 +55,21 @@ export default {
   },
   methods: {
     async loginUser () {
-      const user = await this.$store.dispatch('auth/loginUser', this.user)
-      if (user.error) {
-        alert(user.error)
+      const response = await this.$store.dispatch('auth/loginUser', this.user)
+
+      if (response.error) {
+        this.error = true
       } else {
-        alert('Thank you for you signing in ' + user.username)
+        this.$store.commit('alert/ADD_ALERT', {
+          header: true,
+          headerContent: `Bienvenue ${this.$store.state.auth.currentUser.username}`,
+          body: `Vous êtes maintenant connecté sous le nom ${this.$store.state.auth.currentUser.username}.`,
+          status: 'success',
+          close: true
+        })
+        if (this.$route.query.next) {
+          this.$router.push(this.$route.query.next)
+        }
       }
     }
   }

@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import AuthModule from '@/store/auth'
+import AlertModule from '@/store/alert'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -16,6 +18,7 @@ export default new Vuex.Store({
 
   },
   modules: {
-    auth: AuthModule
+    auth: AuthModule,
+    alert: AlertModule
   }
 })

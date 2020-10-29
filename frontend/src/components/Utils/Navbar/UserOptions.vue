@@ -72,7 +72,15 @@ export default {
 
   methods: {
     logout () {
+      this.$store.commit('alert/ADD_ALERT', {
+        header: true,
+        headerContent: `Au revoir ${this.$store.state.auth.currentUser.username}`,
+        body: 'Vous êtes maintenant déconnecté. Merci d’être passé.',
+        status: 'success',
+        close: true
+      })
       this.$store.dispatch('auth/logoutUser')
+      this.$router.push('/')
     }
   }
 }

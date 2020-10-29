@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <DefaultNavbar />
-    <Alerts />
+    <div class="uk-width-2-5@l uk-width4-5@s uk-margin-auto">
+      <Alerts />
+    </div>
     <router-view uk-height-viewport="offset-top: true; offset-bottom: true" />
     <DefaultFooter />
   </div>

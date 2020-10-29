@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="uk-text-center">Se connecter</h1>
+    <h1 class="uk-text-center uk-margin-large-top uk-margin-large-bottom">Se connecter</h1>
     <LoginSection />
   </div>
 </template>

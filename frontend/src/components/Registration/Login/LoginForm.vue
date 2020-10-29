@@ -1,7 +1,9 @@
 <template>
   <div>
-    <form action="#">
-      <p class="uk-text-danger uk-text-bold" v-if="error">Utilisateur inconnu ou mot de passe incorrect.</p>
+    <form class="uk-form-horizontal" action="#">
+      <p class="uk-text-danger uk-text-bold" v-if="error">
+        Utilisateur inconnu ou mot de passe incorrect.
+      </p>
       <FormInput
         :type="username.type"
         :name="username.name"
@@ -16,8 +18,12 @@
         :value="password.value"
         v-model="user.password"
       />
-
-      <UtilsButton @click="loginUser"> Se connecter </UtilsButton>
+      <div class="uk-margin-medium-top uk-text-center">
+        <UtilsButton @click="loginUser">Se connecter</UtilsButton>
+        <UtilsButton class="uk-margin-large-left" type="text"
+          >Mot de passe oublié</UtilsButton
+        >
+      </div>
     </form>
   </div>
 </template>

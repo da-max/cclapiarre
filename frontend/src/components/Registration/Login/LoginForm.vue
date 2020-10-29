@@ -55,8 +55,7 @@ export default {
   },
   methods: {
     async loginUser () {
-      const user = await this.$store.dispatch('loginUser', this.user)
-      console.log(user)
+      const user = await this.$store.dispatch('auth/loginUser', this.user)
       if (user.error) {
         alert(user.error)
       } else {

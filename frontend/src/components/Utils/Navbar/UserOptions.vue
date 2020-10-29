@@ -67,12 +67,12 @@ export default {
   },
 
   computed: {
-    ...mapState(['currentUser'])
+    ...mapState({ currentUser: state => state.auth.currentUser })
   },
 
   methods: {
     logout () {
-      this.$store.dispatch('logoutUser')
+      this.$store.dispatch('auth/logoutUser')
     }
   }
 }

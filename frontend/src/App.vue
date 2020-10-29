@@ -13,6 +13,9 @@ export default {
   components: {
     DefaultNavbar,
     DefaultFooter
+  },
+  mounted () {
+    this.$store.dispatch('auth/loadUser')
   }
 }
 </script>

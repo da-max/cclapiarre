@@ -99,7 +99,7 @@ export default {
     UserOptions
   },
   computed: {
-    ...mapState(['currentUser'])
+    ...mapState({ currentUser: state => state.auth.currentUser })
   }
 }
 </script>

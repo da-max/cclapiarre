@@ -1,0 +1,9 @@
+query CarouselAll {
+  allCarousels {
+    id
+    title
+    position
+    description
+    image
+  }
+}

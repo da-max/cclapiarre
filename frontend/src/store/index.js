@@ -8,10 +8,15 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    currentUser: {}
+    loading: false
   },
   mutations: {
-
+    START_LOADING (state) {
+      state.loading = true
+    },
+    END_LOADING (state) {
+      state.loading = false
+    }
   },
 
   actions: {

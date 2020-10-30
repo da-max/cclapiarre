@@ -37,6 +37,8 @@ class Application(models.Model):
     """
     name = models.CharField(
         verbose_name="Nom de l’application", max_length=60, unique=True)
+    slug = models.SlugField(verbose_name="Chemin menant à l’application",
+                            unique=True, help_text="Ce champs définira l’URL menant à l’application.")
     description = RichTextField(verbose_name="Description de l’application",
                                 help_text="Cette description s’affichera sur l’entête de la page permettant de commander.")
     images = models.ManyToManyField('ApplicationImage', related_name='images')

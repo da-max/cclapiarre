@@ -29,7 +29,9 @@
             <router-link :to="{ name: 'Home' }">Accueil</router-link>
           </li>
           <li class="uk-parent">
-            <router-link :to="{name: 'MemberList'}" class="uk-nav-header">Liste des adhérents</router-link>
+            <router-link :to="{ name: 'MemberList' }" class="uk-nav-header"
+              >Liste des adhérents</router-link
+            >
           </li>
 
           <li class="uk-parent">
@@ -72,14 +74,13 @@
               >Commander</a
             >
             <ul class="uk-nav-sub uk-nav-default">
-              <li>
-                <a href="">Commander des agrumes</a>
-              </li>
-              <li>
-                <a href="">Commander du café</a>
-              </li>
-              <li>
-                <a href="">Commander des pâtes</a>
+              <li v-for="orderItem in orderItems" :key="orderItem.id">
+                <router-link
+                  :to="{
+                    name: 'Order',
+                    params: { application: orderItem.slug },
+                  }"
+                >{{ orderItem.name }}</router-link>
               </li>
             </ul>
           </li>
@@ -94,7 +95,13 @@ import UserOptions from '@/components/Utils/Navbar/UserOptions'
 import { mapState } from 'vuex'
 
 export default {
-  props: { adminPanelItems: Array },
+  props: {
+    adminPanelItems: Array,
+    orderItems: {
+      type: Array,
+      required: true
+    }
+  },
   components: {
     UserOptions
   },

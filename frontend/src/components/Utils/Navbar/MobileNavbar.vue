@@ -78,16 +78,13 @@
               >Commander</a
             >
             <ul class="uk-nav-sub uk-nav-default">
-              <li>
-                <a href="{% url 'citrus:new_command_citrus' %}"
-                  >Commander des agrumes</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'new_coffee_command' %}">Commander du café</a>
-              </li>
-              <li>
-                <a href="{% url 'pasta_command' %}">Commander des pâtes</a>
+              <li v-for="orderItem in orderItems" :key="orderItem.id">
+                <router-link
+                  :to="{
+                    name: 'Order',
+                    params: { application: orderItem.slug },
+                  }"
+                >{{ orderItem.name }}</router-link>
               </li>
             </ul>
           </li>
@@ -105,13 +102,17 @@ export default {
   props: {
     adminPanelItems: {
       required: true
+    },
+    orderItems: {
+      required: true,
+      type: Array
     }
   },
   components: {
     UserOptions
   },
   computed: {
-    ...mapState({ currentUser: state => state.auth.currentUser })
+    ...mapState({ currentUser: (state) => state.auth.currentUser })
   }
 }
 </script>

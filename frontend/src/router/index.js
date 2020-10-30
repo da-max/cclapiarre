@@ -23,7 +23,7 @@ const routes = [
   {
     path: '/compte/liste-des-adherents',
     name: 'MemberList',
-    component: () => import('../views/Registration/MemberList.vue'),
+    component: () => import(/* webpackChunkName: "member-list" */ '../views/Registration/MemberList.vue'),
     beforeEnter: async (to, from, next) => {
       await groupRequired(to, from, next, 'member')
     }
@@ -31,7 +31,12 @@ const routes = [
   {
     path: '/compte/connexion',
     name: 'Login',
-    component: () => import('../views/Registration/Login.vue')
+    component: () => import(/* webpackChunkName: "login" */ '../views/Registration/Login.vue')
+  },
+  {
+    path: '/:application/commander',
+    name: 'Order',
+    component: () => import(/* webpackChunkName: "application" */ '../views/Home.vue')
   }
 ]
 

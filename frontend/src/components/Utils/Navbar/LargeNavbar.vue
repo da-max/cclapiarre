@@ -11,12 +11,14 @@
       >
         <div class="uk-navbar-center">
           <ul class="uk-navbar-nav">
-            <li><router-link :to="{name: 'Home'}">Accueil</router-link></li>
+            <li><router-link :to="{ name: 'Home' }">Accueil</router-link></li>
             <a class="uk-navbar-item uk-logo"
               ><img src="../../../assets/logo.png" width="75" height="75"
             /></a>
             <li>
-              <router-link :to="{name: 'MemberList'}">Liste des adhérents</router-link>
+              <router-link :to="{ name: 'MemberList' }"
+                >Liste des adhérents</router-link
+              >
             </li>
             <li>
               <a href="#administration-space" uk-toggle
@@ -27,18 +29,13 @@
               <a href="#">Commander</a>
               <div class="uk-navbar-dropdown">
                 <ul class="uk-nav uk-navbar-dropdown-nav">
-                  <li>
-                    <a href="{% url 'citrus:new_command_citrus' %}"
-                      >Commander des agrumes</a
-                    >
-                  </li>
-                  <li>
-                    <a href="{% url 'new_coffee_command'%}"
-                      >Commander du café</a
-                    >
-                  </li>
-                  <li>
-                    <a href="{% url 'pasta_command' %}">Commander des pâtes</a>
+                  <li v-for="orderItem in orderItems" :key="orderItem.id">
+                    <router-link
+                      :to="{
+                        name: 'Order',
+                        params: { application: orderItem.slug },
+                      }"
+                    >{{ orderItem.name }}</router-link>
                   </li>
                 </ul>
               </div>
@@ -90,13 +87,17 @@ import UserOptions from '@/components/Utils/Navbar/UserOptions'
 
 export default {
   props: {
-    adminPanelItems: Array
+    adminPanelItems: Array,
+    orderItems: {
+      required: true,
+      type: Array
+    }
   },
   components: {
     UserOptions
   },
   computed: {
-    ...mapState({ currentUser: state => state.auth.currentUser })
+    ...mapState({ currentUser: (state) => state.auth.currentUser })
   }
 }
 </script>

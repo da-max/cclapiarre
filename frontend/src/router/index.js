@@ -36,7 +36,11 @@ const routes = [
   {
     path: '/:application/commander',
     name: 'Order',
-    component: () => import(/* webpackChunkName: "application" */ '../views/Home.vue')
+    component: () => import(/* webpackChunkName: "application" */ '../views/Application/Product/Order.vue'),
+    props: route => ({ application: route.params.application }),
+    beforeEnter: async (to, from, next) => {
+      await groupRequired(to, from, next, 'member')
+    }
   }
 ]
 

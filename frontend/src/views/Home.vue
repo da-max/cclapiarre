@@ -1,6 +1,6 @@
 <template>
   <main>
-    <Carousels v-if="data.data" :carousels="data.data.allCarousels"></Carousels>
+    <Carousels v-if="response.loading === false" :carousels="response.data.allCarousels"></Carousels>
     <div
       uk-grid
       class="uk-margin-auto uk-width-4-5@xl uk-width-expands uk-position-relative"
@@ -24,10 +24,10 @@ import CarouselAll from '@/graphql/Carousel/CarouselAll.gql'
 export default {
   setup (props) {
     useSetupTitle('Accueil')
-    const { error, data } = useDataFetcher({ query: CarouselAll })
+    const { error, response } = useDataFetcher({ query: CarouselAll })
     return {
       error,
-      data
+      response
     }
   },
   components: {

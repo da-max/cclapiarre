@@ -1,19 +1,19 @@
 <template>
-  <div v-if="data.data">
+  <div v-if="response.loading === false">
     <SmallNavbar
       :admin-panel-items="adminPanelItems"
-      :orderItems="data.data.allApplications"
+      :orderItems="response.data.allApplications"
       class="uk-hidden@m uk-hidden-touch"
     ></SmallNavbar>
     <LargeNavbar
       class="uk-hidden-touch"
       :admin-panel-items="adminPanelItems"
-      :orderItems="data.data.allApplications"
+      :orderItems="response.data.allApplications"
     ></LargeNavbar>
     <MobileNavbar
       class="uk-hidden-notouch"
       :admin-panel-items="adminPanelItems"
-      :orderItems="data.data.allApplications"
+      :orderItems="response.data.allApplications"
     ></MobileNavbar>
   </div>
 </template>
@@ -28,10 +28,10 @@ import { useDataFetcher } from '@/composition/useDataFetcher'
 
 export default {
   setup () {
-    const { error, data } = useDataFetcher({ query: ApplicationAll })
+    const { error, response } = useDataFetcher({ query: ApplicationAll })
     return {
       error,
-      data
+      response
     }
   },
   data () {

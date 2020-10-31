@@ -5,13 +5,13 @@ import { reactive, onMounted, toRefs } from '@vue/composition-api'
 export function useDataFetcher (query) {
   const state = reactive({
     error: null,
-    data: {}
+    response: {}
   })
 
   onMounted(async () => {
     store.commit('START_LOADING')
     try {
-      state.data = await apolloClient.query(query)
+      state.response = await apolloClient.query(query)
     } catch (error) {
       state.error = error
     }

@@ -1,12 +1,12 @@
 <template>
-  <UtilsTable>
+  <UtilsTable v-if="response.loading === false">
     <template #head>
       <th v-for="headerItem in headerItems" :key="headerItem">
         {{ headerItem }}
       </th>
     </template>
     <template #body>
-      <tr v-for="member in data.data.allInformationsUsers" :key="member.id">
+      <tr v-for="member in response.data.allInformationsUsers" :key="member.id">
         <td>
           {{ member.user.lastName }}
         </td>
@@ -30,9 +30,8 @@ import MemberAll from '@/graphql/Member/MemberAll.gql'
 
 export default {
   setup (props) {
-    const { error, data } = useDataFetcher({ query: MemberAll })
-    console.log(error, data)
-    return { error, data }
+    const { error, response } = useDataFetcher({ query: MemberAll })
+    return { error, response }
   },
   data () {
     return {

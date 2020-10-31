@@ -66,7 +66,7 @@ urlpatterns = [
                                               content_type="text/plain"), name="robots_file"),
 
     url(r'^graphql/?', csrf_exempt(GraphQLView.as_view(graphiql=True))),
-    url(r'^#*', TemplateView.as_view(template_name='app.html'))
+    url(r'^#*$', TemplateView.as_view(template_name='app.html'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

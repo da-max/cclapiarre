@@ -105,7 +105,7 @@ class Product(models.Model):
     """
     name = models.CharField(verbose_name="Nom du produit", max_length=60)
     application = models.ForeignKey(
-        Application, on_delete=models.CASCADE, verbose_name="Application du produit")
+        Application, on_delete=models.CASCADE, verbose_name="Application du produit", related_name="products")
     weights = models.ManyToManyField(
         Weight, related_name='weights', verbose_name="Poids disponible pour ce produit")
     description = RichTextField(verbose_name="Description du produit")

@@ -10,6 +10,9 @@ from backend.application.forms import ProductForm
 from backend.registration.decorators import login_required, permissions_required, application_permissions_required
 
 
+# Types
+# =========
+
 class ApplicationImageType(DjangoObjectType):
     class Meta:
         model = ApplicationImage
@@ -50,7 +53,8 @@ class ProductType(DjangoObjectType):
         interfaces = (Node, )
         model = Product
         fields = '__all__'
-        filter_fields = ['id', 'application__name', 'display']
+        filter_fields = [
+            'id', 'application__slug', 'application__name', 'display']
 
 
 class WeightType(DjangoObjectType):
@@ -61,6 +65,19 @@ class WeightType(DjangoObjectType):
         filter_fields = ['id', 'application__name']
 
 
+# Nodes
+# =========
+
+class ApplicationNode(DjangoObjectType):
+    class Meta:
+        model = Application
+        filter_fields = ['slug', 'name', 'id']
+        interfaces = (Node, )
+
+
+# Mutations
+# ==========
+
 class AddProduct(DjangoModelFormMutation):
 
     product = graphene.Field(ProductType)
@@ -68,6 +85,7 @@ class AddProduct(DjangoModelFormMutation):
     class Meta:
         form_class = ProductForm
 
+    @classmethod
     def perform_mutate(form, info):
         print(form)
         return True
@@ -81,6 +99,13 @@ class AddProduct(DjangoModelFormMutation):
     #     return True
 
 
+class Mutation(graphene.ObjectType):
+    add_product = AddProduct.Field()
+
+
+# Queries
+# =========
+
 class Query(graphene.ObjectType):
     all_applications = graphene.List(ApplicationType)
     product = Node.Field(ProductType)
@@ -88,15 +113,21 @@ class Query(graphene.ObjectType):
     all_options = DjangoFilterConnectionField(OptionType)
     all_weight = DjangoFilterConnectionField(WeightType)
     application_order = DjangoFilterConnectionField(OrderType)
+    application_by_slug = graphene.Field(
+        ApplicationType, slug=graphene.String())
+
+    @login_required
+    def resolve_application_by_slug(self, info, slug, *args, **kwargs):
+        return Application.objects.get(slug=slug)
 
     @login_required
     @application_permissions_required('members')
-    def resolve_all_options(self, info, application__name, *args, **kwargs):
+    def resolve_all_options(self, info, application__slug, *args, **kwargs):
         return Option.objects.all()
 
     @login_required
     @application_permissions_required('members')
-    def resolve_application_products(self, info, application_name, *args, **kwargs):
+    def resolve_application_products(self, info, *args, **kwargs):
         return Product.objects.all()
 
     def resolve_all_applications(self, info):
@@ -104,14 +135,10 @@ class Query(graphene.ObjectType):
 
     @login_required
     @application_permissions_required('members')
-    def resolve_all_weight(self, info, application__name, *args, **kwargs):
+    def resolve_all_weight(self, info, application__slug, *args, **kwargs):
         return Weight.objects.all()
 
     @login_required
     @application_permissions_required('admins')
-    def resolve_application_order(self, info, application__name, *args, **kwargs):
+    def resolve_application_order(self, info, application__slug, *args, **kwargs):
         return Order.objects.all()
-
-
-class Mutation(graphene.ObjectType):
-    add_product = AddProduct.Field()

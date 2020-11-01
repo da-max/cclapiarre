@@ -1,11 +1,20 @@
+#import "./ApplicationFragment.gql"
+#import "./Product/ProductFragment.gql"
+
 query ApplicationBySlug($slug: String!) {
   applicationBySlug(slug: $slug) {
-    id
-    name
+    ...ApplicationFragment
     description
     images {
       alt
       image
+    }
+    products {
+      edges {
+        node {
+          ...ProductFragment
+        }
+      }
     }
   }
 }

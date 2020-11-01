@@ -1,0 +1,24 @@
+fragment ProductFragment on ProductType {
+  id
+  name
+  weights {
+    edges {
+      node {
+        weight
+        price
+        unit
+      }
+    }
+  }
+  description
+  display
+  options {
+    edges {
+      node {
+        name
+      }
+    }
+  }
+  maximum
+  maximumAll
+}

@@ -7,15 +7,13 @@
 <script>
 import { useDataFetcher } from '@/composition/useDataFetcher'
 import ApplicationBySlug from '@/graphql/Application/ApplicationBySlug.gql'
-
 import OrderHeader from '@/components/Application/Order/OrderHeader'
 
 export default {
   setup (props) {
-    console.log(props)
     const { error, response } = useDataFetcher({
       query: ApplicationBySlug,
-      variables: { slug: props.application }
+      variables: { slug: props.applicationSlug }
     })
     return {
       error,
@@ -23,7 +21,7 @@ export default {
     }
   },
   props: {
-    application: {
+    applicationSlug: {
       required: true
     }
   },

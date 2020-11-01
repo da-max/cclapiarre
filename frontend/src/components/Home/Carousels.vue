@@ -6,7 +6,7 @@
   >
     <ul class="uk-slideshow-items">
       <li v-for="carousel in carousels" :key="carousel.alt">
-        <img :src="'/media/' + carousel.imageUrl" :alt="carousel.alt" uk-cover />
+        <img :src="'/media/' + carousel.image" :alt="carousel.alt" uk-cover />
         <div
           class="uk-overlay uk-overlay-primary uk-position-left uk-text-center uk-transition-slide-left uk-width-large"
         >

@@ -1,6 +1,6 @@
 <template>
   <main>
-    <Carousels v-if="response.loading === false" :carousels="response.data.allCarousels"></Carousels>
+    <Carousels v-if="!loading" :carousels="result.allCarousels"></Carousels>
     <div
       uk-grid
       class="uk-margin-auto uk-width-4-5@xl uk-width-expands uk-position-relative"
@@ -17,17 +17,16 @@
 import PresentationCard from '@/components/Home/PresentationCard'
 import Carousels from '@/components/Home/Carousels'
 import { useSetupTitle } from '@/composition/utils'
-import { useDataFetcher } from '@/composition/useDataFetcher'
-
+import { useQuery } from '@vue/apollo-composable'
 import CarouselAll from '@/graphql/Carousel/CarouselAll.gql'
 
 export default {
   setup (props) {
     useSetupTitle('Accueil')
-    const { error, response } = useDataFetcher({ query: CarouselAll })
+    const { result, loading } = useQuery(CarouselAll)
     return {
-      error,
-      response
+      result,
+      loading
     }
   },
   components: {

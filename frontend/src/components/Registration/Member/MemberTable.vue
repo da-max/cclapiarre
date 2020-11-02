@@ -1,12 +1,12 @@
 <template>
-  <UtilsTable v-if="response.loading === false">
+  <UtilsTable v-if="loading === false">
     <template #head>
       <th v-for="headerItem in headerItems" :key="headerItem">
         {{ headerItem }}
       </th>
     </template>
     <template #body>
-      <tr v-for="member in response.data.allInformationsUsers" :key="member.id">
+      <tr v-for="member in result.allInformationsUsers" :key="member.id">
         <td>
           {{ member.user.lastName }}
         </td>
@@ -24,14 +24,14 @@
 
 <script>
 import UtilsTable from '@/components/Utils/UtilsTable'
-import { useDataFetcher } from '@/composition/useDataFetcher'
+import { useQuery } from '@vue/apollo-composable'
 
 import MemberAll from '@/graphql/Member/MemberAll.gql'
 
 export default {
   setup (props) {
-    const { error, response } = useDataFetcher({ query: MemberAll })
-    return { error, response }
+    const { result, loading } = useQuery(MemberAll)
+    return { result, loading }
   },
   data () {
     return {

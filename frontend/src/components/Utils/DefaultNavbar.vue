@@ -1,19 +1,19 @@
 <template>
-  <div v-if="response.loading === false">
+  <div v-if="!loading">
     <SmallNavbar
       :admin-panel-items="adminPanelItems"
-      :orderItems="response.data.allApplications"
+      :orderItems="result.allApplications"
       class="uk-hidden@m uk-hidden-touch"
     ></SmallNavbar>
     <LargeNavbar
       class="uk-hidden-touch"
       :admin-panel-items="adminPanelItems"
-      :orderItems="response.data.allApplications"
+      :orderItems="result.allApplications"
     ></LargeNavbar>
     <MobileNavbar
       class="uk-hidden-notouch"
       :admin-panel-items="adminPanelItems"
-      :orderItems="response.data.allApplications"
+      :orderItems="result.allApplications"
     ></MobileNavbar>
   </div>
 </template>
@@ -24,15 +24,13 @@ import LargeNavbar from '@/components/Utils/Navbar/LargeNavbar'
 import SmallNavbar from '@/components/Utils/Navbar/SmallNavbar'
 import ApplicationAll from '@/graphql/Application/ApplicationAll.gql'
 
-import { useDataFetcher } from '@/composition/useDataFetcher'
+import { useQuery } from '@vue/apollo-composable'
 
 export default {
   setup () {
-    const { error, response } = useDataFetcher({ query: ApplicationAll })
-    return {
-      error,
-      response
-    }
+    const { result, loading } = useQuery(ApplicationAll)
+    console.log(result)
+    return { result, loading }
   },
   data () {
     return {

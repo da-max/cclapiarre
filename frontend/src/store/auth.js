@@ -1,4 +1,4 @@
-import { apolloClient } from '@/vue-apollo'
+import apolloClient from '@/vue-apollo'
 
 import USER_LOGIN from '@/graphql/User/UserLogin.gql'
 import USER_LOGOUT from '@/graphql/User/UserLogout.gql'

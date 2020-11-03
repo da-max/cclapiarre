@@ -111,6 +111,8 @@ class Product(models.Model):
     description = RichTextField(verbose_name="Description du produit")
     display = models.BooleanField(
         verbose_name="Afficher le produit sur le tableau des commandes", default=True)
+    image = models.ImageField(verbose_name="Image de présentation du produit",
+                              help_text="Cette image s’affichera sur la carte de présentation du produit.", upload_to='application/products')
     options = models.ManyToManyField(
         Option, verbose_name="Options disponible pour ce produit", blank=True)
     maximum = models.IntegerField(

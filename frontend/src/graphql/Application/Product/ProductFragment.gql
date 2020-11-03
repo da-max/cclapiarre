@@ -4,6 +4,7 @@ fragment ProductFragment on ProductType {
   weights {
     edges {
       node {
+        id
         weight
         price
         unit
@@ -12,9 +13,11 @@ fragment ProductFragment on ProductType {
   }
   description
   display
+  image
   options {
     edges {
       node {
+        id
         name
       }
     }

@@ -16,7 +16,7 @@
 <script>
 import PresentationCard from '@/components/Home/PresentationCard'
 import Carousels from '@/components/Home/Carousels'
-import { useSetupTitle } from '@/composition/utils'
+import { useSetupTitle } from '@/composition/useUtils'
 import { useQuery } from '@vue/apollo-composable'
 import CarouselAll from '@/graphql/Carousel/CarouselAll.gql'
 

@@ -9,7 +9,7 @@
 
 <script>
 import MemberSection from '@/components/Registration/Member/MemberSection'
-import { useSetupTitle } from '@/composition/utils'
+import { useSetupTitle } from '@/composition/useUtils'
 
 export default {
   setup () {

@@ -9,7 +9,7 @@
 
 <script>
 import LoginSection from '@/components/Registration/Login/LoginSection'
-import { useSetupTitle } from '@/composition/utils'
+import { useSetupTitle } from '@/composition/useUtils'
 
 export default {
   setup (props) {

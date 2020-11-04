@@ -9,6 +9,12 @@ query ApplicationBySlug($slug: String!) {
       alt
       image
     }
+    admins {
+      id
+    }
+    members {
+      id
+    }
     products {
       edges {
         node {

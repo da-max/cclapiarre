@@ -10,6 +10,7 @@
     <OrderHeaderSection
       class="uk-margin-xlarge-top uk-width-3-5@m uk-margin-auto"
       :description="application.description"
+      :is-admin="isAdmin"
     />
   </header>
 </template>
@@ -29,6 +30,11 @@ export default {
   components: {
     OrderHeaderImage,
     OrderHeaderSection
+  },
+  computed: {
+    isAdmin () {
+      return !!this.application.admins.find(admin => admin.id === this.$store.state.auth.currentUser.id)
+    }
   }
 }
 </script>

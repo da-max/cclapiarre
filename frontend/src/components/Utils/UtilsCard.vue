@@ -1,5 +1,5 @@
 <template>
-  <div :class="[`uk-card uk-card-${style}`, { 'uk-card-hover': hover}]">
+  <div :class="[`uk-card uk-card-${type}`, { 'uk-card-hover': hover}]">
     <div class="uk-card-header">
       <slot name="header"></slot>
     </div>
@@ -16,7 +16,7 @@
 export default {
   name: 'UtilsCard',
   props: {
-    style: {
+    type: {
       required: false,
       default: 'default',
       type: String

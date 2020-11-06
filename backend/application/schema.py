@@ -6,7 +6,7 @@ from graphene_django.forms.mutation import DjangoModelFormMutation
 
 from backend.application.models import Application, ApplicationImage, \
     Option, Order, Product, Weight, Amount
-from backend.application.forms import ProductForm
+from backend.application.forms import ApplicationForm, ProductForm
 from backend.registration.decorators import login_required, permissions_required, application_permissions_required
 
 
@@ -23,7 +23,6 @@ class ApplicationType(DjangoObjectType):
     class Meta:
         model = Application
         fields = '__all__'
-        interfaces = (Node, )
 
 
 class OptionType(DjangoObjectType):
@@ -87,7 +86,6 @@ class AddProduct(DjangoModelFormMutation):
 
     @classmethod
     def perform_mutate(form, info):
-        print(form)
         return True
 
     def resolve_product(self, info, **kwargs):
@@ -99,8 +97,17 @@ class AddProduct(DjangoModelFormMutation):
     #     return True
 
 
+class UpdateApplication(DjangoModelFormMutation):
+
+    application = graphene.Field(ApplicationType)
+
+    class Meta:
+        form_class = ApplicationForm
+
+
 class Mutation(graphene.ObjectType):
     add_product = AddProduct.Field()
+    update_application = UpdateApplication.Field()
 
 
 # Queries

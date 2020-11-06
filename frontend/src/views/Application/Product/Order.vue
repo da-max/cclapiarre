@@ -4,6 +4,9 @@
       @update-description="updateDescription"
       :application="application"
     />
+    <div class="uk-width-2-5@l uk-width4-5@s uk-margin-auto">
+      <Alerts />
+    </div>
     <OrderSection
       :products="application.products.edges"
       class="uk-margin-large-top uk-width-4-5@m uk-margin-auto"
@@ -12,6 +15,7 @@
 </template>
 
 <script>
+import Alerts from '@/components/Utils/Alert/Alerts'
 import useApplication from '@/composition/useApplication'
 import OrderHeader from '@/components/Application/Order/OrderHeader'
 import OrderSection from '@/components/Application/Order/OrderSection'
@@ -45,7 +49,8 @@ export default {
   },
   components: {
     OrderHeader,
-    OrderSection
+    OrderSection,
+    Alerts
   }
 }
 </script>

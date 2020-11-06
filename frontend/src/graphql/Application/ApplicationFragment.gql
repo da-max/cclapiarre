@@ -1,4 +1,0 @@
-fragment ApplicationFragment on ApplicationType {
-  id
-  name
-}

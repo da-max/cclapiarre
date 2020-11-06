@@ -19,14 +19,13 @@ import Alerts from '@/components/Utils/Alert/Alerts'
 import useApplication from '@/composition/useApplication'
 import OrderHeader from '@/components/Application/Order/OrderHeader'
 import OrderSection from '@/components/Application/Order/OrderSection'
-// import { useResult } from '@vue/apollo-composable'
 
 export default {
   name: 'Order',
   setup (props) {
     const { application, loading, error, getApplication, updateApplication } = useApplication()
-    getApplication({ slug: props.applicationSlug })
-    console.log(application)
+    getApplication(() => ({ slug: props.applicationSlug }))
+    console.log(props)
     const updateDescription = function (newDescription) {
       updateApplication({
         id: application.value.id,
@@ -52,5 +51,11 @@ export default {
     OrderSection,
     Alerts
   }
+  // watch: {
+  //   $route (to, from) {
+  //     console.log(this.slug)
+  //     this.slug = to.params.application
+  //   }
+  // }
 }
 </script>

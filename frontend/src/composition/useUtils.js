@@ -12,6 +12,7 @@ export function useSetupTitle (title = '') {
 export function useUtilsQuery (query, variables = {}) {
   store.commit('START_LOADING')
   try {
+    console.log(variables)
     const { result, loading, error } = useQuery(query, variables)
     return { result, loading, error }
   } catch (e) {

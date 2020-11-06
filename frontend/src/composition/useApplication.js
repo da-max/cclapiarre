@@ -33,7 +33,7 @@ export default function () {
   }
 
   const getApplication = (filter) => {
-    const { result, loading, error } = useUtilsQuery(ApplicationBySlug, () => filter)
+    const { result, loading, error } = useUtilsQuery(ApplicationBySlug, filter)
     state.loading = loading
     state.error = error
     state.application = useResult(result)

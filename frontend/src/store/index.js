@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import AuthModule from '@/store/auth'
 import AlertModule from '@/store/alert'
+import OrderModule from '@/store/order'
 
 Vue.use(Vuex)
 
@@ -24,6 +25,7 @@ export default new Vuex.Store({
   },
   modules: {
     auth: AuthModule,
-    alert: AlertModule
+    alert: AlertModule,
+    order: OrderModule
   }
 })

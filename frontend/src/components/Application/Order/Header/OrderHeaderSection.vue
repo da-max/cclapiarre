@@ -19,7 +19,10 @@
     ></div>
     <footer class="uk-margin-medium-top uk-text-center" v-show="isAdmin">
       <div v-if="update">
-        <UtilsButton :disabled="newDescription === description">
+        <UtilsButton
+          :disabled="newDescription === description"
+          @click="updateDescription"
+        >
           Enregistrer
         </UtilsButton>
         <UtilsButton
@@ -39,8 +42,8 @@
 <script>
 import CKEditor from '@ckeditor/ckeditor5-vue'
 import ClassicEditor from 'ckeditor5-build-classic-with-font'
-
 import UtilsButton from '@/components/Utils/UtilsButton'
+
 export default {
   name: 'OrderHeaderSection',
   data () {
@@ -84,6 +87,12 @@ export default {
   components: {
     UtilsButton,
     ckeditor: CKEditor.component
+  },
+  methods: {
+    updateDescription () {
+      this.$emit('update-description', this.newDescription)
+      this.update = false
+    }
   }
 }
 </script>

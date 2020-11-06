@@ -1,11 +1,14 @@
 <template>
   <div>
-    <OrderSectionProductList :products="products"/>
+    <ProductOrderedList class="uk-margin-xlarge uk-width-4-5@l uk-margin-auto" />
+
+    <ProductList :products="products"/>
   </div>
 </template>
 
 <script>
-import OrderSectionProductList from '@/components/Application/Order/Section/OrderSectionProductList'
+import ProductList from '@/components/Application/Order/Section/Product/ProductList'
+import ProductOrderedList from '@/components/Application/Order/Section/Order/ProductOrderedList'
 
 export default {
   name: 'OrderSection',
@@ -16,7 +19,8 @@ export default {
     }
   },
   components: {
-    OrderSectionProductList
+    ProductList,
+    ProductOrderedList
   }
 }
 </script>

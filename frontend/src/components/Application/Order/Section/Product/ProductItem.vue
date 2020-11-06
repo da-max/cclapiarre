@@ -40,7 +40,7 @@
       </UtilsDrop>
     </template>
     <template #footer>
-      <UtilsButton>Commander ce produit</UtilsButton>
+      <UtilsButton @click="addProductOrder(product.node)" >Commander ce produit</UtilsButton>
     </template>
   </UtilsCard>
 </template>
@@ -49,9 +49,10 @@
 import UtilsCard from '@/components/Utils/UtilsCard'
 import UtilsDrop from '@/components/Utils/UtilsDrop'
 import UtilsButton from '@/components/Utils/UtilsButton'
+import { mapMutations } from 'vuex'
 
 export default {
-  name: 'OrderSectionProductItem',
+  name: 'ProductItem',
   components: {
     UtilsCard,
     UtilsDrop,
@@ -62,6 +63,9 @@ export default {
       required: true,
       type: Object
     }
+  },
+  methods: {
+    ...mapMutations({ addProductOrder: 'order/ADD_PRODUCT_ORDER' })
   }
 }
 </script>

@@ -15,7 +15,7 @@ export default {
       state.alertId++
     },
     ADD_404 (state) {
-      this.commit('alerts/ADD_ALERTS', {
+      this.commit('alert/ADD_ALERT', {
         id: state.alertId,
         header: true,
         headerContent: 'Ressource introuvable',
@@ -25,7 +25,7 @@ export default {
       })
     },
     ADD_400 (state) {
-      this.commit('alerts/ADD_ALERTS', {
+      this.commit('alert/ADD_ALERT', {
         id: state.alertId,
         header: true,
         headerContent: 'Formulaire incomplet',
@@ -36,7 +36,7 @@ export default {
       })
     },
     ADD_500 (state) {
-      this.commit('alerts/ADD_ALERTS', {
+      this.commit('alert/ADD_ALERT', {
         id: state.alertId,
         header: true,
         headerContent: 'Erreur interne',
@@ -47,7 +47,7 @@ export default {
       })
     },
     ADD_503 (state) {
-      this.commit('alerts/ADD_ALERTS', {
+      this.commit('alert/ADD_ALERT', {
         id: state.alertId,
         header: true,
         headerContent: 'Service indisponible',
@@ -58,7 +58,7 @@ export default {
       })
     },
     ADD_403 (state) {
-      this.commit('alerts/ADD_ALERTS', {
+      this.commit('alert/ADD_ALERT', {
         id: state.alertId,
         header: true,
         headerContent: 'Accès refusé',
@@ -69,7 +69,7 @@ export default {
       })
     },
     ADD_UNKNOWN (state) {
-      this.commit('alerts/ADD_ALERTS', {
+      this.commit('alert/ADD_ALERT', {
         id: state.alertId,
         header: true,
         headerContent: 'Erreur inconnue',

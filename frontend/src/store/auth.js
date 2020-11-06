@@ -21,6 +21,7 @@ export default {
 
   actions: {
     async logoutUser ({ commit }) {
+      commit('START_LOADING', null, { root: true })
       try {
         const response = await apolloClient.mutate({
           mutation: USER_LOGOUT
@@ -29,10 +30,13 @@ export default {
         return response.data.logout.ok
       } catch {
         return { error: 'Vous n’avez pas pu être déconnecté. Merci de réessayer.' }
+      } finally {
+        commit('END_LOADING', null, { root: true })
       }
     },
 
     async loginUser ({ commit }, { username, password }) {
+      commit('START_LOADING', null, { root: true })
       try {
         const response = await apolloClient.mutate({
           mutation: USER_LOGIN,
@@ -45,8 +49,10 @@ export default {
         const user = response.data.login.user
         commit('SET_CURRENT_USER', user)
         return response.data.login
-      } catch (e) {
+      } catch {
         return { error: 'Nom d’utilisateur ou mot de passe incorrect. Merci de réessayer.' }
+      } finally {
+        commit('END_LOADING', null, { root: true })
       }
     },
 
@@ -54,10 +60,17 @@ export default {
     This action get user with the sessionid cookie if the user is logged.
     */
     async loadUser ({ commit }) {
-      const response = await apolloClient.query({
-        query: USER_CURRENT
-      })
-      commit('SET_CURRENT_USER', response.data.user)
+      commit('START_LOADING', null, { root: true })
+      try {
+        const response = await apolloClient.query({
+          query: USER_CURRENT
+        })
+        commit('SET_CURRENT_USER', response.data.user)
+      } catch {
+        console.log('User not logged')
+      } finally {
+        commit('END_LOADING', null, { root: true })
+      }
     }
   }
 }

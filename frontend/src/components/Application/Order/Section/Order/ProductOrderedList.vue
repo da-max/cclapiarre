@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="uk-text-center uk-margin-large-bottom">
+    <div class="uk-text-center uk-margin-large-bottom uk-text-bold">
       <p><span class="uk-label">Prix de votre commande</span> {{ price }} €</p>
     </div>
     <transition-group

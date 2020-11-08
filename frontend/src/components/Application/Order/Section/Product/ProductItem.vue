@@ -40,7 +40,7 @@
       </UtilsDrop>
     </template>
     <template #footer>
-      <UtilsButton @click="addProductOrder(product.node)" >Commander ce produit</UtilsButton>
+      <UtilsButton @click="addProduct(product.node)" id="addProductButton" >Commander ce produit</UtilsButton>
     </template>
   </UtilsCard>
 </template>
@@ -65,7 +65,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations({ addProductOrder: 'order/ADD_PRODUCT_ORDER' })
+    ...mapMutations({ addProductOrder: 'order/ADD_PRODUCT_ORDER' }),
+    addProduct (product) {
+      // eslint-disable-next-line no-undef
+      UIkit.scroll('#addProductButton').scrollTo('#order-list')
+      this.addProductOrder(product)
+    }
   }
 }
 </script>

@@ -9,7 +9,7 @@
     </div>
     <OrderSection
       :products="application.products.edges"
-      class="uk-margin-large-top uk-width-4-5@m uk-margin-auto"
+      class="uk-margin-xlarge-top uk-width-4-5@m uk-margin-auto"
     />
   </main>
 </template>

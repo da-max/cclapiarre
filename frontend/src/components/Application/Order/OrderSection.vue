@@ -1,12 +1,14 @@
 <template>
   <div>
-    <ProductOrderedList class="uk-margin-xlarge uk-width-4-5@l uk-margin-auto" />
+    <OrderInformation class="uk-width-1-2@l uk-margin-auto" />
+    <ProductOrderedList class="uk-margin-xlarge uk-width-4-5@l uk-margin-auto" id="order-list" />
 
     <ProductList :products="products"/>
   </div>
 </template>
 
 <script>
+import OrderInformation from '@/components/Application/Order/Section/OrderInformation'
 import ProductList from '@/components/Application/Order/Section/Product/ProductList'
 import ProductOrderedList from '@/components/Application/Order/Section/Order/ProductOrderedList'
 
@@ -20,7 +22,8 @@ export default {
   },
   components: {
     ProductList,
-    ProductOrderedList
+    ProductOrderedList,
+    OrderInformation
   }
 }
 </script>

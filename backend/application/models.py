@@ -131,8 +131,8 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     application = models.ForeignKey(
         Application, on_delete=models.CASCADE, related_name='orders')
-    products = models.ManyToManyField(
-        Product, through='Amount', through_fields=('order', 'product'), verbose_name="Produits de la commande")
+    products = models.ManyToManyField(Product, through='Amount', through_fields=(
+        'order', 'product'), verbose_name="Produits de la commande")
 
     def __str__(self):
         return self.user.username

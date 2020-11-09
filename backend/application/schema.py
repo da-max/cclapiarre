@@ -10,7 +10,7 @@ from graphene_django_cud.mutations import DjangoCreateMutation
 
 from backend.application.models import Application, ApplicationImage, \
     Option, Order, Product, Weight, Amount
-from backend.application.forms import AmountForm, ApplicationForm, OrderForm, ProductForm
+from backend.application.forms import ApplicationForm, ProductForm
 # from backend.registration.decorators import login_required, permissions_required, application_permissions_required
 
 
@@ -125,7 +125,8 @@ class CreateOrderMutation(DjangoCreateMutation):
 
     @classmethod
     def mutate(cls, root, info, **input):
-        application = Application.objects.get(id=input['input']['application'])
+        application = Application.objects.get(
+            id=from_global_id(input['input']['application'])[1])
         order = Order.objects.create(
             user=info.context.user, application=application)
 
@@ -135,12 +136,12 @@ class CreateOrderMutation(DjangoCreateMutation):
         amounts = input['input'].pop('amount_set_add')
         for amount in amounts:
             print(amount)
-            weight = weights.get(id=amount['weight'])
-            option = options.get(id=amount['option'])
-            product = products.get(id=amount['product'])
+            weight = weights.get(id=from_global_id(amount['weight'])[1])
+            option = options.get(id=from_global_id(amount['option'])[1])
+            product = products.get(id=from_global_id(amount['product'])[1])
             amount = Amount(
                 product=product, option=option, weight=weight, amount=amount['amount'], order=order).save()
-        return {"order": order}
+        return {'order': order}
 
 
 class Mutation(graphene.ObjectType):

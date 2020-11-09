@@ -1,7 +1,7 @@
 <template>
   <div>
     <OrderInformation class="uk-width-1-2@l uk-margin-auto" />
-    <ProductOrderedList class="uk-margin-xlarge uk-width-4-5@l uk-margin-auto" id="order-list" />
+    <ProductOrderedList :applicationId="applicationId" class="uk-margin-xlarge uk-width-4-5@l uk-margin-auto" id="order-list" />
 
     <ProductList :products="products"/>
   </div>
@@ -17,6 +17,10 @@ export default {
   props: {
     products: {
       type: Array,
+      required: true
+    },
+    applicationId: {
+      type: String,
       required: true
     }
   },

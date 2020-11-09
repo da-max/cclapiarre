@@ -17,19 +17,25 @@
       class="uk-text-center uk-margin-large-top"
       v-show="productsOrdered.length !== 0"
     >
-      <UtilsButton :disabled="!valide">Commander</UtilsButton>
+      <UtilsButton :disabled="!valide" @click="saveOrder(applicationId)">Commander</UtilsButton>
     </div>
   </section>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 import UtilsButton from '@/components/Utils/UtilsButton'
 import ProductOrderedItem from '@/components/Application/Order/Section/Order/ProductOrderedItem'
 
 export default {
   name: 'ProductOrdered',
+  props: {
+    applicationId: {
+      type: String,
+      required: true
+    }
+  },
   computed: {
     ...mapState({
       productsOrdered: (state) => state.order.order
@@ -46,6 +52,9 @@ export default {
       })
       return price
     }
+  },
+  methods: {
+    ...mapActions({ saveOrder: 'order/saveOrder' })
   },
   components: {
     ProductOrderedItem,

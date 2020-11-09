@@ -116,7 +116,7 @@ class CreateOrderMutation(DjangoCreateMutation):
     class Meta:
         model = Order
         login_required = True
-        exclude_fields = ('products', 'amount_set')
+        exclude_fields = ('products', 'amount_set', 'user')
         many_to_many_extras = {
             "amount_set": {
                 "add": {"type": "CreateAmountInput"}

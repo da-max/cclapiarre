@@ -38,7 +38,7 @@ def sommary_command(request):
     for command in commands:
 
         user_total = Amount.get_total_user(Amount, command.id)
-        users.append((command.user.username, user_total))
+        users.append((command.user.last_name, user_total))
         total += user_total
 
     for product in products:

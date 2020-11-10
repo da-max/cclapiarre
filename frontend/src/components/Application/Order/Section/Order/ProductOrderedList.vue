@@ -17,8 +17,13 @@
       class="uk-text-center uk-margin-large-top"
       v-show="productsOrdered.length !== 0"
     >
-      <UtilsButton :disabled="!valide" @click="saveOrder(applicationId)">Commander</UtilsButton>
+      <UtilsButton
+        :disabled="!valide"
+        @click="showModal('#sommaryModal')"
+        >Commander</UtilsButton
+      >
     </div>
+    <ProductOrderedSommaryModal id="sommaryModal" />
   </section>
 </template>
 
@@ -27,6 +32,7 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 
 import UtilsButton from '@/components/Utils/UtilsButton'
 import ProductOrderedItem from '@/components/Application/Order/Section/Order/ProductOrderedItem'
+import ProductOrderedSommaryModal from '@/components/Application/Order/Section/Order/ProductOrderedSommaryModal'
 
 export default {
   name: 'ProductOrdered',
@@ -36,29 +42,26 @@ export default {
       required: true
     }
   },
+  components: {
+    ProductOrderedItem,
+    UtilsButton,
+    ProductOrderedSommaryModal
+  },
   computed: {
     ...mapState({
       productsOrdered: (state) => state.order.order
     }),
     ...mapGetters({
-      valide: 'order/valide'
-    }),
-    price () {
-      let price = 0
-      this.productsOrdered.forEach((productOrdered) => {
-        if (productOrdered.weight && productOrdered.amount) {
-          price += productOrdered.weight.node.price * productOrdered.amount
-        }
-      })
-      return price
-    }
+      valide: 'order/valide',
+      price: 'order/totalPrice'
+    })
   },
   methods: {
-    ...mapActions({ saveOrder: 'order/saveOrder' })
-  },
-  components: {
-    ProductOrderedItem,
-    UtilsButton
+    ...mapActions({ saveOrder: 'order/saveOrder' }),
+    showModal (modalId) {
+      // eslint-disable-next-line no-undef
+      UIkit.modal(modalId).show()
+    }
   }
 }
 </script>

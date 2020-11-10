@@ -96,6 +96,25 @@ export default {
         }
       })
       return valide
+    },
+    totalPrice (state) {
+      let price = 0
+      state.order.forEach((productOrdered) => {
+        if (productOrdered.weight && productOrdered.amount) {
+          price += productOrdered.weight.node.price * productOrdered.amount
+        }
+      })
+      return Math.round(price * 100) / 100
+    },
+    uniqPrice: (_state, getters) => {
+      return (productId) => {
+        const product = getters.productById(productId)
+        if (product.weight && product.amount) {
+          return Math.round(product.weight.node.price * product.amount * 100) / 100
+        } else {
+          return 0
+        }
+      }
     }
   }
 }

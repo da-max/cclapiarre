@@ -7,7 +7,7 @@ import USER_CURRENT from '@/graphql/User/UserCurrent.gql'
 export default {
   namespaced: true,
   state: () => {
-    return { currentUser: {} }
+    return { currentUser: null }
   },
 
   mutations: {

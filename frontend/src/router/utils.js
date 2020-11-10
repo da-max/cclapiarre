@@ -2,13 +2,21 @@ import store from '@/store/index'
 
 const CONNECTION_URL = '/compte/connexion'
 
-export function loginRequired (to, _from, next) {
+export async function loginRequired (to, _from, next) {
+  if (store.state.auth.currentUser === null) {
+    await store.dispatch('auth/loadUser')
+  }
+
   const currentUser = store.state.auth.currentUser
 
   currentUser && currentUser.username ? next() : next(`${CONNECTION_URL}?next=${to.path}`)
 }
 
-export function groupRequired (to, _from, next, groupRequired) {
+export async function groupRequired (to, _from, next, groupRequired) {
+  if (store.state.auth.currentUser === null) {
+    await store.dispatch('auth/loadUser')
+  }
+
   const currentUser = store.state.auth.currentUser
 
   if (currentUser && currentUser.username) {

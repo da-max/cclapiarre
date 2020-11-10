@@ -16,7 +16,7 @@
           </a>
         </div>
         <UserOptions
-          v-if="currentUser.username"
+          v-if="currentUser && currentUser.username"
           class="uk-navbar-right uk-margin-right"
         ></UserOptions>
       </nav>

@@ -9,7 +9,7 @@
       },
     ]"
   >
-  <caption v-if="caption">{{ caption }}</caption>
+  <caption v-show="caption">{{ caption }}</caption>
     <thead>
       <tr>
           <slot name="head"></slot>
@@ -28,6 +28,7 @@
 
 <script>
 export default {
+  name: 'UtilsTable',
   props: {
     caption: {
       default: null,

@@ -14,7 +14,8 @@ class Product(Model):
                         help_text="Mettre 1 si ce produit n'est pas vendu au poids.")
     price = FloatField(default=1, verbose_name="Prix du produit")
     display = BooleanField(verbose_name="Afficher le produit")
-    maybe_not_available = BooleanField(verbose_name="Produit peut être non disponible", default=False, help_text="Cocher cette case si le produit peut ne pas être disponible.")
+    maybe_not_available = BooleanField(verbose_name="Produit peut être non disponible",
+                                       default=False, help_text="Cocher cette case si le produit peut ne pas être disponible.")
     step = FloatField(default=1, verbose_name="Pas d'augmentation du produit")
     maximum = IntegerField(
         default=100, verbose_name="Quantité maximal commandable par commande")
@@ -83,4 +84,4 @@ class Amount(Model):
         command = self.objects.filter(command_id=command_id)
         for c in command:
             total += c.product.price * c.amount
-        return total
+        return round(total, 4)

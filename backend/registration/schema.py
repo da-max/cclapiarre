@@ -11,7 +11,6 @@ from graphql_jwt.decorators import login_required, token_auth
 from graphql_jwt.shortcuts import get_token
 
 from backend.registration.models import Information
-from backend.registration.decorators import login_required as personnal_login_required
 
 
 class ContentTypeType(DjangoObjectType):

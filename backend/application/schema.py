@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+
 import graphene
 from graphene.relay import Node
 from graphql_relay import from_global_id
@@ -11,7 +13,8 @@ from graphene_django_cud.mutations import DjangoCreateMutation
 from backend.application.models import Application, ApplicationImage, \
     Option, Order, Product, Weight, Amount
 from backend.application.forms import ApplicationForm, ProductForm
-# from backend.registration.decorators import login_required, permissions_required, application_permissions_required
+from backend.registration.schema import UserType
+from backend.registration.decorators import check_application_permission_by_slug
 
 
 # Types
@@ -27,6 +30,18 @@ class ApplicationType(DjangoObjectType):
     class Meta:
         model = Application
         fields = '__all__'
+
+    def resolve_members(self, info):
+        if info.context.user.is_authenticated:
+            return User.objects.filter(member_application=self)
+        else:
+            return User.objects.none()
+
+    def resolve_admins(self, info):
+        if info.context.user.is_authenticated:
+            return User.objects.filter(admin_application=self)
+        else:
+            return User.objects.none()
 
 
 class OptionType(DjangoObjectType):
@@ -66,16 +81,6 @@ class WeightType(DjangoObjectType):
         model = Weight
         fields = '__all__'
         filter_fields = ['id', 'application__name']
-
-
-# Nodes
-# =========
-
-class ApplicationNode(DjangoObjectType):
-    class Meta:
-        model = Application
-        filter_fields = ['slug', 'name', 'id']
-        interfaces = (Node, )
 
 
 # Mutations
@@ -173,10 +178,11 @@ class Query(graphene.ObjectType):
         return Option.objects.all()
 
     @login_required
+    @check_application_permission_by_slug('admin')
     def resolve_application_products(self, info, *args, **kwargs):
         return Product.objects.all()
 
-    def resolve_all_applications(self, info):
+    def resolve_all_applications(self, info, *args, **kwargs):
         return Application.objects.all()
 
     @login_required

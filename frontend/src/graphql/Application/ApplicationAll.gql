@@ -1,7 +1,11 @@
+#import "./Fragment/ApplicationSmallFragment.gql"
+
 query ApplicationAllSmall {
   allApplications {
-    id
-    name
+    ...ApplicationSmallFragment
     slug
+    members {
+      id
+    }
   }
 }

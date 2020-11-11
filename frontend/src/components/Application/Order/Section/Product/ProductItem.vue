@@ -4,14 +4,15 @@
       <h3 class="uk-card-title">{{ product.node.name }}</h3>
     </template>
     <template #body>
-      <img
-        class="uk-img uk-box-shadow-medium"
-        :src="'/media/' + product.node.image"
-        alt=""
-      />
-      <UtilsDrop pos="right-center" class="uk-width-large">
-        <div v-html="product.node.description"></div>
-        <div>
+      <div class="uk-transition-toggle uk-inline-clip" tabindex="0">
+        <img
+          class="uk-img uk-box-shadow-medium"
+          :src="'/media/' + product.node.image"
+          alt=""
+        />
+        <div
+          class="uk-transition-fade uk-position-cover uk-overlay uk-overlay-default uk-overflow-auto"
+        >
           <div class="uk-text-center">
             <h5>Poids disponible</h5>
             <ul class="uk-list">
@@ -25,7 +26,6 @@
             </ul>
           </div>
           <div v-if="product.node.options.edges.length !== 0">
-            <hr class="uk-divider-small" />
             <h5>Options disponible</h5>
             <ul class="uk-list">
               <li
@@ -37,17 +37,18 @@
             </ul>
           </div>
         </div>
-      </UtilsDrop>
+      </div>
     </template>
     <template #footer>
-      <UtilsButton @click="addProduct(product.node)" id="addProductButton" >Commander ce produit</UtilsButton>
+      <UtilsButton @click="addProduct(product.node)" id="addProductButton"
+        >Commander ce produit</UtilsButton
+      >
     </template>
   </UtilsCard>
 </template>
 
 <script>
 import UtilsCard from '@/components/Utils/UtilsCard'
-import UtilsDrop from '@/components/Utils/UtilsDrop'
 import UtilsButton from '@/components/Utils/UtilsButton'
 import { mapMutations } from 'vuex'
 
@@ -55,7 +56,6 @@ export default {
   name: 'ProductItem',
   components: {
     UtilsCard,
-    UtilsDrop,
     UtilsButton
   },
   props: {

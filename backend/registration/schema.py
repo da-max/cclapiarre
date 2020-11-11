@@ -31,11 +31,17 @@ class GroupType(DjangoObjectType):
         fields = ('id', 'name', 'permissions')
 
 
-class UserType(DjangoObjectType):
+class UserLargeType(DjangoObjectType):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'first_name',
                   'last_name', 'user_permissions', 'groups', 'is_superuser')
+
+
+class UserType(DjangoObjectType):
+    class Meta:
+        model = User
+        fields = ('id', )
 
 
 class InformationUserType(DjangoObjectType):
@@ -83,7 +89,7 @@ class Logout(graphene.Mutation):
 class Query(graphene.ObjectType):
     all_informations_users = graphene.List(
         InformationUserType)
-    user = graphene.Field(UserType)
+    user = graphene.Field(UserLargeType)
 
     @login_required
     def resolve_user(self, info, **kwargs):

@@ -32,16 +32,17 @@ class ApplicationType(DjangoObjectType):
         fields = '__all__'
 
     def resolve_members(self, info):
+        members = User.objects.filter(member_application=self)
         if info.context.user.is_authenticated:
-            return User.objects.filter(member_application=self)
+            return members
         else:
-            return User.objects.none()
+            return members.only('id')
 
     def resolve_admins(self, info):
         if info.context.user.is_authenticated:
             return User.objects.filter(admin_application=self)
         else:
-            return User.objects.none()
+            return User.objects.filter(admin_application=self).only('id')
 
 
 class OptionType(DjangoObjectType):

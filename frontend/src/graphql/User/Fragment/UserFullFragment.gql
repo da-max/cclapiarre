@@ -1,0 +1,6 @@
+fragment UserFullFragment on UserLargeType {
+  username
+  lastName
+  firstName
+  email
+}

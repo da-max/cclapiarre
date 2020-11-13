@@ -52,7 +52,7 @@ class InformationUserType(DjangoObjectType):
 
 
 class Login(graphene.Mutation):
-    user = graphene.Field(UserType)
+    user = graphene.Field(UserLargeType)
 
     class Arguments:
         username = graphene.String()

@@ -45,7 +45,7 @@ def sommary_command(request):
         command_user[product.name] = []
         amouts_list[product.name] = []
         for amout in amouts.filter(product=product):
-            amouts_list[product.name].append({'user': amout.command.user.username,
+            amouts_list[product.name].append({'user': amout.command.user.last_name,
                                               'quantity': amout.amount})
             command_user[product.name] += amout.command.user.last_name
 

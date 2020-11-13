@@ -5,6 +5,8 @@ import { groupRequired } from '@/router/utils'
 import Home from '../views/Home.vue'
 import { applicationPermissionRequired, loginRequired, utilsBeforeEach, utilsAfterEach } from './utils'
 
+const CONNECTION_URL = '/compte/connexion'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -26,8 +28,11 @@ const routes = [
     name: 'MemberList',
     component: () => import(/* webpackChunkName: "member-list" */ '../views/Registration/MemberList.vue'),
     beforeEnter: async (to, from, next) => {
-      await loginRequired(to, from, next)
-      await groupRequired(to, from, next, 'members')
+      if (loginRequired(to, from) && groupRequired(to, from, 'members')) {
+        next()
+      } else {
+        next(`${CONNECTION_URL}?next=${to.path}`)
+      }
     }
   },
   {
@@ -41,7 +46,14 @@ const routes = [
     component: () => import(/* webpackChunkName: "application-order" */ '../views/Application/Product/Order.vue'),
     props: route => ({ applicationSlug: route.params.application }),
     beforeEnter: async (to, from, next) => {
-      await applicationPermissionRequired(to, from, next, 'members')
+      const logged = await loginRequired(to, from)
+      const application = await applicationPermissionRequired(to, from, 'members')
+      console.log(application)
+      if (logged && application) {
+        next()
+      } else {
+        next(`${CONNECTION_URL}?next=${to.path}`)
+      }
     }
   }
 ]

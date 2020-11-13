@@ -1,17 +1,16 @@
 import store from '@/store/index'
 
-const CONNECTION_URL = '/compte/connexion'
-
-export async function loginRequired (to, _from, next) {
+export async function loginRequired (to, _from) {
   if (store.state.auth.currentUser === null) {
     await store.dispatch('auth/loadUser')
   }
+
   const currentUser = store.state.auth.currentUser
 
-  currentUser && currentUser.username ? next() : next(`${CONNECTION_URL}?next=${to.path}`)
+  return !!(currentUser && currentUser.username)
 }
 
-export async function applicationPermissionRequired (to, _from, next, permission = 'admins') {
+export async function applicationPermissionRequired (to, _from, permission = 'members') {
   if (store.state.auth.currentUser === null) {
     await store.dispatch('auth/loadUser')
   }
@@ -20,19 +19,26 @@ export async function applicationPermissionRequired (to, _from, next, permission
   }
 
   const application = store.getters['application/applicationBySlug'](to.params.application)
-  if (application[permission].find(user => user.id === store.state.auth.currentUser.id)) { next() } else {
-    store.commit('alert/ADD_ALERT', {
-      header: true,
-      headerContent: 'Accès refusé !',
-      body: 'Vous n’avez pas la permission d’accéder à cette page.',
-      status: 'danger',
-      close: true
-    })
-    next(`${CONNECTION_URL}?next=${to.path}`)
+  try {
+    if (store.state.auth.currentUser.isSuperuser) {
+      return true
+    }
+    if (application[permission].find(user => user.id === store.state.auth.currentUser.id)) { return true } else {
+      store.commit('alert/ADD_ALERT', {
+        header: true,
+        headerContent: 'Accès refusé !',
+        body: 'Vous n’avez pas la permission d’accéder à cette page.',
+        status: 'danger',
+        close: true
+      })
+      return false
+    }
+  } catch {
+    return false
   }
 }
 
-export async function groupRequired (to, _from, next, groupRequired) {
+export async function groupRequired (to, _from, groupRequired) {
   if (store.state.auth.currentUser === null) {
     await store.dispatch('auth/loadUser')
   }
@@ -40,11 +46,9 @@ export async function groupRequired (to, _from, next, groupRequired) {
   const currentUser = store.state.auth.currentUser
 
   if (currentUser && currentUser.username) {
-    !currentUser.isSuperuser && currentUser.groups.filter(group => group.name === groupRequired)
-      ? next(`${CONNECTION_URL}?next=${to.path}`)
-      : next()
+    return !(!currentUser.isSuperuser && currentUser.groups.filter(group => group.name === groupRequired))
   } else {
-    next(`${CONNECTION_URL}?next=${to.path}`)
+    return false
   }
 }
 

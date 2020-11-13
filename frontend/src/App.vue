@@ -21,6 +21,7 @@ export default {
   },
   beforeCreate () {
     this.$store.dispatch('auth/loadUser')
+    this.$store.dispatch('application/getApplications')
   },
   computed: {
     ...mapState(['loading'])

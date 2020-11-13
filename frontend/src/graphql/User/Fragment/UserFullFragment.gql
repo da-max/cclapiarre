@@ -1,4 +1,5 @@
 fragment UserFullFragment on UserLargeType {
+  id
   username
   lastName
   firstName

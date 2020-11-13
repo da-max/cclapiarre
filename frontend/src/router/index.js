@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 import { groupRequired } from '@/router/utils'
 import Home from '../views/Home.vue'
+import { applicationPermissionRequired, loginRequired, utilsBeforeEach, utilsAfterEach } from './utils'
 
 Vue.use(VueRouter)
 
@@ -25,7 +26,8 @@ const routes = [
     name: 'MemberList',
     component: () => import(/* webpackChunkName: "member-list" */ '../views/Registration/MemberList.vue'),
     beforeEnter: async (to, from, next) => {
-      await groupRequired(to, from, next, 'member')
+      await loginRequired(to, from, next)
+      await groupRequired(to, from, next, 'members')
     }
   },
   {
@@ -39,7 +41,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "application-order" */ '../views/Application/Product/Order.vue'),
     props: route => ({ applicationSlug: route.params.application }),
     beforeEnter: async (to, from, next) => {
-      await groupRequired(to, from, next, 'member')
+      await applicationPermissionRequired(to, from, next, 'members')
     }
   }
 ]
@@ -49,4 +51,12 @@ const router = new VueRouter({
   mode: 'hash'
 })
 
+router.beforeEach((_to, _from, next) => {
+  utilsBeforeEach()
+  next()
+})
+
+router.afterEach((_to, _from) => {
+  utilsAfterEach()
+})
 export default router

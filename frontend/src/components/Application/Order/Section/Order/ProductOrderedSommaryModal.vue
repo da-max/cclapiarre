@@ -51,7 +51,7 @@
     <template #footer>
       <div class="uk-text-center">
         <UtilsButton type="default" class="uk-modal-close">Annuler</UtilsButton>
-        <UtilsButton type="primary" class="uk-margin-left" @click="saveOrder(applicationId)">Commander</UtilsButton>
+        <UtilsButton type="primary" class="uk-margin-left" @click="saveOrder(applicationId)" :disabled="!valide">Commander</UtilsButton>
       </div>
     </template>
   </UtilsModal>
@@ -71,13 +71,13 @@ export default {
   },
   computed: {
     ...mapState({ productsOrdered: (state) => state.order.order }),
-    ...mapGetters({ total: 'order/uniqPrice', idApplicationBySlug: 'application/idApplicationBySlug' }),
+    ...mapGetters({ total: 'order/uniqPrice', idApplicationBySlug: 'application/idApplicationBySlug', valide: 'order/valide' }),
     applicationId () {
       return this.idApplicationBySlug(this.$route.params.application)
     }
   },
   methods: {
-    ...mapMutations({ removeProduct: 'order/REMOVE_PRODUCT_ORDER' }),
+    ...mapMutations({ removeProduct: 'order/REMOVE_PRODUCT_ORDER', setAmount: 'order/SET_AMOUNT' }),
     ...mapActions({ saveOrder: 'order/saveOrder' })
   }
 }

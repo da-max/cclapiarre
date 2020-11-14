@@ -68,7 +68,7 @@ export default {
     ...mapMutations({ addProductOrder: 'order/ADD_PRODUCT_ORDER' }),
     addProduct (product) {
       // eslint-disable-next-line no-undef
-      UIkit.scroll('#addProductButton').scrollTo('#order-list')
+      UIkit.scroll('#addProductButton', { offset: 100 }).scrollTo('#order-list')
       this.addProductOrder(product)
     }
   }

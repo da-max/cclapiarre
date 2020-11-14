@@ -5,7 +5,7 @@
       :application="application"
     />
     <div class="uk-width-2-5@l uk-width4-5@s uk-margin-auto">
-      <Alerts />
+      <Alerts id="alerts" />
     </div>
     <OrderSection
       :applicationId="application.id"

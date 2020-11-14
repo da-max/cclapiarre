@@ -26,6 +26,9 @@ export default {
     REMOVE_PRODUCT_ORDER (state, productId) {
       state.order = state.order.filter((product) => product.id !== productId)
     },
+    CLEAR_ORDER (state) {
+      state.order = []
+    },
     SET_WEIGHT (state, { id, weight }) {
       Vue.set(
         state.order.find((productOrdered) => productOrdered.id === id),
@@ -53,25 +56,36 @@ export default {
     async saveOrder ({ state, commit }, applicationId) {
       commit('START_LOADING', null, { root: true })
       try {
-        const orders = state.order.map(productOrdered => {
+        const orders = state.order.map((productOrdered) => {
           console.log(applicationId)
-          return ({
-            option: productOrdered.option ? productOrdered.option.node.id : null,
+          return {
+            option: productOrdered.option
+              ? productOrdered.option.node.id
+              : null,
             weight: productOrdered.weight.node.id,
             amount: parseInt(productOrdered.amount),
             product: productOrdered.product.id
-          })
+          }
         })
-        const response = await apolloClient.mutate({
+        await apolloClient.mutate({
           mutation: ADD_ORDER,
           variables: {
             application: parseInt(applicationId),
             amounts: orders
           }
         })
-        console.log(response)
+        commit(
+          'alert/ADD_ALERT',
+          {
+            header: true,
+            headerContent: 'Commande enregistrée !',
+            body: 'Votre commande a bien été enregistrée !',
+            status: 'success',
+            close: true
+          },
+          { root: true }
+        )
       } catch (error) {
-        console.log(error)
         commit('alert/ADD_UNKNOWN', null, { root: true })
       } finally {
         commit('END_LOADING', null, { root: true })
@@ -87,6 +101,7 @@ export default {
     valide (state) {
       let valide = true
       state.order.forEach((productOrdered) => {
+        console.log(productOrdered.amount)
         if (
           (productOrdered.product.options.edges.length !== 0 &&
             productOrdered.option === undefined) ||
@@ -110,7 +125,9 @@ export default {
       return (productId) => {
         const product = getters.productById(productId)
         if (product.weight && product.amount) {
-          return Math.round(product.weight.node.price * product.amount * 100) / 100
+          return (
+            Math.round(product.weight.node.price * product.amount * 100) / 100
+          )
         } else {
           return 0
         }

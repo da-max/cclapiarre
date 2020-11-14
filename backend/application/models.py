@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_save, post_delete, m2m_changed
 from django.dispatch import receiver
@@ -126,6 +127,15 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'Produit'
 
+    def get_amount_product_ordered(self):
+        number_amounts = 0
+        for amount in self.amounts.all():
+            number_amounts += amount.amount
+        return number_amounts
+
+    def get_amount_available(self):
+        return self.maximum_all - self.get_amount_product_ordered()
+
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -143,7 +153,7 @@ class Order(models.Model):
 
 class Amount(models.Model):
     product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, verbose_name="Produit commandé")
+        Product, on_delete=models.CASCADE, verbose_name="Produit commandé", related_name="amounts")
     order = models.ForeignKey(
         Order, on_delete=models.CASCADE, verbose_name="Commande associé")
     amount = models.FloatField(verbose_name="Quantité commandée")
@@ -154,3 +164,13 @@ class Amount(models.Model):
 
     class Meta:
         verbose_name = "Quantité"
+
+    def __str__(self) -> str:
+        return f"{self.product}, {self.amount}"
+
+    def save(self, *args, **kwargs):
+        if self.product.get_amount_available() >= self.amount:
+            super().save(*args, **kwargs)
+        else:
+            raise ValidationError(
+                f"The maximum amount for the product : {self.product} is reached.")

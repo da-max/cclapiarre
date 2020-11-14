@@ -97,11 +97,6 @@ class AddProduct(DjangoModelFormMutation):
     def resolve_product(self, info, **kwargs):
         return self
 
-    # @staticmethod
-    # def mutate(self, info, *args, **kwargs):
-    #     print(self)
-    #     return True
-
 
 class UpdateApplication(DjangoModelFormMutation):
 
@@ -131,33 +126,34 @@ class CreateOrderMutation(DjangoCreateMutation):
 
     @classmethod
     def mutate(cls, root, info, **input):
-        application = Application.objects.get(
-            id=input['input']['application'])
-        order = Order.objects.create(
-            user=info.context.user, application=application)
-
         products = Product.objects.all()
         options = Option.objects.all()
         weights = Weight.objects.all()
+
+        application = Application.objects.get(
+            id=input['input']['application'])
+
+        order = Order.objects.get_or_create(
+            user=info.context.user, application=application)
+
         amounts = input['input'].pop('amount_set_add')
         for amount in amounts:
             weight = weights.get(id=from_global_id(amount['weight'])[1])
             product = products.get(id=from_global_id(amount['product'])[1])
 
-            if amount['option']:
+            if amount['option'] and product.options != Option.objects.none():
                 option = options.get(id=from_global_id(amount['option'])[1])
-                amount = Amount(
-                    product=product, option=option, weight=weight, amount=amount['amount'], order=order).save()
+                amount = Amount.objects.update_or_create(
+                    product=product, option=option, weight=weight, order=order[0], defaults={'amount': amount['amount']})
             else:
-                amount = Amount(
-                    product=product, weight=weight, amount=amount['amount'], order=order).save()
-        return {'order': order}
+                amount = Amount.objects.update_or_create(
+                    product=product, weight=weight, order=order[0], defaults={'amount': amount['amount']})
+        return {'order': order[0]}
 
 
 class Mutation(graphene.ObjectType):
     add_product = AddProduct.Field()
     create_order = CreateOrderMutation.Field()
-    # add_amount_order = AddAmountOrder.Field()
     update_application = UpdateApplication.Field()
 
 
@@ -179,11 +175,12 @@ class Query(graphene.ObjectType):
         return Application.objects.get(slug=slug)
 
     @login_required
+    @check_application_permission_by_slug('member')
     def resolve_all_options(self, info, *args, **kwargs):
         return Option.objects.all()
 
     @login_required
-    @check_application_permission_by_slug('admin')
+    @check_application_permission_by_slug('member')
     def resolve_application_products(self, info, *args, **kwargs):
         return Product.objects.all()
 
@@ -191,9 +188,11 @@ class Query(graphene.ObjectType):
         return Application.objects.all()
 
     @login_required
+    @check_application_permission_by_slug('member')
     def resolve_all_weight(self, info, *args, **kwargs):
         return Weight.objects.all()
 
     @login_required
+    @check_application_permission_by_slug('admin')
     def resolve_application_order(self, info, *args, **kwargs):
         return Order.objects.all()

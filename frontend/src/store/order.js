@@ -56,16 +56,16 @@ export default {
         const orders = state.order.map(productOrdered => {
           console.log(applicationId)
           return ({
-            option: productOrdered.option.node.id,
+            option: productOrdered.option ? productOrdered.option.node.id : null,
             weight: productOrdered.weight.node.id,
-            amount: productOrdered.amount,
+            amount: parseInt(productOrdered.amount),
             product: productOrdered.product.id
           })
         })
         const response = await apolloClient.mutate({
           mutation: ADD_ORDER,
           variables: {
-            application: applicationId,
+            application: parseInt(applicationId),
             amounts: orders
           }
         })

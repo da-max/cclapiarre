@@ -1,7 +1,7 @@
 <template>
   <div>
     <OrderInformation class="uk-width-1-2@l uk-margin-auto" />
-    <ProductOrderedList :applicationId="applicationId" class="uk-margin-xlarge uk-width-4-5@l uk-margin-auto" id="order-list" />
+    <ProductOrderedList class="uk-margin-xlarge uk-width-4-5@l uk-margin-auto" id="order-list" />
 
     <ProductList :products="products"/>
   </div>

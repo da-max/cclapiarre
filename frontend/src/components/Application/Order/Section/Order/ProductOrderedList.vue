@@ -19,7 +19,14 @@
     >
       <UtilsButton
         :disabled="!valide"
+        type="secondary"
         @click="showModal('#sommaryModal')"
+        >Récapitulatif de la commande</UtilsButton
+      >
+      <UtilsButton
+        class="uk-margin-large-left"
+        :disabled="!valide"
+        @click="saveOrder(applicationId)"
         >Commander</UtilsButton
       >
     </div>
@@ -36,12 +43,6 @@ import ProductOrderedSommaryModal from '@/components/Application/Order/Section/O
 
 export default {
   name: 'ProductOrdered',
-  props: {
-    applicationId: {
-      type: String,
-      required: true
-    }
-  },
   components: {
     ProductOrderedItem,
     UtilsButton,
@@ -53,8 +54,12 @@ export default {
     }),
     ...mapGetters({
       valide: 'order/valide',
-      price: 'order/totalPrice'
-    })
+      price: 'order/totalPrice',
+      idApplicationBySlug: 'application/idApplicationBySlug'
+    }),
+    applicationId () {
+      return this.idApplicationBySlug(this.$route.params.application)
+    }
   },
   methods: {
     ...mapActions({ saveOrder: 'order/saveOrder' }),

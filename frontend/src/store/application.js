@@ -31,6 +31,9 @@ export default {
   getters: {
     applicationBySlug (state) {
       return (slug) => state.applications.find(application => application.slug === slug)
+    },
+    idApplicationBySlug (_state, getters) {
+      return (slug) => getters.applicationBySlug(slug).id
     }
   }
 }

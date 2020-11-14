@@ -52,8 +52,7 @@
             label="Quantité"
             name="amount"
             type="number"
-            :value="productOrdered.amount"
-            min="0"
+            :value="String(productOrdered.amount)"
             @input="changeAmount"
           />
         </div>

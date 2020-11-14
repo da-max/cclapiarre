@@ -48,6 +48,12 @@
         </template>
       </UtilsTable>
     </template>
+    <template #footer>
+      <div class="uk-text-center">
+        <UtilsButton type="default" class="uk-modal-close">Annuler</UtilsButton>
+        <UtilsButton type="primary" class="uk-margin-left" @click="saveOrder(applicationId)">Commander</UtilsButton>
+      </div>
+    </template>
   </UtilsModal>
 </template>
 
@@ -55,7 +61,7 @@
 import UtilsModal from '@/components/Utils/UtilsModal'
 import UtilsTable from '@/components/Utils/UtilsTable'
 import UtilsButton from '@/components/Utils/UtilsButton'
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 export default {
   name: 'ProductOrderedSommaryModal',
   components: {
@@ -65,10 +71,14 @@ export default {
   },
   computed: {
     ...mapState({ productsOrdered: (state) => state.order.order }),
-    ...mapGetters({ total: 'order/uniqPrice' })
+    ...mapGetters({ total: 'order/uniqPrice', idApplicationBySlug: 'application/idApplicationBySlug' }),
+    applicationId () {
+      return this.idApplicationBySlug(this.$route.params.application)
+    }
   },
   methods: {
-    ...mapMutations({ removeProduct: 'order/REMOVE_PRODUCT_ORDER' })
+    ...mapMutations({ removeProduct: 'order/REMOVE_PRODUCT_ORDER' }),
+    ...mapActions({ saveOrder: 'order/saveOrder' })
   }
 }
 </script>

@@ -86,7 +86,8 @@ export default {
           { root: true }
         )
       } catch (error) {
-        commit('alert/ADD_UNKNOWN', null, { root: true })
+        console.log(error)
+        commit('alert/ADD_ALERT', { header: false, body: error, status: 'danger', close: true }, { root: true })
       } finally {
         commit('END_LOADING', null, { root: true })
       }
@@ -101,7 +102,6 @@ export default {
     valide (state) {
       let valide = true
       state.order.forEach((productOrdered) => {
-        console.log(productOrdered.amount)
         if (
           (productOrdered.product.options.edges.length !== 0 &&
             productOrdered.option === undefined) ||

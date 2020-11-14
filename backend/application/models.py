@@ -173,4 +173,4 @@ class Amount(models.Model):
             super().save(*args, **kwargs)
         else:
             raise ValidationError(
-                f"The maximum amount for the product : {self.product} is reached.")
+                f"La quantité maximale commandable pour le produit : {self.product} est de {self.product.get_amount_available()}, merci de réessayer.")

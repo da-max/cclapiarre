@@ -26,7 +26,7 @@
             <td v-if="productOrdered.option">
               {{ productOrdered.option.node.name }}
             </td>
-            <td v-else>Non disponible</td>
+            <td v-else class="uk-text-muted">Non disponible</td>
             <td>
               <input
                 type="number"

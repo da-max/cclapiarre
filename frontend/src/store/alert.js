@@ -13,6 +13,8 @@ export default {
       alert.id = state.alertId
       state.alerts.push(alert)
       state.alertId++
+      // eslint-disable-next-line no-undef
+      UIkit.scroll(null, { offset: 300 }).scrollTo('#alerts')
     },
     ADD_404 (state) {
       this.commit('alert/ADD_ALERT', {

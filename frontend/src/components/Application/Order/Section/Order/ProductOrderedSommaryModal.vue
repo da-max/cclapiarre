@@ -51,7 +51,7 @@
     <template #footer>
       <div class="uk-text-center">
         <UtilsButton type="default" class="uk-modal-close">Annuler</UtilsButton>
-        <UtilsButton type="primary" class="uk-margin-left" @click="saveOrder(applicationId)" :disabled="!valide">Commander</UtilsButton>
+        <UtilsButton type="primary" class="uk-margin-left" @click="addOrder" :disabled="!valide">Commander</UtilsButton>
       </div>
     </template>
   </UtilsModal>
@@ -78,7 +78,12 @@ export default {
   },
   methods: {
     ...mapMutations({ removeProduct: 'order/REMOVE_PRODUCT_ORDER', setAmount: 'order/SET_AMOUNT' }),
-    ...mapActions({ saveOrder: 'order/saveOrder' })
+    ...mapActions({ saveOrder: 'order/saveOrder' }),
+    async addOrder () {
+      // eslint-disable-next-line no-undef
+      UIkit.modal('#sommaryModal').hide()
+      await this.saveOrder(this.applicationId)
+    }
   }
 }
 </script>

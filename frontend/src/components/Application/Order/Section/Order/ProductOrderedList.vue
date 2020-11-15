@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 import UtilsButton from '@/components/Utils/UtilsButton'
 import ProductOrderedItem from '@/components/Application/Order/Section/Order/ProductOrderedItem'
@@ -63,16 +63,12 @@ export default {
   },
   methods: {
     ...mapActions({ saveOrder: 'order/saveOrder' }),
-    ...mapMutations({ clearOrder: 'order/CLEAR_ORDER' }),
     showModal (modalId) {
       // eslint-disable-next-line no-undef
       UIkit.modal(modalId).show()
     },
     async addOrder () {
       await this.saveOrder(this.applicationId)
-      // eslint-disable-next-line no-undef
-      UIkit.scroll(null, { offset: 300 }).scrollTo('#alerts')
-      this.clearOrder()
     }
   }
 }

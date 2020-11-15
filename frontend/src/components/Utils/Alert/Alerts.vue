@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="alerts">
     <div
       v-for="alert in $store.state.alert.alerts"
       :key="alert.id"

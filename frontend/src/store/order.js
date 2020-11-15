@@ -56,17 +56,15 @@ export default {
     async saveOrder ({ state, commit }, applicationId) {
       commit('START_LOADING', null, { root: true })
       try {
-        const orders = state.order.map((productOrdered) => {
-          console.log(applicationId)
-          return {
-            option: productOrdered.option
-              ? productOrdered.option.node.id
-              : null,
-            weight: productOrdered.weight.node.id,
-            amount: parseInt(productOrdered.amount),
-            product: productOrdered.product.id
-          }
+        const orders = state.order.map((productOrdered) => ({
+          option: productOrdered.option
+            ? productOrdered.option.node.id
+            : null,
+          weight: productOrdered.weight.node.id,
+          amount: parseInt(productOrdered.amount),
+          product: productOrdered.product.id
         })
+        )
         await apolloClient.mutate({
           mutation: ADD_ORDER,
           variables: {
@@ -85,8 +83,8 @@ export default {
           },
           { root: true }
         )
+        commit('CLEAR_ORDER')
       } catch (error) {
-        console.log(error)
         commit('alert/ADD_ALERT', { header: false, body: error, status: 'danger', close: true }, { root: true })
       } finally {
         commit('END_LOADING', null, { root: true })

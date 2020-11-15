@@ -35,7 +35,7 @@ class UserLargeType(DjangoObjectType):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'first_name',
-                  'last_name', 'user_permissions', 'groups', 'is_superuser')
+                  'last_name', 'user_permissions', 'groups', 'is_superuser', 'information')
 
 
 class UserType(DjangoObjectType):
@@ -88,7 +88,7 @@ class Logout(graphene.Mutation):
 
 class Query(graphene.ObjectType):
     all_informations_users = graphene.List(
-        InformationUserType)
+        UserLargeType)
     user = graphene.Field(UserLargeType)
 
     @login_required
@@ -97,7 +97,7 @@ class Query(graphene.ObjectType):
 
     @login_required
     def resolve_all_informations_users(self, info):
-        return Information.objects.select_related('user').all()
+        return User.objects.all()
 
 
 class Mutation(graphene.ObjectType):

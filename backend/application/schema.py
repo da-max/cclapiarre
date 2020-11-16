@@ -50,7 +50,7 @@ class OptionType(DjangoObjectType):
         model = Option
         fields = '__all__'
         interfaces = (Node, )
-        filter_fields = ['id', 'application__name']
+        filter_fields = ['id', 'application__name', 'application__slug']
 
 
 class AmountType(DjangoObjectType):
@@ -64,7 +64,8 @@ class OrderType(DjangoObjectType):
         interfaces = (Node, )
         model = Order
         fields = '__all__'
-        filter_fields = ['id', 'application__name', 'user']
+        filter_fields = ['id', 'application__name',
+                         'user',  'application__slug']
 
 
 class ProductType(DjangoObjectType):
@@ -81,7 +82,7 @@ class WeightType(DjangoObjectType):
         interfaces = (Node, )
         model = Weight
         fields = '__all__'
-        filter_fields = ['id', 'application__name']
+        filter_fields = ['id', 'application__name',  'application__slug']
 
 
 # Mutations
@@ -126,7 +127,7 @@ class CreateOrderMutation(DjangoCreateMutation):
 
     @classmethod
     def mutate(cls, root, info, **input):
-        products = Product.objects.all()
+        products = Product.objects.filter(display=True)
         options = Option.objects.all()
         weights = Weight.objects.all()
 
@@ -151,10 +152,17 @@ class CreateOrderMutation(DjangoCreateMutation):
         return {'order': order[0]}
 
 
+class CreateOptionMutation(DjangoCreateMutation):
+    class Meta:
+        model = Option
+        login_required = True
+
+
 class Mutation(graphene.ObjectType):
     add_product = AddProduct.Field()
     create_order = CreateOrderMutation.Field()
     update_application = UpdateApplication.Field()
+    add_option = CreateOptionMutation.Field()
 
 
 # Queries

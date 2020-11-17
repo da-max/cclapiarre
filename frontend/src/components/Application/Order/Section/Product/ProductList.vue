@@ -2,7 +2,7 @@
   <div>
     <form
       class="uk-form-horizontal uk-width-1-3@m uk-margin-large-bottom"
-      v-if="isAdmin"
+      v-if="isAdmin($route.params.application)"
     >
       <label for="filter" class="uk-form-label">Filtrer les produits</label>
       <div class="uk-form-controls">
@@ -23,14 +23,18 @@
         class="uk-child-width-1-3@l uk-child-width-1-2@m uk-grid-match uk-grid-large uk-text-center uk-flex-center"
       >
         <div v-for="product in filterProduct" :key="product.node.id">
-          <ProductItem class="product-card" :product="product" />
+          <ProductItem class="product-card" :product="product" @update-product="updateProduct" />
         </div>
       </transition-group>
+      <ProductUpdateModal id="updateProduct" :product="productUpdate"></ProductUpdateModal>
     </div>
 </template>
 <script>
+import { mapGetters, mapState } from 'vuex'
+
 import ProductItem from '@/components/Application/Order/Section/Product/ProductItem'
-import { mapGetters } from 'vuex'
+import ProductUpdateModal from '@/components/Application/Order/Section/Product/ProductUpdateModal'
+
 export default {
   name: 'ProductList',
   data () {
@@ -50,7 +54,8 @@ export default {
           filter: 'display',
           value: 'all'
         }
-      }
+      },
+      productUpdate: this.products[0].node
     }
   },
   props: {
@@ -60,10 +65,12 @@ export default {
     }
   },
   components: {
-    ProductItem
+    ProductItem,
+    ProductUpdateModal
   },
   computed: {
-    ...mapGetters({ application: 'application/applicationBySlug' }),
+    ...mapGetters({ application: 'application/applicationBySlug', isAdmin: 'application/isAdmin' }),
+    ...mapState({ loading: (state) => state.loading }),
     filterProduct () {
       if (this.value === 'all') {
         return this.products
@@ -71,16 +78,16 @@ export default {
       return this.products.filter(
         (product) => product.node[this.filter] === this.value
       )
-    },
-    isAdmin () {
-      return !!this.application(this.$route.params.application).admins.find(
-        (admin) => admin.id === this.$store.state.auth.currentUser.id
-      )
     }
   },
   methods: {
     updateFilter (event) {
       console.log(event.target.value)
+    },
+    updateProduct (product) {
+      this.productUpdate = product.node
+      // eslint-disable-next-line no-undef
+      UIkit.modal('#updateProduct').show()
     }
   }
 }

@@ -33,13 +33,29 @@
       </div>
     </template>
     <template #body>
-      <h3 class="uk-card-title">{{ product.node.name }}</h3>
+      <h3
+        :class="['uk-card-title', { 'uk-text-muted': !product.node.display }]"
+      >
+        {{ product.node.name }}
+      </h3>
       <div v-html="product.node.description"></div>
     </template>
     <template #footer>
-      <div class="uk-margin-medium-top">
-        <UtilsButton @click="addProduct(product.node)" id="addProductButton"
+      <div class="uk-margin-medium-top" v-if="product.node.display">
+        <UtilsButton
+          @click="addProduct(product.node)"
+          class="uk-margin-medium-bottom"
+          id="addProductButton"
           >Commander ce produit</UtilsButton
+        >
+        <UtilsButton type="text" v-show="isAdmin" @click="updateProduct"
+          >Modifier le produit</UtilsButton
+        >
+      </div>
+      <div v-else class="uk-text-center">
+        <p class="uk-text-muted">Produit non disponible à la commande</p>
+        <UtilsButton type="text" v-show="isAdmin" @click="updateProduct"
+          >Modifier le produit</UtilsButton
         >
       </div>
     </template>
@@ -49,7 +65,7 @@
 <script>
 import UtilsCard from '@/components/Utils/UtilsCard'
 import UtilsButton from '@/components/Utils/UtilsButton'
-import { mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'ProductItem',
@@ -69,7 +85,13 @@ export default {
       // eslint-disable-next-line no-undef
       UIkit.scroll('#addProductButton', { offset: 100 }).scrollTo('#order-list')
       this.addProductOrder(product)
+    },
+    updateProduct () {
+      this.$emit('update-product', this.product)
     }
+  },
+  computed: {
+    ...mapGetters({ isAdmin: 'application/isAdmin' })
   }
 }
 </script>

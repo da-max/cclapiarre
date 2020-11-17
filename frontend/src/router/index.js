@@ -48,7 +48,6 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       const logged = await loginRequired(to, from)
       const application = await applicationPermissionRequired(to, from, 'members')
-      console.log(application)
       if (logged && application) {
         next()
       } else {

@@ -19,7 +19,6 @@ export default {
       commit('START_LOADING', null, { root: true })
       try {
         const response = await apolloClient.query({ query: APPLICATION_ALL })
-        console.log(response)
         commit('SET_APPLICATIONS', response.data.allApplications)
       } catch (e) {
         commit('alert/ADD_UNKNOWN', null, { root: true })
@@ -30,10 +29,17 @@ export default {
   },
   getters: {
     applicationBySlug (state) {
-      return (slug) => state.applications.find(application => application.slug === slug)
+      return (slug) =>
+        state.applications.find((application) => application.slug === slug)
     },
     idApplicationBySlug (_state, getters) {
       return (slug) => getters.applicationBySlug(slug).id
+    },
+    isAdmin (_state, getters, rootState) {
+      return (slug) =>
+        getters
+          .applicationBySlug(slug)
+          .admins.find((admin) => admin.id === rootState.auth.currentUser.id)
     }
   }
 }

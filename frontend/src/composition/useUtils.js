@@ -12,7 +12,6 @@ export function useSetupTitle (title = '') {
 export function useUtilsQuery (query, variables = {}) {
   store.commit('START_LOADING')
   try {
-    console.log(variables)
     const { result, loading, error } = useQuery(query, variables)
     return { result, loading, error }
   } catch (e) {
@@ -27,7 +26,6 @@ export function useUtilsMutation (mutation, variables) {
   try {
     mutation(variables)
   } catch (error) {
-    console.log(error)
     store.commit('alert/ADD_UNKNOWN')
   } finally {
     store.commit('END_LOADING')

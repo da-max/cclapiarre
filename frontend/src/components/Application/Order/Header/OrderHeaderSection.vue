@@ -3,7 +3,7 @@
     class="uk-section uk-section-default uk-box-shadow-medium uk-border-rounded"
   >
     <div
-      v-if="isAdmin && update"
+      v-if="isAdmin($route.params.application) && update"
       class="uk-container uk-text-large uk-text-justify"
     >
       <ckeditor
@@ -17,7 +17,7 @@
       v-html="description"
       class="uk-container uk-text-large uk-text-justify"
     ></div>
-    <footer class="uk-margin-medium-top uk-text-center" v-show="isAdmin">
+    <footer class="uk-margin-medium-top uk-text-center" v-show="isAdmin($route.params.application)">
       <div v-if="update">
         <UtilsButton
           :disabled="newDescription === description"
@@ -43,6 +43,7 @@
 import CKEditor from '@ckeditor/ckeditor5-vue'
 import ClassicEditor from 'ckeditor5-build-classic-with-font'
 import UtilsButton from '@/components/Utils/UtilsButton'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'OrderHeaderSection',
@@ -77,11 +78,6 @@ export default {
     description: {
       required: true,
       type: String
-    },
-    isAdmin: {
-      required: false,
-      default: false,
-      type: Boolean
     }
   },
   components: {
@@ -93,6 +89,9 @@ export default {
       this.$emit('update-description', this.newDescription)
       this.update = false
     }
+  },
+  computed: {
+    ...mapGetters({ isAdmin: 'application/isAdmin' })
   }
 }
 </script>

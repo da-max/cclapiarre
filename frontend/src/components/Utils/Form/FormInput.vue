@@ -11,6 +11,7 @@
         :type="type"
         :name="name"
         class="uk-input"
+        step="0.01"
         :placeholder="label"
         :value="value"
         @input="$emit('input', $event.target.value)"
@@ -39,7 +40,7 @@ export default {
       required: true
     },
     value: {
-      type: String,
+      type: [String, Number],
       required: true
     },
     required: {
@@ -53,7 +54,7 @@ export default {
 
 <style lang="scss" scoped>
 .required-label:after {
-  content: '*';
+  content: "*";
   margin-left: 0.4rem;
   color: rgb(240, 86, 115);
 }

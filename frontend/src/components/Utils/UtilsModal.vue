@@ -7,7 +7,6 @@
   >
     <div
       :class="['uk-modal-dialog', { 'uk-margin-auto-vertical': center }]"
-      uk-overflow-auto
     >
       <button
         v-show="close"
@@ -18,7 +17,7 @@
       <div class="uk-modal-header">
         <slot name="header"></slot>
       </div>
-      <div class="uk-modal-body">
+      <div class="uk-modal-body" uk-overflow-auto>
         <slot name="body"></slot>
       </div>
       <div class="uk-modal-footer">

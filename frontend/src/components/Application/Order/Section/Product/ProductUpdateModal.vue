@@ -6,20 +6,47 @@
     :esc-close="false"
   >
     <template #header>
-      <h2 class="uk-modal-title">
-        Modifier le produit : {{ productUpdated.name }}
-      </h2>
+      <h2 class="uk-modal-title">Modifier le produit : {{ productUpdated.name }}</h2>
     </template>
     <template #body>
-      <form class="">
+      <form class="uk-margin-large-bottom">
+        <FormInput
+          type="text"
+          name="name"
+          label="Nom du produit"
+          :value="product.name"
+          v-model="productUpdated.name"
+        />
         <div class="uk-child-width-1-2@l uk-grid-medium uk-flex-center" uk-grid>
-          <FormInput
-            type="text"
-            name="name"
-            label="Nom du produit"
-            :value="productUpdated.name"
-            v-model="productUpdated.name"
-          />
+          <fieldset class="uk-fieldset uk-text-center">
+            <legend class="uk-legend">Poids du produit</legend>
+            <div class="uk-inline">
+              <button
+                type="button"
+                uk-icon="plus"
+                class="uk-icon-button"
+                title="Ajouter un poids"
+              ></button>
+              <AddWeightDrop @add-weight="addWeight" />
+            </div>
+            <div class="uk-height-small uk-overflow-auto">
+              <div v-for="weight in weights.edges" :key="weight.node.id">
+                <label :for="weight.node.id" class="uk-form-label"
+                  >{{ weight.node.weight }} {{ weight.node.unit }} pour
+                  {{ weight.node.price }} €</label
+                >
+                <div class="uk-form-controls">
+                  <input
+                    type="checkbox"
+                    v-model="productUpdated.weights"
+                    :value="weight.node.id"
+                    :name="weight.node.id"
+                    class="uk-checkbox"
+                  />
+                </div>
+              </div>
+            </div>
+          </fieldset>
           <fieldset class="uk-fieldset uk-text-center">
             <legend class="uk-legend uk-margin-small-bottom">
               Options du produit
@@ -29,25 +56,9 @@
                 type="button"
                 uk-icon="plus"
                 class="uk-icon-button"
-                title="Créer une option"
+                title="Ajouter une option"
               ></button>
-              <UtilsDrop pos="left" id="addOption">
-                <template>
-                  <FormInput
-                    style="z-index: 999"
-                    type="text"
-                    :value="newOption"
-                    v-model="newOption"
-                    name="option-name"
-                    label="Nom de l’option"
-                  />
-                  <UtilsButton
-                    width="small"
-                    @click="addOption($route.params.application)"
-                    >Créer l’option</UtilsButton
-                  >
-                </template>
-              </UtilsDrop>
+              <AddOptionDrop @add-option="addOption" />
             </div>
             <div class="uk-height-small uk-overflow-auto">
               <div v-for="option in options.edges" :key="option.node.id">
@@ -56,7 +67,8 @@
                 }}</label>
                 <div class="uk-form-controls">
                   <input
-                    :checked="optionSelected(option.node.id)"
+                    v-model="productUpdated.options"
+                    :value="option.node.id"
                     type="checkbox"
                     :name="option.node.id"
                     class="uk-checkbox"
@@ -72,7 +84,7 @@
         >
           <div>
             <div uk-form-custom>
-              <input type="file" />
+              <input type="file" @change="upload" />
               <button
                 class="uk-button uk-button-default"
                 type="button"
@@ -81,7 +93,9 @@
                 Image du produit
               </button>
             </div>
-            <p class="uk-text-muted">Cette image sera affiché sur la page des commandes.</p>
+            <p class="uk-text-muted">
+              Cette image sera affiché sur la page des commandes.
+            </p>
           </div>
           <div>
             <label for="display" class="uk-form-label"
@@ -125,63 +139,139 @@
             </p>
           </div>
         </div>
+        <ckeditor :editor="editor" v-model="productUpdated.description" />
       </form>
+    </template>
+    <template #footer>
+      <div class="uk-text-center">
+        <UtilsButton type="primary" @click="updateProduct($route.params.application)">Modifier le produit</UtilsButton>
+      </div>
     </template>
   </UtilsModal>
 </template>
 
 <script>
-import { computed } from '@vue/composition-api'
+import CKEditor from '@ckeditor/ckeditor5-vue'
+import ClassicEditor from 'ckeditor5-build-classic-with-font'
 
 import store from '@/store/index'
 
 import useOption from '@/composition/application/product/useOption'
+import useWeight from '@/composition/application/product/useWeight'
+import useProduct from '@/composition/application/product/useProduct'
 import { useUtilsMutation } from '@/composition/useUtils'
 
 import UtilsModal from '@/components/Utils/UtilsModal'
-import UtilsDrop from '@/components/Utils/UtilsDrop'
+import UtilsButton from '@/components/Utils/UtilsButton'
 import FormInput from '@/components/Utils/Form/FormInput'
-import UtilsButton from '@/components/Utils/UtilsButton.vue'
+import AddOptionDrop from '@/components/Application/Order/Section/Product/Option/AddOptionDrop'
+import AddWeightDrop from '@/components/Application/Order/Section/Product/Weight/AddWeightDrop'
+import { computed } from '@vue/composition-api'
 
 export default {
   name: 'ProductUpdateModal',
   setup (props, ctx) {
     // Computed
     // ==========
-    const productUpdated = computed(() => ({ ...props.product }))
+    // const productUpdated = computed(() => {
+    //   const options = props.product.options.edges.map(
+    //     (option) => option.node.id
+    //   )
+    //   const weights = props.product.weights.edges.map(
+    //     (weight) => weight.node.id
+    //   )
+    //   return { ...props.product, options, weights }
+    // })
 
     const optionSelected = (optionId) =>
-      !!productUpdated.value.options.edges.find(
+      !!props.product.options.edges.find(
         (option) => option.node.id === optionId
       )
+
+    const { productUpdated, productUpdate } = useProduct()
+
+    productUpdated.value = computed(() => {
+      const options = props.product.options.edges.map(
+        (option) => option.node.id
+      )
+      const weights = props.product.weights.edges.map(
+        (weight) => weight.node.id
+      )
+      return { ...props.product, options, weights }
+    })
 
     const {
       options,
       newOption,
-      loading,
+      loading: optionLoading,
       getOptionsByApplicationSlug,
       optionAdd
     } = useOption()
+
+    const {
+      weights,
+      getWeightByApplicationSlug,
+      weightAdd,
+      loading: weightLoading
+    } = useWeight()
+
+    // Methods
+    // =========
+
+    getWeightByApplicationSlug((ctx) => ({
+      applicationSlug: ctx.$route.params.application
+    }))
 
     getOptionsByApplicationSlug((ctx) => ({
       applicationSlug: ctx.$route.params.application
     }))
 
-    const addOption = (applicationSlug) => {
+    const addOption = (data) => {
       const input = {
-        name: newOption.value,
-        application: store.getters['application/idApplicationBySlug'](applicationSlug)
+        name: data.newOption,
+        application: store.getters['application/idApplicationBySlug'](
+          data.application
+        )
       }
       useUtilsMutation(optionAdd, input)
     }
 
+    const addWeight = (data) => {
+      const input = {
+        ...data.newWeight,
+        application: store.getters['application/idApplicationBySlug'](
+          data.application
+        )
+      }
+      useUtilsMutation(weightAdd, input)
+    }
+
+    const updateProduct = (applicationSlug) => {
+      const input = {
+        ...productUpdated.value,
+        application: store.getters['application/idApplicationBySlug'](applicationSlug)
+      }
+
+      useUtilsMutation(productUpdate, input)
+    }
+
+    const upload = (ev) => {
+      productUpdated.value.image = ev.target.files[0]
+      console.log(productUpdated.value.image)
+    }
+
     return {
+      editor: ClassicEditor,
       options,
-      loading,
+      weights,
+      loading: weightLoading && optionLoading,
       productUpdated,
       optionSelected,
       newOption,
-      addOption
+      addOption,
+      addWeight,
+      upload,
+      updateProduct
     }
   },
   props: {
@@ -193,7 +283,9 @@ export default {
   components: {
     UtilsModal,
     FormInput,
-    UtilsDrop,
+    AddOptionDrop,
+    AddWeightDrop,
+    ckeditor: CKEditor.component,
     UtilsButton
   }
 }

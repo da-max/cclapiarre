@@ -1,11 +1,12 @@
 import Vue from 'vue'
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core'
+import { ApolloClient, ApolloLink, createHttpLink, InMemoryCache } from '@apollo/client/core'
+import { createUploadLink } from 'apollo-upload-client'
 
 // Name of the localStorage item
 const AUTH_TOKEN = 'apollo-token'
 
 // Http endpoint
-const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:3000/graphql'
+const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:8000/graphql'
 // Files URL root
 export const filesRoot = process.env.VUE_APP_FILES_ROOT || httpEndpoint.substr(0, httpEndpoint.indexOf('/graphql'))
 
@@ -27,8 +28,12 @@ function getCookie (name) {
   return cookieValue
 }
 
+const httpUploadLink = createUploadLink({
+  uri: httpEndpoint
+})
+
 const httpLink = createHttpLink({
-  uri: 'http://localhost:8000/graphql/',
+  uri: httpEndpoint,
   httpLinkOptions: {
     headers: {
       'X-CSRFToken': getCookie('csrftoken')
@@ -45,7 +50,10 @@ const cache = new InMemoryCache()
 export function createClient (options = {}) {
   // Create apollo client
   const apolloClient = new ApolloClient({
-    link: httpLink,
+    link: ApolloLink.from([
+      httpLink,
+      httpUploadLink
+    ]),
     cache,
     ...options
   })

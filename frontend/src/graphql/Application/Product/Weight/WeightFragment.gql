@@ -1,0 +1,6 @@
+fragment WeightFragment on WeightType {
+  id
+  weight
+  price
+  unit
+}

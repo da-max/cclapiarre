@@ -1,0 +1,11 @@
+#import "./WeightFragment.gql"
+
+query WeightByApplicationSlug($applicationSlug: String!) {
+  allWeight(application_Slug: $applicationSlug) {
+    edges {
+      node {
+        ...WeightFragment
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+mutation WeightAdd(
+  $application: ID!
+  $unit: String!
+  $price: Float!
+  $weight: Float!
+) {
+  addWeight(
+    input: {
+      application: $application
+      unit: $unit
+      price: $price
+      weight: $weight
+    }
+  ) {
+    weight {
+      id
+      unit
+      price
+      weight
+    }
+  }
+}

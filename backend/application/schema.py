@@ -7,7 +7,7 @@ from graphene_django import DjangoObjectType, DjangoListField
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.forms.mutation import DjangoModelFormMutation
 from graphql_jwt.decorators import login_required
-from graphene_django_cud.mutations import DjangoCreateMutation
+from graphene_django_cud.mutations import DjangoCreateMutation, DjangoUpdateMutation
 
 
 from backend.application.models import Application, ApplicationImage, \
@@ -91,6 +91,7 @@ class WeightType(DjangoObjectType):
 class AddProduct(DjangoModelFormMutation):
 
     product = graphene.Field(ProductType)
+    login_required = True
 
     class Meta:
         form_class = ProductForm
@@ -158,11 +159,27 @@ class CreateOptionMutation(DjangoCreateMutation):
         login_required = True
 
 
+class CreateWeightMutation(DjangoCreateMutation):
+    class Meta:
+        model = Weight
+        login_required = True
+        permissions = ('application.add_weight', )
+
+
+class UpdateProductMutation(DjangoUpdateMutation):
+    class Meta:
+        model = Product
+        login_required = True
+
+
 class Mutation(graphene.ObjectType):
     add_product = AddProduct.Field()
     create_order = CreateOrderMutation.Field()
-    update_application = UpdateApplication.Field()
     add_option = CreateOptionMutation.Field()
+    add_weight = CreateWeightMutation.Field()
+
+    update_application = UpdateApplication.Field()
+    update_product = UpdateProductMutation.Field()
 
 
 # Queries

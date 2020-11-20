@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { ApolloClient, ApolloLink, createHttpLink, InMemoryCache } from '@apollo/client/core'
+import { ApolloClient, InMemoryCache } from '@apollo/client/core'
 import { createUploadLink } from 'apollo-upload-client'
 
 // Name of the localStorage item
@@ -12,48 +12,49 @@ export const filesRoot = process.env.VUE_APP_FILES_ROOT || httpEndpoint.substr(0
 
 Vue.prototype.$filesRoot = filesRoot
 
-function getCookie (name) {
-  var cookieValue = null
-  if (document.cookie && document.cookie !== '') {
-    var cookies = document.cookie.split(';')
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i].trim()
-      // Does this cookie string begin with the name we want?
-      if (cookie.substring(0, name.length + 1) === name + '=') {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
-        break
-      }
-    }
-  }
-  return cookieValue
-}
+// function getCookie (name) {
+//   var cookieValue = null
+//   if (document.cookie && document.cookie !== '') {
+//     var cookies = document.cookie.split(';')
+//     for (var i = 0; i < cookies.length; i++) {
+//       var cookie = cookies[i].trim()
+//       // Does this cookie string begin with the name we want?
+//       if (cookie.substring(0, name.length + 1) === name + '=') {
+//         cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+//         break
+//       }
+//     }
+//   }
+//   return cookieValue
+// }
 
 const httpUploadLink = createUploadLink({
-  uri: httpEndpoint
-})
-
-const httpLink = createHttpLink({
   uri: httpEndpoint,
-  httpLinkOptions: {
-    headers: {
-      'X-CSRFToken': getCookie('csrftoken')
-    }
-  },
   tokenName: AUTH_TOKEN,
   persisting: false,
   websocketsOnly: false,
   ssr: false
 })
 
+// const httpLink = createHttpLink({
+//   uri: httpEndpoint,
+//   httpLinkOptions: {
+//     headers: {
+//       'X-CSRFToken': getCookie('csrftoken')
+//     }
+//   },
+//   tokenName: AUTH_TOKEN,
+//   persisting: false,
+//   websocketsOnly: false,
+//   ssr: false
+// })
+
 const cache = new InMemoryCache()
 
 export function createClient (options = {}) {
   // Create apollo client
   const apolloClient = new ApolloClient({
-    link: ApolloLink.from([
-      httpLink,
-      httpUploadLink
-    ]),
+    link: httpUploadLink,
     cache,
     ...options
   })

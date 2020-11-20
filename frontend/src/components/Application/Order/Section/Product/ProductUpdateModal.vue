@@ -173,15 +173,6 @@ export default {
   setup (props, ctx) {
     // Computed
     // ==========
-    // const productUpdated = computed(() => {
-    //   const options = props.product.options.edges.map(
-    //     (option) => option.node.id
-    //   )
-    //   const weights = props.product.weights.edges.map(
-    //     (weight) => weight.node.id
-    //   )
-    //   return { ...props.product, options, weights }
-    // })
 
     const optionSelected = (optionId) =>
       !!props.product.options.edges.find(
@@ -251,13 +242,12 @@ export default {
         ...productUpdated.value,
         application: store.getters['application/idApplicationBySlug'](applicationSlug)
       }
-
+      console.log(productUpdated.value)
       useUtilsMutation(productUpdate, input)
     }
 
     const upload = (ev) => {
       productUpdated.value.image = ev.target.files[0]
-      console.log(productUpdated.value.image)
     }
 
     return {

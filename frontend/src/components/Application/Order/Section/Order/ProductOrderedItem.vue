@@ -48,11 +48,11 @@
           </div>
         </div>
         <div class="uk-margin-medium-top">
-          <FormInput
+          <FormInputNumber
             label="Quantité"
             name="amount"
-            type="number"
-            :value="String(productOrdered.amount)"
+            :value="productOrdered.amount"
+            :max="productOrdered.max"
             @input="changeAmount"
           />
         </div>
@@ -73,7 +73,7 @@
 <script>
 import UtilsCard from '@/components/Utils/UtilsCard'
 import UtilsButton from '@/components/Utils/UtilsButton'
-import FormInput from '@/components/Utils/Form/FormInput'
+import FormInputNumber from '@/components/Utils/Form/FormInputNumber'
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
@@ -90,7 +90,7 @@ export default {
   components: {
     UtilsCard,
     UtilsButton,
-    FormInput
+    FormInputNumber
   },
   methods: {
     ...mapMutations({

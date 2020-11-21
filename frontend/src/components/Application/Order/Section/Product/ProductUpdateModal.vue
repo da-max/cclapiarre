@@ -117,10 +117,9 @@
             </p>
           </div>
           <div>
-            <FormInput
+            <FormInputNumber
               :value="productUpdated.maximum"
               :v-model="productUpdated.maximum"
-              type="number"
               name="maximum"
               label="Maximum par commande"
             />
@@ -129,10 +128,10 @@
             </p>
           </div>
           <div>
-            <FormInput
+            <FormInputNumber
               :value="productUpdated.maximumAll"
               v-model="productUpdated.maximumAll"
-              type="number"
+              :max="1000"
               name="maximum-all"
               label="Maximum pour le produit"
             />
@@ -171,9 +170,10 @@ import { useUtilsMutation } from '@/composition/useUtils'
 import UtilsModal from '@/components/Utils/UtilsModal'
 import UtilsButton from '@/components/Utils/UtilsButton'
 import FormInput from '@/components/Utils/Form/FormInput'
+import FormInputNumber from '@/components/Utils/Form/FormInputNumber'
 import AddOptionDrop from '@/components/Application/Order/Section/Product/Option/AddOptionDrop'
 import AddWeightDrop from '@/components/Application/Order/Section/Product/Weight/AddWeightDrop'
-import { computed } from '@vue/composition-api'
+import { watch } from '@vue/composition-api'
 
 export default {
   name: 'ProductUpdateModal',
@@ -181,21 +181,16 @@ export default {
     // Computed
     // ==========
 
-    const optionSelected = (optionId) =>
-      !!props.product.options.edges.find(
-        (option) => option.node.id === optionId
-      )
-
     const { productUpdated, productUpdate } = useProduct()
-
-    productUpdated.value = computed(() => {
+    productUpdated.value = { ...props.product }
+    watch(props, () => {
       const options = props.product.options.edges.map(
         (option) => option.node.id
       )
       const weights = props.product.weights.edges.map(
         (weight) => weight.node.id
       )
-      return { ...props.product, options, weights }
+      productUpdated.value = { ...props.product, options, weights }
     })
 
     const {
@@ -265,7 +260,6 @@ export default {
       weights,
       loading: weightLoading && optionLoading,
       productUpdated,
-      optionSelected,
       newOption,
       addOption,
       addWeight,
@@ -285,7 +279,8 @@ export default {
     AddOptionDrop,
     AddWeightDrop,
     ckeditor: CKEditor.component,
-    UtilsButton
+    UtilsButton,
+    FormInputNumber
   }
 }
 </script>

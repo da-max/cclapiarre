@@ -1,8 +1,7 @@
 <template>
   <UtilsDrop pos="right" id="addOption" mode="click">
     <template>
-      <FormInput
-        type="number"
+      <FormInputNumber
         :value="newWeight.weight"
         v-model="newWeight.weight"
         name="weight"
@@ -15,10 +14,10 @@
         name="unit"
         label="Unité du poids"
       />
-      <FormInput
-        type="number"
+      <FormInputNumber
         :value="newWeight.price"
         v-model="newWeight.price"
+        :step="0.01"
         name="price"
         label="Prix du produit pour ce poids"
       />
@@ -42,13 +41,15 @@ import { ref } from '@vue/composition-api'
 import UtilsButton from '@/components/Utils/UtilsButton'
 import UtilsDrop from '@/components/Utils/UtilsDrop'
 import FormInput from '@/components/Utils/Form/FormInput'
+import FormInputNumber from '@/components/Utils/Form/FormInputNumber'
 
 export default {
   name: 'AddWeightDrop',
   components: {
     UtilsButton,
     UtilsDrop,
-    FormInput
+    FormInput,
+    FormInputNumber
   },
   setup () {
     const newWeight = ref({

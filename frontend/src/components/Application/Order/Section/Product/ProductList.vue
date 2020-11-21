@@ -17,17 +17,29 @@
         </select>
       </div>
     </form>
-      <transition-group
-        name="fade"
-        uk-grid
-        class="uk-child-width-1-3@l uk-child-width-1-2@m uk-grid-match uk-grid-large uk-text-center uk-flex-center"
-      >
-        <div v-for="product in filterProduct" :key="product.node.id">
-          <ProductItem class="product-card" :product="product" @update-product="updateProduct" />
-        </div>
-      </transition-group>
-      <ProductUpdateModal id="updateProduct" :product="productUpdate"></ProductUpdateModal>
+    <div v-if="filterProduct.length === 0">
+      <p class="uk-text-center uk-text-muted">Aucun produit disponible.</p>
     </div>
+    <transition-group
+      v-else
+      name="fade"
+      uk-grid
+      class="uk-child-width-1-3@l uk-child-width-1-2@m uk-grid-match uk-grid-large uk-text-center uk-flex-center"
+    >
+      <div v-for="product in filterProduct" :key="product.node.id">
+        <ProductItem
+          class="product-card"
+          :product="product"
+          @update-product="updateProduct"
+        />
+      </div>
+    </transition-group>
+    <ProductUpdateModal
+      id="updateProduct"
+      :product="productUpdate"
+      v-if="isAdmin($route.params.application)"
+    ></ProductUpdateModal>
+  </div>
 </template>
 <script>
 import { mapGetters, mapState } from 'vuex'

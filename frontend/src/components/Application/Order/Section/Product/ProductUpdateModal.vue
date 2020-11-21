@@ -6,7 +6,9 @@
     :esc-close="false"
   >
     <template #header>
-      <h2 class="uk-modal-title">Modifier le produit : {{ productUpdated.name }}</h2>
+      <h2 class="uk-modal-title">
+        Modifier le produit : {{ productUpdated.name }}
+      </h2>
     </template>
     <template #body>
       <form class="uk-margin-large-bottom">
@@ -144,7 +146,12 @@
     </template>
     <template #footer>
       <div class="uk-text-center">
-        <UtilsButton type="primary" @click="updateProduct($route.params.application)">Modifier le produit</UtilsButton>
+        <UtilsButton class="uk-modal-close uk-margin-medium-right" type="default">Annuler</UtilsButton>
+        <UtilsButton
+          type="primary"
+          @click="updateProduct($route.params.application)"
+          >Modifier le produit</UtilsButton
+        >
       </div>
     </template>
   </UtilsModal>
@@ -242,8 +249,10 @@ export default {
         ...productUpdated.value,
         application: store.getters['application/idApplicationBySlug'](applicationSlug)
       }
-      console.log(productUpdated.value)
+
       useUtilsMutation(productUpdate, input)
+      // eslint-disable-next-line no-undef
+      UIkit.modal('#updateProduct').hide()
     }
 
     const upload = (ev) => {

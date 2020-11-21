@@ -38,4 +38,10 @@ export default {
 .fade-leave-to {
   opacity: 0;
 }
+
+.required-label:after {
+  content: "*";
+  margin-left: 0.4rem;
+  color: rgb(240, 86, 115);
+}
 </style>

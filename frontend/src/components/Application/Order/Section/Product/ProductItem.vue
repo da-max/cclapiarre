@@ -48,7 +48,7 @@
           id="addProductButton"
           >Commander ce produit</UtilsButton
         >
-        <UtilsButton type="text" v-show="isAdmin" @click="updateProduct"
+        <UtilsButton type="text" v-if="isAdmin($route.params.application)" @click="updateProduct"
           >Modifier le produit</UtilsButton
         >
       </div>

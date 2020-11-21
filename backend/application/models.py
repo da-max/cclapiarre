@@ -138,7 +138,8 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="order")
     application = models.ForeignKey(
         Application, on_delete=models.CASCADE, related_name='orders')
     products = models.ManyToManyField(Product, through='Amount', through_fields=(

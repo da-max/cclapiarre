@@ -151,6 +151,12 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Commande'
 
+    def get_price(self):
+        price = 0
+        for amount in self.products.through.objects.filter(order=self):
+            price += amount.amount * amount.weight.price
+        return price
+
 
 class Amount(models.Model):
     product = models.ForeignKey(
@@ -175,3 +181,6 @@ class Amount(models.Model):
         else:
             raise ValidationError(
                 f"La quantité maximale commandable pour le produit : {self.product} est de {self.product.get_amount_available()}, merci de réessayer.")
+
+    def get_price(self) -> float:
+        return self.weight.price * self.amount

@@ -47,7 +47,7 @@ urlpatterns = [
     path('a-propos-du-site/', views.flatpage,
          {'url': "/a-propos-du-site/"}, name="a_propos"),
     path('carousel/', include("backend.carousel.urls")),
-    path("cafe/", include("backend.coffee.urls")),
+    # path("cafe/", include("backend.coffee.urls")),
     path('pate/', include("backend.pasta.urls")),
     path('parametre/', include('backend.stats.urls')),
     path('pages/', include('django.contrib.flatpages.urls')),
@@ -67,7 +67,9 @@ urlpatterns = [
                                               content_type="text/plain"), name="robots_file"),
 
     url(r'^graphql/?', csrf_exempt(FileUploadGraphQLView.as_view(graphiql=True))),
-    url(r'^#*$', TemplateView.as_view(template_name='app.html'))
+    url(r'^#*$', TemplateView.as_view(template_name='app.html')),
+    url(r'', include(('backend.application.urls',
+                        'application'), namespace='application')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -13,7 +13,7 @@ from graphene_django_cud.mutations import DjangoCreateMutation, DjangoUpdateMuta
 from backend.application.models import Application, ApplicationImage, \
     Option, Order, Product, Weight, Amount
 from backend.application.forms import ApplicationForm, ProductForm
-from backend.registration.schema import UserType
+from backend.registration.schema import UserType, UserLargeType
 from backend.registration.decorators import check_application_permission_by_slug
 
 
@@ -64,8 +64,12 @@ class OrderType(DjangoObjectType):
         interfaces = (Node, )
         model = Order
         fields = '__all__'
-        filter_fields = ['id', 'application__name',
-                         'user',  'application__slug']
+        filter_fields = ['id', 'application__name', 'application__slug']
+
+    user_full = graphene.Field(UserLargeType)
+
+    def resolve_user_full(self, info):
+        return User.objects.filter(order=self).get(id=self.user.id)
 
 
 class ProductType(DjangoObjectType):

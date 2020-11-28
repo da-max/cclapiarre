@@ -2,7 +2,6 @@
   <div>
     <form
       class="uk-form-horizontal uk-width-1-3@m uk-margin-large-bottom"
-      v-if="isAdmin($route.params.application)"
     >
       <label for="filter" class="uk-form-label">Filtrer les produits</label>
       <div class="uk-form-controls">
@@ -34,23 +33,27 @@
         />
       </div>
     </transition-group>
-    <ProductUpdateModal
-      id="updateProduct"
-      :product="productUpdate"
-      v-if="isAdmin($route.params.application)"
-    ></ProductUpdateModal>
+    <ProductFormModal
+      id="update-product"
+      :product-update="productUpdate"
+      :update="true"
+      v-if="isAdmin"
+    />
   </div>
 </template>
 <script>
-import { mapGetters, mapState } from 'vuex'
+
+import useApplication from '@/composition/application/useApplication'
 
 import ProductItem from '@/components/Application/Order/Section/Product/ProductItem'
-import ProductUpdateModal from '@/components/Application/Order/Section/Product/ProductUpdateModal'
+import ProductFormModal from '@/components/Application/Order/Section/Product/ProductFormModal'
+import { computed, reactive, toRefs } from '@vue/composition-api'
 
 export default {
   name: 'ProductList',
-  data () {
-    return {
+  setup (props, { root }) {
+    const { isAdmin, products } = useApplication(root.$route.params.application)
+    const state = reactive({
       filter: 'display',
       value: true,
       FILTERS: {
@@ -67,40 +70,29 @@ export default {
           value: 'all'
         }
       },
-      productUpdate: this.products[0].node
+      productUpdate: products.value[0] ? products.value[0].node : {}
+    })
+
+    const filterProduct = computed(() => {
+      if (state.value === 'all') {
+        return products.value
+      }
+      return products.value.filter(
+        (product) => product.node[state.filter] === state.value
+      )
+    })
+
+    const updateProduct = (product) => {
+      state.productUpdate = product.node
+      // eslint-disable-next-line no-undef
+      UIkit.modal('#update-product').show()
     }
-  },
-  props: {
-    products: {
-      type: Array,
-      required: true
-    }
+
+    return { ...toRefs(state), isAdmin, filterProduct, updateProduct }
   },
   components: {
     ProductItem,
-    ProductUpdateModal
-  },
-  computed: {
-    ...mapGetters({ application: 'application/applicationBySlug', isAdmin: 'application/isAdmin' }),
-    ...mapState({ loading: (state) => state.loading }),
-    filterProduct () {
-      if (this.value === 'all') {
-        return this.products
-      }
-      return this.products.filter(
-        (product) => product.node[this.filter] === this.value
-      )
-    }
-  },
-  methods: {
-    updateFilter (event) {
-      console.log(event.target.value)
-    },
-    updateProduct (product) {
-      this.productUpdate = product.node
-      // eslint-disable-next-line no-undef
-      UIkit.modal('#updateProduct').show()
-    }
+    ProductFormModal
   }
 }
 </script>

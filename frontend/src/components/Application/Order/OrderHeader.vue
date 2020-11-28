@@ -5,36 +5,30 @@
     </h1>
     <OrderHeaderImage
       class="uk-margin-large-top uk-margin-auto uk-width-1-2@l uk-width-4-5@m"
-      :images="application.images"
     />
     <OrderHeaderSection
       class="uk-margin-xlarge-top uk-width-3-5@m uk-margin-auto"
-      :description="application.description"
-      @update-description="updateDescription"
     />
   </header>
 </template>
 
 <script>
+import store from '@/store/index'
+
 import OrderHeaderImage from '@/components/Application/Order/Header/OrderHeaderImage'
 import OrderHeaderSection from '@/components/Application/Order/Header/OrderHeaderSection'
+import { computed } from '@vue/composition-api'
 
 export default {
   name: 'OrderHeader',
-  props: {
-    application: {
-      required: true,
-      type: Object
-    }
+  setup () {
+    const application = computed(() => store.state.application.currentApplication)
+
+    return { application }
   },
   components: {
     OrderHeaderImage,
     OrderHeaderSection
-  },
-  methods: {
-    updateDescription (newDescription) {
-      this.$emit('update-description', newDescription)
-    }
   }
 }
 </script>

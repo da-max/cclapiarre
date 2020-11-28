@@ -1,0 +1,31 @@
+#import "./ProductFragment.gql"
+
+mutation ProductAdd(
+  $name: String!
+  $application: ID!
+  $weights: [ID]!
+  $description: String!
+  $display: Boolean
+  $image: Upload
+  $options: [ID]
+  $maximum: Int
+  $maximumAll: Int
+) {
+  addProduct(
+    input: {
+      name: $name
+      application: $application
+      weights: $weights
+      description: $description
+      display: $display
+      image: $image
+      options: $options
+      maximum: $maximum
+      maximumAll: $maximumAll
+    }
+  ) {
+    product {
+      ...ProductFragment
+    }
+  }
+}

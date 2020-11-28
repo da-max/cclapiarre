@@ -1,23 +1,26 @@
 <template>
   <UtilsModal
     v-if="!loading"
+    id="product-form-modal"
     :container="true"
     :center="true"
     :esc-close="false"
   >
     <template #header>
-      <h2 class="uk-modal-title">
-        Modifier le produit : {{ productUpdated.name }}
+      <h2 v-if="update" class="uk-modal-title">
+        Modifier le produit : {{ product.name }}
       </h2>
+      <h2 class="uk-modal-title" v-else>Ajouter un produit</h2>
     </template>
     <template #body>
+      <Alerts />
       <form class="uk-margin-large-bottom">
         <FormInput
           type="text"
           name="name"
           label="Nom du produit"
           :value="product.name"
-          v-model="productUpdated.name"
+          v-model="product.name"
         />
         <div class="uk-child-width-1-2@l uk-grid-medium uk-flex-center" uk-grid>
           <fieldset class="uk-fieldset uk-text-center">
@@ -31,7 +34,7 @@
               ></button>
               <AddWeightDrop @add-weight="addWeight" />
             </div>
-            <div class="uk-height-small uk-overflow-auto">
+            <div class="uk-height-medium uk-overflow-auto">
               <div v-for="weight in weights.edges" :key="weight.node.id">
                 <label :for="weight.node.id" class="uk-form-label"
                   >{{ weight.node.weight }} {{ weight.node.unit }} pour
@@ -40,7 +43,7 @@
                 <div class="uk-form-controls">
                   <input
                     type="checkbox"
-                    v-model="productUpdated.weights"
+                    v-model="product.weights"
                     :value="weight.node.id"
                     :name="weight.node.id"
                     class="uk-checkbox"
@@ -62,14 +65,14 @@
               ></button>
               <AddOptionDrop @add-option="addOption" />
             </div>
-            <div class="uk-height-small uk-overflow-auto">
+            <div class="uk-height-medium uk-overflow-auto">
               <div v-for="option in options.edges" :key="option.node.id">
                 <label :for="option.node.id" class="uk-form-label">{{
                   option.node.name
                 }}</label>
                 <div class="uk-form-controls">
                   <input
-                    v-model="productUpdated.options"
+                    v-model="product.options"
                     :value="option.node.id"
                     type="checkbox"
                     :name="option.node.id"
@@ -86,7 +89,7 @@
         >
           <div>
             <div uk-form-custom>
-              <input type="file" @change="upload" />
+              <input type="file" @change="upload" required />
               <button
                 class="uk-button uk-button-default"
                 type="button"
@@ -107,7 +110,8 @@
               <input
                 type="checkbox"
                 name="display"
-                v-model="productUpdated.display"
+                required
+                v-model="product.display"
                 class="uk-checkbox"
               />
             </div>
@@ -118,8 +122,8 @@
           </div>
           <div>
             <FormInputNumber
-              :value="productUpdated.maximum"
-              :v-model="productUpdated.maximum"
+              :value="product.maximum"
+              :v-model="product.maximum"
               name="maximum"
               label="Maximum par commande"
             />
@@ -129,8 +133,8 @@
           </div>
           <div>
             <FormInputNumber
-              :value="productUpdated.maximumAll"
-              v-model="productUpdated.maximumAll"
+              :value="product.maximumAll"
+              v-model="product.maximumAll"
               :max="1000"
               name="maximum-all"
               label="Maximum pour le produit"
@@ -140,16 +144,20 @@
             </p>
           </div>
         </div>
-        <ckeditor :editor="editor" v-model="productUpdated.description" />
+        <ckeditor :editor="editor" v-model="product.description" />
       </form>
     </template>
     <template #footer>
       <div class="uk-text-center">
-        <UtilsButton class="uk-modal-close uk-margin-medium-right" type="default">Annuler</UtilsButton>
+        <UtilsButton
+          class="uk-margin-medium-right uk-modal-close"
+          type="default"
+          >Annuler</UtilsButton
+        >
         <UtilsButton
           type="primary"
-          @click="updateProduct($route.params.application)"
-          >Modifier le produit</UtilsButton
+          @click="saveProduct($route.params.application)"
+          >{{ update ? "Modifier" : "Ajouter" }} le produit</UtilsButton
         >
       </div>
     </template>
@@ -159,38 +167,59 @@
 <script>
 import CKEditor from '@ckeditor/ckeditor5-vue'
 import ClassicEditor from 'ckeditor5-build-classic-with-font'
+import { computed } from '@vue/composition-api'
 
 import store from '@/store/index'
 
 import useOption from '@/composition/application/product/useOption'
 import useWeight from '@/composition/application/product/useWeight'
-import useProduct from '@/composition/application/product/useProduct'
+import useApplication from '@/composition/application/useApplication'
 import { useUtilsMutation } from '@/composition/useUtils'
 
+import Alerts from '@/components/Utils/Alert/Alerts'
 import UtilsModal from '@/components/Utils/UtilsModal'
 import UtilsButton from '@/components/Utils/UtilsButton'
 import FormInput from '@/components/Utils/Form/FormInput'
 import FormInputNumber from '@/components/Utils/Form/FormInputNumber'
 import AddOptionDrop from '@/components/Application/Order/Section/Product/Option/AddOptionDrop'
 import AddWeightDrop from '@/components/Application/Order/Section/Product/Weight/AddWeightDrop'
-import { watch } from '@vue/composition-api'
 
 export default {
-  name: 'ProductUpdateModal',
-  setup (props, ctx) {
+  name: 'ProductFormModal',
+  setup (props, { root }) {
     // Computed
     // ==========
+    const { application } = useApplication(root.$route.params.application)
 
-    const { productUpdated, productUpdate } = useProduct()
-    productUpdated.value = { ...props.product }
-    watch(props, () => {
-      const options = props.product.options.edges.map(
-        (option) => option.node.id
-      )
-      const weights = props.product.weights.edges.map(
-        (weight) => weight.node.id
-      )
-      productUpdated.value = { ...props.product, options, weights }
+    const updated = computed(() => props.update && Object.keys(props.productUpdate).length !== 0)
+    const productOptions = computed(() => {
+      if (updated.value) {
+        return props.productUpdate.options.edges.map(
+          (option) => option.node.id
+        )
+      }
+      return []
+    })
+    const productWeights = computed(() => {
+      if (updated.value) {
+        return props.productUpdate.weights.edges.map(
+          (weight) => weight.node.id)
+      }
+      return []
+    })
+    const product = computed(() => {
+      if (updated.value) {
+        return { ...props.productUpdate, options: productOptions.value, weights: productWeights.value }
+      }
+      return {
+        name: '',
+        description: '',
+        weights: [],
+        options: [],
+        maximum: 100,
+        maximumAll: 1000,
+        display: true
+      }
     })
 
     const {
@@ -211,20 +240,18 @@ export default {
     // Methods
     // =========
 
-    getWeightByApplicationSlug((ctx) => ({
-      applicationSlug: ctx.$route.params.application
+    getWeightByApplicationSlug(() => ({
+      applicationSlug: root.$route.params.application
     }))
 
-    getOptionsByApplicationSlug((ctx) => ({
-      applicationSlug: ctx.$route.params.application
+    getOptionsByApplicationSlug(() => ({
+      applicationSlug: root.$route.params.application
     }))
 
     const addOption = (data) => {
       const input = {
         name: data.newOption,
-        application: store.getters['application/idApplicationBySlug'](
-          data.application
-        )
+        application: application.id
       }
       useUtilsMutation(optionAdd, input)
     }
@@ -232,45 +259,51 @@ export default {
     const addWeight = (data) => {
       const input = {
         ...data.newWeight,
-        application: store.getters['application/idApplicationBySlug'](
-          data.application
-        )
+        application: application.value.id
       }
       useUtilsMutation(weightAdd, input)
     }
 
-    const updateProduct = (applicationSlug) => {
+    const saveProduct = () => {
+      // eslint-disable-next-line no-undef
+      UIkit.modal('#product-form-modal').hide()
       const input = {
-        ...productUpdated.value,
-        application: store.getters['application/idApplicationBySlug'](applicationSlug)
+        ...product.value,
+        application: application.value.id
       }
 
-      useUtilsMutation(productUpdate, input)
-      // eslint-disable-next-line no-undef
-      UIkit.modal('#updateProduct').hide()
+      store.dispatch('application/saveProduct', { product: input, update: props.update })
     }
 
     const upload = (ev) => {
-      productUpdated.value.image = ev.target.files[0]
+      product.value.image = ev.target.files[0]
     }
+
+    const loading = computed(() => !!(weightLoading.value || optionLoading.value))
 
     return {
       editor: ClassicEditor,
       options,
       weights,
-      loading: weightLoading && optionLoading,
-      productUpdated,
+      loading,
+      product,
       newOption,
       addOption,
       addWeight,
       upload,
-      updateProduct
+      saveProduct
     }
   },
   props: {
-    product: {
-      required: true,
-      type: Object
+    productUpdate: {
+      required: false,
+      type: Object,
+      default: () => ({})
+    },
+    update: {
+      required: false,
+      default: false,
+      type: Boolean
     }
   },
   components: {
@@ -280,7 +313,8 @@ export default {
     AddWeightDrop,
     ckeditor: CKEditor.component,
     UtilsButton,
-    FormInputNumber
+    FormInputNumber,
+    Alerts
   }
 }
 </script>

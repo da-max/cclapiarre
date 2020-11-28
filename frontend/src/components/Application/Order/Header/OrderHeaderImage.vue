@@ -36,12 +36,15 @@
 </template>
 
 <script>
+import store from '@/store/index'
+import { computed } from '@vue/composition-api'
+
 export default {
   name: 'OrderHeaderImage',
-  props: {
-    images: {
-      required: true,
-      type: Array
+  setup () {
+    const images = computed(() => store.getters['application/applicationImage'])
+    return {
+      images
     }
   }
 }

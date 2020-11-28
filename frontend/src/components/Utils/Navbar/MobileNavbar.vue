@@ -81,7 +81,7 @@
               <li v-for="orderItem in orderItems" :key="orderItem.id">
                 <router-link
                   :to="{
-                    name: 'Order',
+                    name: 'ApplicationOrder',
                     params: { application: orderItem.slug },
                   }"
                 >{{ orderItem.name }}</router-link>

@@ -39,7 +39,7 @@ export default {
       required: true
     },
     value: {
-      type: Number,
+      type: [Number, String],
       required: true
     },
     required: {

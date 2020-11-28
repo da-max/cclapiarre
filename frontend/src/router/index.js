@@ -42,7 +42,7 @@ const routes = [
   },
   {
     path: '/:application/commander',
-    name: 'Order',
+    name: 'ApplicationOrder',
     component: () => import(/* webpackChunkName: "application-order" */ '../views/Application/Product/Order.vue'),
     props: route => ({ applicationSlug: route.params.application }),
     beforeEnter: async (to, from, next) => {
@@ -53,7 +53,17 @@ const routes = [
       } else {
         next(`${CONNECTION_URL}?next=${to.path}`)
       }
-    }
+    },
+    children: [
+      {
+        path: 'creer',
+        name: 'ApplicationProductCreate',
+        components: {
+          default: () => import(/* webpackChunkName: "application-order" */ '../views/Application/Product/Order.vue'),
+          modal: () => import(/* webpackChunkName: "application-product-create" */ '../components/Application/Order/Section/Product/ProductFormModal.vue')
+        }
+      }
+    ]
   }
 ]
 

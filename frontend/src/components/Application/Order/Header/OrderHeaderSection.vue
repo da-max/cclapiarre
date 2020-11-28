@@ -3,12 +3,12 @@
     class="uk-section uk-section-default uk-box-shadow-medium uk-border-rounded"
   >
     <div
-      v-if="isAdmin($route.params.application) && update"
+      v-if="isAdmin && update"
       class="uk-container uk-text-large uk-text-justify"
     >
       <ckeditor
         :editor="editor"
-        v-model="newDescription"
+        v-model="description"
         :config="config"
       ></ckeditor>
     </div>
@@ -17,11 +17,11 @@
       v-html="description"
       class="uk-container uk-text-large uk-text-justify"
     ></div>
-    <footer class="uk-margin-medium-top uk-text-center" v-show="isAdmin($route.params.application)">
+    <footer class="uk-margin-medium-top uk-text-center" v-show="isAdmin">
       <div v-if="update">
         <UtilsButton
           :disabled="newDescription === description"
-          @click="updateDescription"
+          @click="saveDescription"
         >
           Enregistrer
         </UtilsButton>
@@ -40,17 +40,36 @@
 </template>
 
 <script>
+import { computed, reactive, toRefs } from '@vue/composition-api'
+
 import CKEditor from '@ckeditor/ckeditor5-vue'
 import ClassicEditor from 'ckeditor5-build-classic-with-font'
+import store from '@/store/index'
+import useApplication from '@/composition/application/useApplication'
+
 import UtilsButton from '@/components/Utils/UtilsButton'
-import { mapGetters } from 'vuex'
 
 export default {
   name: 'OrderHeaderSection',
-  data () {
-    return {
+  setup (props, { root }) {
+    const { isAdmin, updateApplication } = useApplication(
+      root.$route.params.application
+    )
+
+    const description = computed({
+      get: () => store.state.application.currentApplication.description,
+      set (newValue) {
+        store.commit('application/CHANGE_DESCRIPTION', newValue)
+      }
+    })
+
+    const newDescription = computed(() =>
+      store.state.application.currentApplication.newDescription
+        ? store.state.application.currentApplication.newDescription
+        : store.state.application.currentApplication.description
+    )
+    const state = reactive({
       editor: ClassicEditor,
-      newDescription: this.description,
       update: false,
       config: {
         toolbar: [
@@ -72,26 +91,18 @@ export default {
           'fontBackgroundColor'
         ]
       }
+    })
+
+    const saveDescription = async () => {
+      await updateApplication()
+      state.update = false
     }
-  },
-  props: {
-    description: {
-      required: true,
-      type: String
-    }
+
+    return { ...toRefs(state), isAdmin, description, saveDescription, newDescription }
   },
   components: {
     UtilsButton,
     ckeditor: CKEditor.component
-  },
-  methods: {
-    updateDescription () {
-      this.$emit('update-description', this.newDescription)
-      this.update = false
-    }
-  },
-  computed: {
-    ...mapGetters({ isAdmin: 'application/isAdmin' })
   }
 }
 </script>

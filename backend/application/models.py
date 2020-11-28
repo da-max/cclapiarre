@@ -108,12 +108,12 @@ class Product(models.Model):
     application = models.ForeignKey(
         Application, on_delete=models.CASCADE, verbose_name="Application du produit", related_name="products")
     weights = models.ManyToManyField(
-        Weight, related_name='weights', verbose_name="Poids disponible pour ce produit")
+        Weight, related_name='weights', verbose_name="Poids disponible pour ce produit", blank=False)
     description = RichTextField(verbose_name="Description du produit")
     display = models.BooleanField(
         verbose_name="Afficher le produit sur le tableau des commandes", default=True)
     image = models.ImageField(verbose_name="Image de présentation du produit",
-                              help_text="Cette image s’affichera sur la carte de présentation du produit.", upload_to='application/products')
+                              help_text="Cette image s’affichera sur la carte de présentation du produit.", upload_to='application/products', blank=True, null=True)
     options = models.ManyToManyField(
         Option, verbose_name="Options disponible pour ce produit", blank=True)
     maximum = models.IntegerField(

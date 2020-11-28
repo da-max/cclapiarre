@@ -92,24 +92,10 @@ class WeightType(DjangoObjectType):
 # Mutations
 # ==========
 
-class AddProduct(DjangoModelFormMutation):
-
-    product = graphene.Field(ProductType)
-    login_required = True
-
+class CreateProductMutation(DjangoCreateMutation):
     class Meta:
-        form_class = ProductForm
-
-    def resolve_product(self, info, **kwargs):
-        return self
-
-
-class UpdateApplication(DjangoModelFormMutation):
-
-    application = graphene.Field(ApplicationType)
-
-    class Meta:
-        form_class = ApplicationForm
+        model = Product
+        login_required = True
 
 
 class CreateAmountMutation(DjangoCreateMutation):
@@ -170,6 +156,14 @@ class CreateWeightMutation(DjangoCreateMutation):
         permissions = ('application.add_weight', )
 
 
+class UpdateApplication(DjangoModelFormMutation):
+
+    application = graphene.Field(ApplicationType)
+
+    class Meta:
+        form_class = ApplicationForm
+
+
 class UpdateProductMutation(DjangoUpdateMutation):
     class Meta:
         model = Product
@@ -177,7 +171,7 @@ class UpdateProductMutation(DjangoUpdateMutation):
 
 
 class Mutation(graphene.ObjectType):
-    add_product = AddProduct.Field()
+    add_product = CreateProductMutation.Field()
     create_order = CreateOrderMutation.Field()
     add_option = CreateOptionMutation.Field()
     add_weight = CreateWeightMutation.Field()
@@ -192,7 +186,7 @@ class Mutation(graphene.ObjectType):
 class Query(graphene.ObjectType):
     all_applications = DjangoListField(ApplicationType)
     product = Node.Field(ProductType)
-    application_products = DjangoFilterConnectionField(ProductType)
+    all_products = DjangoFilterConnectionField(ProductType)
     all_options = DjangoFilterConnectionField(OptionType)
     all_weight = DjangoFilterConnectionField(WeightType)
     application_order = DjangoFilterConnectionField(OrderType)

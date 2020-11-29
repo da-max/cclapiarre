@@ -70,7 +70,7 @@ export default {
           value: 'all'
         }
       },
-      productUpdate: products.value[0] ? products.value[0].node : {}
+      productUpdate: {}
     })
 
     const filterProduct = computed(() => {

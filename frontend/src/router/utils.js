@@ -10,7 +10,11 @@ export async function loginRequired (to, _from) {
   return !!(currentUser && currentUser.username)
 }
 
-export async function applicationPermissionRequired (to, _from, permission = 'members') {
+export async function applicationPermissionRequired (
+  to,
+  _from,
+  permission = 'members'
+) {
   if (store.state.auth.currentUser === null) {
     await store.dispatch('auth/loadUser')
   }
@@ -18,19 +22,20 @@ export async function applicationPermissionRequired (to, _from, permission = 'me
     await store.dispatch('application/getApplications')
   }
 
-  const application = store.getters['application/applicationBySlug'](to.params.application)
+  const application = store.getters['application/applicationBySlug'](
+    to.params.application
+  )
   try {
     if (store.state.auth.currentUser.isSuperuser) {
       return true
     }
-    if (application[permission].find(user => user.id === store.state.auth.currentUser.id)) { return true } else {
-      store.commit('alert/ADD_ALERT', {
-        header: true,
-        headerContent: 'Accès refusé !',
-        body: 'Vous n’avez pas la permission d’accéder à cette page.',
-        status: 'danger',
-        close: true
-      })
+    if (
+      application[permission].find(
+        (user) => user.id === store.state.auth.currentUser.id
+      )
+    ) {
+      return true
+    } else {
       return false
     }
   } catch {
@@ -46,7 +51,10 @@ export async function groupRequired (to, _from, groupRequired) {
   const currentUser = store.state.auth.currentUser
 
   if (currentUser && currentUser.username) {
-    return !(!currentUser.isSuperuser && currentUser.groups.filter(group => group.name === groupRequired))
+    return !(
+      !currentUser.isSuperuser &&
+      currentUser.groups.filter((group) => group.name === groupRequired)
+    )
   } else {
     return false
   }

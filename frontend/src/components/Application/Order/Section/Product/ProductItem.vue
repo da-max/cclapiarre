@@ -31,7 +31,7 @@
     <template #footer>
       <div class="uk-margin-medium-top" v-if="product.node.display">
         <UtilsButton
-          @click="addProduct(product.node)"
+          @click="addProductOrder(product.node)"
           class="uk-margin-medium-bottom"
           id="addProductButton"
           >Commander ce produit</UtilsButton

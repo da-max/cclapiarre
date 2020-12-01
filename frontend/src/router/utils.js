@@ -13,7 +13,7 @@ export async function loginRequired (to, _from) {
 export async function applicationPermissionRequired (
   to,
   _from,
-  permission = 'members'
+  permission = 'admins'
 ) {
   if (store.state.auth.currentUser === null) {
     await store.dispatch('auth/loadUser')
@@ -36,6 +36,7 @@ export async function applicationPermissionRequired (
     ) {
       return true
     } else {
+      store.commit('alert/ADD_PERMISSION_DENIED')
       return false
     }
   } catch {

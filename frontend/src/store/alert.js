@@ -16,6 +16,15 @@ export default {
       // eslint-disable-next-line no-undef
       UIkit.scroll(null, { offset: 300 }).scrollTo('#alerts')
     },
+    ADD_PERMISSION_DENIED (state) {
+      this.commit('alert/ADD_ALERT', {
+        header: true,
+        headerContent: 'Accès refusé',
+        body: 'Vous n’avez pas la permission d‘accéder à cette ressource, merci de contacter un administrateur si vous pensez qu’il s’agit d’une erreur.',
+        status: 'warning',
+        close: true
+      })
+    },
     ADD_404 (state) {
       this.commit('alert/ADD_ALERT', {
         id: state.alertId,

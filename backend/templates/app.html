@@ -1,14 +1,21 @@
-{% extends "base.html" %}
-{% load static %}
-{% load render_bundle from webpack_loader %}
-
-{% block title %}Commander
-{% endblock title %}
-
-{% block content %}
-<div id="app">
-
-</div>
-{% render_bundle 'app' %}
-{% endblock content %}
-
+{% load static %} {% load render_bundle from webpack_loader %}
+<!DOCTYPE html>
+<html lang="fr" style="padding: 0; margin: 0; height: 100%;">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      type="image/ico"
+      href="{% static 'Images/favicon.ico' %}"
+    />
+    <link rel="stylesheet" href="{% static 'CSS/uikit/uikit.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'Fontawesone/css/all.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'CSS/style.css' %}" />
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+  <script src="{% static 'JS/uikit/uikit.min.js' %}"></script>
+  <script src="{% static 'JS/uikit/uikit-icons.min.js' %}"></script>
+  {% render_bundle "app" %}
+</html>

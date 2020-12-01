@@ -1,0 +1,7 @@
+mutation orderAdd($application: ID!, $amounts: [CreateAmountInput]!) {
+  createOrder(input: { application: $application, amountSetAdd: $amounts }) {
+    order {
+      id
+    }
+  }
+}

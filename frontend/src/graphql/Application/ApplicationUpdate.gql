@@ -1,0 +1,11 @@
+#import "./Fragment/ApplicationFullFragment.gql"
+
+mutation applicationUpdate($id: ID!, $name: String!, $description: String!) {
+  updateApplication(
+    input: { id: $id, name: $name, description: $description }
+  ) {
+    application {
+      ...ApplicationFullFragment
+    }
+  }
+}

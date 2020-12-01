@@ -19,6 +19,7 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.views.i18n import JavaScriptCatalog
+from django.views.decorators.csrf import csrf_exempt
 
 
 from django.contrib.sitemaps.views import sitemap
@@ -26,11 +27,10 @@ from django.contrib import admin
 from django.contrib.flatpages import views
 from django.views.generic import TemplateView
 from graphene_django.views import GraphQLView
-
+from graphene_file_upload.django import FileUploadGraphQLView
 
 from backend.article import views as a_views
 from backend.article.sitemaps import StaticViewSitemap
-from backend.article.views import home
 from backend.api.apps import ApiConfig
 
 
@@ -39,8 +39,7 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path("", home, {"filtered": "Public"}, name="home"),
-    path('admin/', admin.site.urls),
+    url(r'^admin/?', admin.site.urls),
     path('compte/', include("backend.registration.urls")),
     path('article/', include("backend.article.urls")),
     path('evenement/', include("backend.event.urls")),
@@ -48,7 +47,7 @@ urlpatterns = [
     path('a-propos-du-site/', views.flatpage,
          {'url': "/a-propos-du-site/"}, name="a_propos"),
     path('carousel/', include("backend.carousel.urls")),
-    path("cafe/", include("backend.coffee.urls")),
+    # path("cafe/", include("backend.coffee.urls")),
     path('pate/', include("backend.pasta.urls")),
     path('parametre/', include('backend.stats.urls')),
     path('pages/', include('django.contrib.flatpages.urls')),
@@ -67,7 +66,10 @@ urlpatterns = [
     url(r'^robots.txt$', TemplateView.as_view(template_name="robots.txt",
                                               content_type="text/plain"), name="robots_file"),
 
-    path('graphql/', GraphQLView.as_view(graphiql=True))
+    url(r'^graphql/?', csrf_exempt(FileUploadGraphQLView.as_view(graphiql=True))),
+    url(r'^#*$', TemplateView.as_view(template_name='app.html')),
+    url(r'', include(('backend.application.urls',
+                        'application'), namespace='application')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

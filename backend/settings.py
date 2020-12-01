@@ -91,6 +91,11 @@ TEMPLATES = [
     },
 ]
 
+AUTHENTIFICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend'
+]
+
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
@@ -179,9 +184,9 @@ PHONENUMBER_DEFAULT_REGION = 'FR'
 # WebPack Loader configuration
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'CACHE': DEBUG,
+        'CACHE': not DEBUG,
         'BUNDLE_DIR_NAME': '/bundles/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'frontend', 'webpack-stats.json')
+        'STATS_FILE': os.path.join(BASE_DIR, 'frontend', 'dist', 'webpack-stats.json')
     }
 }
 
@@ -194,5 +199,8 @@ REST_FRAMEWORK = {
 
 # Graphene configuration
 GRAPHENE = {
-    "SCHEMA": "backend.schema.schema"
+    'SCHEMA': 'backend.schema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware'
+    ]
 }

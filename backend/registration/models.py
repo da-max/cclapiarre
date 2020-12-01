@@ -7,7 +7,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 class Information(Model) :
 
-    user = ForeignKey(User, verbose_name="Utilisateur", on_delete=CASCADE)
+    user = ForeignKey(User, verbose_name="Utilisateur", on_delete=CASCADE, related_name='information')
     phone_number = PhoneNumberField(verbose_name="Numéro de téléphone")
 
     def __str__(self):

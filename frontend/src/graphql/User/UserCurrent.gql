@@ -1,0 +1,12 @@
+#import "./Fragment/UserFullFragment.gql"
+
+query UserCurrent {
+  user {
+    ...UserFullFragment
+    isSuperuser
+    groups {
+      id
+      name
+    }
+  }
+}

@@ -1,0 +1,4 @@
+fragment ApplicationImageFragment on ApplicationImageType {
+  alt
+  image
+}

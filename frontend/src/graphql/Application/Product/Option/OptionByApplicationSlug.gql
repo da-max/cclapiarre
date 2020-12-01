@@ -1,0 +1,11 @@
+#import "./OptionFragment.gql"
+
+query OptionByApplicationSlug($applicationSlug: String!) {
+  allOptions(application_Slug: $applicationSlug) {
+    edges {
+      node {
+        ...OptionFragment
+      }
+    }
+  }
+}

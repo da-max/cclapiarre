@@ -1,0 +1,11 @@
+#import "./ProductFragment.gql"
+
+query ProductByApplicationSlug($application: String!) {
+  allProduct(application_Slug: $application) {
+    edges {
+      node {
+        ...ProductFragement
+      }
+    }
+  }
+}

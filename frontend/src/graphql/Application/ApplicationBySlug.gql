@@ -1,0 +1,7 @@
+#import "./Fragment/ApplicationFullFragment.gql"
+
+query ApplicationBySlug($slug: String!) {
+  applicationBySlug(slug: $slug) {
+    ...ApplicationFullFragment
+  }
+}

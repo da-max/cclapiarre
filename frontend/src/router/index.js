@@ -1,104 +1,79 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
+import Vue from 'vue'
+import VueRouter from 'vue-router'
 
-Vue.use(VueRouter);
+import Home from '../views/Home.vue'
+import { loginRequired, utilsBeforeEach, utilsAfterEach, applicationPermissionRequired } from '@/router/utils'
+
+const CONNECTION_URL = '/compte/connexion'
+
+Vue.use(VueRouter)
 
 const routes = [
   {
-    path: "/cafe/commander-du-cafe",
-    name: "coffee_command",
-    component: function() {
-      return import("../views/CoffeeCommand.vue");
-    },
+    path: '/',
+    name: 'Home',
+    component: Home
   },
   {
-    path: "/agrumes/commander-des-agrumes",
-    name: "citrus_command",
-    component: function() {
-      return import("../views/CitrusCommand.vue");
-    },
-  },
-  {
-    path: "/agrumes/liste-des-produits",
-    name: "citrus_list_product",
-    component: function() {
-      return import("../views/CitrusProductList.vue");
-    },
-  },
-  {
-    path: "/agrumes/modifier-un-produit/:product_id",
-    name: "citrus_update_product",
-    component: function() {
-      return import("../views/CitrusProductUpdate.vue");
-    },
-  },
-  {
-    path: "/agrumes/ajouter-un-produit",
-    name: "citrus_add_product",
-    component: function() {
-      return import("../views/CitrusProductAdd.vue");
-    },
-  },
-  {
-    path: "/pate/commander-des-pates",
-    name: "pasta_command",
-    component: function() {
-      return import("../views/PastaCommand.vue");
-    },
-  },
-  {
-    path: "/cafe/liste-des-commandes",
-    name: "coffee_list",
-    component: function() {
-      return import("../views/CoffeeCommandList.vue");
-    },
-  },
-  {
-    path: "**",
-    redirect: (to) => {
-      window.location.href = "/";
-    },
-  },
-  /* '../views/About.vue')
-    }
-  },
-  {
-    path: '/a',
-    name: 'pageA',
-    component: function () {
-      return import('../views/PageA.vue')
-    },
-    children: [
-      {
-        path: 'c',
-        name: 'a.c',
-        component: PageC
-      },
-      {
-        path: 'b',
-        name: 'a.b',
-        component: PageB
-      }
-    ]
-  }, 
-  {
-    path: '*',
-    redirect: '/'
-  }*/
-  /*{
     path: '/about',
-    name: 'about',
+    name: 'About',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: function () {
-      return import(/* webpackChunkName: "about" */
-];
+    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+  },
+  {
+    path: '/compte/liste-des-adherents',
+    name: 'MemberList',
+    component: () => import(/* webpackChunkName: "member-list" */ '../views/Registration/MemberList.vue'),
+    meta: { loginRequired: true }
+  },
+  {
+    path: '/compte/connexion',
+    name: 'Login',
+    component: () => import(/* webpackChunkName: "login" */ '../views/Registration/Login.vue')
+  },
+  {
+    path: '/:application/commander',
+    name: 'ApplicationOrder',
+    component: () => import(/* webpackChunkName: "application-order" */ '../views/Application/Product/Order.vue'),
+    props: route => ({ applicationSlug: route.params.application }),
+    meta: { loginRequired: true, applicationPermission: 'members' },
+    children: [
+      {
+        path: 'creer',
+        name: 'ApplicationProductCreate',
+        components: {
+          default: () => import(/* webpackChunkName: "application-order" */ '../views/Application/Product/Order.vue'),
+          modal: () => import(/* webpackChunkName: "application-product-create" */ '../components/Application/Order/Section/Product/ProductFormModal.vue')
+        }
+      }
+    ]
+  }
+]
 
 const router = new VueRouter({
-  mode: "history",
-  base: "/",
   routes,
-});
+  mode: 'hash'
+})
 
-export default router;
+router.beforeEach(async (to, from, next) => {
+  utilsBeforeEach()
+  let go = true
+
+  if (to.matched.some(record => record.meta.loginRequired)) {
+    console.log(to.matched)
+    go = await loginRequired(to, from)
+  }
+
+  if (to.matched.some(record => record.meta.applicationPermission) && go) {
+    go = await applicationPermissionRequired(to, from, to.meta.applicationPermission)
+  }
+
+  go ? next() : next(`${CONNECTION_URL}?next=${to.path}`)
+})
+
+router.afterEach((_to, _from) => {
+  utilsAfterEach()
+})
+export default router

@@ -299,7 +299,7 @@ class Amount(models.Model):
         None
         """
         try:
-            assert self.product.get_amount_available() < self.amount
+            assert self.product.get_amount_available() > self.amount
         except AssertionError:
             raise ValidationError(
                 f"La quantité maximale commandable pour le produit : {self.product} est de {self.product.get_amount_available()}, merci de réessayer.")

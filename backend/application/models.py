@@ -10,12 +10,16 @@ from ckeditor.fields import RichTextField
 
 
 class ApplicationImage(models.Model):
-    """ ApplicationImage model is use by Application model
+    """
+    ApplicationImage model is use by Application model
     for display images on Command view of each application.
 
-    Fields:
-        alt --- CharField, text display in alternative, if image cannot be displayed.
-        image --- ImageField, image display on command view.
+    Attributes
+    ----------
+    alt : str
+        CharField, text display in alternative, if image cannot be displayed.
+    image : Image
+        ImageField, image display on command view.
     """
     alt = models.CharField(verbose_name="Texte alternatif", max_length=60,
                            help_text="Texte affiché si l’image ne peut pas être affichée.")
@@ -29,12 +33,16 @@ class ApplicationImage(models.Model):
 
 
 class Application(models.Model):
-    """ Application model, this model is use by many of the following models
+    """ 
+    Application model, this model is use by many of the following models
     because it describes the core of the created application.
 
-    Fields:
-        name --- CharField,
-        description --- RichTextField for better styling.
+    Attributes
+    ----------
+    name : str
+        Name of application.
+    description : str
+        HTML text for describe application.
     """
     name = models.CharField(
         verbose_name="Nom de l’application", max_length=60, unique=True)
@@ -57,10 +65,13 @@ class Application(models.Model):
 
 
 class Option(models.Model):
-    """ Option model is use by Product Model for define option for product.
+    """
+    Option model is use by Product Model for define option for product.
 
-    Fields:
-        name --- CharField
+    Attributes
+    ---------
+    name : str
+        Name of option.
     """
     application = models.ForeignKey(
         Application, on_delete=models.CASCADE, verbose_name='Application de l’option')
@@ -71,10 +82,19 @@ class Option(models.Model):
 
 
 class Weight(models.Model):
-    """ Weight model define all weights and price for all products.
+    """
+    Weight model define all weights and price for all products.
 
-
-
+    Attributes
+    ----------
+    application : int
+        ForeignKey to Application model.
+    weight : float
+        Float for define weight of product
+    unit : str
+        Char unit of the weight
+    price : float
+        Float for define price for this weight
     """
     application = models.ForeignKey(
         Application, on_delete=models.CASCADE, verbose_name="Application des poids", related_name='weights')
@@ -91,18 +111,34 @@ class Weight(models.Model):
 
 
 class Product(models.Model):
-    """ Product model define all products for all applications.
+    """
+    Product model define all products for all applications.
 
+    Attributes
+    ----------
+    name : str
+        CharField, name of product
+    application : int
+        ForeignKey to Application model for define to what application this product is use.
+    weights : [int]
+        ManyToManyField to Weight Model to define which weights are available for this product
+    description : str 
+        HTML text to describe the product.
+    display : bool
+        BooleanField to define if this product is display and orderable.
+    options : [int]
+        ManyToManyField to define options for this product.
+    maximum : int
+        IntegerField for define maximum amount orderable by member.
+    maximum_all : int
+        IntegerField for define maximum amount orderable by all members.
 
-    Fields:
-        name --- CharField, name of product
-        application --- ForeignKey to Application model for define to what application this product is use.
-        weights ---  ManyToManyField to Weight Model to define which weights are available for this product
-        description --- RichTextField to describe the product.
-        display --- BooleanField to define if this product is display and orderable.
-        options --- ManyToManyField to define options for this product.
-        maximum --- IntergerField for define maximum amount orderable by member.
-        maximum_all --- IntergerField for define maximum amount orderable by all members.
+    Methods
+    -------
+    get_amount_product_ordered() -> float:
+        Method for get amount of order for this product.
+    get_amount_product_available() -> float:
+        Method for get amount available.
     """
     name = models.CharField(verbose_name="Nom du produit", max_length=60)
     application = models.ForeignKey(
@@ -127,17 +163,54 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'Produit'
 
-    def get_amount_product_ordered(self):
+    def get_amount_product_ordered(self) -> float:
+        """ Method for get amount of order for this product
+
+        Parameters
+        ----------
+        None
+        Returns
+        -------
+        float: amount of order.
+        """
         number_amounts = 0
         for amount in self.amounts.all():
             number_amounts += amount.amount
         return number_amounts
 
-    def get_amount_available(self):
+    def get_amount_available(self) -> float:
+        """
+        Method for send amount available for this product 
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ------- 
+        float: amount available.
+        """
         return self.maximum_all - self.get_amount_product_ordered()
 
 
 class Order(models.Model):
+    """
+    Order model define order of products
+
+    Attributes
+    ----------
+    user : int
+        ForeignKey to django.contrib.auth.models.User model.
+    application : int 
+        ForeignKey to Application model.
+    products : [int]
+         ManyToMany to Product with through Amount.
+
+    Methods
+    -------
+    get_price() -> float:
+        Method for compute price of order.
+    """
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="order")
     application = models.ForeignKey(
@@ -151,7 +224,18 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Commande'
 
-    def get_price(self):
+    def get_price(self) -> float:
+        """
+        Methods for compute price of order.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        float: price of order.
+        """
         price = 0
         for amount in self.products.through.objects.filter(order=self):
             price += amount.amount * amount.weight.price
@@ -159,6 +243,29 @@ class Order(models.Model):
 
 
 class Amount(models.Model):
+    """
+    Amount model is use by ManyToMany field products in Order model
+
+    Attributes
+    ----------
+    product : int
+        ForeignKey to Product model.
+    order : int
+        ForeignKey to Order model.
+    amount : float
+        Float for define Amount of product.
+    weight : int 
+        ForeignKey to Weight model for define weight selected by the user for this product.
+    option : int, optional
+        ForeignKey to Option model for define option selected by the user for this product.
+
+    Methods
+    -------
+    save(*args, **kwargs):
+        Save Amount.
+    get_price():
+        Method for get price for this amount.
+    """
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, verbose_name="Produit commandé", related_name="amounts")
     order = models.ForeignKey(
@@ -175,12 +282,36 @@ class Amount(models.Model):
     def __str__(self) -> str:
         return f"{self.product}, {self.amount}"
 
-    def save(self, *args, **kwargs):
-        if self.product.get_amount_available() >= self.amount:
-            super().save(*args, **kwargs)
-        else:
+    def save(self, *args, **kwargs) -> None:
+        """
+        Method for save Amount.
+
+        Parameters
+        ----------
+        None
+
+        Raise
+        -----
+        ValidationError : If the amount_available for product order is lower to amount.
+
+        Returns
+        -------
+        None
+        """
+        try:
+            assert self.product.get_amount_available() < self.amount
+        except AssertionError:
             raise ValidationError(
                 f"La quantité maximale commandable pour le produit : {self.product} est de {self.product.get_amount_available()}, merci de réessayer.")
+        else:
+            super().save(*args, **kwargs)
 
     def get_price(self) -> float:
+        """
+        Method for compute price with the amount.
+
+        Returns
+        -------
+        float: price for this order.
+        """
         return self.weight.price * self.amount

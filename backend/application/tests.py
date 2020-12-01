@@ -10,8 +10,7 @@ class ApplicationTestCase(GraphQLTestCase):
       query {
         allApplications {
           id,
-          name,
-          table
+          name
         }
       }
       ''')

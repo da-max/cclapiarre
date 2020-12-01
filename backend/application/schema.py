@@ -21,24 +21,37 @@ from backend.registration.decorators import check_application_permission_by_slug
 # =========
 
 class ApplicationImageType(DjangoObjectType):
+    """GraphQl type for ApplicationImage model."""
     class Meta:
         model = ApplicationImage
         fields = '__all__'
 
 
 class ApplicationType(DjangoObjectType):
+    """
+    GraphQl type for Application model.
+
+    Methods
+    -------
+    resolve_members() -> User:
+        Method for customise resolve of members fields and check if user is authenticated.
+    resolve_admins() -> User:
+        Method for customise resolve of admins and check if user is authenticated.
+    """
     class Meta:
         model = Application
         fields = '__all__'
 
-    def resolve_members(self, info):
+    def resolve_members(self, info) -> User:
+        """ Method for customise resolve of members and check if user is authenticated. """
         members = User.objects.filter(member_application=self)
         if info.context.user.is_authenticated:
             return members
         else:
             return members.only('id')
 
-    def resolve_admins(self, info):
+    def resolve_admins(self, info) -> User:
+        """ Method for customise resolve of admins and check if user is authenticated. """
         if info.context.user.is_authenticated:
             return User.objects.filter(admin_application=self)
         else:
@@ -46,6 +59,7 @@ class ApplicationType(DjangoObjectType):
 
 
 class OptionType(DjangoObjectType):
+    """GraphQl type for Option model."""
     class Meta:
         model = Option
         fields = '__all__'
@@ -54,12 +68,25 @@ class OptionType(DjangoObjectType):
 
 
 class AmountType(DjangoObjectType):
+    """GraphQl type for Amount model."""
     class Meta:
         model = Amount
         fields = '__all__'
 
 
 class OrderType(DjangoObjectType):
+    """
+    GraphQl type for Order model.
+
+    Attributes
+    ----------
+    user_full : graphene.Field
+
+    Methods
+    -------
+    resolve_user_full() -> User:
+        Method for resolve user_full field and get all info of User.
+    """
     class Meta:
         interfaces = (Node, )
         model = Order
@@ -68,11 +95,12 @@ class OrderType(DjangoObjectType):
 
     user_full = graphene.Field(UserLargeType)
 
-    def resolve_user_full(self, info):
+    def resolve_user_full(self, info) -> User:
         return User.objects.filter(order=self).get(id=self.user.id)
 
 
 class ProductType(DjangoObjectType):
+    """GraphQl type for Product model."""
     class Meta:
         interfaces = (Node, )
         model = Product
@@ -82,6 +110,7 @@ class ProductType(DjangoObjectType):
 
 
 class WeightType(DjangoObjectType):
+    """GraphQl type for Weight model."""
     class Meta:
         interfaces = (Node, )
         model = Weight
@@ -93,12 +122,14 @@ class WeightType(DjangoObjectType):
 # ==========
 
 class CreateProductMutation(DjangoCreateMutation):
+    """GraphQl mutation for create Product."""
     class Meta:
         model = Product
         login_required = True
 
 
 class CreateAmountMutation(DjangoCreateMutation):
+    """GraphQl mutation for create Amount."""
     class Meta:
         model = Amount
         login_required = True
@@ -106,6 +137,14 @@ class CreateAmountMutation(DjangoCreateMutation):
 
 
 class CreateOrderMutation(DjangoCreateMutation):
+    """
+    GraphQl mutation for create Order.
+
+    Methods
+    -------
+    mutate() -> dict:
+        Methods for customise mutate of Order.
+    """
     class Meta:
         model = Order
         login_required = True
@@ -117,7 +156,8 @@ class CreateOrderMutation(DjangoCreateMutation):
         }
 
     @classmethod
-    def mutate(cls, root, info, **input):
+    def mutate(cls, root, info, **input) -> dict:
+        """Methods for customise mutate of Order."""
         products = Product.objects.filter(display=True)
         options = Option.objects.all()
         weights = Weight.objects.all()
@@ -130,6 +170,7 @@ class CreateOrderMutation(DjangoCreateMutation):
 
         amounts = input['input'].pop('amount_set_add')
         for amount in amounts:
+            # from_global_id is use because input contains id generate by the Node interface.
             weight = weights.get(id=from_global_id(amount['weight'])[1])
             product = products.get(id=from_global_id(amount['product'])[1])
 
@@ -144,12 +185,14 @@ class CreateOrderMutation(DjangoCreateMutation):
 
 
 class CreateOptionMutation(DjangoCreateMutation):
+    """GraphQl mutation for create Option."""
     class Meta:
         model = Option
         login_required = True
 
 
 class CreateWeightMutation(DjangoCreateMutation):
+    """GraphQl mutation for create Weight."""
     class Meta:
         model = Weight
         login_required = True
@@ -157,7 +200,7 @@ class CreateWeightMutation(DjangoCreateMutation):
 
 
 class UpdateApplication(DjangoModelFormMutation):
-
+    """GraphQl mutation for update Application."""
     application = graphene.Field(ApplicationType)
 
     class Meta:
@@ -165,6 +208,7 @@ class UpdateApplication(DjangoModelFormMutation):
 
 
 class UpdateProductMutation(DjangoUpdateMutation):
+    """ GraphQl mutation for update Product. """
     class Meta:
         model = Product
         login_required = True

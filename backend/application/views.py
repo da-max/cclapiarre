@@ -1,18 +1,30 @@
-from django.shortcuts import render, Http404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.dispatch import Signal, receiver
+from django.shortcuts import render, Http404
 from django.template.loader import get_template
+from django.template.response import TemplateResponse
 
 from django_xhtml2pdf.utils import pdf_decorator
 
-from backend.mail import async_send_mail
 from backend.application.models import Order
+from backend.mail import async_send_mail
 
 order_added = Signal()
 
 
 @receiver(order_added)
-def send_confirm_order_mail(sender, order, create=True, **kwargs):
+def send_confirm_order_mail(sender, order: Order, create: bool = True, **kwargs) -> None:
+    """ Signal for send mail when an order is confirm.
+
+    Parameters
+    ----------
+    sender : class
+        Class when the signal is called.
+    order : Order
+        Order saves.
+    create : bool, optional
+        Is True if the order has been created.
+    """
     html_content = get_template(
         'application/mail/confirm_order.html').render({
             'order': order,
@@ -26,7 +38,19 @@ def send_confirm_order_mail(sender, order, create=True, **kwargs):
 @ login_required
 @ permission_required('application.view_order')
 @ pdf_decorator(pdfname='order.pdf')
-def pdf_list_order(request, slug_application):
+def pdf_list_order(request, slug_application: str) -> TemplateResponse:
+    """ View for generate PDF files for summarize all orders of an application.
+
+    Parameters
+    ----------
+    request : Request
+    slug_application : str
+        slug of application to generate summarize.
+
+    Returns
+    -------
+    TemplateResponse.
+    """
     orders = dict()
     try:
         order = Order.objects.filter(

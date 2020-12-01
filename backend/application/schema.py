@@ -12,6 +12,7 @@ from graphene_django_cud.mutations import DjangoCreateMutation, DjangoUpdateMuta
 
 from backend.application.models import Application, ApplicationImage, \
     Option, Order, Product, Weight, Amount
+from backend.application.views import order_added
 from backend.application.forms import ApplicationForm, ProductForm
 from backend.registration.schema import UserType, UserLargeType
 from backend.registration.decorators import check_application_permission_by_slug
@@ -158,12 +159,12 @@ class CreateOrderMutation(DjangoCreateMutation):
     @classmethod
     def mutate(cls, root, info, **input) -> dict:
         """Methods for customise mutate of Order."""
-        products = Product.objects.filter(display=True)
-        options = Option.objects.all()
-        weights = Weight.objects.all()
-
         application = Application.objects.get(
             id=input['input']['application'])
+
+        products = Product.objects.filter(display=True)
+        options = Option.objects.filter(application=application.id)
+        weights = Weight.objects.filter(application=application.id)
 
         order = Order.objects.get_or_create(
             user=info.context.user, application=application)
@@ -181,6 +182,7 @@ class CreateOrderMutation(DjangoCreateMutation):
             else:
                 amount = Amount.objects.update_or_create(
                     product=product, weight=weight, order=order[0], defaults={'amount': amount['amount']})
+        order_added.send(sender=cls.__class__, order=order[0], create=order[1])
         return {'order': order[0]}
 
 

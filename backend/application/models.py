@@ -169,6 +169,7 @@ class Product(models.Model):
         Parameters
         ----------
         None
+
         Returns
         -------
         float: amount of order.

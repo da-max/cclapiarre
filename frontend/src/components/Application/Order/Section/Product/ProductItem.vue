@@ -1,35 +1,23 @@
 <template>
   <UtilsCard mediaPos="bottom">
     <template #media>
-      <div class="uk-transition-toggle uk-inline-clip" tabindex="0">
+      <div
+        v-if="product.node.image"
+        class="uk-transition-toggle uk-inline-clip"
+        tabindex="0"
+      >
         <img :src="'/media/' + product.node.image" alt="" />
-        <div
+        <ProductItemInformation
+          :weights="product.node.weights"
+          :options="product.node.options"
           class="uk-transition-fade uk-position-cover uk-overlay uk-overlay-default uk-overflow-auto"
-        >
-          <div class="uk-text-center">
-            <h5>Poids disponible</h5>
-            <ul class="uk-list">
-              <li
-                v-for="weight in product.node.weights.edges"
-                :key="weight.node.id"
-              >
-                {{ weight.node.weight }} {{ weight.node.unit }} pour
-                {{ weight.node.price }} €
-              </li>
-            </ul>
-          </div>
-          <div v-if="product.node.options.edges.length !== 0">
-            <h5>Options disponible</h5>
-            <ul class="uk-list">
-              <li
-                v-for="option in product.node.options.edges"
-                :key="option.node.id"
-              >
-                {{ option.node.name }}
-              </li>
-            </ul>
-          </div>
-        </div>
+        />
+      </div>
+      <div v-else>
+        <ProductItemInformation
+          :weights="product.node.weights"
+          :options="product.node.options"
+        />
       </div>
     </template>
     <template #body>
@@ -48,7 +36,7 @@
           id="addProductButton"
           >Commander ce produit</UtilsButton
         >
-        <UtilsButton type="text" v-if="isAdmin($route.params.application)" @click="updateProduct"
+        <UtilsButton type="text" v-if="isAdmin" @click="updateProduct"
           >Modifier le produit</UtilsButton
         >
       </div>
@@ -63,15 +51,19 @@
 </template>
 
 <script>
+import useApplication from '@/composition/application/useApplication'
+import useOrder from '@/composition/application/useOrder'
+
 import UtilsCard from '@/components/Utils/UtilsCard'
 import UtilsButton from '@/components/Utils/UtilsButton'
-import { mapGetters, mapMutations } from 'vuex'
+import ProductItemInformation from '@/components/Application/Order/Section/Product/ProductItemInformation'
 
 export default {
   name: 'ProductItem',
   components: {
     UtilsCard,
-    UtilsButton
+    UtilsButton,
+    ProductItemInformation
   },
   props: {
     product: {
@@ -79,19 +71,15 @@ export default {
       type: Object
     }
   },
-  methods: {
-    ...mapMutations({ addProductOrder: 'order/ADD_PRODUCT_ORDER' }),
-    addProduct (product) {
-      // eslint-disable-next-line no-undef
-      UIkit.scroll('#addProductButton', { offset: 100 }).scrollTo('#order-list')
-      this.addProductOrder(product)
-    },
-    updateProduct () {
-      this.$emit('update-product', this.product)
+  setup (props, { emit, root }) {
+    const { isAdmin } = useApplication(root.$route.params.application)
+
+    const { addProductOrder } = useOrder()
+
+    const updateProduct = () => {
+      emit('update-product', props.product)
     }
-  },
-  computed: {
-    ...mapGetters({ isAdmin: 'application/isAdmin' })
+    return { isAdmin, addProductOrder, updateProduct }
   }
 }
 </script>

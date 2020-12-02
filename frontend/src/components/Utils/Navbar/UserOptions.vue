@@ -11,7 +11,7 @@
           v-for="userOptionItem in userOptionsItems"
           :key="userOptionItem.title"
         >
-          <a href="">{{ userOptionItem.title }}</a>
+          <router-link :to="userOptionItem.link">{{ userOptionItem.title }}</router-link>
         </li>
         <li>
           <a href="#" type="button" @click.prevent="logout">Déconnexion</a>
@@ -31,7 +31,7 @@
           v-for="userOptionItem in userOptionsItems"
           :key="userOptionItem.title"
         >
-          <a href="">{{ userOptionItem.title }}</a>
+          <router-link :to="userOptionItem.link">{{ userOptionItem.title }}</router-link>
         </li>
         <li>
           <a href="#" type="button" @click.prevent="logout()">Déconnexion</a>
@@ -49,12 +49,8 @@ export default {
     return {
       userOptionsItems: [
         {
-          title: 'Changer de mot de passe',
-          link: '#'
-        },
-        {
           title: 'Changer d’utilisateur',
-          link: '#'
+          link: { name: 'Login' }
         }
       ]
     }

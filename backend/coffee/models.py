@@ -91,7 +91,8 @@ class Coffee(Model):
     available_type : [int]
         Listing of type available for this coffee. ManyToManyField for Type model.
     """
-    origin = ForeignKey(Origin, on_delete=CASCADE)
+    origin = ForeignKey(Origin, on_delete=CASCADE,
+                        related_name="coffee", verbose_name="Origine du café")
     farm_coop = CharField(max_length=200, verbose_name="Ferme/Coopérative")
     region = CharField(max_length=200, verbose_name="Région du café")
     description = RichTextField(
@@ -107,7 +108,8 @@ class Coffee(Model):
                            help_text="Cocher cette case pour que le café soit affiché sur le tableau de la commande.")
     maximum = IntegerField(
         default=100, verbose_name="Quantité maximal commandable par utilisateur")
-    available_type = ManyToManyField(Type)
+    available_type = ManyToManyField(
+        Type, related_name="coffee", verbose_name="Mouture disponible")
 
     def __str__(self):
         """ Display origin name and price. """

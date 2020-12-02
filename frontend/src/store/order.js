@@ -77,7 +77,7 @@ export default {
           {
             header: true,
             headerContent: 'Commande enregistrée !',
-            body: 'Votre commande a bien été enregistrée !',
+            body: 'Votre commande a bien été enregistrée, un mail va vous être envoyé afin de confirmer votre commande !',
             status: 'success',
             close: true
           },

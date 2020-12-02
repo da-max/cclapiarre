@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="uk-text-center">
+    <div class="uk-text-center uk-margin-medium-bottom">
       <a
         class="uk-button uk-button-secondary"
         v-show="isAdmin"

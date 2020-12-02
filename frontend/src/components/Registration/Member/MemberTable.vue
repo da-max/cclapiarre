@@ -1,36 +1,50 @@
 <template>
-  <UtilsTable v-if="loading === false">
+  <UtilsTable v-if="loading === false" :middle="true">
     <template #head>
       <th v-for="headerItem in headerItems" :key="headerItem">
         {{ headerItem }}
       </th>
     </template>
     <template #body>
-      <tr v-for="member in result.allInformationsUsers" :key="member.id">
-        <td>
-          {{ member.user.lastName }}
+      <tr v-for="member in result.users" :key="member.id">
+        <td v-if="member.lastName">
+          {{ member.lastName }}
         </td>
-        <td>
-          {{ member.user.firstName }}
+        <td v-else>
+          Non défini
         </td>
-        <td>
-          {{ member.user.email }}
+        <td v-if="member.firstName">
+          {{ member.firstName }}
         </td>
-        <td>{{ member.phoneNumber }}</td>
+        <td v-else>
+          Non défini
+        </td>
+        <td v-if="member.email">
+          {{ member.email }}
+        </td>
+        <td v-else>
+          Non défini
+        </td>
+        <td v-if="member.phoneNumber">
+          {{ member.phoneNumber }}
+        </td>
+        <td v-else>
+          Non défini
+        </td>
       </tr>
     </template>
   </UtilsTable>
 </template>
 
 <script>
+import { useUtilsQuery } from '@/composition/useUtils'
 import UtilsTable from '@/components/Utils/UtilsTable'
-import { useQuery } from '@vue/apollo-composable'
 
-import MemberAll from '@/graphql/Member/MemberAll.gql'
+import MEMBER_ALL from '@/graphql/Member/MemberAll.gql'
 
 export default {
   setup (props) {
-    const { result, loading } = useQuery(MemberAll)
+    const { result, loading } = useUtilsQuery(MEMBER_ALL)
     return { result, loading }
   },
   data () {

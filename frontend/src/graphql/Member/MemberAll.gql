@@ -1,12 +1,10 @@
+#import "../User/Fragment/UserFullFragment.gql"
+
 query MembersAll {
-  allInformationsUsers {
-    id
-    user {
-      email
-      username
-      firstName
-      lastName
+  users {
+    ...UserFullFragment
+    information {
+      phoneNumber
     }
-    phoneNumber
   }
 }

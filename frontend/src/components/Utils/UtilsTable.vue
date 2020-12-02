@@ -5,7 +5,8 @@
       {
         'uk-table-divider': divider,
         'uk-table-striped': striped,
-        'uk-table-hover': hover
+        'uk-table-hover': hover,
+        'uk-table-middle': middle
       },
     ]"
   >
@@ -47,6 +48,11 @@ export default {
     },
     hover: {
       default: true,
+      required: false,
+      type: Boolean
+    },
+    middle: {
+      default: false,
       required: false,
       type: Boolean
     }

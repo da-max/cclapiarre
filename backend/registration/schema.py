@@ -87,7 +87,7 @@ class Logout(graphene.Mutation):
 
 
 class Query(graphene.ObjectType):
-    all_informations_users = graphene.List(
+    users = graphene.List(
         UserLargeType)
     user = graphene.Field(UserLargeType)
 
@@ -96,7 +96,7 @@ class Query(graphene.ObjectType):
         return info.context.user
 
     @login_required
-    def resolve_all_informations_users(self, info):
+    def resolve_users(self, info):
         return User.objects.all()
 
 

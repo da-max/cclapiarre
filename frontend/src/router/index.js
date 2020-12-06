@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Home from '../views/Home.vue'
 import { loginRequired, utilsBeforeEach, utilsAfterEach, applicationPermissionRequired } from '@/router/utils'
+import applicationRoutes from './application'
+import coffeeRoutes from './coffee'
 
 const CONNECTION_URL = '/compte/connexion'
 
@@ -12,7 +13,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: () => import(/* webpackChunkName: "home" */ '../views/Home.vue')
   },
   {
     path: '/about',
@@ -33,23 +34,8 @@ const routes = [
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '../views/Registration/Login.vue')
   },
-  {
-    path: '/:application/commander',
-    name: 'ApplicationOrder',
-    component: () => import(/* webpackChunkName: "application-order" */ '../views/Application/Product/Order.vue'),
-    props: route => ({ applicationSlug: route.params.application }),
-    meta: { loginRequired: true, applicationPermission: 'members' },
-    children: [
-      {
-        path: 'creer',
-        name: 'ApplicationProductCreate',
-        components: {
-          default: () => import(/* webpackChunkName: "application-order" */ '../views/Application/Product/Order.vue'),
-          modal: () => import(/* webpackChunkName: "application-product-create" */ '../components/Application/Order/Section/Product/ProductFormModal.vue')
-        }
-      }
-    ]
-  }
+  ...coffeeRoutes,
+  ...applicationRoutes
 ]
 
 const router = new VueRouter({

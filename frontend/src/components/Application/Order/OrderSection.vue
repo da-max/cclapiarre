@@ -11,7 +11,6 @@
         type="primary"
         class="uk-margin-medium-left"
         v-show="isAdmin"
-        :to="{ name: 'ApplicationProductCreate' }"
         @click="showProductFormModal"
         >Ajouter un produit</UtilsButton
       >

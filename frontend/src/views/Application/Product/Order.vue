@@ -9,7 +9,6 @@
     <OrderSection
       class="uk-margin-xlarge-top uk-width-4-5@m uk-margin-auto"
     />
-    <router-view name="modal"></router-view>
   </main>
 </template>
 
@@ -48,7 +47,6 @@ export default {
   },
   watch: {
     $route (to, from) {
-      console.log('route')
       this.getApplication()
     }
   }

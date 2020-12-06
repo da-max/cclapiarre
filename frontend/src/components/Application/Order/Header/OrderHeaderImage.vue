@@ -7,40 +7,19 @@
       class="uk-box-shadow-medium"
     />
   </div>
-  <div
-    v-else
-    uk-slider="center: true; autoplay: true"
-    tabindex="-1"
-    class="uk-position-relative uk-visible-toggle uk-light"
-  >
-    <ul class="uk-slider-items uk-grid" uk-height-match="target: > li > div > img">
-      <li class="uk-width-3-4" v-for="image in images" :key="image.image">
-        <div class="uk-panel">
-          <img :src="'/media/' + image.image" :alt="image.alt" />
-        </div>
-      </li>
-    </ul>
-    <a
-      class="uk-position-center-left uk-position-small uk-hidden-hover"
-      href="#"
-      uk-slidenav-previous
-      uk-slider-item="previous"
-    ></a>
-    <a
-      class="uk-position-center-right uk-position-small uk-hidden-hover"
-      href="#"
-      uk-slidenav-next
-      uk-slider-item="next"
-    ></a>
-  </div>
+  <UtilsSlider v-else base-url="/media/" :images="images" />
 </template>
 
 <script>
-import store from '@/store/index'
 import { computed } from '@vue/composition-api'
+import store from '@/store/index'
+import UtilsSlider from '@/components/Utils/UtilsSlider'
 
 export default {
   name: 'OrderHeaderImage',
+  components: {
+    UtilsSlider
+  },
   setup () {
     const images = computed(() => store.getters['application/applicationImage'])
     return {

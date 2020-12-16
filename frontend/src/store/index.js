@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import AuthModule from '@/store/auth'
-import AlertModule from '@/store/alert'
-import OrderModule from '@/store/order'
-import ApplicationModule from '@/store/application'
+import AuthModule from '@/store/utils/auth'
+import AlertModule from '@/store/utils/alert'
+import OrderModule from '@/store/application/order'
+import ApplicationModule from '@/store/application/application'
+import CoffeeModule from '@/store/coffee/coffee'
 
 Vue.use(Vuex)
 
@@ -28,6 +29,7 @@ export default new Vuex.Store({
     auth: AuthModule,
     alert: AlertModule,
     order: OrderModule,
-    application: ApplicationModule
+    application: ApplicationModule,
+    coffee: CoffeeModule
   }
 })

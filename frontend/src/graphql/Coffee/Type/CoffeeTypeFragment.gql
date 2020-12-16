@@ -1,0 +1,4 @@
+fragment CoffeeTypeFragment on CoffeeTypeType {
+  id
+  name
+}

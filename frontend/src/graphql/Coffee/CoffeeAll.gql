@@ -1,0 +1,11 @@
+#import "./CoffeeFragment.gql"
+
+query CoffeeAll {
+  coffee {
+    edges {
+      node {
+        ...CoffeeFragment
+      }
+    }
+  }
+}

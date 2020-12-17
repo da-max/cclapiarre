@@ -1,5 +1,5 @@
 from random import random
-from django.db.models import Model, ForeignKey, ManyToManyField, CASCADE
+from django.db.models import Model, ForeignKey, ManyToManyField, CASCADE, ImageField
 from django.db.models.fields import CharField, IntegerField, FloatField, BooleanField
 
 from django.contrib.auth.models import User
@@ -90,6 +90,8 @@ class Coffee(Model):
         Maximun of coffee command by on user. It's IntergerField by 100 default
     available_type : [int]
         Listing of type available for this coffee. ManyToManyField for Type model.
+    image : str
+        Path to image of coffee.
     """
     origin = ForeignKey(Origin, on_delete=CASCADE,
                         related_name="coffee", verbose_name="Origine du café")
@@ -110,6 +112,8 @@ class Coffee(Model):
         default=100, verbose_name="Quantité maximal commandable par utilisateur")
     available_type = ManyToManyField(
         Type, related_name="coffee", verbose_name="Mouture disponible")
+    image = ImageField(
+        "Image de présentation du café", upload_to="Images/Coffee", height_field=800, blank=True, null=True)
 
     def __str__(self):
         """ Display origin name and price. """

@@ -21,4 +21,5 @@ fragment CoffeeFragment on CoffeeType {
   kilogramPrice
   display
   maximum
+  image
 }

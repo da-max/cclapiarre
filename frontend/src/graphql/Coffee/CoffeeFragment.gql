@@ -15,6 +15,7 @@ fragment CoffeeFragment on CoffeeType {
   }
   farmCoop
   region
+  description
   process
   variety
   twoHundredGramPrice

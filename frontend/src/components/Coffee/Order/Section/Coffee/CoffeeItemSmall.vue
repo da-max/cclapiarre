@@ -36,7 +36,7 @@ import UtilsCard from '@/components/Utils/UtilsCard'
 import UtilsButton from '@/components/Utils/UtilsButton.vue'
 
 export default {
-  name: 'CoffeeItem',
+  name: 'CoffeeItemSmall',
   props: {
     coffee: {
       required: true,
@@ -46,11 +46,6 @@ export default {
   components: {
     UtilsCard,
     UtilsButton
-  },
-  setup () {
-    const log = () => console.log('hello world')
-
-    return { log }
   }
 }
 </script>

@@ -113,7 +113,7 @@ class Coffee(Model):
     available_type = ManyToManyField(
         Type, related_name="coffee", verbose_name="Mouture disponible")
     image = ImageField(
-        "Image de présentation du café", upload_to="Images/Coffee", height_field=800, blank=True, null=True)
+        "Image de présentation du café", upload_to="Images/Coffee/", blank=True, null=True)
 
     def __str__(self):
         """ Display origin name and price. """

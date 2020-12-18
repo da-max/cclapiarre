@@ -18,7 +18,6 @@ export default {
       commit('START_LOADING', null, { root: true })
       try {
         const response = await apolloClient.query({ query: COFFEE_ALL })
-        console.log(response)
         commit('SET_COFFEE', response.data.coffee.edges)
       } catch (e) {
         commit('alert/ADD_ALERT', {

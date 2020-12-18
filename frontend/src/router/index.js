@@ -48,7 +48,6 @@ router.beforeEach(async (to, from, next) => {
   let go = true
 
   if (to.matched.some(record => record.meta.loginRequired)) {
-    console.log(to.matched)
     go = await loginRequired(to, from)
   }
 

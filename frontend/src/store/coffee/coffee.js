@@ -26,7 +26,9 @@ export default {
           body: `Une erreur est survenue, merci de réessayer : ${e}`,
           status: 'error',
           close: true
-        })
+        }, { root: true })
+      } finally {
+        commit('END_LOADING', null, { root: true })
       }
     }
   }

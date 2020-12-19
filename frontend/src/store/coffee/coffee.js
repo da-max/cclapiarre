@@ -5,12 +5,31 @@ import COFFEE_ALL from '@/graphql/Coffee/CoffeeAll.gql'
 export default {
   namespaced: true,
   state: () => ({
-    coffees: []
+    coffees: [],
+    coffeeOrderedId: 0,
+    order: []
   }),
 
   mutations: {
     SET_COFFEE (state, coffees) {
       state.coffees = coffees
+    },
+    ADD_COFFEE_ORDER (state, coffee) {
+      state.order.push({
+        id: state.coffeeOrderedId,
+        coffee,
+        weight: null,
+        type: null,
+        amount: 0
+      })
+      state.coffeeOrderedId++
+    },
+    REMOVE_COFFEE_ORDER (state, orderId) {
+      state.order = state.order.filter((coffee) => coffee.id !== orderId)
+    },
+
+    SET_COFFEE_ORDER_WEIGHT (state, { orderId, weight }) {
+      state.order.find((coffee) => coffee.id === orderId).weight = weight
     }
   },
   actions: {

@@ -25,13 +25,15 @@
     </template>
     <template #footer>
       <div class="uk-text-center">
-        <UtilsButton>Ajouter ce produit à ma commande</UtilsButton>
+        <UtilsButton @click="addCoffeeOrder(coffee)">Ajouter ce produit à ma commande</UtilsButton>
       </div>
     </template>
   </UtilsCard>
 </template>
 
 <script>
+import useCoffee from '@/composition/coffee/useCoffee'
+
 import UtilsCard from '@/components/Utils/UtilsCard'
 import UtilsButton from '@/components/Utils/UtilsButton.vue'
 
@@ -46,6 +48,11 @@ export default {
   components: {
     UtilsCard,
     UtilsButton
+  },
+  setup () {
+    const { addCoffeeOrder } = useCoffee()
+
+    return { addCoffeeOrder }
   }
 }
 </script>

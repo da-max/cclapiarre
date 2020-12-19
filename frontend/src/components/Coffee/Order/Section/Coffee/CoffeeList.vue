@@ -72,7 +72,7 @@ export default {
       displaying: 'small',
       DISPLAYING_MODE: {
         'Affichage réduit': 'small',
-        'Afficher toutes les informations': 'full'
+        'Affichage détaillé': 'full'
       }
     })
 

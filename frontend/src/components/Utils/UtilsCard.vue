@@ -9,7 +9,7 @@
       },
     ]"
   >
-    <div class="uk-card-header" v-show="!mediaPos">
+    <div class="uk-card-header" v-show="!mediaPos && header">
       <slot name="header"></slot>
     </div>
     <div class="uk-card-body">
@@ -18,7 +18,7 @@
     <div v-show="mediaPos" :class="`uk-card-media-${mediaPos}`">
       <slot name="media"></slot>
     </div>
-    <div class="uk-card-footer">
+    <div class="uk-card-footer" v-if="footer">
       <slot name="footer"></slot>
     </div>
   </div>
@@ -47,6 +47,16 @@ export default {
       required: false,
       default: 'medium',
       type: String
+    },
+    header: {
+      required: false,
+      default: true,
+      type: Boolean
+    },
+    footer: {
+      required: false,
+      default: true,
+      type: Boolean
     }
   }
 }

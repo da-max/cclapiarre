@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import apolloClient from '@/vue-apollo'
 
 import COFFEE_ALL from '@/graphql/Coffee/CoffeeAll.gql'
@@ -20,7 +21,7 @@ export default {
         coffee,
         weight: null,
         type: null,
-        amount: 0
+        amount: 1
       })
       state.coffeeOrderedId++
     },
@@ -29,7 +30,37 @@ export default {
     },
 
     SET_COFFEE_ORDER_WEIGHT (state, { orderId, weight }) {
-      state.order.find((coffee) => coffee.id === orderId).weight = weight
+      Vue.set(
+        state.order.find((coffee) => coffee.id === orderId),
+        'weight',
+        weight
+      )
+    },
+
+    SET_COFFEE_ORDER_TYPE (state, { orderId, type }) {
+      Vue.set(
+        state.order.find((coffee) => coffee.id === orderId),
+        'type',
+        type
+      )
+    },
+
+    SET_COFFEE_ORDER_AMOUNT (state, { orderId, amount }) {
+      Vue.set(
+        state.order.find((coffee) => coffee.id === orderId),
+        'amount',
+        amount
+      )
+    },
+
+    SET_COFFEE_ORDER (state, { orderId, coffeeId }) {
+      const coffee = state.coffees.find((coffee) => coffee.node.id === coffeeId)
+        .node
+      Vue.set(
+        state.order.find((coffee) => coffee.id === orderId),
+        'coffee',
+        coffee
+      )
     }
   },
   actions: {
@@ -39,15 +70,32 @@ export default {
         const response = await apolloClient.query({ query: COFFEE_ALL })
         commit('SET_COFFEE', response.data.coffee.edges)
       } catch (e) {
-        commit('alert/ADD_ALERT', {
-          header: false,
-          body: `Une erreur est survenue, merci de réessayer : ${e}`,
-          status: 'error',
-          close: true
-        }, { root: true })
+        commit(
+          'alert/ADD_ALERT',
+          {
+            header: false,
+            body: `Une erreur est survenue, merci de réessayer : ${e}`,
+            status: 'error',
+            close: true
+          },
+          { root: true }
+        )
       } finally {
         commit('END_LOADING', null, { root: true })
       }
+    }
+  },
+  getters: {
+    totalPrice (state) {
+      let price = 0
+      state.order.forEach((coffee) => {
+        if (coffee.weight === '200') {
+          price += coffee.coffee.twoHundredGramPrice * coffee.amount
+        } else if (coffee.weight === '1000') {
+          price += coffee.coffee.kilogramPrice * coffee.amount
+        }
+      })
+      return Math.round(price * 100) / 100
     }
   }
 }

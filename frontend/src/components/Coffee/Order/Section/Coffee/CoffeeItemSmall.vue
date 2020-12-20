@@ -25,7 +25,9 @@
     </template>
     <template #footer>
       <div class="uk-text-center">
-        <UtilsButton @click="addCoffeeOrder(coffee)">Ajouter ce produit à ma commande</UtilsButton>
+        <UtilsButton @click="addCoffeeOrder(coffee)" id="add-coffee-button"
+          >Ajouter ce produit à ma commande</UtilsButton
+        >
       </div>
     </template>
   </UtilsCard>

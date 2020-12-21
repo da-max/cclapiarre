@@ -2,9 +2,15 @@ import store from '@/store/index'
 import { computed } from '@vue/composition-api'
 
 export default function () {
+  // Computed
   const coffees = computed(() => store.state.coffee.coffees)
   const coffeesOrder = computed(() => store.state.coffee.order)
   const price = computed(() => store.getters['coffee/totalPrice'])
+  const valide = computed(() => store.getters['coffee/valide'])
+
+  const uniqPrice = (orderId) => store.getters['coffee/uniqPrice'](orderId)
+
+  // Mutations
 
   const setAmount = (orderId, amount) => {
     store.commit('coffee/SET_COFFEE_ORDER_AMOUNT', { orderId, amount })
@@ -22,10 +28,6 @@ export default function () {
     store.commit('coffee/SET_COFFEE_ORDER', { orderId, coffeeId: coffee })
   }
 
-  const getCoffees = () => {
-    store.dispatch('coffee/getCoffees')
-  }
-
   const addCoffeeOrder = (coffee) => {
     // eslint-disable-next-line no-undef
     UIkit.scroll('#add-coffee-button', { offset: 100 }).scrollTo('#order-list')
@@ -35,6 +37,12 @@ export default function () {
 
   const removeCoffeeOrder = (orderId) => {
     store.commit('coffee/REMOVE_COFFEE_ORDER', orderId)
+  }
+
+  // Actions
+
+  const getCoffees = () => {
+    store.dispatch('coffee/getCoffees')
   }
 
   const saveOrder = () => {
@@ -52,6 +60,8 @@ export default function () {
     setCoffee,
     removeCoffeeOrder,
     price,
-    saveOrder
+    saveOrder,
+    uniqPrice,
+    valide
   }
 }

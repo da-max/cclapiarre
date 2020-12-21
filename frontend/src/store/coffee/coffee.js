@@ -90,7 +90,7 @@ export default {
       commit('START_LOADING', null, { root: true })
       try {
         const orders = state.order.map((coffeeOrdered) => ({
-          sort: coffeeOrdered.type,
+          sort: coffeeOrdered.type.id,
           weight: `A_${coffeeOrdered.weight}`,
           amount: coffeeOrdered.amount,
           coffee: coffeeOrdered.coffee.id
@@ -120,13 +120,27 @@ export default {
           body: `Merci de réessayer, si vous rencontrez de nouveau une erreur merci de me contacter, erreur : ${e}`,
           status: 'danger',
           close: true
-        })
+        }, { root: true })
       } finally {
         commit('END_LOADING', null, { root: true })
       }
     }
   },
   getters: {
+    orderById (state) {
+      return (orderId) => state.order.find((order) => order.id === orderId)
+    },
+    valide (state) {
+      let valide = true
+      if (Object.keys(state.order).length !== 0) {
+        state.order.forEach((coffeeOrdered) => {
+          if (!coffeeOrdered.weight || !coffeeOrdered.type || coffeeOrdered.amount === '0') {
+            valide = false
+          }
+        })
+      }
+      return valide
+    },
     totalPrice (state) {
       let price = 0
       state.order.forEach((coffee) => {
@@ -137,6 +151,21 @@ export default {
         }
       })
       return Math.round(price * 100) / 100
+    },
+    uniqPrice (state, getters) {
+      return (orderId) => {
+        const order = getters.orderById(orderId)
+        if (order.weight === '200') {
+          return (
+            Math.round(order.amount * order.coffee.twoHundredGramPrice * 100) /
+            100
+          )
+        } else {
+          return (
+            Math.round(order.amount * order.coffee.kilogramPrice * 100) / 100
+          )
+        }
+      }
     }
   }
 }

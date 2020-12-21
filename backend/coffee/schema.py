@@ -1,10 +1,12 @@
+from django.db.models import Q
 import graphene
 from graphene.relay import Node
+from graphql_relay import from_global_id
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django_cud.mutations import DjangoCreateMutation
 from graphql_jwt.decorators import login_required, permission_required
 
-from backend.coffee.models import Amount, Coffee, Order, Origin, Type
+from backend.coffee.models import CoffeeAmount, Coffee, CoffeeOrder, Origin, Type
 from graphene_django import DjangoObjectType
 
 # Types
@@ -41,16 +43,16 @@ class CoffeeType(DjangoObjectType):
 class CoffeeOrderType(DjangoObjectType):
     """ GraphQL type for coffee.Order model. """
     class Meta:
-        model = Order
+        model = CoffeeOrder
         interfaces = (Node, )
         fields = '__all__'
         filter_fields = ['id']
 
 
 class CoffeeAmountType(DjangoObjectType):
-    """ GraphQL type for coffee.Amount model. """
+    """ GraphQL type for coffee.CoffeeAmount model. """
     class Meta:
-        model = Amount
+        model = CoffeeAmount
         interfaces = (Node, )
         fields = '__all__'
         filter_fields = ['coffee__farm_coop']
@@ -84,13 +86,13 @@ class Query(graphene.ObjectType):
 
     @login_required
     @permission_required('coffee.view_order')
-    def resolve_coffee_order(self, info, *args, **kwargs) -> Order:
-        return Order.objects.all()
+    def resolve_coffee_order(self, info, *args, **kwargs) -> CoffeeOrder:
+        return CoffeeOrder.objects.all()
 
     @login_required
     @permission_required('coffee.view_amount')
-    def resolve_coffee_amount(self, info, *args, **kwargs) -> Order:
-        return Amount.objects.all()
+    def resolve_coffee_amount(self, info, *args, **kwargs) -> CoffeeOrder:
+        return CoffeeAmount.objects.all()
 
 # Mutations
 # =========
@@ -120,8 +122,57 @@ class CreateCoffeeMutation(DjangoCreateMutation):
         permission_required = ('coffee.add_coffee', )
 
 
+class CreateCoffeeAmountMutation(DjangoCreateMutation):
+    class Meta:
+        model = CoffeeAmount
+        login_required = True
+        exclude_fields = ('order')
+
+
+class CreateCoffeeOrderMutation(DjangoCreateMutation):
+    """
+    GraphQl mutation for create Order.
+
+    Methods
+    -------
+    mutate() -> dict;
+        Methods for customise mutate of Order.
+    """
+    class Meta:
+        model = CoffeeOrder
+        login_required = True
+        permission_required = ('coffee.add_order', )
+        exclude_fields = ('coffee', 'amounts', 'user')
+        many_to_many_extras = {
+            "amounts": {
+                "add": {"type": "CreateCoffeeAmountInput"}
+            }
+        }
+
+    @classmethod
+    def mutate(cls, root, info, **input) -> dict:
+        """ Methods for customise mutate of Order"""
+        coffees = Coffee.objects.filter(display=True)
+        types = Type.objects.all()
+
+        order = CoffeeOrder.objects.get_or_create(user=info.context.user)
+        amounts = input['input'].pop('amounts_add')
+
+        for amount in amounts:
+            coffee = coffees.get(id=from_global_id(amount['coffee'])[1])
+            t = types.get(
+                Q(id=from_global_id(amount['sort'])[1]), Q(coffee=coffee))
+
+            amount = CoffeeAmount.objects.update_or_create(
+                coffee=coffee, sort=t, order=order[0], weight=amount['weight'], defaults={
+                    'amount': amount['amount']}
+            )
+        return {'coffeeOrder': order[0]}
+
+
 class Mutation(graphene.ObjectType):
     """ Define mutations for coffee app. """
     add_coffee_origin = CreateOriginMutation.Field()
     add_coffee_type = CreateTypeMutation.Field()
     add_coffee = CreateCoffeeMutation.Field()
+    add_coffee_order = CreateCoffeeOrderMutation.Field()

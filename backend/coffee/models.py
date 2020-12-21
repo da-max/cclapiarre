@@ -125,7 +125,7 @@ class Coffee(Model):
         verbose_name_plural = "Cafés"
 
 
-class Order(Model):
+class CoffeeOrder(Model):
     """
     Order model define order for coffee. 
 
@@ -142,7 +142,7 @@ class Order(Model):
         Method for get price of order.
     """
     user = ForeignKey(User, on_delete=CASCADE, related_name="coffee_order")
-    coffee = ManyToManyField(Coffee, through="Amount",
+    coffee = ManyToManyField(Coffee, through="CoffeeAmount",
                              through_fields=('order', 'coffee'))
 
     class Meta:
@@ -159,7 +159,7 @@ class Order(Model):
         -------
         float : price for this amount.
         """
-        amounts = Amount.objects.filter(order=self)
+        amounts = CoffeeAmount.objects.filter(order=self)
 
         total_price = float()
 
@@ -174,7 +174,7 @@ class Order(Model):
         return round(total_price, 3)
 
 
-class Amount(Model):
+class CoffeeAmount(Model):
     """
     Amount model is use by ManyToMany field coffee in Order model.
 
@@ -198,7 +198,7 @@ class Amount(Model):
     """
     coffee = ForeignKey(Coffee, on_delete=CASCADE,
                         related_name="amounts")
-    order = ForeignKey(Order, on_delete=CASCADE,
+    order = ForeignKey(CoffeeOrder, on_delete=CASCADE,
                        related_name="amounts")
     amount = IntegerField(verbose_name="Quantité commandé")
     weight = IntegerField(verbose_name="Poids commandé", help_text="200 ou 1000 grammes.", choices=(

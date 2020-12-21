@@ -167,7 +167,7 @@ class CreateCoffeeOrderMutation(DjangoCreateMutation):
                 coffee=coffee, sort=t, order=order[0], weight=amount['weight'], defaults={
                     'amount': amount['amount']}
             )
-        return {'coffeeOrder': order[0]}
+        return {'coffee_order': order[0]}
 
 
 class Mutation(graphene.ObjectType):

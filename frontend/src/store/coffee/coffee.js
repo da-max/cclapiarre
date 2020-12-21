@@ -96,15 +96,31 @@ export default {
           coffee: coffeeOrdered.coffee.id
         }))
 
-        console.log(orders)
-
-        const response = await apolloClient.mutate({
+        await apolloClient.mutate({
           mutation: ADD_ORDER,
           variables: { amounts: orders }
         })
-        console.log(response)
+
+        commit(
+          'alert/ADD_ALERT',
+          {
+            header: true,
+            headerContent: 'Commande enregistrée !',
+            body:
+              'Votre commande a bien été enregistrée, un mail va vous être envoyé afin de confirmer votre commande !',
+            status: 'success',
+            close: true
+          },
+          { root: true }
+        )
       } catch (e) {
-        console.log(e)
+        commit('alert/ADD_ALERT', {
+          header: true,
+          headerContent: 'Une erreur est survenue',
+          body: `Merci de réessayer, si vous rencontrez de nouveau une erreur merci de me contacter, erreur : ${e}`,
+          status: 'danger',
+          close: true
+        })
       } finally {
         commit('END_LOADING', null, { root: true })
       }

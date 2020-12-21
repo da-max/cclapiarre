@@ -29,13 +29,19 @@
               <a href="#">Commander</a>
               <div class="uk-navbar-dropdown">
                 <ul class="uk-nav uk-navbar-dropdown-nav">
+                  <li>
+                    <router-link :to="{ name: 'CoffeeOrder' }"
+                      >Café</router-link
+                    >
+                  </li>
                   <li v-for="orderItem in orderItems" :key="orderItem.id">
                     <router-link
                       :to="{
                         name: 'ApplicationOrder',
-                        params: { application: orderItem.slug },
+                        params: { application: orderItem.slug }
                       }"
-                    >{{ orderItem.name }}</router-link>
+                      >{{ orderItem.name }}</router-link
+                    >
                   </li>
                 </ul>
               </div>

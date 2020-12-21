@@ -78,13 +78,17 @@
               >Commander</a
             >
             <ul class="uk-nav-sub uk-nav-default">
+              <li>
+                <router-link :to="{ name: 'CoffeeOrder' }">Café</router-link>
+              </li>
               <li v-for="orderItem in orderItems" :key="orderItem.id">
                 <router-link
                   :to="{
                     name: 'ApplicationOrder',
-                    params: { application: orderItem.slug },
+                    params: { application: orderItem.slug }
                   }"
-                >{{ orderItem.name }}</router-link>
+                  >{{ orderItem.name }}</router-link
+                >
               </li>
             </ul>
           </li>

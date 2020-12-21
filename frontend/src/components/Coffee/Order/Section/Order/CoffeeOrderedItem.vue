@@ -60,7 +60,7 @@
         />
         <div class="uk-text-center">
           <UtilsButton type="danger" @click="removeCoffeeOrder(coffee.id)"
-            >Supprimer ce café</UtilsButton
+            >Supprimer de ma commande</UtilsButton
           >
         </div>
       </form>

@@ -9,6 +9,11 @@ export function useSetupTitle (title = '') {
   })
 }
 
+export function useShowModal (modalId) {
+  // eslint-disable-next-line no-undef
+  UIkit.modal(modalId).show()
+}
+
 export function useUtilsQuery (query, variables = {}) {
   store.commit('START_LOADING')
   try {

@@ -37,6 +37,10 @@ export default function () {
     store.commit('coffee/REMOVE_COFFEE_ORDER', orderId)
   }
 
+  const saveOrder = () => {
+    store.dispatch('coffee/saveOrder')
+  }
+
   return {
     addCoffeeOrder,
     getCoffees,
@@ -47,6 +51,7 @@ export default function () {
     setWeight,
     setCoffee,
     removeCoffeeOrder,
-    price
+    price,
+    saveOrder
   }
 }

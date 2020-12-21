@@ -2,6 +2,7 @@ import Vue from 'vue'
 import apolloClient from '@/vue-apollo'
 
 import COFFEE_ALL from '@/graphql/Coffee/CoffeeAll.gql'
+import ADD_ORDER from '@/graphql/Coffee/Order/OrderAdd.gql'
 
 export default {
   namespaced: true,
@@ -80,6 +81,30 @@ export default {
           },
           { root: true }
         )
+      } finally {
+        commit('END_LOADING', null, { root: true })
+      }
+    },
+
+    async saveOrder ({ state, commit }) {
+      commit('START_LOADING', null, { root: true })
+      try {
+        const orders = state.order.map((coffeeOrdered) => ({
+          sort: coffeeOrdered.type,
+          weight: `A_${coffeeOrdered.weight}`,
+          amount: coffeeOrdered.amount,
+          coffee: coffeeOrdered.coffee.id
+        }))
+
+        console.log(orders)
+
+        const response = await apolloClient.mutate({
+          mutation: ADD_ORDER,
+          variables: { amounts: orders }
+        })
+        console.log(response)
+      } catch (e) {
+        console.log(e)
       } finally {
         commit('END_LOADING', null, { root: true })
       }

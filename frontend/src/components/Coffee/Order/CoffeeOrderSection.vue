@@ -2,7 +2,7 @@
   <section class="uk-margin-medium-top uk-width-4-5@m uk-margin-auto">
     <OrderInformation class="uk-width-1-2@l uk-margin-auto" />
     <CoffeeOrderedList class="uk-margin-large-top" />
-    <CoffeeList class="uk-margin-large-top" />
+    <CoffeeList class="uk-margin-xlarge-top" />
   </section>
 </template>
 

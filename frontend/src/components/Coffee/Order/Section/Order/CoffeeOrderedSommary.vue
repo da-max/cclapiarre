@@ -4,6 +4,10 @@
       <h2 class="uk-modal-title">Récapitulatif de la commande</h2>
     </template>
     <template #body>
+      <OrderInformation />
+      <p class="uk-text-center uk-margin-large-bottom uk-text-bold">
+        <span class="uk-label">Prix de votre commande</span> {{ price }} €
+      </p>
       <utils-table>
         <template #head>
           <th>Café</th>
@@ -53,6 +57,21 @@
         </template>
       </utils-table>
     </template>
+    <template #footer>
+      <div class="uk-text-center">
+        <UtilsButton
+          class="uk-margin-medium-right uk-modal-close"
+          type="secondary"
+          >Annuler</UtilsButton
+        >
+        <UtilsButton
+          @click="saveOrder"
+          :disabled="!valide"
+          v-show="Object.keys(coffeesOrder).length !== 0"
+          >Commander</UtilsButton
+        >
+      </div>
+    </template>
   </UtilsModal>
 </template>
 
@@ -62,19 +81,37 @@ import useCoffee from '@/composition/coffee/useCoffee'
 import UtilsModal from '@/components/Utils/UtilsModal.vue'
 import UtilsTable from '@/components/Utils/UtilsTable.vue'
 import UtilsButton from '@/components/Utils/UtilsButton.vue'
+import OrderInformation from '@/components/Application/Order/Section/OrderInformation.vue'
 
 export default {
   name: 'CoffeeOrderedSommary',
-  components: { UtilsModal, UtilsTable, UtilsButton },
+  components: { UtilsModal, UtilsTable, UtilsButton, OrderInformation },
   setup () {
     const {
       coffeesOrder,
       uniqPrice,
       setAmount,
-      removeCoffeeOrder
+      removeCoffeeOrder,
+      saveOrder: save,
+      valide,
+      price
     } = useCoffee()
 
-    return { coffeesOrder, uniqPrice, setAmount, removeCoffeeOrder }
+    const saveOrder = () => {
+      // eslint-disable-next-line no-undef
+      UIkit.modal('#sommary-modal').hide()
+      save()
+    }
+
+    return {
+      coffeesOrder,
+      uniqPrice,
+      setAmount,
+      removeCoffeeOrder,
+      saveOrder,
+      valide,
+      price
+    }
   }
 }
 </script>

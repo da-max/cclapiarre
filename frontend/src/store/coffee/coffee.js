@@ -16,6 +16,7 @@ export default {
     SET_COFFEE (state, coffees) {
       state.coffees = coffees
     },
+
     ADD_COFFEE_ORDER (state, coffee) {
       state.order.push({
         id: state.coffeeOrderedId,
@@ -26,6 +27,7 @@ export default {
       })
       state.coffeeOrderedId++
     },
+
     REMOVE_COFFEE_ORDER (state, orderId) {
       state.order = state.order.filter((coffee) => coffee.id !== orderId)
     },
@@ -62,6 +64,10 @@ export default {
         'coffee',
         coffee
       )
+    },
+
+    CLEAR_ORDER (state) {
+      state.order = []
     }
   },
   actions: {
@@ -113,6 +119,7 @@ export default {
           },
           { root: true }
         )
+        commit('CLEAR_ORDER')
       } catch (e) {
         commit('alert/ADD_ALERT', {
           header: true,

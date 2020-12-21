@@ -25,7 +25,10 @@
     </template>
     <template #footer>
       <div class="uk-text-center">
-        <UtilsButton @click="addCoffeeOrder(coffee)" id="add-coffee-button"
+        <UtilsButton
+          @click="addCoffeeOrder(coffee)"
+          :disabled="!valide"
+          id="add-coffee-button"
           >Commander ce café</UtilsButton
         >
       </div>
@@ -52,9 +55,9 @@ export default {
     UtilsButton
   },
   setup () {
-    const { addCoffeeOrder } = useCoffee()
+    const { addCoffeeOrder, valide } = useCoffee()
 
-    return { addCoffeeOrder }
+    return { addCoffeeOrder, valide }
   }
 }
 </script>

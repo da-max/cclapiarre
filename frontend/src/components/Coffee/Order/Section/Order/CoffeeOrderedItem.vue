@@ -14,7 +14,6 @@
                 v-for="c in coffees"
                 :key="c.node.id"
                 :value="c.node.id"
-                :selected="c.node.id === coffee.coffee.id"
                 >{{ c.node.farmCoop }}</option
               >
             </select>
@@ -45,7 +44,7 @@
               <option
                 v-for="type in coffee.coffee.availableType.edges"
                 :key="type.node.id"
-                :value="type.node.id"
+                :value="type.node"
                 >{{ type.node.name }}</option
               >
             </select>

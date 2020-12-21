@@ -13,12 +13,22 @@
         <CoffeeOrderedItem :coffee="coffeeOrder" />
       </div>
     </transition-group>
-    <div class="uk-text-center uk-margin-medium-top" v-show="coffeesOrder.length !== 0">
-      <UtilsButton type="secondary" class="uk-margin-large-right" @click="showModal('#sommary-modal')"
+    <div
+      class="uk-text-center uk-margin-medium-top"
+      v-show="coffeesOrder.length !== 0"
+    >
+      <UtilsButton
+        type="secondary"
+        class="uk-margin-large-right"
+        @click="showModal('#sommary-modal')"
+        :disabled="!valide"
         >Récapitulatif de la commande</UtilsButton
       >
-      <UtilsButton @click="saveOrder">Commander</UtilsButton>
+      <UtilsButton @click="saveOrder" :disabled="!valide"
+        >Commander</UtilsButton
+      >
     </div>
+    <CoffeeOrderedSommary id="sommary-modal" />
   </div>
 </template>
 
@@ -28,14 +38,15 @@ import { useShowModal } from '@/composition/useUtils'
 
 import CoffeeOrderedItem from '@/components/Coffee/Order/Section/Order/CoffeeOrderedItem.vue'
 import UtilsButton from '@/components/Utils/UtilsButton.vue'
+import CoffeeOrderedSommary from './CoffeeOrderedSommary.vue'
 
 export default {
   name: 'CoffeeOrderedList',
-  components: { CoffeeOrderedItem, UtilsButton },
+  components: { CoffeeOrderedItem, UtilsButton, CoffeeOrderedSommary },
   setup () {
-    const { coffeesOrder, price, saveOrder } = useCoffee()
+    const { coffeesOrder, price, saveOrder, valide } = useCoffee()
 
-    return { coffeesOrder, price, showModal: useShowModal, saveOrder }
+    return { coffeesOrder, price, showModal: useShowModal, saveOrder, valide }
   }
 }
 </script>

@@ -7,6 +7,7 @@ from graphene_django_cud.mutations import DjangoCreateMutation
 from graphql_jwt.decorators import login_required, permission_required
 
 from backend.coffee.models import CoffeeAmount, Coffee, CoffeeOrder, Origin, Type
+from backend.coffee.views import coffee_order_add
 from graphene_django import DjangoObjectType
 
 # Types
@@ -167,6 +168,9 @@ class CreateCoffeeOrderMutation(DjangoCreateMutation):
                 coffee=coffee, sort=t, order=order[0], weight=amount['weight'], defaults={
                     'amount': amount['amount']}
             )
+
+        coffee_order_add.send(sender=cls.__class__,
+                              order=order[0], create=order[1])
         return {'coffee_order': order[0]}
 
 

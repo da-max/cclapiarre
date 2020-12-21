@@ -1,5 +1,7 @@
+from backend.mail import async_send_mail
 from copy import deepcopy
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404, redirect
+from django.dispatch import Signal, receiver
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -14,7 +16,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required, login_required
 from django_xhtml2pdf.utils import pdf_decorator
 
-from backend.coffee.models import Coffee, Type, CommandCoffee, Quantity, Origin
+from backend.coffee.models import Coffee, Type, CoffeeAmount, CoffeeOrder, Origin
 from backend.coffee.forms import CoffeeForm, OriginForm
 from backend.registration.views import disconnection
 
@@ -594,9 +596,9 @@ def pdf_global_command(request):
     return render(request, "coffee/pdf/global_command.html", locals())
 
 
-#@login_required
-#@permission_required('coffee.view_commandcoffee', raise_exception=True)
-#def list_command(request):
+# @login_required
+# @permission_required('coffee.view_commandcoffee', raise_exception=True)
+# def list_command(request):
 #
 #    commands = CommandCoffee.objects.all()
 #    quantitys = Quantity.objects.all()
@@ -829,3 +831,32 @@ def new_command(request):
         messages.warning(request, "La méthode utilisée afin de commander ne semble pas conforme, merci de recommander "
                          "et de me contacter en cas de besoin.")
         return HttpResponseRedirect(reverse_lazy('home'))
+
+
+coffee_order_add = Signal()
+
+
+@receiver(coffee_order_add)
+def send_confirm_order_mail(sender, order: CoffeeOrder, create: bool = True, **kwargs) -> None:
+    """ Signal for send async mail when an coffee order is confirm.
+
+    Parameters
+    ----------
+    sender : class
+        Class that calls this signal.
+    order : Order
+        Order saves.
+    create : bool, optional
+        Is True if the order has been created
+    """
+    html_content = get_template(
+        'coffee/mail/confirm_order.html'
+    ).render({
+        'order': order,
+        'amounts': order.coffee.through.objects.filter(
+            order=order
+        ),
+        'create': create
+    })
+
+    async_send_mail('Commande confirmée', html_content, [order.user.email])

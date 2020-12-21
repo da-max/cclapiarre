@@ -57,14 +57,11 @@ export default {
       commit('START_LOADING', null, { root: true })
       try {
         const orders = state.order.map((productOrdered) => ({
-          option: productOrdered.option
-            ? productOrdered.option.node.id
-            : null,
+          option: productOrdered.option ? productOrdered.option.node.id : null,
           weight: productOrdered.weight.node.id,
           amount: parseInt(productOrdered.amount),
           product: productOrdered.product.id
-        })
-        )
+        }))
         await apolloClient.mutate({
           mutation: ADD_ORDER,
           variables: {
@@ -77,7 +74,8 @@ export default {
           {
             header: true,
             headerContent: 'Commande enregistrée !',
-            body: 'Votre commande a bien été enregistrée, un mail va vous être envoyé afin de confirmer votre commande !',
+            body:
+              'Votre commande a bien été enregistrée, un mail va vous être envoyé afin de confirmer votre commande !',
             status: 'success',
             close: true
           },
@@ -85,7 +83,11 @@ export default {
         )
         commit('CLEAR_ORDER')
       } catch (error) {
-        commit('alert/ADD_ALERT', { header: false, body: error, status: 'danger', close: true }, { root: true })
+        commit(
+          'alert/ADD_ALERT',
+          { header: false, body: error, status: 'danger', close: true },
+          { root: true }
+        )
       } finally {
         commit('END_LOADING', null, { root: true })
       }

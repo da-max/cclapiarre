@@ -30,8 +30,8 @@ export async function applicationPermissionRequired (
       return true
     }
     if (
-      application[permission].find(
-        (user) => user.id === store.state.auth.currentUser.id
+      application[permission].edges.find(
+        (user) => user.node.id === store.state.auth.currentUser.id
       )
     ) {
       return true

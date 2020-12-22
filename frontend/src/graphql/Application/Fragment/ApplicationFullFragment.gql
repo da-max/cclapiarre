@@ -10,10 +10,18 @@ fragment ApplicationFullFragment on ApplicationType {
     ...ApplicationImageFragment
   }
   admins {
-    ...UserFragment
+    edges {
+      node {
+        ...UserFragment
+      }
+    }
   }
   members {
-    ...UserFragment
+    edges {
+      node {
+        ...UserFragment
+      }
+    }
   }
   products {
     edges {

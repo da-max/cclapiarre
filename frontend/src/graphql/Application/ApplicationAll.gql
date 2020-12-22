@@ -5,10 +5,18 @@ query ApplicationAllSmall {
     ...ApplicationSmallFragment
     slug
     members {
-      id
+      edges {
+        node {
+          id
+        }
+      }
     }
     admins {
-      id
+      edges {
+        node {
+          id
+        }
+      }
     }
   }
 }

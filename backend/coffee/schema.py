@@ -47,7 +47,7 @@ class CoffeeOrderType(DjangoObjectType):
         model = CoffeeOrder
         interfaces = (Node, )
         fields = '__all__'
-        filter_fields = ['id']
+        filter_fields = ['id', 'user__id']
 
 
 class CoffeeAmountType(DjangoObjectType):

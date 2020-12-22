@@ -42,6 +42,7 @@ class ApplicationType(DjangoObjectType):
     class Meta:
         model = Application
         fields = '__all__'
+        interfaces = (Node, )
 
     def resolve_members(self, info) -> User:
         """ Method for customise resolve of members and check if user is authenticated. """

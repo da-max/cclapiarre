@@ -34,6 +34,7 @@ class GroupType(DjangoObjectType):
 class UserLargeType(DjangoObjectType):
     class Meta:
         model = User
+        interfaces = (relay.Node, )
         fields = ('id', 'username', 'email', 'first_name',
                   'last_name', 'user_permissions', 'groups', 'is_superuser', 'information')
 
@@ -41,6 +42,8 @@ class UserLargeType(DjangoObjectType):
 class UserType(DjangoObjectType):
     class Meta:
         model = User
+        interfaces = (relay.Node, )
+        filter_fields = ['id']
         fields = ('id', )
 
 

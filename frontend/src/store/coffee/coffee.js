@@ -2,6 +2,7 @@ import Vue from 'vue'
 import apolloClient from '@/vue-apollo'
 
 import COFFEE_ALL from '@/graphql/Coffee/CoffeeAll.gql'
+import ORDER_BY_USER_ID from '@/graphql/Coffee/Order/OrderByUserId.gql'
 import ADD_ORDER from '@/graphql/Coffee/Order/OrderAdd.gql'
 
 export default {
@@ -9,7 +10,8 @@ export default {
   state: () => ({
     coffees: [],
     coffeeOrderedId: 0,
-    order: []
+    order: [],
+    hasOrder: false
   }),
 
   mutations: {
@@ -68,10 +70,14 @@ export default {
 
     CLEAR_ORDER (state) {
       state.order = []
+    },
+
+    HAS_ORDERED (state) {
+      state.hasOrder = true
     }
   },
   actions: {
-    async getCoffees ({ commit }) {
+    async getCoffees ({ commit, rootState }) {
       commit('START_LOADING', null, { root: true })
       try {
         const response = await apolloClient.query({ query: COFFEE_ALL })
@@ -89,6 +95,42 @@ export default {
         )
       } finally {
         commit('END_LOADING', null, { root: true })
+      }
+    },
+
+    async hasOrdered ({ commit, rootState }) {
+      commit('START_LOADING', null, { root: true })
+      try {
+        const response = await apolloClient.query({
+          query: ORDER_BY_USER_ID,
+          variables: { userId: rootState.auth.currentUser.id }
+        })
+        if (response.data.coffeeOrder.edges.length !== 0) {
+          commit('HAS_ORDERED')
+          commit(
+            'alert/ADD_ALERT',
+            {
+              header: true,
+              headerContent: 'Vous avez déjà commandé !',
+              body: 'Une commande à votre nom a été trouvé.',
+              status: 'primary',
+              close: true
+            },
+            { root: true }
+          )
+        }
+      } catch (e) {
+        commit(
+          'alert/ADD_ALERT',
+          {
+            header: true,
+            headerContent: 'Une erreur est survenue',
+            body: 'Merci de réessayer, si vous rencontrez de nouveau cette erreur merci de me contacter.',
+            status: 'danger',
+            close: true
+          },
+          { root: true }
+        )
       }
     },
 
@@ -120,14 +162,19 @@ export default {
           { root: true }
         )
         commit('CLEAR_ORDER')
+        commit('HAS_ORDERED')
       } catch (e) {
-        commit('alert/ADD_ALERT', {
-          header: true,
-          headerContent: 'Une erreur est survenue',
-          body: `Merci de réessayer, si vous rencontrez de nouveau une erreur merci de me contacter, erreur : ${e}`,
-          status: 'danger',
-          close: true
-        }, { root: true })
+        commit(
+          'alert/ADD_ALERT',
+          {
+            header: true,
+            headerContent: 'Une erreur est survenue',
+            body: `Merci de réessayer, si vous rencontrez de nouveau une erreur merci de me contacter, erreur : ${e}`,
+            status: 'danger',
+            close: true
+          },
+          { root: true }
+        )
       } finally {
         commit('END_LOADING', null, { root: true })
       }
@@ -139,9 +186,18 @@ export default {
     },
     valide (state) {
       let valide = true
+
+      if (state.hasOrder) {
+        return false
+      }
+
       if (Object.keys(state.order).length !== 0) {
         state.order.forEach((coffeeOrdered) => {
-          if (!coffeeOrdered.weight || !coffeeOrdered.type || coffeeOrdered.amount === '0') {
+          if (
+            !coffeeOrdered.weight ||
+            !coffeeOrdered.type ||
+            coffeeOrdered.amount === '0'
+          ) {
             valide = false
           }
         })

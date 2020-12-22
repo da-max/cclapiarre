@@ -5,6 +5,7 @@ export default function () {
   // Computed
   const coffees = computed(() => store.state.coffee.coffees)
   const coffeesOrder = computed(() => store.state.coffee.order)
+  const hasOrder = computed(() => store.state.coffee.hasOrder)
   const price = computed(() => store.getters['coffee/totalPrice'])
   const valide = computed(() => store.getters['coffee/valide'])
 
@@ -49,6 +50,10 @@ export default function () {
     store.dispatch('coffee/saveOrder')
   }
 
+  const hasOrdered = () => {
+    store.dispatch('coffee/hasOrdered')
+  }
+
   return {
     addCoffeeOrder,
     getCoffees,
@@ -62,6 +67,8 @@ export default function () {
     price,
     saveOrder,
     uniqPrice,
-    valide
+    valide,
+    hasOrdered,
+    hasOrder
   }
 }

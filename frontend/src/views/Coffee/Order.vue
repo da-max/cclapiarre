@@ -12,6 +12,7 @@
 
 <script>
 import { useSetupTitle } from '@/composition/useUtils'
+import useCoffee from '@/composition/coffee/useCoffee'
 
 import Alerts from '@/components/Utils/Alert/Alerts'
 import CoffeeOrderHeader from '@/components/Coffee/Order/CoffeeOrderHeader.vue'
@@ -26,6 +27,9 @@ export default {
   },
   setup () {
     useSetupTitle('Commander du café')
+    const { hasOrdered } = useCoffee()
+
+    hasOrdered()
   }
 }
 </script>

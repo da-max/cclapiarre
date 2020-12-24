@@ -42,7 +42,7 @@
       >
         <CoffeeItemFull
           :coffee="coffee.node"
-          @display-details="displayDetails"
+          @display-details="displayDetails(coffee)"
         ></CoffeeItemFull>
       </div>
     </div>
@@ -66,9 +66,8 @@ export default {
     CoffeeDetails
   },
   setup () {
-    const { coffees, getCoffees } = useCoffee()
+    const { coffees, getCoffees, displayDetails, coffeeSelect } = useCoffee()
     const state = reactive({
-      coffeeSelect: {},
       displaying: 'small',
       DISPLAYING_MODE: {
         'Affichage réduit': 'small',
@@ -76,16 +75,9 @@ export default {
       }
     })
 
-    const displayDetails = (coffee) => {
-      state.coffeeSelect = coffee
-
-      // eslint-disable-next-line no-undef
-      UIkit.modal('#coffee-details').show()
-    }
-
     onBeforeMount(() => getCoffees())
 
-    return { coffees, displayDetails, ...toRefs(state) }
+    return { coffees, displayDetails, ...toRefs(state), coffeeSelect }
   }
 }
 </script>

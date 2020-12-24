@@ -2,13 +2,14 @@ from django.db.models import Q
 import graphene
 from graphene.relay import Node
 from graphql_relay import from_global_id
+from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django_cud.mutations import DjangoCreateMutation
 from graphql_jwt.decorators import login_required, permission_required
 
+from backend.registration.schema import UserLargeType
 from backend.coffee.models import CoffeeAmount, Coffee, CoffeeOrder, Origin, Type
 from backend.coffee.views import coffee_order_add
-from graphene_django import DjangoObjectType
 
 # Types
 # ========
@@ -43,6 +44,8 @@ class CoffeeType(DjangoObjectType):
 
 class CoffeeOrderType(DjangoObjectType):
     """ GraphQL type for coffee.Order model. """
+    user = graphene.Field(UserLargeType)
+
     class Meta:
         model = CoffeeOrder
         interfaces = (Node, )

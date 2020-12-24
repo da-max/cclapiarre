@@ -1,7 +1,12 @@
 import store from '@/store/index'
-import { computed } from '@vue/composition-api'
+import { computed, reactive, toRefs } from '@vue/composition-api'
 
 export default function () {
+  // state
+  const state = reactive({
+    coffeeSelect: {}
+  })
+
   // Computed
   const coffees = computed(() => store.state.coffee.coffees)
   const coffeesOrder = computed(() => store.state.coffee.order)
@@ -54,21 +59,41 @@ export default function () {
     store.dispatch('coffee/hasOrdered')
   }
 
+  // Methods
+
+  const displayDetails = (coffee) => {
+    state.coffeeSelect = coffee
+
+    // eslint-disable-next-line no-undef
+    UIkit.modal('#coffee-details').show()
+  }
+
   return {
-    addCoffeeOrder,
-    getCoffees,
+    // State
+    ...toRefs(state),
+
+    // Store state or getter
     coffees,
+    price,
+    valide,
+    hasOrder,
     coffeesOrder,
+    uniqPrice,
+
+    // Mutations
+    addCoffeeOrder,
     setAmount,
     setType,
     setWeight,
     setCoffee,
     removeCoffeeOrder,
-    price,
+
+    // Actions
+    getCoffees,
     saveOrder,
-    uniqPrice,
-    valide,
     hasOrdered,
-    hasOrder
+
+    // Methods
+    displayDetails
   }
 }

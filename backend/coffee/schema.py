@@ -4,7 +4,7 @@ from graphene.relay import Node
 from graphql_relay import from_global_id
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
-from graphene_django_cud.mutations import DjangoCreateMutation
+from graphene_django_cud.mutations import DjangoCreateMutation, DjangoDeleteMutation
 from graphql_jwt.decorators import login_required, permission_required
 
 from backend.registration.schema import UserLargeType
@@ -177,9 +177,17 @@ class CreateCoffeeOrderMutation(DjangoCreateMutation):
         return {'coffee_order': order[0]}
 
 
+class DeleteCoffeeOrderMutation(DjangoDeleteMutation):
+    class Meta:
+        model = CoffeeOrder
+        login_required = True
+        permission_required = ('coffee.delete_coffeeorder', )
+
+
 class Mutation(graphene.ObjectType):
     """ Define mutations for coffee app. """
     add_coffee_origin = CreateOriginMutation.Field()
     add_coffee_type = CreateTypeMutation.Field()
     add_coffee = CreateCoffeeMutation.Field()
     add_coffee_order = CreateCoffeeOrderMutation.Field()
+    remove_coffee_order = DeleteCoffeeOrderMutation.Field()

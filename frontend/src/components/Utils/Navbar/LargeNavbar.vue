@@ -61,7 +61,7 @@
       <div class="uk-offcanvas-bar">
         <ul class="uk-nav uk-nav-default uk-nav-parent-icon" uk-nav>
           <li class="uk-active uk-text-center uk-text-bold">
-            <a href="#">Espace administration</a>
+            <a href="">Espace administration</a>
           </li>
           <br />
           <li
@@ -75,7 +75,12 @@
                 v-for="subItem in adminPanelItem.subItems"
                 :key="subItem.name"
               >
-                <a :href="subItem.link">{{ subItem.name }}</a>
+                <router-link
+                  v-if="subItem.routerLink"
+                  :to="subItem.routerLink"
+                  >{{ subItem.name }}</router-link
+                >
+                <a v-else :href="subItem.link">{{ subItem.name }}</a>
               </li>
             </ul>
           </li>

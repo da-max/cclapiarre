@@ -66,6 +66,15 @@ export default {
               link: ''
             }
           ]
+        },
+        {
+          title: 'Café',
+          subItems: [
+            {
+              name: 'Liste des commandes',
+              routerLink: { name: 'CoffeeOrderList' }
+            }
+          ]
         }
       ]
     }

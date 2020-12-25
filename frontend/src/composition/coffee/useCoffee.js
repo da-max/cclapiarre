@@ -4,7 +4,7 @@ import { useMutation, useResult } from '@vue/apollo-composable'
 import { useUtilsQuery } from '@/composition/useUtils'
 
 import ORDER_ALL from '@/graphql/Coffee/Order/OrderAll.gql'
-import ORDER_REMOVE from '@/graphql/Coffee/Order/OrderRemove.gql'
+import BACTH_ORDER_REMOVE from '@/graphql/Coffee/Order/BatchOrderRemove.gql'
 
 export default function () {
   // state
@@ -80,7 +80,7 @@ export default function () {
     return { orders, loading, refetchOrderAll }
   }
 
-  const { mutate: orderRemove, onDone: onDoneRemoveOrder } = useMutation(ORDER_REMOVE)
+  const { mutate: orderRemove, onDone: onDoneRemoveOrder } = useMutation(BACTH_ORDER_REMOVE)
 
   return {
     // State

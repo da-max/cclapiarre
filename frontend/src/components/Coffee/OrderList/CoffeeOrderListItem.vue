@@ -100,11 +100,11 @@ export default {
     })
 
     const orderRemove = () => {
-      remove({ orderId: props.order.node.id })
+      useUtilsMutation(remove, { ordersId: props.order.node.id })
     }
 
     onDoneRemoveOrder((result) => {
-      if (result.data.removeCoffeeOrder.found) {
+      if (result.data.batchRemoveCoffeeOrder.deletionCount !== 0) {
         emit('order-delete')
         store.commit('alert/ADD_ALERT', {
           header: true,

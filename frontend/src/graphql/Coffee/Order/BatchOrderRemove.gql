@@ -1,5 +1,5 @@
-mutation OrderDelete($orderId: [ID]!) {
-  batchRemoveCoffeeOrder(ids: $orderId) {
+mutation OrderDelete($ordersId: [ID]!) {
+  batchRemoveCoffeeOrder(ids: $ordersId) {
     deletionCount
     deletedIds
   }

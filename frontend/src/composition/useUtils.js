@@ -14,6 +14,11 @@ export function useShowModal (modalId) {
   UIkit.modal(modalId).show()
 }
 
+export function useHideModal (modalId) {
+  // eslint-disable-next-line no-undef
+  UIkit.modal(modalId).hide()
+}
+
 export function useUtilsQuery (query, variables = {}) {
   store.commit('START_LOADING')
   try {

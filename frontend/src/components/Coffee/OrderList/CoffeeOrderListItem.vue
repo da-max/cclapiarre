@@ -54,7 +54,7 @@
       <div class="uk-flex uk-flex-center">
         <UtilsButton
           type="danger"
-          @click="useUtilsMutation(orderRemove, {orderId: order.node.id})"
+          @click="$emit('confirm-remove', order)"
         >
           Supprimer
         </UtilsButton>
@@ -65,9 +65,6 @@
 
 <script>
 import { computed } from '@vue/composition-api'
-import { useUtilsMutation } from '@/composition/useUtils'
-import useCoffee from '@/composition/coffee/useCoffee'
-import store from '@/store/index'
 
 import UtilsCard from '@/components/Utils/UtilsCard.vue'
 import UtilsButton from '@/components/Utils/UtilsButton.vue'
@@ -84,9 +81,7 @@ export default {
       type: Object
     }
   },
-  setup (props, { emit }) {
-    const { orderRemove: remove, onDoneRemoveOrder } = useCoffee()
-
+  setup (props) {
     const totalPrice = computed(() => {
       let price = 0
       props.order.node.amounts.edges.forEach(amount => {
@@ -99,35 +94,8 @@ export default {
       return price
     })
 
-    const orderRemove = () => {
-      useUtilsMutation(remove, { ordersId: props.order.node.id })
-    }
-
-    onDoneRemoveOrder((result) => {
-      if (result.data.batchRemoveCoffeeOrder.deletionCount !== 0) {
-        emit('order-delete')
-        store.commit('alert/ADD_ALERT', {
-          header: true,
-          headerContent: 'Commande supprimée',
-          body: 'La commande séléctionnée a bien été supprimé.',
-          status: 'success',
-          close: true
-        })
-      } else {
-        store.commit('alert/ADD_ALERT', {
-          header: true,
-          headerContent: 'Commande non trouvé',
-          body: 'La commande séléctionnée n’a pas pu être supprimé, car elle n’a pas été trouvé. Merci de réessayer.',
-          status: 'warning',
-          close: true
-        })
-      }
-    })
-
     return {
-      totalPrice,
-      useUtilsMutation,
-      orderRemove
+      totalPrice
     }
   }
 }

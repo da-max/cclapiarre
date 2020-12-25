@@ -2,7 +2,15 @@
   <section
     class="uk-margin-medium-top uk-width-1-2@m uk-margin-auto"
   >
-    <header class="uk-margin-large-bottom">
+    <CoffeeOrderListConfirmRemove
+      :order="orderToDelete"
+      :all="all"
+      @refetch-order="refetchOrderAll"
+    />
+    <header
+      v-show="!loading && orders.edges.length !== 0"
+      class="uk-margin-large-bottom"
+    >
       <a
         class="uk-button uk-button-secondary"
         href="#"
@@ -12,7 +20,7 @@
       <UtilsButton
         type="danger"
         class="uk-margin-large-left"
-        @click="removeAllOrder"
+        @click="confirmRemoveAllOrder"
       >
         Supprimer toutes les commandes
       </UtilsButton>
@@ -37,7 +45,7 @@
       <CoffeeOrderListItem
         :order="order"
         @display-details="(coffee) => displayDetails(coffee)"
-        @order-delete="refetchOrderAll()"
+        @confirm-remove="confirmRemoveOrder"
       />
     </section>
     <CoffeeDetails
@@ -48,49 +56,59 @@
 </template>
 
 <script>
+import { reactive, toRefs } from '@vue/composition-api'
 import useCoffee from '@/composition/coffee/useCoffee'
-import store from '@/store/index'
-import { useUtilsMutation } from '@/composition/useUtils'
+import { useShowModal } from '@/composition/useUtils'
 
 import CoffeeDetails from '@/components/Coffee/Order/Section/Coffee/CoffeeDetails'
 import CoffeeOrderListItem from '@/components/Coffee/OrderList/CoffeeOrderListItem.vue'
 import UtilsButton from '@/components/Utils/UtilsButton'
+import CoffeeOrderListConfirmRemove from '@/components/Coffee/OrderList/CoffeeOrderListConfirmRemove'
 
 export default {
   name: 'CoffeeOrderListSection',
-  components: { CoffeeDetails, CoffeeOrderListItem, UtilsButton },
+  components: {
+    CoffeeOrderListConfirmRemove,
+    CoffeeDetails,
+    CoffeeOrderListItem,
+    UtilsButton
+  },
   setup () {
-    const { coffeeSelect, displayDetails, allOrder, orderRemove, onDoneRemoveOrder } = useCoffee()
+    const state = reactive({
+      all: true,
+      orderToDelete: []
+    })
+
+    const {
+      coffeeSelect,
+      displayDetails,
+      allOrder
+    } = useCoffee()
 
     const { orders, loading, refetchOrderAll } = allOrder()
 
-    const removeAllOrder = () => {
-      const ordersId = orders.value.edges.map(order => order.node.id)
-      useUtilsMutation(orderRemove, { ordersId })
+    const confirmRemoveAllOrder = () => {
+      state.orderToDelete = orders.value.edges
+      state.all = true
+      useShowModal('#confirm-remove-order')
     }
 
-    onDoneRemoveOrder((result) => {
-      if (result.data.batchRemoveCoffeeOrder.deletionCount !== 0) {
-        refetchOrderAll()
-        store.commit('alert/ADD_ALERT', {
-          header: true,
-          headerContent: 'Commandes supprimées',
-          body: 'Toutes les commandes ont été supprimées.',
-          status: 'success',
-          close: true
-        })
-      } else {
-        store.commit('alert/ADD_ALERT', {
-          header: true,
-          headerContent: 'Commande non trouvé',
-          body: 'Les commandes n’ont pas pu être supprimées.',
-          status: 'warning',
-          close: true
-        })
-      }
-    })
+    const confirmRemoveOrder = (order) => {
+      state.orderToDelete = order
+      state.all = false
+      useShowModal('#confirm-remove-order')
+    }
 
-    return { orders, loading, coffeeSelect, displayDetails, refetchOrderAll, removeAllOrder }
+    return {
+      orders,
+      loading,
+      coffeeSelect,
+      displayDetails,
+      refetchOrderAll,
+      confirmRemoveAllOrder,
+      confirmRemoveOrder,
+      ...toRefs(state)
+    }
   }
 }
 </script>

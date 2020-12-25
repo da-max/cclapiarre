@@ -1,5 +1,0 @@
-mutation OrderDelete($orderId: ID!) {
-  removeCoffeeOrder(id: $orderId) {
-    found
-  }
-}

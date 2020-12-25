@@ -17,8 +17,8 @@ export function useShowModal (modalId) {
 export function useUtilsQuery (query, variables = {}) {
   store.commit('START_LOADING')
   try {
-    const { result, loading, error } = useQuery(query, variables)
-    return { result, loading, error }
+    const { result, loading, error, refetch } = useQuery(query, variables)
+    return { result, loading, error, refetch }
   } catch (e) {
     store.commit('alert/ADD_UNKNOWN')
   } finally {

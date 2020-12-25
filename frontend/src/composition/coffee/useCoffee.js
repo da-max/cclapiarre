@@ -1,5 +1,10 @@
 import store from '@/store/index'
 import { computed, reactive, toRefs } from '@vue/composition-api'
+import { useMutation, useResult } from '@vue/apollo-composable'
+import { useUtilsQuery } from '@/composition/useUtils'
+
+import ORDER_ALL from '@/graphql/Coffee/Order/OrderAll.gql'
+import ORDER_REMOVE from '@/graphql/Coffee/Order/OrderRemove.gql'
 
 export default function () {
   // state
@@ -68,6 +73,15 @@ export default function () {
     UIkit.modal('#coffee-details').show()
   }
 
+  const allOrder = () => {
+    const { result, loading, refetch: refetchOrderAll } = useUtilsQuery(ORDER_ALL)
+    const orders = useResult(result)
+
+    return { orders, loading, refetchOrderAll }
+  }
+
+  const { mutate: orderRemove, onDone: onDoneRemoveOrder } = useMutation(ORDER_REMOVE)
+
   return {
     // State
     ...toRefs(state),
@@ -94,6 +108,9 @@ export default function () {
     hasOrdered,
 
     // Methods
-    displayDetails
+    allOrder,
+    displayDetails,
+    orderRemove,
+    onDoneRemoveOrder
   }
 }

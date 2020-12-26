@@ -143,7 +143,7 @@ class CoffeeOrder(Model):
     """
     user = ForeignKey(User, on_delete=CASCADE, related_name="coffee_order")
     coffee = ManyToManyField(Coffee, through="CoffeeAmount",
-                             through_fields=('order', 'coffee'))
+                             through_fields=('order', 'coffee'), related_name="coffee_order")
 
     class Meta:
         verbose_name = 'Commande de café'

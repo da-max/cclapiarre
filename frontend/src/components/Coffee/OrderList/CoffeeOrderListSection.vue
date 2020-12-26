@@ -11,7 +11,7 @@
     >
       <a
         class="uk-button uk-button-secondary"
-        href="#"
+        href="/cafe/pdf-liste-des-commandes"
       >
         Générer le récapitulatif PDF de la commande
       </a>

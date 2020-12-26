@@ -3,24 +3,32 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Liste des commandes de pâte</title>
+    <title>Liste des commandes de café</title>
     <style>
     @page{
     	size: a4;
     	margin: 4cm;
     }
+    .center {
+        text-align: center;
+      }
+      .flex {
+        display: flex;
+      }
     </style>
 </head>
 <body>
-    {% for user, amount in data.items %}
-          <div class="center">
-                <p>
-                    Nom : {{ user.name }} - Prénom : {{ user.first_name }}
-                    <br>Email : {{ user.email }} - Prix à payer : {{ user.get_total_price }} €
+    <h1 class="center">Liste des commandes de café</h1>
+
+    {% for order, amounts in orders.items %}
+          <div>
+                <p class="center">
+                    Nom : {{ order.user.last_name }} - Prénom : {{ order.user.first_name }}
+                    <br>Email : {{ order.user.email }} - Prix à payer : {{ order.get_price }} €
                 </p>
                 <ul>
-                    {% for quantity in quantitys %}
-                    <li>{{ quantity.coffee.farm_coop }} ({{ quantity.sort }}) <p  class="text-right">{{ quantity.weight }}g x {{ quantity.quantity }} = {{ quantity.get_price }} €</p></li>
+                    {% for amount in amounts %}
+                    <li>{{ amount.coffee.farm_coop }} ({{ amount.sort }}) <span  class="text-right">{{ amount.weight }}g x {{ amount.amount }} = {{ amount.get_price }} €</span></li>
                     {% endfor %}
                 </ul>
                 <hr>

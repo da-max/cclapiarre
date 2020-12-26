@@ -1,7 +1,5 @@
 <template>
-  <section
-    class="uk-margin-medium-top uk-width-1-2@m uk-margin-auto"
-  >
+  <section class="uk-margin-medium-top uk-width-1-2@m uk-margin-auto">
     <CoffeeOrderListConfirmRemove
       :order="orderToDelete"
       :all="all"
@@ -79,11 +77,7 @@ export default {
       orderToDelete: []
     })
 
-    const {
-      coffeeSelect,
-      displayDetails,
-      allOrder
-    } = useCoffee()
+    const { coffeeSelect, displayDetails, allOrder } = useCoffee()
 
     const { orders, loading, refetchOrderAll } = allOrder()
 

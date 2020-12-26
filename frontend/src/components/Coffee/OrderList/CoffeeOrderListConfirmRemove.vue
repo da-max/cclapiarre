@@ -1,12 +1,16 @@
 <template>
   <UtilsModal id="confirm-remove-order">
     <template #header>
-      {{ all ? allHeader : uniqHeader + order.node.user.username }}
+      <h2 class="uk-modal-title">
+        {{ all ? allHeader : uniqHeader + order.node.user.username }}
+      </h2>
     </template>
     <template #body>
       <p>
         {{ all ? allBody : uniqBody + order.node.user.username }}
-        <span class="uk-text-danger uk-text-bold">attention, cette action est irréversible !!</span>
+        <span
+          class="uk-text-danger uk-text-bold"
+        >attention, cette action est irréversible !!</span>
       </p>
     </template>
     <template #footer>
@@ -59,7 +63,8 @@ export default {
     const state = reactive({
       allHeader: 'Supprimer toutes les commandes ?',
       uniqHeader: 'Supprimer la commande de ',
-      allBody: 'Vous êtes sur le point de supprimer toutes les commandes de café',
+      allBody:
+        'Vous êtes sur le point de supprimer toutes les commandes de café',
       uniqBody: 'Vous êtes sur le point de supprimer la commande de '
     })
 
@@ -68,7 +73,7 @@ export default {
     const removeOrder = () => {
       useHideModal('#confirm-remove-order')
       if (Array.isArray(props.order)) {
-        const ordersId = props.order.map(order => order.node.id)
+        const ordersId = props.order.map((order) => order.node.id)
         useUtilsMutation(orderRemove, { ordersId })
       } else {
         useUtilsMutation(orderRemove, { ordersId: props.order.node.id })
@@ -80,16 +85,24 @@ export default {
         emit('refetch-order')
         store.commit('alert/ADD_ALERT', {
           header: true,
-          headerContent: props.all ? 'Commandes supprimées' : 'Commande supprimée.',
-          body: props.all ? 'Toutes les commandes ont été supprimées.' : 'La commande a bien été supprimée.',
+          headerContent: props.all
+            ? 'Commandes supprimées'
+            : 'Commande supprimée.',
+          body: props.all
+            ? 'Toutes les commandes ont été supprimées.'
+            : 'La commande a bien été supprimée.',
           status: 'success',
           close: true
         })
       } else {
         store.commit('alert/ADD_ALERT', {
           header: true,
-          headerContent: props.all ? 'Commandes non trouvées' : 'Commande non trouvée',
-          body: props.all ? 'Les commandes n’ont pas pu être supprimées.' : 'La commande n’a pas pu être supprimée.',
+          headerContent: props.all
+            ? 'Commandes non trouvées'
+            : 'Commande non trouvée',
+          body: props.all
+            ? 'Les commandes n’ont pas pu être supprimées.'
+            : 'La commande n’a pas pu être supprimée.',
           status: 'warning',
           close: true
         })

@@ -84,7 +84,7 @@ export default {
   setup (props) {
     const totalPrice = computed(() => {
       let price = 0
-      props.order.node.amounts.edges.forEach(amount => {
+      props.order.node.amounts.edges.forEach((amount) => {
         if (amount.node.weight === 'A_200') {
           price += amount.node.amount * amount.node.coffee.twoHundredGramPrice
         } else {

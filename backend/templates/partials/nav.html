@@ -7,6 +7,11 @@
                     <span uk-navbar-toggle-icon></span> <span class="uk-margin-small-left">Menu</span>
                 </a>
             </div>
+						<div class="uk-navbar-center">
+							<a href="{% url 'home' %}">
+								<img src="{% static 'Images/logo.png' %}" alt="Logo" width="75" height="75">
+							</a>
+						</div>
             {% if user.is_authenticated %}
 	        <div class="uk-navbar-right uk-margin-right">
 	            <a href="#" class="uk-text uk-navbar-toggle"><span  uk-icon="icon: user; ratio: 1.5"></span>{{ user.first_name|default:user.username }}</a>
@@ -258,6 +263,11 @@
                     <span uk-navbar-toggle-icon></span> <span class="uk-margin-small-left">Menu</span>
                 </a>
             </div>
+						<div class="uk-navbar-center">
+							<a href="{% url 'home' %}">
+								<img src="{% static 'Images/logo.png' %}" alt="Logo" width="75" height="75">
+							</a>
+						</div>
             {% if user.is_authenticated %}
 	        <div class="uk-navbar-right uk-margin-right">
 	            <a href="#" class="uk-text uk-navbar-toggle"><span  uk-icon="icon: user; ratio: 1.5"></span>{{ user.first_name|default:user.username }}</a>

@@ -19,6 +19,18 @@
             <span class="uk-margin-small-left">Menu</span>
           </a>
         </div>
+        <div class="uk-navbar-center">
+          <router-link
+            :to="{name: 'Home' }"
+            class="uk-navbar-item uk-logo"
+          >
+            <img
+              src="/static/Images/logo.png"
+              width="75"
+              height="75"
+            >
+          </router-link>
+        </div>
         <UserOptions
           v-if="currentUser && currentUser.username"
           class="uk-navbar-right uk-margin-right"
@@ -35,7 +47,7 @@
           class="uk-nav uk-nav-center uk-margin-auto-vertical"
           uk-nav
         >
-          <li class="uk-parent">
+          <li>
             <router-link :to="{ name: 'Home' }">
               Accueil
             </router-link>
@@ -43,14 +55,10 @@
           <li class="uk-parent">
             <router-link
               :to="{ name: 'MemberList' }"
-              class="uk-nav-header"
             >
               Liste des adhérents
             </router-link>
           </li>
-
-          <br>
-
           <li class="uk-parent">
             <a
               href="#"
@@ -92,9 +100,6 @@
               </li>
             </ul>
           </li>
-
-          <br>
-
           <li class="uk-parent">
             <a
               href="#"

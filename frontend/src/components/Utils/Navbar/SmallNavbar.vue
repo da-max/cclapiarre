@@ -18,6 +18,18 @@
             <span uk-navbar-toggle-icon />
             <span class="uk-margin-small-left">Menu</span>
           </a>
+        </div>*
+        <div class="uk-navbar-center">
+          <router-link
+            :to="{name: 'Home'}"
+            class="uk-navbar-item uk-logo"
+          >
+            <img
+              src="/static/Images/logo.png"
+              width="75"
+              height="75"
+            >
+          </router-link>
         </div>
         <UserOptions
           v-if="currentUser && currentUser.username"
@@ -35,15 +47,14 @@
           class="uk-nav uk-nav-center uk-margin-auto-vertical"
           uk-nav
         >
-          <li class="uk-parent">
+          <li>
             <router-link :to="{ name: 'Home' }">
               Accueil
             </router-link>
           </li>
-          <li class="uk-parent">
+          <li>
             <router-link
               :to="{ name: 'MemberList' }"
-              class="uk-nav-header"
             >
               Liste des adhérents
             </router-link>

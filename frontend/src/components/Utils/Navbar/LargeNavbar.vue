@@ -19,7 +19,7 @@
             <a
               class="uk-navbar-item uk-logo"
             ><img
-              src="../../../assets/logo.png"
+              src="/static/Images/logo.png"
               width="75"
               height="75"
             ></a>

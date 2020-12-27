@@ -12,10 +12,7 @@
 	            <a href="#" class="uk-text uk-navbar-toggle"><span  uk-icon="icon: user; ratio: 1.5"></span>{{ user.first_name|default:user.username }}</a>
 	            <div class="uk-navbar-dropdown" uk-dropdown>
 	            	<ul class="uk-nav uk-navbar-dropdown-nav">
-	            		<li class="uk-nav-header">{{ user.username }}</li>
-	            		<li><a href="{% url 'change_password' %}">Changer de mot de passe</a>
 	            		<li><a href="{% url 'disconnection_connection' %}">Changer d'utilisateur</a></li>
-	            		<li class="uk-nav-divider"></li>
 	            		<li><a href="{% url 'disconnection' %}">Déconnexion</a></li>
 	            	</ul>
 	            </div>
@@ -29,13 +26,11 @@
 		<div class="uk-offcanvas-bar uk-flex uk-flex-column">
                         
             <ul class="uk-nav uk-nav-center uk-margin-auto-vertical" uk-nav>
-                
-                <li class="uk-parent">
-                    <a href="#" class="uk-nav-header"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span>Espace adhérent</a>
-                    <ul class="uk-nav-sub uk-nav-default">
-                        <li><a href="{% url 'list_user' %}">Liste des adhérents</a></li>
-	                    <li><a href="{% url 'list_article_private' %}">Actualité</a></li>
-                    </ul>
+                <li>
+									<a href="{% url 'home' %}">Accueil</a>
+								</li>
+                <li>
+                  <a href="/#/compte/liste-des-adherents">Liste des adhérents</a>
                 </li>
                 
                 <br>
@@ -81,7 +76,6 @@
                                 <li><a href="{% url 'list_coffee' %}">Liste des cafés</a></li>
                                 <li><a href="{% url 'create_coffee' %}">Ajouter un café</a></li>
                                 <li class="uk-nav-divider"></li>
-                                <li><a href="{% url 'list_command' %}">Liste des commandes</a></li>
                                 <li><a href="{% url 'global_command' %}">Commande globale</a></li>
                                 <li class="uk-nav-divider"></li>
                                 <li><a href="{% url 'list_origin' %}">Liste des origines</a></li>
@@ -130,9 +124,7 @@
                 <li class="uk-parent">
                     <a href="#" class="uk-nav-header uk-nav-default"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span>Commander</a>
                     <ul class="uk-nav-sub uk-nav-default">
-                        <li><a href="{% url 'citrus:new_command_citrus' %}">Commander des agrumes</a></li>
-                        <li><a href="{% url 'new_coffee_command' %}">Commander du café</a></li>
-												<li><a href="{% url 'pasta_command' %}">Commander des pâtes</a></li>
+                        <li><a href="/#/cafe/commander">café</a></li>
                     </ul>
                 </li>
             </ul>
@@ -148,13 +140,7 @@
 	                <li><a href="{% url 'home' %}">Accueil</a></li>
 									<a class="uk-navbar-item uk-logo"><img src="{% static 'Images/logo.png' %}" width="75px" height="75px" /></a>
 		            	<li>
-	                	<a href="#">Espace adhérent</a>
-	                	<div class="uk-navbar-dropdown">
-	                	    <ul class="uk-nav uk-navbar-dropdown-nav">
-	                	        <li><a href="{% url 'list_user' %}">Liste des adhérents</a></li>
-	                	        <li><a href="{% url 'list_article_private' %}">Actualité</a></li>
-	                	    </ul>
-	                	</div>
+	                	<a href="/#/compte/liste-des-adherents">Liste des adhérents</a>
 	                </li>
 	                <li>
 		                <a href="#administration-space" uk-toggle>Espace administration</a>
@@ -163,9 +149,7 @@
 						<a href="#">Commander</a>
 					  <div class="uk-navbar-dropdown">
 							<ul class="uk-nav uk-navbar-dropdown-nav">
-								<li><a href="{% url 'citrus:new_command_citrus' %}">Commander des agrumes</a></li>
-								<li><a href="{% url 'new_coffee_command'%}">Commander du café</a></li>
-								<li><a href="{% url 'pasta_command' %}">Commander des pâtes</a></li>
+								<li><a href="/#/cafe/commander">café</a></li>
 							</ul>
 						</div>
 					</li>
@@ -174,10 +158,7 @@
 	            <a href="#" class="uk-text"><span  uk-icon="icon: user; ratio: 1.5"></span>{{ user.first_name|default:user.username }}</a>
 	            <div class="uk-navbar-dropdown">
 	            	<ul class="uk-nav uk-navbar-dropdown-nav">
-	            		<li class="uk-nav-header">{{ user.username }}</li>
-	            		<li><a href="{% url 'change_password' %}">Changer de mot de passe</a>
 	            		<li><a href="{% url 'disconnection_connection' %}">Changer d'utilisateur</a></li>
-	            		<li class="uk-nav-divider"></li>
 	            		<li><a href="{% url 'disconnection' %}">Déconnexion</a></li>
 	            	</ul>
 	            </div>
@@ -219,8 +200,7 @@
 						<li><a href="{% url 'create_coffee' %}">Ajouter un café</a></li>
 		        
 						<li class="uk-nav-divider"></li>
-						
-						<li><a href="{% url 'list_command' %}">Liste des commandes</a></li>
+						<li><a href="/#/cafe/liste-des-commandes">Liste des commandes</a></li>
 						<li><a href="{% url 'global_command' %}">Commande globale</a></li>
 						
 						<li class="uk-nav-divider"></li>
@@ -237,16 +217,6 @@
 			    <ul class="uk-nav-sub">
 						<li><a href="{% url 'list_carousel' %}">Liste des carousels</a></li>
 						<li><a href="{% url 'create_carousel' %}">Créer un carousel</a></li>
-					</ul>
-				</li>
-
-				<li class="uk-nav-divider"></li>
-
-				<li class='uk-parent'>
-					<a class='uk-nav-header'>Pâtes</a>
-					<ul class='uk-nav-sub'>
-						<li><a href="{% url 'pasta_list_command' %}">Liste des commandes</a></li>
-						<li><a href="{% url 'pasta_global_command' %}">Commande globale</a></li>
 					</ul>
 				</li>
 
@@ -293,10 +263,7 @@
 	            <a href="#" class="uk-text uk-navbar-toggle"><span  uk-icon="icon: user; ratio: 1.5"></span>{{ user.first_name|default:user.username }}</a>
 	            <div class="uk-navbar-dropdown" uk-dropdown>
 	            	<ul class="uk-nav uk-navbar-dropdown-nav">
-	            		<li class="uk-nav-header">{{ user.username }}</li>
-	            		<li><a href="{% url 'change_password' %}">Changer de mot de passe</a>
 	            		<li><a href="{% url 'disconnection_connection' %}">Changer d'utilisateur</a></li>
-	            		<li class="uk-nav-divider"></li>
 	            		<li><a href="{% url 'disconnection' %}">Déconnexion</a></li>
 	            	</ul>
 	            </div>
@@ -310,13 +277,11 @@
 		<div class="uk-offcanvas-bar uk-flex uk-flex-column">
                         
             <ul class="uk-nav uk-nav-center uk-margin-auto-vertical" uk-nav>
-                
-                <li class="uk-parent">
-                    <a href="#" class="uk-nav-header"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span>Espace adhérent</a>
-                    <ul class="uk-nav-sub uk-nav-default">
-                        <li><a href="{% url 'list_user' %}">Liste des adhérents</a></li>
-	                    <li><a href="{% url 'list_article_private' %}">Actualité</a></li>
-                    </ul>
+                <li>
+									<a href="{% url 'home' %}">Accueil</a>
+								</li>
+                <li>
+                  <a href="/#/compte/liste-des-adherents">Liste des adhérents</a>
                 </li>
                 
                 <br>
@@ -352,7 +317,6 @@
                                 <li><a href="{% url 'list_coffee' %}">Liste des cafés</a></li>
                                 <li><a href="{% url 'create_coffee' %}">Ajouter un café</a></li>
                                 <li class="uk-nav-divider"></li>
-                                <li><a href="{% url 'list_command' %}">Liste des commandes</a></li>
                                 <li><a href="{% url 'global_command' %}">Commande globale</a></li>
                                 <li class="uk-nav-divider"></li>
                                 <li><a href="{% url 'list_origin' %}">Liste des origines</a></li>
@@ -370,37 +334,27 @@
                             </ul>
                         </li>
                         
-                        <li class="uk-nav-divider"></li>
-                        
-						<li class='uk-parent'>
-							<a class='uk-nav-header'>Pâtes</a>
-							<ul class='uk-nav-sub'>
-								<li><a href="{% url 'pasta_list_command' %}">Liste des commandes</a></li>
-								<li><a href="{% url 'pasta_global_command' %}">Commande globale</a></li>
-							</ul>
-						</li>
+												<li class="uk-nav-divider"></li>
 
-						<li class="uk-nav-divider"></li>
+												<li class="uk-parent">
+													<a href="" class="uk-nav-header">Agrumes</a>
+													<ul class="uk-nav-sub">
+														<li><a href="{% url 'citrus:list_product' %}">Liste des produits</a></li>
+														<li><a href="{% url 'citrus:create_product' %}">Ajouter un produit</a></li>
+													</ul>
+												</li>
 
-						<li class="uk-parent">
-							<a href="" class="uk-nav-header">Agrumes</a>
-							<ul class="uk-nav-sub">
-								<li><a href="{% url 'citrus:list_product' %}">Liste des produits</a></li>
-								<li><a href="{% url 'citrus:create_product' %}">Ajouter un produit</a></li>
-							</ul>
-						</li>
+												<li class='uk-nav-divider'></li>
 
-						<li class='uk-nav-divider'></li>
+												<li class="uk-parent">
+													<a class="uk-nav-header" type='button'>Paramètres</a>
+													<ul class="uk-nav-sub">
+														<li><a href="{% url 'list_pageaccess' %}">Listes de règle d’accès aux pages</a></li>
+														<li><a href="{% url 'create_pageaccess' %}">Ajouter une règle d’accès à une page</a></li>
+													</ul>
+												</li>
 
-						<li class="uk-parent">
-							<a class="uk-nav-header" type='button'>Paramètres</a>
-							<ul class="uk-nav-sub">
-								<li><a href="{% url 'list_pageaccess' %}">Listes de règle d’accès aux pages</a></li>
-								<li><a href="{% url 'create_pageaccess' %}">Ajouter une règle d’accès à une page</a></li>
-							</ul>
-						</li>
-
-						<li class='uk-nav-divider'></li>
+												<li class='uk-nav-divider'></li>
 
                         <li><a href="/admin/">Administration</a></li>
                     </ul>
@@ -411,9 +365,7 @@
                 <li class="uk-parent">
                     <a href="#" class="uk-nav-header uk-nav-default"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span>Commander</a>
                     <ul class="uk-nav-sub uk-nav-default">
-                        <li><a href="{% url 'citrus:new_command_citrus' %}">Commander des agrumes</a></li>
-                        <li><a href="{% url 'new_coffee_command' %}">Commander du café</a></li>
-						<li><a href="{% url 'pasta_command' %}">Commander des pâtes</a></li>
+                        <li><a href="/#/cafe/commander">café</a></li>
                     </ul>
                 </li>
             </ul>

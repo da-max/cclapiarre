@@ -11,37 +11,54 @@
       >
         <div class="uk-navbar-center">
           <ul class="uk-navbar-nav">
-            <li><router-link :to="{ name: 'Home' }">Accueil</router-link></li>
-            <a class="uk-navbar-item uk-logo"
-              ><img src="../../../assets/logo.png" width="75" height="75"
-            /></a>
             <li>
-              <router-link :to="{ name: 'MemberList' }"
-                >Liste des adhérents</router-link
+              <router-link :to="{ name: 'Home' }">
+                Accueil
+              </router-link>
+            </li>
+            <a
+              class="uk-navbar-item uk-logo"
+            ><img
+              src="../../../assets/logo.png"
+              width="75"
+              height="75"
+            ></a>
+            <li>
+              <router-link
+                :to="{ name: 'MemberList' }"
               >
+                Liste des adhérents
+              </router-link>
             </li>
             <li>
-              <a href="#administration-space" uk-toggle
-                >Espace administration</a
-              >
+              <a
+                href="#administration-space"
+                uk-toggle
+              >Espace administration</a>
             </li>
             <li>
               <a href="#">Commander</a>
               <div class="uk-navbar-dropdown">
                 <ul class="uk-nav uk-navbar-dropdown-nav">
                   <li>
-                    <router-link :to="{ name: 'CoffeeOrder' }"
-                      >Café</router-link
+                    <router-link
+                      :to="{ name: 'CoffeeOrder' }"
                     >
+                      Café
+                    </router-link>
                   </li>
-                  <li v-for="orderItem in orderItems" :key="orderItem.id">
+                  <li
+                    v-for="orderItem in orderItems"
+                    :key="orderItem.id"
+                  >
                     <router-link
                       :to="{
                         name: 'ApplicationOrder',
                         params: { application: orderItem.slug }
                       }"
-                      >{{ orderItem.name }}</router-link
                     >
+                      {{ orderItem.name }}
+                    </router-link>
                   </li>
                 </ul>
               </div>
@@ -51,38 +68,50 @@
               v-if="currentUser && currentUser.username"
               :li="true"
               class="uk-position-relative uk-position-right uk-margin-right uk-margin-large-left"
-            ></UserOptions>
+            />
           </ul>
         </div>
       </nav>
     </div>
 
-    <div id="administration-space" uk-offcanvas="overlay: true">
+    <div
+      id="administration-space"
+      uk-offcanvas="overlay: true"
+    >
       <div class="uk-offcanvas-bar">
-        <ul class="uk-nav uk-nav-default uk-nav-parent-icon" uk-nav>
+        <ul
+          class="uk-nav uk-nav-default uk-nav-parent-icon"
+          uk-nav
+        >
           <li class="uk-active uk-text-center uk-text-bold">
             <a href="">Espace administration</a>
           </li>
-          <br />
+          <br>
           <li
-            class="uk-parent"
             v-for="adminPanelItem in adminPanelItems"
             :key="adminPanelItem.title"
+            class="uk-parent"
           >
             <a class="uk-nav-header">{{ adminPanelItem.title }}</a>
             <ul class="uk-nav-sub">
               <li
                 v-for="subItem in adminPanelItem.subItems"
                 :key="subItem.name"
+                :class="{'uk-nav-divider': subItem.divider}"
               >
                 <router-link
-                  v-if="subItem.routerLink"
+                  v-if="subItem.routerLink && !subItem.divider"
                   :to="subItem.routerLink"
-                  >{{ subItem.name }}</router-link
                 >
-                <a v-else :href="subItem.link">{{ subItem.name }}</a>
+                  {{ subItem.name }}
+                </router-link>
+                <a
+                  v-else-if="!subItem.divider"
+                  :href="subItem.link"
+                >{{ subItem.name }}</a>
               </li>
             </ul>
+            <div class="uk-nav-divider" />
           </li>
 
           <li><a href="/admin/">Administration</a></li>
@@ -97,15 +126,18 @@ import { mapState } from 'vuex'
 import UserOptions from '@/components/Utils/Navbar/UserOptions'
 
 export default {
+  components: {
+    UserOptions
+  },
   props: {
-    adminPanelItems: Array,
+    adminPanelItems: {
+      required: true,
+      type: Array
+    },
     orderItems: {
       required: true,
       type: Array
     }
-  },
-  components: {
-    UserOptions
   },
   computed: {
     ...mapState({ currentUser: (state) => state.auth.currentUser })

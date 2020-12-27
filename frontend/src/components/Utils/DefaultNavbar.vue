@@ -2,19 +2,19 @@
   <div>
     <SmallNavbar
       :admin-panel-items="adminPanelItems"
-      :orderItems="allApplications"
+      :order-items="allApplications"
       class="uk-hidden@m uk-hidden-touch"
-    ></SmallNavbar>
+    />
     <LargeNavbar
       class="uk-hidden-touch"
       :admin-panel-items="adminPanelItems"
-      :orderItems="allApplications"
-    ></LargeNavbar>
+      :order-items="allApplications"
+    />
     <MobileNavbar
       class="uk-hidden-notouch"
       :admin-panel-items="adminPanelItems"
-      :orderItems="allApplications"
-    ></MobileNavbar>
+      :order-items="allApplications"
+    />
   </div>
 </template>
 
@@ -25,6 +25,11 @@ import SmallNavbar from '@/components/Utils/Navbar/SmallNavbar'
 import { mapState } from 'vuex'
 
 export default {
+  components: {
+    MobileNavbar,
+    LargeNavbar,
+    SmallNavbar
+  },
   data () {
     return {
       adminPanelItems: [
@@ -33,11 +38,11 @@ export default {
           subItems: [
             {
               name: 'Liste des articles',
-              link: ''
+              link: '/article/liste-des-articles'
             },
             {
               name: 'Créer un article',
-              link: ''
+              link: '/article/creer-un-article'
             }
           ]
         },
@@ -46,11 +51,48 @@ export default {
           subItems: [
             {
               name: 'Liste des évènements',
-              link: ''
+              link: '/evenement/liste-des-evenements'
             },
             {
               name: 'Créer un évènement',
-              link: ''
+              link: '/evenement/creer-un-evenement'
+            }
+          ]
+        },
+        {
+          title: 'Café',
+          subItems: [
+            {
+              name: 'Liste des cafés',
+              link: '/cafe/liste-des-cafes'
+            },
+            {
+              name: 'Ajouter un café',
+              link: '/cafe/creer-un-cafe'
+            },
+            {
+              name: 'Divider 1',
+              divider: true
+            },
+            {
+              name: 'Liste des commandes',
+              routerLink: { name: 'CoffeeOrderList' }
+            },
+            {
+              name: 'Commande globale',
+              link: '/cafe/commande-globale'
+            },
+            {
+              name: 'Divider 2',
+              divider: true
+            },
+            {
+              name: 'Liste des origines',
+              link: '/cafe/liste-des-origines'
+            },
+            {
+              name: 'Ajouter une origine',
+              link: '/cafe/creer-une-origine'
             }
           ]
         },
@@ -59,20 +101,24 @@ export default {
           subItems: [
             {
               name: 'Liste des carousels',
-              link: ''
+              link: '/carousel/liste-des-carousels'
             },
             {
               name: 'Créer un carousel',
-              link: ''
+              link: '/carousel/creer-un-carousel'
             }
           ]
         },
         {
-          title: 'Café',
+          title: 'Paramètres',
           subItems: [
             {
-              name: 'Liste des commandes',
-              routerLink: { name: 'CoffeeOrderList' }
+              name: 'Liste des règles d’accès aux pages',
+              link: '/parametre/liste-des-acces'
+            },
+            {
+              name: 'Ajouter une règles d’accès à une page',
+              link: '/parametre/creer-une-regle-d-acces'
             }
           ]
         }
@@ -81,11 +127,6 @@ export default {
   },
   computed: {
     ...mapState({ allApplications: (state) => state.application.applications })
-  },
-  components: {
-    MobileNavbar,
-    LargeNavbar,
-    SmallNavbar
   }
 }
 </script>

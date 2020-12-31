@@ -52,3 +52,7 @@ yarn-error.log*
 frontend/webpack-stats.json
 frontend/webpack-stats-prod.json
 
+
+# Cypress
+frontend/tests/e2e/videos/
+frontend/tests/e2e/screenshots/

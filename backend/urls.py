@@ -31,7 +31,7 @@ from graphene_file_upload.django import FileUploadGraphQLView
 
 from backend.article import views as a_views
 from backend.article.sitemaps import StaticViewSitemap
-from backend.api.apps import ApiConfig
+# from backend.api.apps import ApiConfig
 
 
 sitemaps = {
@@ -47,7 +47,7 @@ urlpatterns = [
     path('a-propos-du-site/', views.flatpage,
          {'url': "/a-propos-du-site/"}, name="a_propos"),
     path('carousel/', include("backend.carousel.urls")),
-    # path("cafe/", include("backend.coffee.urls")),
+    path(r'cafe/', include("backend.coffee.urls")),
     path('pate/', include("backend.pasta.urls")),
     path('parametre/', include('backend.stats.urls')),
     path('pages/', include('django.contrib.flatpages.urls')),
@@ -56,7 +56,7 @@ urlpatterns = [
     path('changements', a_views.changelog, name='changelog'),
 
     # Api
-    url(r'^api/', include(('backend.api.urls', 'api'), namespace='api')),
+    # url(r'^api/', include(('backend.api.urls', 'api'), namespace='api')),
 
     path('jsi18n', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 
@@ -67,9 +67,10 @@ urlpatterns = [
                                               content_type="text/plain"), name="robots_file"),
 
     url(r'^graphql/?', csrf_exempt(FileUploadGraphQLView.as_view(graphiql=True))),
+    url(r'^#$', TemplateView.as_view(template_name='app.html'), name='home'),
     url(r'^#*$', TemplateView.as_view(template_name='app.html')),
     url(r'', include(('backend.application.urls',
-                        'application'), namespace='application')),
+                      'application'), namespace='application')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

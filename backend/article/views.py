@@ -137,23 +137,6 @@ class UpdateArticle(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
                                                  kwargs={"id_article":id_article}), {"form":form})
 
 
-def home(request, filtered):
-    """ Home of site.
-    Arguments:
-        request {request} -- [Request with Http information.]
-        filtered {string} -- [String for filtered article with categorie name.]
-    """
-    event = Event.objects.all().order_by("date")
-    article = Article.objects.filter(categorie__name=filtered).order_by("-date_creation")
-    carousels = Carousel.objects.all().order_by('position')
-    return render(request, "article/home.html", {
-        'event': event,
-        'article': article,
-        'carousels': carousels,
-        'filtered': filtered
-    })
-
-
 
 @login_required
 @permission_required("article.delete_article", raise_exception=True)

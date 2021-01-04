@@ -62,13 +62,3 @@ def sommary_command(request):
         }
 
     return render(request, "citrus/pdf/sommary_command.html", {'products_list': products_list, 'users': users, 'total': total})
-
-
-@login_required
-@permission_required('citrus.add_command', raise_exception=True)
-def command_citrus(request):
-    ''' Vuejs app for command citrus.'''
-    return render(request, 'app.html')
-
-class CitrusAppView(PermissionRequiredMixin, LoginRequiredMixin, TemplateView):
-    template_name = "app.html"

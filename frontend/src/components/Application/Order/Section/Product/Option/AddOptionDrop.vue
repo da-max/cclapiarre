@@ -1,10 +1,13 @@
 <template>
-  <UtilsDrop pos="left" mode="click">
-    <template>
+  <UtilsDrop
+    pos="left"
+    mode="click"
+  >
+    <template #default>
       <FormInput
+        v-model="newOption"
         type="text"
         :value="newOption"
-        v-model="newOption"
         name="option-name"
         label="Nom de l’option"
       />
@@ -16,8 +19,9 @@
             application: $route.params.application,
           })
         "
-        >Ajouter l’option</UtilsButton
       >
+        Ajouter l’option
+      </UtilsButton>
     </template>
   </UtilsDrop>
 </template>

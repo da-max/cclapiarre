@@ -10,18 +10,20 @@
       },
     ]"
   >
-  <caption v-show="caption">{{ caption }}</caption>
+    <caption v-show="caption">
+      {{ caption }}
+    </caption>
     <thead>
       <tr>
-          <slot name="head"></slot>
+        <slot name="head" />
       </tr>
     </thead>
     <tbody>
-      <slot name="body"></slot>
+      <slot name="body" />
     </tbody>
     <tfoot>
       <tr>
-        <slot name="foot"></slot>
+        <slot name="foot" />
       </tr>
     </tfoot>
   </table>

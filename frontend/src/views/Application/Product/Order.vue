@@ -23,6 +23,17 @@ import { computed } from '@vue/composition-api'
 
 export default {
   name: 'Order',
+  components: {
+    OrderHeader,
+    OrderSection,
+    Alerts
+  },
+  props: {
+    applicationSlug: {
+      required: true,
+      type: String
+    }
+  },
   setup (props, { root }) {
     const application = computed(() => root.$route.params.application)
     const { getApplication } = useApplication(application)
@@ -34,16 +45,6 @@ export default {
     return {
       getApplication
     }
-  },
-  props: {
-    applicationSlug: {
-      required: true
-    }
-  },
-  components: {
-    OrderHeader,
-    OrderSection,
-    Alerts
   },
   watch: {
     $route (to, from) {

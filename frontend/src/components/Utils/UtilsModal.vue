@@ -13,15 +13,18 @@
         class="uk-modal-close-default"
         type="button"
         uk-close
-      ></button>
+      />
       <div class="uk-modal-header">
-        <slot name="header"></slot>
+        <slot name="header" />
       </div>
-      <div class="uk-modal-body" uk-overflow-auto>
-        <slot name="body"></slot>
+      <div
+        class="uk-modal-body"
+        uk-overflow-auto
+      >
+        <slot name="body" />
       </div>
       <div class="uk-modal-footer">
-        <slot name="footer"></slot>
+        <slot name="footer" />
       </div>
     </div>
   </div>

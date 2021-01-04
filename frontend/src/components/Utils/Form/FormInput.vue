@@ -3,8 +3,7 @@
     <label
       :for="name"
       :class="['uk-form-label', { 'required-label': required }]"
-      >{{ label }}</label
-    >
+    >{{ label }}</label>
     <div class="uk-form-controls">
       <input
         :required="required"
@@ -15,10 +14,20 @@
         :placeholder="label"
         :value="value"
         @input="$emit('input', $event.target.value)"
-      />
+      >
     </div>
-    <p v-if="required" class="uk-text-muted">Ce champ est requis.</p>
-    <p v-else class="uk-text-muted">Ce champ est optionnel.</p>
+    <p
+      v-if="required"
+      class="uk-text-muted"
+    >
+      Ce champ est requis.
+    </p>
+    <p
+      v-else
+      class="uk-text-muted"
+    >
+      Ce champ est optionnel.
+    </p>
   </div>
 </template>
 

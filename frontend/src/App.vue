@@ -19,12 +19,12 @@ export default {
     DefaultFooter,
     Loader
   },
+  computed: {
+    ...mapState(['loading'])
+  },
   beforeCreate () {
     this.$store.dispatch('auth/loadUser')
     this.$store.dispatch('application/getApplications')
-  },
-  computed: {
-    ...mapState(['loading'])
   }
 }
 </script>

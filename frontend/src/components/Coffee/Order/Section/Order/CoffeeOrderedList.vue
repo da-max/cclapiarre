@@ -4,29 +4,36 @@
       <p><span class="uk-label">Prix de votre commande</span> {{ price }}€</p>
     </div>
     <transition-group
+      id="order-list"
       name="fade"
       uk-grid
       class="uk-flex uk-flex-center uk-grid-large"
-      id="order-list"
     >
-      <div v-for="coffeeOrder in coffeesOrder" :key="coffeeOrder.id">
+      <div
+        v-for="coffeeOrder in coffeesOrder"
+        :key="coffeeOrder.id"
+      >
         <CoffeeOrderedItem :coffee="coffeeOrder" />
       </div>
     </transition-group>
     <div
-      class="uk-text-center uk-margin-medium-top"
       v-show="coffeesOrder.length !== 0"
+      class="uk-text-center uk-margin-medium-top"
     >
       <UtilsButton
         type="secondary"
         class="uk-margin-large-right"
-        @click="showModal('#sommary-modal')"
         :disabled="!valide"
-        >Récapitulatif de la commande</UtilsButton
+        @click="showModal('#sommary-modal')"
       >
-      <UtilsButton @click="saveOrder" :disabled="!valide"
-        >Commander</UtilsButton
+        Récapitulatif de la commande
+      </UtilsButton>
+      <UtilsButton
+        :disabled="!valide"
+        @click="saveOrder"
       >
+        Commander
+      </UtilsButton>
     </div>
     <CoffeeOrderedSommary id="sommary-modal" />
   </div>

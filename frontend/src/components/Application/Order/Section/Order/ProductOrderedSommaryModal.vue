@@ -1,7 +1,12 @@
 <template>
-  <UtilsModal :container="true" :center="true">
+  <UtilsModal
+    :container="true"
+    :center="true"
+  >
     <template #header>
-      <h2 class="uk-modal-title">Récapitulatif de la commande</h2>
+      <h2 class="uk-modal-title">
+        Récapitulatif de la commande
+      </h2>
     </template>
     <template #body>
       <UtilsTable>
@@ -26,14 +31,19 @@
             <td v-if="productOrdered.option">
               {{ productOrdered.option.node.name }}
             </td>
-            <td v-else class="uk-text-muted">Non disponible</td>
+            <td
+              v-else
+              class="uk-text-muted"
+            >
+              Non disponible
+            </td>
             <td>
               <input
+                v-model="productOrdered.amount"
                 type="number"
                 name="amount"
                 class="uk-input uk-form-width-small"
-                v-model="productOrdered.amount"
-              />
+              >
             </td>
             <td>{{ total(productOrdered.id) }} €</td>
             <td>
@@ -41,8 +51,9 @@
                 type="danger"
                 width="small"
                 @click="removeProduct(productOrdered.id)"
-                >Supprimer</UtilsButton
               >
+                Supprimer
+              </UtilsButton>
             </td>
           </tr>
         </template>
@@ -50,8 +61,20 @@
     </template>
     <template #footer>
       <div class="uk-text-center">
-        <UtilsButton type="default" class="uk-modal-close">Annuler</UtilsButton>
-        <UtilsButton type="primary" class="uk-margin-left" @click="addOrder" :disabled="!valide">Commander</UtilsButton>
+        <UtilsButton
+          type="default"
+          class="uk-modal-close"
+        >
+          Annuler
+        </UtilsButton>
+        <UtilsButton
+          type="primary"
+          class="uk-margin-left"
+          :disabled="!valide"
+          @click="addOrder"
+        >
+          Commander
+        </UtilsButton>
       </div>
     </template>
   </UtilsModal>

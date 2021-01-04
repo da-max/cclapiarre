@@ -7,17 +7,20 @@
       class="uk-container uk-text-large uk-text-justify"
     >
       <ckeditor
-        :editor="editor"
         v-model="description"
+        :editor="editor"
         :config="config"
-      ></ckeditor>
+      />
     </div>
     <div
       v-else
-      v-html="description"
       class="uk-container uk-text-large uk-text-justify"
-    ></div>
-    <footer class="uk-margin-medium-top uk-text-center" v-show="isAdmin">
+      v-html="description"
+    />
+    <footer
+      v-show="isAdmin"
+      class="uk-margin-medium-top uk-text-center"
+    >
       <div v-if="update">
         <UtilsButton
           :disabled="newDescription === description"
@@ -29,11 +32,14 @@
           type="secondary"
           class="uk-margin-medium-left"
           @click="update = false"
-          >Annuler</UtilsButton
         >
+          Annuler
+        </UtilsButton>
       </div>
       <div v-else>
-        <UtilsButton @click="update = true">Modifier</UtilsButton>
+        <UtilsButton @click="update = true">
+          Modifier
+        </UtilsButton>
       </div>
     </footer>
   </article>
@@ -51,6 +57,10 @@ import UtilsButton from '@/components/Utils/UtilsButton'
 
 export default {
   name: 'OrderHeaderSection',
+  components: {
+    UtilsButton,
+    ckeditor: CKEditor.component
+  },
   setup (props, { root }) {
     const { isAdmin, updateApplication } = useApplication(
       root.$route.params.application
@@ -99,10 +109,6 @@ export default {
     }
 
     return { ...toRefs(state), isAdmin, description, saveDescription, newDescription }
-  },
-  components: {
-    UtilsButton,
-    ckeditor: CKEditor.component
   }
 }
 </script>

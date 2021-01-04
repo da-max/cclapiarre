@@ -1,40 +1,63 @@
 <template>
   <li v-if="li">
-    <a href="#" class="uk-text">
-      <span uk-icon="icon: user; ratio: 1.5" class="uk-icon-link"></span
-      >{{ currentUser.name ? currentUser.name : currentUser.username }}</a
+    <a
+      href="#"
+      class="uk-text"
     >
+      <span
+        uk-icon="icon: user; ratio: 1.5"
+        class="uk-icon-link"
+      />{{ currentUser.name ? currentUser.name : currentUser.username }}</a>
     <div class="uk-navbar-dropdown">
       <ul class="uk-nav uk-navbar-dropdown-nav">
-        <li class="uk-nav-header"></li>
+        <li class="uk-nav-header" />
         <li
           v-for="userOptionItem in userOptionsItems"
           :key="userOptionItem.title"
         >
-          <router-link :to="userOptionItem.link">{{ userOptionItem.title }}</router-link>
+          <router-link :to="userOptionItem.link">
+            {{ userOptionItem.title }}
+          </router-link>
         </li>
         <li>
-          <a href="#" type="button" @click.prevent="logout">Déconnexion</a>
+          <a
+            href="#"
+            type="button"
+            @click.prevent="logout"
+          >Déconnexion</a>
         </li>
       </ul>
     </div>
   </li>
   <div v-else>
-    <a class="uk-text uk-navbar-toggle" href="#">
-      <span uk-icon="icon: user; ratio: 1.5" class="uk-icon-link"></span
-      >{{ currentUser.name ? currentUser.name : currentUser.username }}</a
+    <a
+      class="uk-text uk-navbar-toggle"
+      href="#"
     >
-    <div class="uk-navbar-dropdown" uk-dropdown>
+      <span
+        uk-icon="icon: user; ratio: 1.5"
+        class="uk-icon-link"
+      />{{ currentUser.name ? currentUser.name : currentUser.username }}</a>
+    <div
+      class="uk-navbar-dropdown"
+      uk-dropdown
+    >
       <ul class="uk-nav uk-navbar-dropdown-nav">
-        <li class="uk-nav-header"></li>
+        <li class="uk-nav-header" />
         <li
           v-for="userOptionItem in userOptionsItems"
           :key="userOptionItem.title"
         >
-          <router-link :to="userOptionItem.link">{{ userOptionItem.title }}</router-link>
+          <router-link :to="userOptionItem.link">
+            {{ userOptionItem.title }}
+          </router-link>
         </li>
         <li>
-          <a href="#" type="button" @click.prevent="logout()">Déconnexion</a>
+          <a
+            href="#"
+            type="button"
+            @click.prevent="logout()"
+          >Déconnexion</a>
         </li>
       </ul>
     </div>
@@ -45,6 +68,13 @@
 import { mapState } from 'vuex'
 
 export default {
+  props: {
+    li: {
+      type: Boolean,
+      default: false,
+      required: false
+    }
+  },
   data () {
     return {
       userOptionsItems: [
@@ -53,12 +83,6 @@ export default {
           link: { name: 'Login' }
         }
       ]
-    }
-  },
-  props: {
-    li: {
-      default: false,
-      required: false
     }
   },
 

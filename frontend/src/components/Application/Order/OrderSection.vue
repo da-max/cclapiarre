@@ -2,24 +2,24 @@
   <div>
     <div class="uk-text-center uk-margin-medium-bottom">
       <a
-        class="uk-button uk-button-secondary"
         v-show="isAdmin"
+        class="uk-button uk-button-secondary"
         :href="'/' + $route.params.application + '/recapitulatif'"
-        >Générer le récapitulatif de la commande</a
-      >
+      >Générer le récapitulatif de la commande</a>
       <UtilsButton
+        v-show="isAdmin"
         type="primary"
         class="uk-margin-medium-left"
-        v-show="isAdmin"
         @click="showProductFormModal"
-        >Ajouter un produit</UtilsButton
       >
+        Ajouter un produit
+      </UtilsButton>
     </div>
     <ProductFormModal />
     <OrderInformation class="uk-width-1-2@l uk-margin-auto" />
     <ProductOrderedList
-      class="uk-margin-xlarge uk-width-4-5@l uk-margin-auto"
       id="order-list"
+      class="uk-margin-xlarge uk-width-4-5@l uk-margin-auto"
     />
 
     <ProductList />
@@ -37,6 +37,13 @@ import UtilsButton from '../../Utils/UtilsButton.vue'
 
 export default {
   name: 'OrderSection',
+  components: {
+    ProductList,
+    ProductOrderedList,
+    OrderInformation,
+    UtilsButton,
+    ProductFormModal
+  },
   setup (props, { root }) {
     const { isAdmin } = useApplication(root.$route.params.application)
     // eslint-disable-next-line no-undef
@@ -45,13 +52,6 @@ export default {
       isAdmin,
       showProductFormModal
     }
-  },
-  components: {
-    ProductList,
-    ProductOrderedList,
-    OrderInformation,
-    UtilsButton,
-    ProductFormModal
   }
 }
 </script>

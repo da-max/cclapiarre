@@ -11,16 +11,16 @@
       class="uk-alert-close"
       uk-close
       @click="deleteAlert(alertId)"
-    ></a>
+    />
     <div v-show="header">
       <h2 :class="'uk-text-center uk-text-' + status">
-        <slot name="header"></slot>
+        <slot name="header" />
       </h2>
     </div>
     <p>
-      <slot name="body"></slot>
+      <slot name="body" />
     </p>
-    <hr />
+    <hr>
     <p>
       <slot name="footer">
         Si vous rencontrez un problème, vous pouvez me contacter à l’adresse :

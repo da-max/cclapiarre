@@ -1,22 +1,26 @@
 <template>
-  <UtilsDrop pos="right" id="addOption" mode="click">
+  <UtilsDrop
+    id="addOption"
+    pos="right"
+    mode="click"
+  >
     <template>
       <FormInputNumber
-        :value="newWeight.weight"
         v-model="newWeight.weight"
+        :value="newWeight.weight"
         name="weight"
         label="Poids"
       />
       <FormInput
+        v-model="newWeight.unit"
         type="text"
         :value="newWeight.unit"
-        v-model="newWeight.unit"
         name="unit"
         label="Unité du poids"
       />
       <FormInputNumber
-        :value="newWeight.price"
         v-model="newWeight.price"
+        :value="newWeight.price"
         :step="0.01"
         name="price"
         label="Prix du produit pour ce poids"
@@ -29,8 +33,9 @@
             newWeight,
           })
         "
-        >Ajouter le poids</UtilsButton
       >
+        Ajouter le poids
+      </UtilsButton>
     </template>
   </UtilsDrop>
 </template>

@@ -1,28 +1,39 @@
 <template>
   <div>
-    <form class="uk-form-horizontal" action="#">
-      <p class="uk-text-danger uk-text-bold" v-if="error">
+    <form
+      class="uk-form-horizontal"
+      action="#"
+    >
+      <p
+        v-if="error"
+        class="uk-text-danger uk-text-bold"
+      >
         Utilisateur inconnu ou mot de passe incorrect.
       </p>
       <FormInput
+        v-model="user.username"
         :type="username.type"
         :name="username.name"
         :label="username.label"
         :value="username.value"
-        v-model="user.username"
       />
       <FormInput
+        v-model="user.password"
         :type="password.type"
         :name="password.name"
         :label="password.label"
         :value="password.value"
-        v-model="user.password"
       />
       <div class="uk-margin-medium-top uk-text-center">
-        <UtilsButton @click="loginUser">Se connecter</UtilsButton>
-        <UtilsButton class="uk-margin-large-left" type="text"
-          >Mot de passe oublié</UtilsButton
+        <UtilsButton @click="loginUser">
+          Se connecter
+        </UtilsButton>
+        <UtilsButton
+          class="uk-margin-large-left"
+          type="text"
         >
+          Mot de passe oublié
+        </UtilsButton>
       </div>
     </form>
   </div>

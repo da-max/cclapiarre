@@ -1,12 +1,15 @@
 <template>
-  <UtilsCard mediaPos="bottom">
+  <UtilsCard media-pos="bottom">
     <template #media>
       <div
         v-if="product.node.image"
         class="uk-transition-toggle uk-inline-clip"
         tabindex="0"
       >
-        <img :src="'/media/' + product.node.image" alt="" />
+        <img
+          :src="'/media/' + product.node.image"
+          alt=""
+        >
         <ProductItemInformation
           :weights="product.node.weights"
           :options="product.node.options"
@@ -26,25 +29,42 @@
       >
         {{ product.node.name }}
       </h3>
-      <div v-html="product.node.description"></div>
+      <div v-html="product.node.description" />
     </template>
     <template #footer>
-      <div class="uk-margin-medium-top" v-if="product.node.display">
+      <div
+        v-if="product.node.display"
+        class="uk-margin-medium-top"
+      >
         <UtilsButton
-          @click="addProductOrder(product.node)"
-          class="uk-margin-medium-bottom"
           id="addProductButton"
-          >Commander ce produit</UtilsButton
+          class="uk-margin-medium-bottom"
+          @click="addProductOrder(product.node)"
         >
-        <UtilsButton type="text" v-if="isAdmin" @click="updateProduct"
-          >Modifier le produit</UtilsButton
+          Commander ce produit
+        </UtilsButton>
+        <UtilsButton
+          v-if="isAdmin"
+          type="text"
+          @click="updateProduct"
         >
+          Modifier le produit
+        </UtilsButton>
       </div>
-      <div v-else class="uk-text-center">
-        <p class="uk-text-muted">Produit non disponible à la commande</p>
-        <UtilsButton type="text" v-show="isAdmin" @click="updateProduct"
-          >Modifier le produit</UtilsButton
+      <div
+        v-else
+        class="uk-text-center"
+      >
+        <p class="uk-text-muted">
+          Produit non disponible à la commande
+        </p>
+        <UtilsButton
+          v-show="isAdmin"
+          type="text"
+          @click="updateProduct"
         >
+          Modifier le produit
+        </UtilsButton>
       </div>
     </template>
   </UtilsCard>

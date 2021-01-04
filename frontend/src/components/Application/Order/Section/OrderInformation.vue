@@ -1,20 +1,23 @@
 <template>
   <section class="uk-text-center">
-  <h3>Informations</h3>
-  <div uk-grid class="uk-child-width-1-2@m uk-flex-center uk-text-bold">
-    <p>
-      <span class="uk-label">Nom d’utilisateur</span> {{ username }}
-    </p>
-    <p>
-      <span class="uk-label">Email</span> {{ email }}
-    </p>
-    <p>
-      <span class="uk-label">Prénom</span> {{ firstName }}
-    </p>
-    <p>
-      <span class="uk-label">Nom</span> {{ lastName }}
-    </p>
-  </div>
+    <h3>Informations</h3>
+    <div
+      uk-grid
+      class="uk-child-width-1-2@m uk-flex-center uk-text-bold"
+    >
+      <p>
+        <span class="uk-label">Nom d’utilisateur</span> {{ username }}
+      </p>
+      <p>
+        <span class="uk-label">Email</span> {{ email }}
+      </p>
+      <p>
+        <span class="uk-label">Prénom</span> {{ firstName }}
+      </p>
+      <p>
+        <span class="uk-label">Nom</span> {{ lastName }}
+      </p>
+    </div>
   </section>
 </template>
 

@@ -16,13 +16,25 @@
         :max="max"
         :placeholder="label"
         :value="value"
-        @input="$emit('input', $event.target.value)"
         :class="['uk-input', { 'uk-form-danger': value <= 0 }]"
-      />
+        @input="$emit('input', $event.target.value)"
+      >
     </div>
-    <p v-if="required" class="uk-text-muted">Ce champ est requis.</p>
-    <p v-else class="uk-text-muted">Ce champ est optionnel.</p>
-    <p class="uk-text-muted"><slot></slot></p>
+    <p
+      v-if="required"
+      class="uk-text-muted"
+    >
+      Ce champ est requis.
+    </p>
+    <p
+      v-else
+      class="uk-text-muted"
+    >
+      Ce champ est optionnel.
+    </p>
+    <p class="uk-text-muted">
+      <slot />
+    </p>
   </div>
 </template>
 

@@ -7,46 +7,78 @@
     <template #body>
       <form class="uk-form-horizontal">
         <div class="uk-margin-medium-bottom">
-          <label for="farmCoop" class="uk-form-label">Café</label>
+          <label
+            for="farmCoop"
+            class="uk-form-label"
+          >Café</label>
           <div class="uk-form-controls">
-            <select name="farmCoop" id="farmCoop" class="uk-select" v-model="coffeeCoffee">
+            <select
+              id="farmCoop"
+              v-model="coffeeCoffee"
+              name="farmCoop"
+              class="uk-select"
+            >
               <option
                 v-for="c in coffees"
                 :key="c.node.id"
                 :value="c.node.id"
-                >{{ c.node.farmCoop }}</option
               >
+                {{ c.node.farmCoop }}
+              </option>
             </select>
           </div>
         </div>
         <div class="uk-margin-medium-bottom">
-          <label for="weight" class="uk-form-label">Poids du café</label>
+          <label
+            for="weight"
+            class="uk-form-label"
+          >Poids du café</label>
           <div class="uk-form-controls">
-            <select name="weight" id="weight" class="uk-select" v-model="coffeeWeight">
-              <option :value="null">Sélectionner le poids</option>
-              <option value="200">200 grammes</option>
-              <option value="1000">1 kilogramme</option>
+            <select
+              id="weight"
+              v-model="coffeeWeight"
+              name="weight"
+              class="uk-select"
+            >
+              <option :value="null">
+                Sélectionner le poids
+              </option>
+              <option value="200">
+                200 grammes
+              </option>
+              <option value="1000">
+                1 kilogramme
+              </option>
             </select>
           </div>
         </div>
-        <div class="uk-margin-medium-bottom" v-show="coffee.weight !== null">
-          <label for="type" class="uk-form-label">Type de mouture</label>
+        <div
+          v-show="coffee.weight !== null"
+          class="uk-margin-medium-bottom"
+        >
+          <label
+            for="type"
+            class="uk-form-label"
+          >Type de mouture</label>
           <div class="uk-form-controls">
             <select
-              name="type"
               id="type"
-              class="uk-select"
               v-model="coffeeType"
+              name="type"
+              class="uk-select"
             >
-              <option :value="null"
-                >Sélectionner le type de mouture</option
+              <option
+                :value="null"
               >
+                Sélectionner le type de mouture
+              </option>
               <option
                 v-for="type in coffee.coffee.availableType.edges"
                 :key="type.node.id"
                 :value="type.node"
-                >{{ type.node.name }}</option
               >
+                {{ type.node.name }}
+              </option>
             </select>
           </div>
         </div>
@@ -58,9 +90,12 @@
           @input="changeAmount"
         />
         <div class="uk-text-center">
-          <UtilsButton type="danger" @click="removeCoffeeOrder(coffee.id)"
-            >Supprimer de ma commande</UtilsButton
+          <UtilsButton
+            type="danger"
+            @click="removeCoffeeOrder(coffee.id)"
           >
+            Supprimer de ma commande
+          </UtilsButton>
         </div>
       </form>
     </template>
@@ -77,16 +112,16 @@ import { computed } from '@vue/composition-api'
 
 export default {
   name: 'CoffeeOrderedItem',
+  components: {
+    UtilsCard,
+    UtilsButton,
+    FormInputNumber
+  },
   props: {
     coffee: {
       required: true,
       type: Object
     }
-  },
-  components: {
-    UtilsCard,
-    UtilsButton,
-    FormInputNumber
   },
   setup (props) {
     const { coffees, setAmount, removeCoffeeOrder, setCoffee, setType, setWeight } = useCoffee()

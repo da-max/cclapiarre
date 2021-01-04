@@ -5,9 +5,13 @@
       :alt="images[0].alt"
       uk-img
       class="uk-box-shadow-medium"
-    />
+    >
   </div>
-  <UtilsSlider v-else base-url="/media/" :images="images" />
+  <UtilsSlider
+    v-else
+    base-url="/media/"
+    :images="images"
+  />
 </template>
 
 <script>

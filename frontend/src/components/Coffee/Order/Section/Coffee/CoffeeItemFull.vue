@@ -2,7 +2,9 @@
   <UtilsCard>
     <template #header>
       <div>
-        <h2 class="uk-card-title">{{ coffee.farmCoop }}</h2>
+        <h2 class="uk-card-title">
+          {{ coffee.farmCoop }}
+        </h2>
       </div>
     </template>
     <template #body>
@@ -11,11 +13,12 @@
     <template #footer>
       <div class="uk-text-center">
         <UtilsButton
-          @click="addCoffeeOrder(coffee)"
-          :disabled="!valide"
           id="add-coffee-button"
-          >Commander ce café</UtilsButton
+          :disabled="!valide"
+          @click="addCoffeeOrder(coffee)"
         >
+          Commander ce café
+        </UtilsButton>
       </div>
     </template>
   </UtilsCard>
@@ -30,16 +33,16 @@ import UtilsCard from '@/components/Utils/UtilsCard'
 
 export default {
   name: 'CoffeeItemFull',
+  components: {
+    CoffeeDetailsContent,
+    UtilsCard,
+    UtilsButton
+  },
   props: {
     coffee: {
       type: Object,
       required: true
     }
-  },
-  components: {
-    CoffeeDetailsContent,
-    UtilsCard,
-    UtilsButton
   },
   setup () {
     const { addCoffeeOrder, valide } = useCoffee()

@@ -3,7 +3,10 @@
     <div class="uk-text-center">
       <h5>Poids disponible</h5>
       <ul class="uk-list">
-        <li v-for="weight in weights.edges" :key="weight.node.id">
+        <li
+          v-for="weight in weights.edges"
+          :key="weight.node.id"
+        >
           {{ weight.node.weight }} {{ weight.node.unit }} pour
           {{ weight.node.price }} €
         </li>
@@ -12,7 +15,10 @@
     <div v-if="options.edges.length !== 0">
       <h5>Options disponible</h5>
       <ul class="uk-list">
-        <li v-for="option in options.edges" :key="option.node.id">
+        <li
+          v-for="option in options.edges"
+          :key="option.node.id"
+        >
           {{ option.node.name }}
         </li>
       </ul>

@@ -1,14 +1,31 @@
 <template>
-  <UtilsModal :center="true" :container="true" :bgClose="true"
-    ><template #header v-if="Object.keys(coffee).length !== 0">
-      <h3 class="uk-modal-title">{{ coffee.farmCoop }}</h3>
+  <UtilsModal
+    :center="true"
+    :container="true"
+    :bg-close="true"
+  >
+    <template
+      v-if="Object.keys(coffee).length !== 0"
+      #header
+    >
+      <h3 class="uk-modal-title">
+        {{ coffee.farmCoop }}
+      </h3>
     </template>
-    <template #body v-if="Object.keys(coffee).length !== 0">
+    <template
+      v-if="Object.keys(coffee).length !== 0"
+      #body
+    >
       <CoffeeDetailsContent :coffee="coffee" />
     </template>
     <template #footer>
       <div class="uk-text-center">
-        <UtilsButton class="uk-modal-close" type="default">Fermer</UtilsButton>
+        <UtilsButton
+          class="uk-modal-close"
+          type="default"
+        >
+          Fermer
+        </UtilsButton>
       </div>
     </template>
   </UtilsModal>

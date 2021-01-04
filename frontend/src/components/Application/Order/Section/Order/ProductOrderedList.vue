@@ -9,26 +9,31 @@
       class="uk-flex-center uk-child-width-1-2@l uk-grid-match"
       uk-grid
     >
-      <div v-for="productOrdered in productsOrdered" :key="productOrdered.id">
-        <ProductOrderedItem :productOrdered="productOrdered" />
+      <div
+        v-for="productOrdered in productsOrdered"
+        :key="productOrdered.id"
+      >
+        <ProductOrderedItem :product-ordered="productOrdered" />
       </div>
     </transition-group>
     <div
-      class="uk-text-center uk-margin-large-top"
       v-show="productsOrdered.length !== 0"
+      class="uk-text-center uk-margin-large-top"
     >
       <UtilsButton
         :disabled="!valide"
         type="secondary"
         @click="showModal('#sommaryModal')"
-        >Récapitulatif de la commande</UtilsButton
       >
+        Récapitulatif de la commande
+      </UtilsButton>
       <UtilsButton
         class="uk-margin-large-left"
         :disabled="!valide"
         @click="addOrder"
-        >Commander</UtilsButton
       >
+        Commander
+      </UtilsButton>
     </div>
     <ProductOrderedSommaryModal id="sommaryModal" />
   </section>

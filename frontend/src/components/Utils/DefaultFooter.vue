@@ -8,8 +8,14 @@
       class="uk-child-width-expand@s uk-grid-large uk-text-center uk-padding uk-padding-bottom"
       uk-grid
     >
-      <li v-for="utilsLink in utilsLinks" :key="utilsLink.name">
-        <a class="uk-button uk-button-text" :href="utilsLink.link">{{
+      <li
+        v-for="utilsLink in utilsLinks"
+        :key="utilsLink.name"
+      >
+        <a
+          class="uk-button uk-button-text"
+          :href="utilsLink.link"
+        >{{
           utilsLink.name
         }}</a>
       </li>
@@ -19,7 +25,10 @@
     >
       <li>
         Ce site est gracieusement hébergé par
-        <a href="https://deblan.fr" class="uk-link">Deblan.fr</a>.
+        <a
+          href="https://deblan.fr"
+          class="uk-link"
+        >Deblan.fr</a>.
       </li>
       <li>
         Site développé et maintenu par
@@ -31,9 +40,9 @@
       </li>
       <li>Version : {{ version }}</li>
       <li>
-        <a href="https://gitlab.com/Damax/cclapiarre"
-          ><i class="fab fa-gitlab fa-2x uk-link-heading"></i
-        ></a>
+        <a
+          href="https://gitlab.com/Damax/cclapiarre"
+        ><i class="fab fa-gitlab fa-2x uk-link-heading" /></a>
       </li>
     </ul>
   </footer>

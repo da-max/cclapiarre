@@ -7,47 +7,64 @@
     :esc-close="false"
   >
     <template #header>
-      <h2 v-if="update" class="uk-modal-title">
+      <h2
+        v-if="update"
+        class="uk-modal-title"
+      >
         Modifier le produit : {{ product.name }}
       </h2>
-      <h2 class="uk-modal-title" v-else>Ajouter un produit</h2>
+      <h2
+        v-else
+        class="uk-modal-title"
+      >
+        Ajouter un produit
+      </h2>
     </template>
     <template #body>
       <Alerts />
       <form class="uk-margin-large-bottom">
         <FormInput
+          v-model="product.name"
           type="text"
           name="name"
           label="Nom du produit"
           :value="product.name"
-          v-model="product.name"
         />
-        <div class="uk-child-width-1-2@l uk-grid-medium uk-flex-center" uk-grid>
+        <div
+          class="uk-child-width-1-2@l uk-grid-medium uk-flex-center"
+          uk-grid
+        >
           <fieldset class="uk-fieldset uk-text-center">
-            <legend class="uk-legend">Poids du produit</legend>
+            <legend class="uk-legend">
+              Poids du produit
+            </legend>
             <div class="uk-inline">
               <button
                 type="button"
                 uk-icon="plus"
                 class="uk-icon-button"
                 title="Ajouter un poids"
-              ></button>
+              />
               <AddWeightDrop @add-weight="addWeight" />
             </div>
             <div class="uk-height-medium uk-overflow-auto">
-              <div v-for="weight in weights.edges" :key="weight.node.id">
-                <label :for="weight.node.id" class="uk-form-label"
-                  >{{ weight.node.weight }} {{ weight.node.unit }} pour
-                  {{ weight.node.price }} €</label
-                >
+              <div
+                v-for="weight in weights.edges"
+                :key="weight.node.id"
+              >
+                <label
+                  :for="weight.node.id"
+                  class="uk-form-label"
+                >{{ weight.node.weight }} {{ weight.node.unit }} pour
+                  {{ weight.node.price }} €</label>
                 <div class="uk-form-controls">
                   <input
-                    type="checkbox"
                     v-model="product.weights"
+                    type="checkbox"
                     :value="weight.node.id"
                     :name="weight.node.id"
                     class="uk-checkbox"
-                  />
+                  >
                 </div>
               </div>
             </div>
@@ -62,12 +79,18 @@
                 uk-icon="plus"
                 class="uk-icon-button"
                 title="Ajouter une option"
-              ></button>
+              />
               <AddOptionDrop @add-option="addOption" />
             </div>
             <div class="uk-height-medium uk-overflow-auto">
-              <div v-for="option in options.edges" :key="option.node.id">
-                <label :for="option.node.id" class="uk-form-label">{{
+              <div
+                v-for="option in options.edges"
+                :key="option.node.id"
+              >
+                <label
+                  :for="option.node.id"
+                  class="uk-form-label"
+                >{{
                   option.node.name
                 }}</label>
                 <div class="uk-form-controls">
@@ -77,7 +100,7 @@
                     type="checkbox"
                     :name="option.node.id"
                     class="uk-checkbox"
-                  />
+                  >
                 </div>
               </div>
             </div>
@@ -89,7 +112,11 @@
         >
           <div>
             <div uk-form-custom>
-              <input type="file" @change="upload" required />
+              <input
+                type="file"
+                required
+                @change="upload"
+              >
               <button
                 class="uk-button uk-button-default"
                 type="button"
@@ -103,17 +130,18 @@
             </p>
           </div>
           <div>
-            <label for="display" class="uk-form-label"
-              >Afficher le produit</label
-            >
+            <label
+              for="display"
+              class="uk-form-label"
+            >Afficher le produit</label>
             <div class="uk-form-controls">
               <input
+                v-model="product.display"
                 type="checkbox"
                 name="display"
                 required
-                v-model="product.display"
                 class="uk-checkbox"
-              />
+              >
             </div>
             <p class="uk-text-muted">
               Si cette case est décochée, le produit sera caché et ne sera pas
@@ -133,8 +161,8 @@
           </div>
           <div>
             <FormInputNumber
-              :value="product.maximumAll"
               v-model="product.maximumAll"
+              :value="product.maximumAll"
               :max="1000"
               name="maximum-all"
               label="Maximum pour le produit"
@@ -144,7 +172,10 @@
             </p>
           </div>
         </div>
-        <ckeditor :editor="editor" v-model="product.description" />
+        <ckeditor
+          v-model="product.description"
+          :editor="editor"
+        />
       </form>
     </template>
     <template #footer>
@@ -152,13 +183,15 @@
         <UtilsButton
           class="uk-margin-medium-right uk-modal-close"
           type="default"
-          >Annuler</UtilsButton
         >
+          Annuler
+        </UtilsButton>
         <UtilsButton
           type="primary"
           @click="saveProduct($route.params.application)"
-          >{{ update ? "Modifier" : "Ajouter" }} le produit</UtilsButton
         >
+          {{ update ? "Modifier" : "Ajouter" }} le produit
+        </UtilsButton>
       </div>
     </template>
   </UtilsModal>
@@ -186,6 +219,28 @@ import AddWeightDrop from '@/components/Application/Order/Section/Product/Weight
 
 export default {
   name: 'ProductFormModal',
+  components: {
+    UtilsModal,
+    FormInput,
+    AddOptionDrop,
+    AddWeightDrop,
+    ckeditor: CKEditor.component,
+    UtilsButton,
+    FormInputNumber,
+    Alerts
+  },
+  props: {
+    productUpdate: {
+      required: false,
+      type: Object,
+      default: () => ({})
+    },
+    update: {
+      required: false,
+      default: false,
+      type: Boolean
+    }
+  },
   setup (props, { root }) {
     // Computed
     // ==========
@@ -293,28 +348,6 @@ export default {
       upload,
       saveProduct
     }
-  },
-  props: {
-    productUpdate: {
-      required: false,
-      type: Object,
-      default: () => ({})
-    },
-    update: {
-      required: false,
-      default: false,
-      type: Boolean
-    }
-  },
-  components: {
-    UtilsModal,
-    FormInput,
-    AddOptionDrop,
-    AddWeightDrop,
-    ckeditor: CKEditor.component,
-    UtilsButton,
-    FormInputNumber,
-    Alerts
   }
 }
 </script>

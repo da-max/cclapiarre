@@ -1,5 +1,8 @@
 <template>
-  <UtilsSlider base-url="/static/Images/Coffee/" :images="images" />
+  <UtilsSlider
+    base-url="/static/Images/Coffee/"
+    :images="images"
+  />
 </template>
 
 <script>

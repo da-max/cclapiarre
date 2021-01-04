@@ -1,6 +1,8 @@
 <template>
   <header class="uk-margin-large-top">
-    <h1 class="uk-text-center">Café</h1>
+    <h1 class="uk-text-center">
+      Café
+    </h1>
     <CoffeeOrderHeaderImage
       class="uk-margin-large-top uk-margin-auto uk-width-1-2@l uk-width-4-5@m"
     />

@@ -9,7 +9,7 @@
     ]"
     @click.prevent="$emit('click')"
   >
-    <slot></slot>
+    <slot />
   </button>
 </template>
 

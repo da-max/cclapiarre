@@ -21,14 +21,14 @@ import { computed } from '@vue/composition-api'
 
 export default {
   name: 'OrderHeader',
+  components: {
+    OrderHeaderImage,
+    OrderHeaderSection
+  },
   setup () {
     const application = computed(() => store.state.application.currentApplication)
 
     return { application }
-  },
-  components: {
-    OrderHeaderImage,
-    OrderHeaderSection
   }
 }
 </script>

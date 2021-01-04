@@ -10,9 +10,16 @@
       class="uk-slider-items uk-grid"
       uk-height-match="target: > li > div > img"
     >
-      <li class="uk-width-3-4" v-for="image in images" :key="image.image">
+      <li
+        v-for="image in images"
+        :key="image.image"
+        class="uk-width-3-4"
+      >
         <div class="uk-panel">
-          <img :src="baseUrl + image.image" :alt="image.alt" />
+          <img
+            :src="baseUrl + image.image"
+            :alt="image.alt"
+          >
         </div>
       </li>
     </ul>
@@ -21,13 +28,13 @@
       href="#"
       uk-slidenav-previous
       uk-slider-item="previous"
-    ></a>
+    />
     <a
       class="uk-position-center-right uk-position-small uk-hidden-hover"
       href="#"
       uk-slidenav-next
       uk-slider-item="next"
-    ></a>
+    />
   </div>
 </template>
 

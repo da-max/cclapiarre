@@ -1,7 +1,12 @@
 <template>
-  <UtilsModal :container="true" :center="true">
+  <UtilsModal
+    :container="true"
+    :center="true"
+  >
     <template #header>
-      <h2 class="uk-modal-title">Récapitulatif de la commande</h2>
+      <h2 class="uk-modal-title">
+        Récapitulatif de la commande
+      </h2>
     </template>
     <template #body>
       <OrderInformation />
@@ -17,23 +22,36 @@
           <th>Prix</th>
           <th>Supprimer</th>
         </template>
-        <template #body v-if="Object.keys(coffeesOrder).length === 0">
+        <template
+          v-if="Object.keys(coffeesOrder).length === 0"
+          #body
+        >
           <tr>
             <td>
               Aucun café n’a été commandé
             </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td />
+            <td />
+            <td />
+            <td />
+            <td />
           </tr>
         </template>
-        <template #body v-else>
-          <tr v-for="coffeeOrder in coffeesOrder" :key="coffeeOrder.id">
+        <template
+          v-else
+          #body
+        >
+          <tr
+            v-for="coffeeOrder in coffeesOrder"
+            :key="coffeeOrder.id"
+          >
             <td>{{ coffeeOrder.coffee.farmCoop }}</td>
-            <td v-if="coffeeOrder.weight === 200">200 grammes</td>
-            <td v-else>1 kilogramme</td>
+            <td v-if="coffeeOrder.weight === 200">
+              200 grammes
+            </td>
+            <td v-else>
+              1 kilogramme
+            </td>
             <td>{{ coffeeOrder.type ? coffeeOrder.type.name : '' }}</td>
             <td>
               <input
@@ -42,7 +60,7 @@
                 class="uk-input uk-form-width-small salut"
                 :value="coffeeOrder.amount"
                 @change="(ev) => setAmount(coffeeOrder.id, ev.target.value)"
-              />
+              >
             </td>
             <td>{{ uniqPrice(coffeeOrder.id) }} €</td>
             <td>
@@ -50,8 +68,9 @@
                 width="small"
                 type="danger"
                 @click="removeCoffeeOrder(coffeeOrder.id)"
-                >Supprimer</UtilsButton
               >
+                Supprimer
+              </UtilsButton>
             </td>
           </tr>
         </template>
@@ -62,14 +81,16 @@
         <UtilsButton
           class="uk-margin-medium-right uk-modal-close"
           type="secondary"
-          >Annuler</UtilsButton
         >
+          Annuler
+        </UtilsButton>
         <UtilsButton
-          @click="saveOrder"
-          :disabled="!valide"
           v-show="Object.keys(coffeesOrder).length !== 0"
-          >Commander</UtilsButton
+          :disabled="!valide"
+          @click="saveOrder"
         >
+          Commander
+        </UtilsButton>
       </div>
     </template>
   </UtilsModal>

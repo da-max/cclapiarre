@@ -1,12 +1,21 @@
 <template>
-  <UtilsTable v-if="loading === false" :middle="true">
+  <UtilsTable
+    v-if="loading === false"
+    :middle="true"
+  >
     <template #head>
-      <th v-for="headerItem in headerItems" :key="headerItem">
+      <th
+        v-for="headerItem in headerItems"
+        :key="headerItem"
+      >
         {{ headerItem }}
       </th>
     </template>
     <template #body>
-      <tr v-for="member in result.users" :key="member.id">
+      <tr
+        v-for="member in result.users"
+        :key="member.id"
+      >
         <td v-if="member.lastName">
           {{ member.lastName }}
         </td>
@@ -43,6 +52,9 @@ import UtilsTable from '@/components/Utils/UtilsTable'
 import MEMBER_ALL from '@/graphql/Member/MemberAll.gql'
 
 export default {
+  components: {
+    UtilsTable
+  },
   setup (props) {
     const { result, loading } = useUtilsQuery(MEMBER_ALL)
     return { result, loading }
@@ -51,9 +63,6 @@ export default {
     return {
       headerItems: ['Nom', 'Prénom', 'Email', 'Numéro de téléphone']
     }
-  },
-  components: {
-    UtilsTable
   }
 }
 </script>

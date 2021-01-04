@@ -8,13 +8,16 @@
     <template #body>
       <form class="uk-form-horizontal">
         <div>
-          <label for="weight" class="uk-form-label">Poids du produit</label>
+          <label
+            for="weight"
+            class="uk-form-label"
+          >Poids du produit</label>
           <div class="uk-form-controls">
             <select
               name="weight"
               class="uk-select"
-              @input="selectWeight"
               :disabled="productOrdered.product.weights.edges.length === 1"
+              @input="selectWeight"
             >
               <option
                 v-for="weight in productOrdered.product.weights.edges"
@@ -28,19 +31,26 @@
           </div>
         </div>
         <div
-          class="uk-margin-medium-top"
           v-if="productOrdered.product.options.edges.length !== 0"
+          class="uk-margin-medium-top"
         >
-          <label for="option" class="uk-form-label"
-            >Option pour ce produit</label
-          >
+          <label
+            for="option"
+            class="uk-form-label"
+          >Option pour ce produit</label>
           <div class="uk-form-controls">
-            <select name="option" class="uk-select" @input="selectOption">
-              <option selected>Sélectionner une option</option>
+            <select
+              name="option"
+              class="uk-select"
+              @input="selectOption"
+            >
+              <option selected>
+                Sélectionner une option
+              </option>
               <option
-                :value="option.node.id"
                 v-for="option in productOrdered.product.options.edges"
                 :key="option.node.id"
+                :value="option.node.id"
               >
                 {{ option.node.name }}
               </option>
@@ -61,10 +71,11 @@
     <template #footer>
       <div class="uk-text-center">
         <UtilsButton
-          @click="removeProductOrdered(productOrdered.id)"
           type="danger"
-          >Supprimer</UtilsButton
+          @click="removeProductOrdered(productOrdered.id)"
         >
+          Supprimer
+        </UtilsButton>
       </div>
     </template>
   </UtilsCard>
@@ -78,6 +89,11 @@ import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'ProductOrderedItem',
+  components: {
+    UtilsCard,
+    UtilsButton,
+    FormInputNumber
+  },
   props: {
     productOrdered: {
       required: true,
@@ -86,11 +102,6 @@ export default {
   },
   computed: {
     ...mapGetters({ productById: 'order/productById' })
-  },
-  components: {
-    UtilsCard,
-    UtilsButton,
-    FormInputNumber
   },
   methods: {
     ...mapMutations({

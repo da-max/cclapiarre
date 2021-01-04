@@ -9,17 +9,26 @@
       },
     ]"
   >
-    <div class="uk-card-header" v-show="!mediaPos && header">
-      <slot name="header"></slot>
+    <div
+      v-show="!mediaPos && header"
+      class="uk-card-header"
+    >
+      <slot name="header" />
     </div>
     <div class="uk-card-body">
-      <slot name="body"></slot>
+      <slot name="body" />
     </div>
-    <div v-show="mediaPos" :class="`uk-card-media-${mediaPos}`">
-      <slot name="media"></slot>
+    <div
+      v-show="mediaPos"
+      :class="`uk-card-media-${mediaPos}`"
+    >
+      <slot name="media" />
     </div>
-    <div class="uk-card-footer" v-if="footer">
-      <slot name="footer"></slot>
+    <div
+      v-if="footer"
+      class="uk-card-footer"
+    >
+      <slot name="footer" />
     </div>
   </div>
 </template>

@@ -39,6 +39,9 @@ class ApplicationType(DjangoObjectType):
     resolve_admins() -> User:
         Method for customise resolve of admins and check if user is authenticated.
     """
+    members = graphene.List(UserLargeType)
+    admins = graphene.List(UserLargeType)
+
     class Meta:
         model = Application
         fields = '__all__'

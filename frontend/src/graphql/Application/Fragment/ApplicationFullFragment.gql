@@ -1,6 +1,6 @@
 #import "./ApplicationSmallFragment.gql"
 #import "./ApplicationImageFragment.gql"
-#import "../../User/Fragment/UserFragment.gql"
+#import "../../User/Fragment/UserFullFragment.gql"
 #import "../Product/ProductFragment.gql"
 
 fragment ApplicationFullFragment on ApplicationType {
@@ -10,18 +10,10 @@ fragment ApplicationFullFragment on ApplicationType {
     ...ApplicationImageFragment
   }
   admins {
-    edges {
-      node {
-        ...UserFragment
-      }
-    }
+    ...UserFullFragment
   }
   members {
-    edges {
-      node {
-        ...UserFragment
-      }
-    }
+    ...UserFullFragment
   }
   products {
     edges {

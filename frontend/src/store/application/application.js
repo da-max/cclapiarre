@@ -154,7 +154,7 @@ export default {
       return (slug) =>
         !!getters
           .applicationBySlug(slug)
-          .admins.edges.find((admin) => admin.node.id === rootState.auth.currentUser.id)
+          .admins.find((admin) => admin.id === rootState.auth.currentUser.id)
     },
     products (state) {
       return state.currentApplication.products

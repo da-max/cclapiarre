@@ -31,7 +31,6 @@ from graphene_file_upload.django import FileUploadGraphQLView
 
 from backend.article import views as a_views
 from backend.article.sitemaps import StaticViewSitemap
-# from backend.api.apps import ApiConfig
 
 
 sitemaps = {
@@ -48,17 +47,11 @@ urlpatterns = [
          {'url': "/a-propos-du-site/"}, name="a_propos"),
     path('carousel/', include("backend.carousel.urls")),
     path(r'cafe/', include("backend.coffee.urls")),
-    path('pate/', include("backend.pasta.urls")),
     path('parametre/', include('backend.stats.urls')),
     path('pages/', include('django.contrib.flatpages.urls')),
 
     # Page for display content of CHANGELOG.md files
     path('changements', a_views.changelog, name='changelog'),
-
-    # Api
-    # url(r'^api/', include(('backend.api.urls', 'api'), namespace='api')),
-
-    path('jsi18n', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 
     # Utility
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps},

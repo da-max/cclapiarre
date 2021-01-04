@@ -55,7 +55,6 @@ INSTALLED_APPS = [
     'backend.citrus',
     'backend.carousel',
     'backend.coffee',
-    'backend.pasta',
     'backend.application'
 ]
 

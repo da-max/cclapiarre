@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in
 
 from backend.stats.models import PageAccess
-from backend.registration.views import connect
 
 
 class CheckAccessTest(TransactionTestCase):
@@ -16,7 +15,6 @@ class CheckAccessTest(TransactionTestCase):
         super().setUp()
         self.user = User.objects.create_superuser(
             'test1', 'test1@test.com', 'password')
-        user_logged_in.disconnect(receiver=connect)
 
         self.client = Client()
         self.client.login(username='test1', password='password')

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
 
 
-class Product(Model):
+class CitrusProduct(Model):
     name = CharField(max_length=255, verbose_name="Nom du produit")
     description = RichTextField(
         blank=True, verbose_name="Description du produit", help_text="Ce champ est optionnel.")
@@ -28,18 +28,18 @@ class Product(Model):
 
     def get_total(self):
         total = float()
-        amounts = Amount.objects.filter(product=self)
+        amounts = CitrusOrder.objects.filter(product=self)
         for amount in amounts:
             total += amount.amount
         return total
 
 
-class Command(Model):
+class CitrusOrder(Model):
     number = IntegerField(default=int(random() * 1000),
                           help_text="Merci de laisser la valeur par défaut.")
     user = ForeignKey(User, on_delete=CASCADE, related_name="utilisateur")
     product = ManyToManyField(
-        Product, through='Amount', related_name='commands')
+        CitrusProduct, through='CitrusAmount', related_name='commands')
     send_mail = BooleanField(verbose_name='Envoyer un mail', default=True,
                              help_text='Décocher cette case afin qu\'aucun mail ne soit envoyé à l\'utilisateur '
                              'lors de sa commande (ou de la modification de sa commande.')
@@ -53,16 +53,16 @@ class Command(Model):
 
     def get_total(self):
         total = float()
-        amounts = Amount.objects.filter(command=self)
+        amounts = CitrusOrder.objects.filter(command=self)
         for amount in amounts:
             total += amount.product.price * amount.amount
 
         return total
 
 
-class Amount(Model):
-    product = ForeignKey(Product, on_delete=CASCADE, related_name="amounts")
-    command = ForeignKey(Command, on_delete=CASCADE, related_name="amounts")
+class CitrusAmount(Model):
+    product = ForeignKey(CitrusProduct, on_delete=CASCADE, related_name="amounts")
+    command = ForeignKey(CitrusOrder, on_delete=CASCADE, related_name="amounts")
     amount = FloatField(verbose_name="Quatité commandé")
 
     class Meta:

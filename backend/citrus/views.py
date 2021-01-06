@@ -17,7 +17,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 
 
-from backend.citrus.models import Product, Command, Amount
+from backend.citrus.models import CitrusProduct, CitrusOrder, CitrusAmount
 
 
 @login_required
@@ -31,13 +31,13 @@ def sommary_command(request):
     total = float()
     user_total = float()
 
-    products = Product.objects.filter(display=True)
-    commands = Command.objects.all()
-    amouts = Amount.objects.all()
+    products = CitrusProduct.objects.filter(display=True)
+    commands = CitrusOrder.objects.all()
+    amouts = CitrusAmount.objects.all()
 
     for command in commands:
 
-        user_total = Amount.get_total_user(Amount, command.id)
+        user_total = CitrusAmount.get_total_user(CitrusAmount, command.id)
         users.append((command.user.username, user_total))
         total += user_total
 
@@ -58,7 +58,7 @@ def sommary_command(request):
             'maximum': product.maximum,
             'amouts': amouts_list[product.name],
             'users': command_user,
-            'total': Amount.get_total_product(Amount, product)
+            'total': CitrusAmount.get_total_product(CitrusAmount, product)
         }
 
     return render(request, "citrus/pdf/sommary_command.html", {'products_list': products_list, 'users': users, 'total': total})

@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in
 
 from backend.citrus.models import Amount, Command, Product
-from backend.registration.views import connect
 
 
 

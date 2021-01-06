@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 
-from backend.citrus.models import Product, Command, Amount
+from backend.citrus.models import CitrusProduct, CitrusOrder, CitrusAmount
 
-class ProductAdmin(ModelAdmin):
+class CitrusProductAdmin(ModelAdmin):
 
     def display(self, request, queryset):
         queryset.update(display=True)
@@ -28,20 +28,20 @@ class ProductAdmin(ModelAdmin):
     ordering = ('display', )
     search_fields = ['name']
 
-class CommandAdmin(ModelAdmin):
+class CitrusOrderAdmin(ModelAdmin):
 
     list_display = ("user", "number")
     list_filter = ["user"]
     ordering = ('user',)
     search_fields = ['user']
 
-class AmountAdmin(ModelAdmin):
+class CitrusAmountAdmin(ModelAdmin):
 
     list_display = ("command", "product", "amount")
     list_filter = ["command", "product"]
     ordering = ('command', )
     search_fields = ['command', "product"]
 
-admin.site.register(Command, CommandAdmin)
-admin.site.register(Product, ProductAdmin)
-admin.site.register(Amount, AmountAdmin)
+admin.site.register(CitrusOrder, CitrusOrderAdmin)
+admin.site.register(CitrusProduct, CitrusProductAdmin)
+admin.site.register(CitrusAmount, CitrusAmountAdmin)

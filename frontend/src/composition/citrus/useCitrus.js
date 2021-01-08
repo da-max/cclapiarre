@@ -27,11 +27,23 @@ export default function () {
     }
   })
 
+  const setCheckCitrus = (citrus, value) => {
+    store.commit('citrus/SET_CHECK_CITRUS', { citrus, value })
+  }
+
+  // Getters
+  // ========
+
+  const citrusById = (citrusId) =>
+    store.getters['citrus/citrusById'](citrusId)
+
   return {
     getCitrus,
+    citrusById,
     citrus,
     searchCitrus,
     setSearchCitrus,
+    setCheckCitrus,
     checkAll
   }
 }

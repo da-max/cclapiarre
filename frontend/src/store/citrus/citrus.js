@@ -22,8 +22,9 @@ export default {
       state.searchCitrus = searchCitrus
     },
     SET_CHECK_CITRUS (state, { citrus, value }) {
+      const product = state.citrus.find((c) => c.node.id === citrus.node.id)
       Vue.set(
-        citrus,
+        product,
         'check',
         value
       )
@@ -55,6 +56,11 @@ export default {
       } finally {
         commit('END_LOADING', null, { root: true })
       }
+    }
+  },
+  getters: {
+    citrusById (state) {
+      return (citrusId) => state.citrus.find((citrus) => citrus.node.id === citrusId)
     }
   }
 }

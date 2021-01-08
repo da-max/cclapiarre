@@ -1,0 +1,70 @@
+<template>
+  <tr>
+    <td>
+      <input
+        v-model="checkProduct"
+        type="checkbox"
+        :title="`Sélectionner le produit ${product.node.name.toLowerCase()}`"
+        class="uk-checkbox"
+      >
+    </td>
+    <td>
+      <UtilsButton
+        type="default"
+      >
+        {{ product.node.name }}
+      </UtilsButton>
+      <CitrusDetails :product="product" />
+    </td>
+    <td>{{ product.node.weight !== 1 ? product.node.weight + 'kg' : 'Vendu à l’unité' }}</td>
+    <td>{{ product.node.price }} €</td>
+    <td><span :uk-icon="product.node.display ? 'check' : 'close'" /></td>
+    <td><span :uk-icon="product.node.maybeNotAvailable ? 'check' : 'close'" /></td>
+    <td>
+      <a
+        class="uk-icon-link"
+        uk-icon="refresh"
+      /><a
+        class="uk-icon-link"
+        uk-icon="trash"
+      />
+    </td>
+  </tr>
+</template>
+
+<script>
+import { computed } from '@vue/composition-api'
+
+import useCitrus from '@/composition/citrus/useCitrus'
+
+import CitrusDetails from '@/components/Citrus/CitrusDetails'
+import UtilsButton from '@/components/Utils/UtilsButton'
+
+export default {
+  name: 'ProductListItem',
+  components: {
+    CitrusDetails,
+    UtilsButton
+  },
+  props: {
+    productId: {
+      required: true,
+      type: String
+    }
+  },
+  setup (props) {
+    const { citrusById, setCheckCitrus } = useCitrus()
+    const product = computed(() => citrusById(props.productId))
+
+    const checkProduct = computed({
+      get: () => product.value.check,
+      set: (value) => { setCheckCitrus(product.value, value) }
+    })
+
+    return {
+      product,
+      checkProduct
+    }
+  }
+}
+</script>

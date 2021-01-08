@@ -10,7 +10,7 @@
     </header>
 
     <div>
-      <CitrusProductListTable />
+      <ProductListTable />
     </div>
   </section>
 </template>
@@ -20,13 +20,13 @@ import { reactive, toRefs } from '@vue/composition-api'
 
 import useCitrus from '@/composition/citrus/useCitrus'
 
-import CitrusProductListTable from '@/components/Citrus/ProductList/CitrusProductListTable'
 import FormSearch from '@/components/Utils/Form/FormSearch'
+import ProductListTable from '@/components/Citrus/ProductList/Table/ProductListTable'
 
 export default {
   components: {
-    CitrusProductListTable,
-    FormSearch
+    FormSearch,
+    ProductListTable
   },
   setup () {
     const state = reactive({

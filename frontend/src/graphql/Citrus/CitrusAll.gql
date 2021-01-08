@@ -1,0 +1,11 @@
+#import "./CitrusFragment.gql"
+
+query CitrusAll {
+  citrus {
+    edges {
+      node {
+        ...CitrusFragment
+      }
+    }
+  }
+}

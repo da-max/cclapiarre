@@ -1,0 +1,11 @@
+fragment CitrusFragment on CitrusProductType {
+  id
+  name
+  description
+  weight
+  price
+  display
+  maybeNotAvailable
+  step
+  maximum
+}

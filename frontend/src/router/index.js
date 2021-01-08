@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 import { loginRequired, utilsBeforeEach, utilsAfterEach, applicationPermissionRequired } from '@/router/utils'
 import applicationRoutes from './application'
 import coffeeRoutes from './coffee'
+import citrusRoutes from './citrus'
 
 const CONNECTION_URL = '/compte/connexion'
 
@@ -35,7 +36,8 @@ const routes = [
     component: () => import(/* webpackChunkName: "login" */ '../views/Registration/Login.vue')
   },
   ...coffeeRoutes,
-  ...applicationRoutes
+  ...applicationRoutes,
+  ...citrusRoutes
 ]
 
 const router = new VueRouter({

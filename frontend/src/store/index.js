@@ -6,6 +6,7 @@ import AlertModule from '@/store/utils/alert'
 import OrderModule from '@/store/application/order'
 import ApplicationModule from '@/store/application/application'
 import CoffeeModule from '@/store/coffee/coffee'
+import CitrusModule from '@/store/citrus/citrus'
 
 Vue.use(Vuex)
 
@@ -30,6 +31,7 @@ export default new Vuex.Store({
     alert: AlertModule,
     order: OrderModule,
     application: ApplicationModule,
-    coffee: CoffeeModule
+    coffee: CoffeeModule,
+    citrus: CitrusModule
   }
 })

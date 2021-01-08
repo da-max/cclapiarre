@@ -1,6 +1,6 @@
 <template>
   <div :uk-drop="`mode: ${mode}; pos: ${pos}`">
-    <div class="uk-card-body uk-card uk-card-default">
+    <div class="uk-card uk-card-default">
       <slot />
     </div>
   </div>

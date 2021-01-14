@@ -13,6 +13,10 @@ export default function () {
     store.dispatch('citrus/getCitrus')
   }
 
+  const patchCitrus = (key, value) => {
+    store.dispatch('citrus/patchCitrus', { key, value })
+  }
+
   // Mutations
   // =========
 
@@ -37,9 +41,13 @@ export default function () {
   const citrusById = (citrusId) =>
     store.getters['citrus/citrusById'](citrusId)
 
+  const citrusChecked = computed(() => store.getters['citrus/citrusChecked'])
+
   return {
     getCitrus,
+    patchCitrus,
     citrusById,
+    citrusChecked,
     citrus,
     searchCitrus,
     setSearchCitrus,

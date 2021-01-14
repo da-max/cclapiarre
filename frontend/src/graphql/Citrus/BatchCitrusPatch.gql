@@ -1,0 +1,9 @@
+#import "./CitrusFragment.gql"
+
+mutation CitrusPatch($citrus: [BatchPatchCitrusProductInput]!) {
+  batchPatchCitrusProduct(input: $citrus) {
+    citrusProducts{
+      ...CitrusFragment
+    }
+  }
+}

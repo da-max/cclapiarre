@@ -3,6 +3,7 @@ from graphene.relay import Node
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql_jwt.decorators import login_required, permission_required
+from graphene_django_cud.mutations import DjangoBatchPatchMutation
 
 from backend.citrus.models import CitrusAmount, CitrusOrder, CitrusProduct
 
@@ -40,6 +41,8 @@ class CitrusOrderType(DjangoObjectType):
         fields = '__all__'
         filter_fields = ['id']
 
+# Queries
+# =======
 
 class Query(ObjectType):
     """ Queries for citrus app. """
@@ -55,3 +58,16 @@ class Query(ObjectType):
     @permission_required('citrus.view_citrusorder')
     def resolve_citrus_order(self, info, *args, **kwargs):
         return CitrusOrder.objects.all()
+
+
+# Mutations
+# ==========
+
+class BatchPatchCitrusProductMutation(DjangoBatchPatchMutation):
+    class Meta:
+        model = CitrusProduct
+        login_required = True
+        permission_required = ('citrus.change_citrusproduct')
+
+class Mutation(ObjectType):
+    batch_patch_citrus_product = BatchPatchCitrusProductMutation.Field()

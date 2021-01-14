@@ -1,14 +1,18 @@
 <template>
   <section class="uk-margin-medium-top uk-width-3-4@m uk-margin-auto">
-    <header class="uk-margin-large-bottom">
-      <FormSearch
-        placeholder="Rechercher un produit"
-        :elements="citrus"
-        :keys="searchKeys"
-        @fuseResultsUpdated="(result) => setSearchCitrus(result)"
-      />
+    <header class="uk-margin-large-bottom uk-flex uk-flex-between">
+      <div>
+        <FormSearch
+          placeholder="Rechercher un produit"
+          :elements="citrus"
+          :keys="searchKeys"
+          @fuseResultsUpdated="(result) => setSearchCitrus(result)"
+        />
+      </div>
+      <div>
+        <CitrusProductListActions />
+      </div>
     </header>
-
     <div>
       <ProductListTable />
     </div>
@@ -22,15 +26,18 @@ import useCitrus from '@/composition/citrus/useCitrus'
 
 import FormSearch from '@/components/Utils/Form/FormSearch'
 import ProductListTable from '@/components/Citrus/ProductList/Table/ProductListTable'
+import CitrusProductListActions from '@/components/Citrus/ProductList/CitrusProductListActions'
 
 export default {
   components: {
     FormSearch,
-    ProductListTable
+    ProductListTable,
+    CitrusProductListActions
   },
   setup () {
     const state = reactive({
       searchKeys: ['node.name', 'node.description']
+
     })
 
     const { citrus, searchCitrus, setSearchCitrus } = useCitrus()

@@ -1,5 +1,9 @@
 <template>
-  <form>
+  <form class="uk-inline">
+    <span
+      class="uk-form-icon"
+      uk-icon="search"
+    />
     <vue-fuse
       placeholder="Rechercher un produit"
       :default-all="defaultAll"

@@ -9,7 +9,7 @@ export default {
   state: () => ({
     citrus: [],
     searchCitrus: [],
-    citrusUpdate: {}
+    citrusSelect: {}
   }),
 
   mutations: {
@@ -31,8 +31,8 @@ export default {
         value
       )
     },
-    SET_CITRUS_UPDATE (state, value) {
-      state.citrusUpdate = value
+    SET_CITRUS_SELECT (state, value) {
+      state.citrusSelect = value
     },
     CHECK_ALL (state, value) {
       state.searchCitrus.forEach((citrus) => {

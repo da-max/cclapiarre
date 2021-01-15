@@ -6,7 +6,7 @@
   >
     <template #header>
       <h2 class="uk-modal-title">
-        {{ citrusUpdate.name ? `Modifier le produit : ${product.name}` : 'Ajouter un produit' }}
+        {{ citrusSelect.name ? `Modifier le produit : ${product.name}` : 'Ajouter un produit' }}
       </h2>
     </template>
     <template #body>
@@ -121,8 +121,18 @@
         >
           Annuler
         </UtilsButton>
-        <UtilsButton type="primary">
-          {{ citrusUpdate.name ? 'Modifier' : 'Ajouter' }} le produit
+        <UtilsButton
+          v-if="citrusSelect.name"
+          type="primary"
+          @click="updateCitrus"
+        >
+          Modifier le produit
+        </UtilsButton>
+        <UtilsButton
+          v-else
+          type="primary"
+        >
+          Ajouter le produit
         </UtilsButton>
       </div>
     </template>
@@ -135,6 +145,7 @@ import CKEditor from '@ckeditor/ckeditor5-vue'
 import ClassicEditor from 'ckeditor5-build-classic-with-font'
 
 import useCitrus from '@/composition/citrus/useCitrus'
+import { useUtilsMutation, useHideModal } from '@/composition/useUtils'
 
 import UtilsModal from '@/components/Utils/UtilsModal'
 import Alerts from '@/components/Utils/Alert/Alerts'
@@ -144,12 +155,20 @@ import UtilsButton from '@/components/Utils/UtilsButton'
 
 export default {
   name: 'CitrusProductModal',
-  components: { UtilsButton, FormInputNumber, FormInput, Alerts, UtilsModal, ckeditor: CKEditor.component },
+  components: {
+    UtilsButton,
+    FormInputNumber,
+    FormInput,
+    Alerts,
+    UtilsModal,
+    ckeditor: CKEditor.component
+  },
   setup () {
-    const { citrusUpdate } = useCitrus()
+    const { citrusSelect, citrusUpdate } = useCitrus()
+
     const product = computed(() => {
-      if (citrusUpdate.value.name) {
-        return { ...citrusUpdate.value }
+      if (citrusSelect.value.name) {
+        return { ...citrusSelect.value }
       } else {
         return {
           name: '',
@@ -164,10 +183,20 @@ export default {
       }
     })
 
+    const updateCitrus = () => {
+      const id = product.value.id
+
+      delete product.value.id
+      delete product.value.__typename
+      useUtilsMutation(citrusUpdate, { id, input: product.value })
+      useHideModal('#citrus-product-modal')
+    }
+
     return {
       editor: ClassicEditor,
-      citrusUpdate,
-      product
+      citrusSelect,
+      product,
+      updateCitrus
     }
   }
 }

@@ -55,7 +55,7 @@ export default {
     }
   },
   setup (props) {
-    const { citrusById, setCheckCitrus, setCitrusUpdate } = useCitrus()
+    const { citrusById, setCheckCitrus, setCitrusSelect } = useCitrus()
     const product = computed(() => citrusById(props.productId))
 
     const checkProduct = computed({
@@ -64,7 +64,7 @@ export default {
     })
 
     const showUpdateModal = () => {
-      setCitrusUpdate(product.value.node)
+      setCitrusSelect(product.value.node)
       useShowModal('#citrus-product-modal')
     }
 

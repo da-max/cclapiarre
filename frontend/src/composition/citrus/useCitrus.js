@@ -1,11 +1,14 @@
 import { computed } from '@vue/composition-api'
+import { useMutation } from '@vue/apollo-composable'
 
 import store from '@/store/index'
+
+import CITRUS_UPDATE from '@/graphql/Citrus/CitrusUpdate.gql'
 
 export default function () {
   const citrus = computed(() => store.state.citrus.citrus)
   const searchCitrus = computed(() => store.state.citrus.searchCitrus)
-  const citrusUpdate = computed(() => store.state.citrus.citrusUpdate)
+  const citrusSelect = computed(() => store.state.citrus.citrusSelect)
 
   // Actions
   // ========
@@ -36,8 +39,8 @@ export default function () {
     store.commit('citrus/SET_CHECK_CITRUS', { citrus, value })
   }
 
-  const setCitrusUpdate = (citrus) => {
-    store.commit('citrus/SET_CITRUS_UPDATE', citrus)
+  const setCitrusSelect = (citrus) => {
+    store.commit('citrus/SET_CITRUS_SELECT', citrus)
   }
 
   // Getters
@@ -48,17 +51,42 @@ export default function () {
 
   const citrusChecked = computed(() => store.getters['citrus/citrusChecked'])
 
+  // Mutations
+
+  const { mutate: citrusUpdate, onDone: onDoneCitrusUpdate } = useMutation(CITRUS_UPDATE)
+
+  onDoneCitrusUpdate(result => {
+    console.log(result.data.updateCitrusProduct.citrusProduct)
+    store.commit('citrus/UPDATE_CITRUS', result.data.updateCitrusProduct.citrusProduct)
+    store.commit('alert/ADD_ALERT', {
+      header: false,
+      body: 'Le produit a bien été mis à jour.',
+      status: 'success',
+      close: true
+    })
+  })
+
   return {
-    getCitrus,
-    patchCitrus,
-    citrusById,
-    citrusChecked,
+    // Store state
     citrus,
     searchCitrus,
-    citrusUpdate,
+    citrusSelect,
+
+    // Store mutations
     setSearchCitrus,
     setCheckCitrus,
-    setCitrusUpdate,
-    checkAll
+    setCitrusSelect,
+    checkAll,
+
+    // Store actions
+    patchCitrus,
+    getCitrus,
+
+    // Store getters
+    citrusById,
+    citrusChecked,
+
+    // Mutations
+    citrusUpdate
   }
 }

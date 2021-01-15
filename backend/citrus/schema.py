@@ -3,7 +3,7 @@ from graphene.relay import Node
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql_jwt.decorators import login_required, permission_required
-from graphene_django_cud.mutations import DjangoBatchPatchMutation
+from graphene_django_cud.mutations import DjangoBatchPatchMutation, DjangoUpdateMutation
 
 from backend.citrus.models import CitrusAmount, CitrusOrder, CitrusProduct
 
@@ -69,5 +69,12 @@ class BatchPatchCitrusProductMutation(DjangoBatchPatchMutation):
         login_required = True
         permission_required = ('citrus.change_citrusproduct')
 
+class UpdateCitrusProductMutation(DjangoUpdateMutation):
+    class Meta:
+        model = CitrusProduct
+        login_required = True
+        permission_required = ('citrus.change_citrusproduct')
+
 class Mutation(ObjectType):
     batch_patch_citrus_product = BatchPatchCitrusProductMutation.Field()
+    update_citrus_product = UpdateCitrusProductMutation.Field()

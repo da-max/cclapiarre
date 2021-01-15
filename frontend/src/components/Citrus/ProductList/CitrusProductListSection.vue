@@ -13,9 +13,8 @@
         <CitrusProductListActions />
       </div>
     </header>
-    <div>
-      <ProductListTable />
-    </div>
+    <ProductListTable />
+    <CitrusProductModal id="citrus-product-modal" />
   </section>
 </template>
 
@@ -27,9 +26,11 @@ import useCitrus from '@/composition/citrus/useCitrus'
 import FormSearch from '@/components/Utils/Form/FormSearch'
 import ProductListTable from '@/components/Citrus/ProductList/Table/ProductListTable'
 import CitrusProductListActions from '@/components/Citrus/ProductList/CitrusProductListActions'
+import CitrusProductModal from '@/components/Citrus/ProductList/CitrusProductModal'
 
 export default {
   components: {
+    CitrusProductModal,
     FormSearch,
     ProductListTable,
     CitrusProductListActions

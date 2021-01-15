@@ -8,7 +8,8 @@ export default {
   namespaced: true,
   state: () => ({
     citrus: [],
-    searchCitrus: []
+    searchCitrus: [],
+    citrusUpdate: {}
   }),
 
   mutations: {
@@ -29,6 +30,9 @@ export default {
         'check',
         value
       )
+    },
+    SET_CITRUS_UPDATE (state, value) {
+      state.citrusUpdate = value
     },
     CHECK_ALL (state, value) {
       state.searchCitrus.forEach((citrus) => {

@@ -3,7 +3,7 @@
     <label
       v-show="displayLabel"
       :for="name"
-      :class="['uk-form-label', { 'required-label': required }]"
+      :class="['uk-form-label', { 'required-label': required && displayInfo }]"
     >
       {{ label }}
     </label>
@@ -20,18 +20,20 @@
         @input="$emit('input', $event.target.value)"
       >
     </div>
-    <p
-      v-if="required"
-      class="uk-text-muted"
-    >
-      Ce champ est requis.
-    </p>
-    <p
-      v-else
-      class="uk-text-muted"
-    >
-      Ce champ est optionnel.
-    </p>
+    <div v-show="displayInfo">
+      <p
+        v-if="required"
+        class="uk-text-muted"
+      >
+        Ce champ est requis.
+      </p>
+      <p
+        v-else
+        class="uk-text-muted"
+      >
+        Ce champ est optionnel.
+      </p>
+    </div>
     <p class="uk-text-muted">
       <slot />
     </p>
@@ -75,6 +77,11 @@ export default {
       required: false
     },
     displayLabel: {
+      type: Boolean,
+      default: true,
+      required: false
+    },
+    displayInfo: {
       type: Boolean,
       default: true,
       required: false

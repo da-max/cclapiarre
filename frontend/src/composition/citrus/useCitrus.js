@@ -5,6 +5,7 @@ import store from '@/store/index'
 export default function () {
   const citrus = computed(() => store.state.citrus.citrus)
   const searchCitrus = computed(() => store.state.citrus.searchCitrus)
+  const citrusUpdate = computed(() => store.state.citrus.citrusUpdate)
 
   // Actions
   // ========
@@ -35,6 +36,10 @@ export default function () {
     store.commit('citrus/SET_CHECK_CITRUS', { citrus, value })
   }
 
+  const setCitrusUpdate = (citrus) => {
+    store.commit('citrus/SET_CITRUS_UPDATE', citrus)
+  }
+
   // Getters
   // ========
 
@@ -50,8 +55,10 @@ export default function () {
     citrusChecked,
     citrus,
     searchCitrus,
+    citrusUpdate,
     setSearchCitrus,
     setCheckCitrus,
+    setCitrusUpdate,
     checkAll
   }
 }

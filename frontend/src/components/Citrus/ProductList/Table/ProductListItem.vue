@@ -24,6 +24,7 @@
       <a
         class="uk-icon-link"
         uk-icon="refresh"
+        @click.prevent="showUpdateModal"
       /><a
         class="uk-icon-link"
         uk-icon="trash"
@@ -36,6 +37,7 @@
 import { computed } from '@vue/composition-api'
 
 import useCitrus from '@/composition/citrus/useCitrus'
+import { useShowModal } from '@/composition/useUtils'
 
 import CitrusDetails from '@/components/Citrus/CitrusDetails'
 import UtilsButton from '@/components/Utils/UtilsButton'
@@ -53,7 +55,7 @@ export default {
     }
   },
   setup (props) {
-    const { citrusById, setCheckCitrus } = useCitrus()
+    const { citrusById, setCheckCitrus, setCitrusUpdate } = useCitrus()
     const product = computed(() => citrusById(props.productId))
 
     const checkProduct = computed({
@@ -61,9 +63,15 @@ export default {
       set: (value) => { setCheckCitrus(product.value, value) }
     })
 
+    const showUpdateModal = () => {
+      setCitrusUpdate(product.value.node)
+      useShowModal('#citrus-product-modal')
+    }
+
     return {
       product,
-      checkProduct
+      checkProduct,
+      showUpdateModal
     }
   }
 }

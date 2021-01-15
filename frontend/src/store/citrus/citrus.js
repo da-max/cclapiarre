@@ -38,6 +38,14 @@ export default {
           value
         )
       })
+    },
+    UPDATE_CITRUS (state, citrusUpdate) {
+      const citrusIndex = state.citrus.findIndex(c => c.node.id === citrusUpdate.id)
+      Vue.set(
+        state.citrus[citrusIndex],
+        'node',
+        citrusUpdate
+      )
     }
   },
 
@@ -62,15 +70,26 @@ export default {
       commit('START_LOADING', null, { root: true })
       try {
         const variables = getters.citrusChecked.map(citrus => {
-          console.log(key)
           const c = { id: citrus.node.id }
           c[key.key] = key.value
-          console.log(c)
           return c
         })
-        console.log(variables)
         const response = await apolloClient.mutate({ mutation: BATCH_CITRUS_PATCH, variables: { citrus: variables } })
-        console.log(response)
+        response.data.batchPatchCitrusProduct.citrusProducts.forEach(citrus => {
+          commit('UPDATE_CITRUS', citrus)
+        })
+        commit(
+          'alert/ADD_ALERT',
+          {
+            header: false,
+            body:
+              'Les produits sélectionnés ont bien été modifié.',
+            status: 'success',
+            close: true
+          },
+          { root: true }
+        )
+        commit('CHECK_ALL', false)
       } catch (e) {
         commit('alert/ADD_ALERT', {
           header: false,

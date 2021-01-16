@@ -63,7 +63,7 @@ export default function () {
     store.commit('citrus/UPDATE_CITRUS', result.data.updateCitrusProduct.citrusProduct)
     store.commit('alert/ADD_ALERT', {
       header: false,
-      body: `Le produit ${result.data.updateCitrusProduct.citrusProduct.name} a bien été mis à jour.`,
+      body: `Le produit « ${result.data.updateCitrusProduct.citrusProduct.name} » a bien été mis à jour.`,
       status: 'success',
       close: true
     })

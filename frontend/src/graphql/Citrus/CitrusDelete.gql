@@ -1,0 +1,5 @@
+mutation citrusDelete($id: ID!) {
+    deleteCitrusProduct(id: $id) {
+        found
+    }
+}

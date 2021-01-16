@@ -3,6 +3,7 @@ import apolloClient from '@/vue-apollo'
 
 import CITRUS_ALL from '@/graphql/Citrus/CitrusAll.gql'
 import BATCH_CITRUS_PATCH from '@/graphql/Citrus/BatchCitrusPatch.gql'
+import CITRUS_DELETE from '@/graphql/Citrus/CitrusDelete.gql'
 
 export default {
   namespaced: true,
@@ -50,6 +51,9 @@ export default {
         'node',
         citrusUpdate
       )
+    },
+    DELETE_CITRUS (state, citrusId) {
+      state.citrus = state.citrus.filter(citrus => citrus.node.id !== citrusId)
     }
   },
 
@@ -94,6 +98,31 @@ export default {
           { root: true }
         )
         commit('CHECK_ALL', false)
+      } catch (e) {
+        commit('alert/ADD_ALERT', {
+          header: false,
+          body: `Une erreur est survenue, merci de réessayer : ${e}`,
+          status: 'danger',
+          close: true
+        }, { root: true })
+      } finally {
+        commit('END_LOADING', null, { root: true })
+      }
+    },
+    async deleteCitrus ({ commit, getters }, citrusId) {
+      commit('START_LOADING', null, { root: true })
+      try {
+        const response = await apolloClient.mutate({ mutation: CITRUS_DELETE, variables: { id: citrusId } })
+        if (!response.data.deleteCitrusProduct.found) {
+          throw new Error('Product not found')
+        }
+        commit('DELETE_CITRUS', citrusId)
+        commit('alert/ADD_ALERT', {
+          header: false,
+          body: 'Le produit a bien été supprimé.',
+          status: 'success',
+          close: true
+        }, { root: true })
       } catch (e) {
         commit('alert/ADD_ALERT', {
           header: false,

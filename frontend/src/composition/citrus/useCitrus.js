@@ -21,6 +21,10 @@ export default function () {
     store.dispatch('citrus/patchCitrus', { key, value })
   }
 
+  const deleteCitrus = (citrusId) => {
+    store.dispatch('citrus/deleteCitrus', citrusId)
+  }
+
   // Mutations
   // =========
 
@@ -81,6 +85,7 @@ export default function () {
     // Store actions
     patchCitrus,
     getCitrus,
+    deleteCitrus,
 
     // Store getters
     citrusById,

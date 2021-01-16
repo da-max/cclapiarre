@@ -60,11 +60,10 @@ export default function () {
   const { mutate: citrusUpdate, onDone: onDoneCitrusUpdate } = useMutation(CITRUS_UPDATE)
 
   onDoneCitrusUpdate(result => {
-    console.log(result.data.updateCitrusProduct.citrusProduct)
     store.commit('citrus/UPDATE_CITRUS', result.data.updateCitrusProduct.citrusProduct)
     store.commit('alert/ADD_ALERT', {
       header: false,
-      body: 'Le produit a bien été mis à jour.',
+      body: `Le produit ${result.data.updateCitrusProduct.citrusProduct.name} a bien été mis à jour.`,
       status: 'success',
       close: true
     })

@@ -21,13 +21,14 @@
     <td><span :uk-icon="product.node.display ? 'check' : 'close'" /></td>
     <td><span :uk-icon="product.node.maybeNotAvailable ? 'check' : 'close'" /></td>
     <td>
-      <a
+      <button
         class="uk-icon-link"
         uk-icon="refresh"
         @click.prevent="showUpdateModal"
-      /><a
+      /><button
         class="uk-icon-link"
         uk-icon="trash"
+        @click.prevent="showDeleteModal"
       />
     </td>
   </tr>
@@ -68,10 +69,16 @@ export default {
       useShowModal('#citrus-product-modal')
     }
 
+    const showDeleteModal = () => {
+      setCitrusSelect(product.value.node)
+      useShowModal('#citrus-product-delete')
+    }
+
     return {
       product,
       checkProduct,
-      showUpdateModal
+      showUpdateModal,
+      showDeleteModal
     }
   }
 }

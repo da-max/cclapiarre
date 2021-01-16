@@ -15,6 +15,7 @@
     </header>
     <ProductListTable />
     <CitrusProductModal id="citrus-product-modal" />
+    <CitrusProductDelete id="citrus-product-delete" />
   </section>
 </template>
 
@@ -27,13 +28,15 @@ import FormSearch from '@/components/Utils/Form/FormSearch'
 import ProductListTable from '@/components/Citrus/ProductList/Table/ProductListTable'
 import CitrusProductListActions from '@/components/Citrus/ProductList/CitrusProductListActions'
 import CitrusProductModal from '@/components/Citrus/ProductList/CitrusProductModal'
+import CitrusProductDelete from '@/components/Citrus/ProductList/CitrusProductDelete'
 
 export default {
   components: {
+    CitrusProductDelete,
+    CitrusProductListActions,
     CitrusProductModal,
     FormSearch,
-    ProductListTable,
-    CitrusProductListActions
+    ProductListTable
   },
   setup () {
     const state = reactive({

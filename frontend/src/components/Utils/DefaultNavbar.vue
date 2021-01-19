@@ -121,6 +121,15 @@ export default {
               link: '/parametre/creer-une-regle-d-acces'
             }
           ]
+        },
+        {
+          title: 'Agrumes',
+          subItems: [
+            {
+              name: 'Liste des produits',
+              routerLink: { name: 'CitrusList' }
+            }
+          ]
         }
       ]
     }

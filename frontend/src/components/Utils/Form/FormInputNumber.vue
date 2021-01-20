@@ -16,7 +16,7 @@
         :max="max"
         :placeholder="label"
         :value="value"
-        :class="['uk-input', { 'uk-form-danger': value <= 0 }]"
+        :class="['uk-input', { 'uk-form-danger': value < min }]"
         @input="$emit('input', $event.target.value)"
       >
     </div>

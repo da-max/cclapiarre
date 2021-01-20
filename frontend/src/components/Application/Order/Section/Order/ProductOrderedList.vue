@@ -47,34 +47,34 @@ import ProductOrderedItem from '@/components/Application/Order/Section/Order/Pro
 import ProductOrderedSommaryModal from '@/components/Application/Order/Section/Order/ProductOrderedSommaryModal'
 
 export default {
-  name: 'ProductOrdered',
-  components: {
-    ProductOrderedItem,
-    UtilsButton,
-    ProductOrderedSommaryModal
-  },
-  computed: {
-    ...mapState({
-      productsOrdered: (state) => state.order.order
-    }),
-    ...mapGetters({
-      valide: 'order/valide',
-      price: 'order/totalPrice',
-      idApplicationBySlug: 'application/idApplicationBySlug'
-    }),
-    applicationId () {
-      return this.idApplicationBySlug(this.$route.params.application)
-    }
-  },
-  methods: {
-    ...mapActions({ saveOrder: 'order/saveOrder' }),
-    showModal (modalId) {
-      // eslint-disable-next-line no-undef
-      UIkit.modal(modalId).show()
+    name: 'ProductOrdered',
+    components: {
+        ProductOrderedItem,
+        UtilsButton,
+        ProductOrderedSommaryModal
     },
-    async addOrder () {
-      await this.saveOrder(this.applicationId)
+    computed: {
+        ...mapState({
+            productsOrdered: (state) => state.order.order
+        }),
+        ...mapGetters({
+            valide: 'order/valide',
+            price: 'order/totalPrice',
+            idApplicationBySlug: 'application/idApplicationBySlug'
+        }),
+        applicationId () {
+            return this.idApplicationBySlug(this.$route.params.application)
+        }
+    },
+    methods: {
+        ...mapActions({ saveOrder: 'order/saveOrder' }),
+        showModal (modalId) {
+            // eslint-disable-next-line no-undef
+            UIkit.modal(modalId).show()
+        },
+        async addOrder () {
+            await this.saveOrder(this.applicationId)
+        }
     }
-  }
 }
 </script>

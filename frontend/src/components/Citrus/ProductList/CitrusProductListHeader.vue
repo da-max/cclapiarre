@@ -15,6 +15,6 @@
 
 <script>
 export default {
-  name: 'CitrusProductListHeader'
+    name: 'CitrusProductListHeader'
 }
 </script>

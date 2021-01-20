@@ -70,33 +70,33 @@ import UtilsCard from '@/components/Utils/UtilsCard.vue'
 import UtilsButton from '@/components/Utils/UtilsButton.vue'
 
 export default {
-  name: 'CoffeeOrderListItem',
-  components: {
-    UtilsCard,
-    UtilsButton
-  },
-  props: {
-    order: {
-      required: true,
-      type: Object
-    }
-  },
-  setup (props) {
-    const totalPrice = computed(() => {
-      let price = 0
-      props.order.node.amounts.edges.forEach((amount) => {
-        if (amount.node.weight === 'A_200') {
-          price += amount.node.amount * amount.node.coffee.twoHundredGramPrice
-        } else {
-          price += amount.node.amount * amount.node.coffee.kilogramPrice
+    name: 'CoffeeOrderListItem',
+    components: {
+        UtilsCard,
+        UtilsButton
+    },
+    props: {
+        order: {
+            required: true,
+            type: Object
         }
-      })
-      return price
-    })
+    },
+    setup (props) {
+        const totalPrice = computed(() => {
+            let price = 0
+            props.order.node.amounts.edges.forEach((amount) => {
+                if (amount.node.weight === 'A_200') {
+                    price += amount.node.amount * amount.node.coffee.twoHundredGramPrice
+                } else {
+                    price += amount.node.amount * amount.node.coffee.kilogramPrice
+                }
+            })
+            return price
+        })
 
-    return {
-      totalPrice
+        return {
+            totalPrice
+        }
     }
-  }
 }
 </script>

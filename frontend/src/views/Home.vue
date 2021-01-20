@@ -30,18 +30,18 @@ import { useQuery } from '@vue/apollo-composable'
 import CarouselAll from '@/graphql/Carousel/CarouselAll.gql'
 
 export default {
-  components: {
-    Carousels,
-    PresentationCard,
-    Alerts
-  },
-  setup (props) {
-    useSetupTitle('Accueil')
-    const { result, loading } = useQuery(CarouselAll)
-    return {
-      result,
-      loading
+    components: {
+        Carousels,
+        PresentationCard,
+        Alerts
+    },
+    setup (props) {
+        useSetupTitle('Accueil')
+        const { result, loading } = useQuery(CarouselAll)
+        return {
+            result,
+            loading
+        }
     }
-  }
 }
 </script>

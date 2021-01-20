@@ -64,45 +64,45 @@ import UtilsButton from '@/components/Utils/UtilsButton'
 import CoffeeOrderListConfirmRemove from '@/components/Coffee/OrderList/CoffeeOrderListConfirmRemove'
 
 export default {
-  name: 'CoffeeOrderListSection',
-  components: {
-    CoffeeOrderListConfirmRemove,
-    CoffeeDetails,
-    CoffeeOrderListItem,
-    UtilsButton
-  },
-  setup () {
-    const state = reactive({
-      all: true,
-      orderToDelete: []
-    })
+    name: 'CoffeeOrderListSection',
+    components: {
+        CoffeeOrderListConfirmRemove,
+        CoffeeDetails,
+        CoffeeOrderListItem,
+        UtilsButton
+    },
+    setup () {
+        const state = reactive({
+            all: true,
+            orderToDelete: []
+        })
 
-    const { coffeeSelect, displayDetails, allOrder } = useCoffee()
+        const { coffeeSelect, displayDetails, allOrder } = useCoffee()
 
-    const { orders, loading, refetchOrderAll } = allOrder()
+        const { orders, loading, refetchOrderAll } = allOrder()
 
-    const confirmRemoveAllOrder = () => {
-      state.orderToDelete = orders.value.edges
-      state.all = true
-      useShowModal('#confirm-remove-order')
+        const confirmRemoveAllOrder = () => {
+            state.orderToDelete = orders.value.edges
+            state.all = true
+            useShowModal('#confirm-remove-order')
+        }
+
+        const confirmRemoveOrder = (order) => {
+            state.orderToDelete = order
+            state.all = false
+            useShowModal('#confirm-remove-order')
+        }
+
+        return {
+            orders,
+            loading,
+            coffeeSelect,
+            displayDetails,
+            refetchOrderAll,
+            confirmRemoveAllOrder,
+            confirmRemoveOrder,
+            ...toRefs(state)
+        }
     }
-
-    const confirmRemoveOrder = (order) => {
-      state.orderToDelete = order
-      state.all = false
-      useShowModal('#confirm-remove-order')
-    }
-
-    return {
-      orders,
-      loading,
-      coffeeSelect,
-      displayDetails,
-      refetchOrderAll,
-      confirmRemoveAllOrder,
-      confirmRemoveOrder,
-      ...toRefs(state)
-    }
-  }
 }
 </script>

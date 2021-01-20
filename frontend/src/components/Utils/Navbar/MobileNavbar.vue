@@ -140,21 +140,21 @@ import { mapState } from 'vuex'
 import UserOptions from '@/components/Utils/Navbar/UserOptions'
 
 export default {
-  components: {
-    UserOptions
-  },
-  props: {
-    adminPanelItems: {
-      required: true,
-      type: Array
+    components: {
+        UserOptions
     },
-    orderItems: {
-      required: true,
-      type: Array
+    props: {
+        adminPanelItems: {
+            required: true,
+            type: Array
+        },
+        orderItems: {
+            required: true,
+            type: Array
+        }
+    },
+    computed: {
+        ...mapState({ currentUser: (state) => state.auth.currentUser })
     }
-  },
-  computed: {
-    ...mapState({ currentUser: (state) => state.auth.currentUser })
-  }
 }
 </script>

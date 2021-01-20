@@ -79,27 +79,27 @@ import UtilsButton from '@/components/Utils/UtilsButton'
 import ProductItemInformation from '@/components/Application/Order/Section/Product/ProductItemInformation'
 
 export default {
-  name: 'ProductItem',
-  components: {
-    UtilsCard,
-    UtilsButton,
-    ProductItemInformation
-  },
-  props: {
-    product: {
-      required: true,
-      type: Object
-    }
-  },
-  setup (props, { emit, root }) {
-    const { isAdmin } = useApplication(root.$route.params.application)
+    name: 'ProductItem',
+    components: {
+        UtilsCard,
+        UtilsButton,
+        ProductItemInformation
+    },
+    props: {
+        product: {
+            required: true,
+            type: Object
+        }
+    },
+    setup (props, { emit, root }) {
+        const { isAdmin } = useApplication(root.$route.params.application)
 
-    const { addProductOrder } = useOrder()
+        const { addProductOrder } = useOrder()
 
-    const updateProduct = () => {
-      emit('update-product', props.product)
+        const updateProduct = () => {
+            emit('update-product', props.product)
+        }
+        return { isAdmin, addProductOrder, updateProduct }
     }
-    return { isAdmin, addProductOrder, updateProduct }
-  }
 }
 </script>

@@ -14,18 +14,18 @@ import Loader from '@/components/Utils/Loader'
 import { mapState } from 'vuex'
 
 export default {
-  components: {
-    DefaultNavbar,
-    DefaultFooter,
-    Loader
-  },
-  computed: {
-    ...mapState(['loading'])
-  },
-  beforeCreate () {
-    this.$store.dispatch('auth/loadUser')
-    this.$store.dispatch('application/getApplications')
-  }
+    components: {
+        DefaultNavbar,
+        DefaultFooter,
+        Loader
+    },
+    computed: {
+        ...mapState(['loading'])
+    },
+    beforeCreate () {
+        this.$store.dispatch('auth/loadUser')
+        this.$store.dispatch('application/getApplications')
+    }
 }
 </script>
 

@@ -36,16 +36,16 @@ import CitrusOrderItem from '@/components/Citrus/Order/Section/CitrusOrderItem'
 import UtilsTable from '@/components/Utils/UtilsTable'
 
 export default {
-  name: 'CitrusOrderTable',
-  components: {
-    CitrusOrderItem,
-    UtilsTable
-  },
-  setup () {
-    const { citrusDisplay, setOrderAmount } = useCitrus()
+    name: 'CitrusOrderTable',
+    components: {
+        CitrusOrderItem,
+        UtilsTable
+    },
+    setup () {
+        const { citrusDisplay, setOrderAmount } = useCitrus()
 
-    return { citrusDisplay, setOrderAmount }
-  }
+        return { citrusDisplay, setOrderAmount }
+    }
 }
 </script>
 

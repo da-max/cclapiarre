@@ -52,26 +52,26 @@
 import { version } from '../../../package.json'
 
 export default {
-  data () {
-    return {
-      utilsLinks: [
-        {
-          name:
+    data () {
+        return {
+            utilsLinks: [
+                {
+                    name:
             'Contacter court-circuit buëch méouge : ccbuechmeouge@gmail.com',
-          link: 'mailto:ccbuechmeouge@gmail.com'
-        },
-        {
-          name: 'À propos du site',
-          link: '/changements'
-        },
-        {
-          name:
+                    link: 'mailto:ccbuechmeouge@gmail.com'
+                },
+                {
+                    name: 'À propos du site',
+                    link: '/changements'
+                },
+                {
+                    name:
             'Contacter Court-circuit La Piarre : courtcircuit.lapiarre@gmail.com',
-          link: 'mailto:courtcircuit.lapiarre@gmail.com'
+                    link: 'mailto:courtcircuit.lapiarre@gmail.com'
+                }
+            ],
+            version
         }
-      ],
-      version
     }
-  }
 }
 </script>

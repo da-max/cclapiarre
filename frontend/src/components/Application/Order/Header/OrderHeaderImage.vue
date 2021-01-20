@@ -20,15 +20,15 @@ import store from '@/store/index'
 import UtilsSlider from '@/components/Utils/UtilsSlider'
 
 export default {
-  name: 'OrderHeaderImage',
-  components: {
-    UtilsSlider
-  },
-  setup () {
-    const images = computed(() => store.getters['application/applicationImage'])
-    return {
-      images
+    name: 'OrderHeaderImage',
+    components: {
+        UtilsSlider
+    },
+    setup () {
+        const images = computed(() => store.getters['application/applicationImage'])
+        return {
+            images
+        }
     }
-  }
 }
 </script>

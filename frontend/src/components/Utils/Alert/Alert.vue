@@ -34,30 +34,30 @@
 import { mapMutations } from 'vuex'
 
 export default {
-  name: 'Alert',
+    name: 'Alert',
 
-  props: {
-    status: {
-      default: 'primary',
-      type: String
+    props: {
+        status: {
+            default: 'primary',
+            type: String
+        },
+        alertId: {
+            type: Number,
+            required: true
+        },
+        close: {
+            default: true,
+            type: Boolean
+        },
+        header: {
+            default: false,
+            type: Boolean
+        }
     },
-    alertId: {
-      type: Number,
-      required: true
-    },
-    close: {
-      default: true,
-      type: Boolean
-    },
-    header: {
-      default: false,
-      type: Boolean
+
+    methods: {
+        ...mapMutations({ deleteAlert: 'alert/DELETE_ALERT' })
     }
-  },
-
-  methods: {
-    ...mapMutations({ deleteAlert: 'alert/DELETE_ALERT' })
-  }
 }
 </script>
 

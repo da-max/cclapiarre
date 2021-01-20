@@ -18,14 +18,14 @@ import CitrusOrderHeader from '@/components/Citrus/Order/CitrusOrderHeader'
 import CitrusOrderSection from '@/components/Citrus/Order/CitrusOrderSection'
 
 export default {
-  name: 'Order',
-  components: {
-    Alerts,
-    CitrusOrderHeader,
-    CitrusOrderSection
-  },
-  setup () {
-    useSetupTitle('Commander des agrumes')
-  }
+    name: 'Order',
+    components: {
+        Alerts,
+        CitrusOrderHeader,
+        CitrusOrderSection
+    },
+    setup () {
+        useSetupTitle('Commander des agrumes')
+    }
 }
 </script>

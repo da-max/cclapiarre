@@ -105,34 +105,34 @@ import UtilsButton from '@/components/Utils/UtilsButton.vue'
 import OrderInformation from '@/components/Application/Order/Section/OrderInformation.vue'
 
 export default {
-  name: 'CoffeeOrderedSommary',
-  components: { UtilsModal, UtilsTable, UtilsButton, OrderInformation },
-  setup () {
-    const {
-      coffeesOrder,
-      uniqPrice,
-      setAmount,
-      removeCoffeeOrder,
-      saveOrder: save,
-      valide,
-      price
-    } = useCoffee()
+    name: 'CoffeeOrderedSommary',
+    components: { UtilsModal, UtilsTable, UtilsButton, OrderInformation },
+    setup () {
+        const {
+            coffeesOrder,
+            uniqPrice,
+            setAmount,
+            removeCoffeeOrder,
+            saveOrder: save,
+            valide,
+            price
+        } = useCoffee()
 
-    const saveOrder = () => {
-      // eslint-disable-next-line no-undef
-      UIkit.modal('#sommary-modal').hide()
-      save()
-    }
+        const saveOrder = () => {
+            // eslint-disable-next-line no-undef
+            UIkit.modal('#sommary-modal').hide()
+            save()
+        }
 
-    return {
-      coffeesOrder,
-      uniqPrice,
-      setAmount,
-      removeCoffeeOrder,
-      saveOrder,
-      valide,
-      price
+        return {
+            coffeesOrder,
+            uniqPrice,
+            setAmount,
+            removeCoffeeOrder,
+            saveOrder,
+            valide,
+            price
+        }
     }
-  }
 }
 </script>

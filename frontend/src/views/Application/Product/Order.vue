@@ -22,34 +22,34 @@ import OrderSection from '@/components/Application/Order/OrderSection'
 import { computed } from '@vue/composition-api'
 
 export default {
-  name: 'Order',
-  components: {
-    OrderHeader,
-    OrderSection,
-    Alerts
-  },
-  props: {
-    applicationSlug: {
-      required: true,
-      type: String
-    }
-  },
-  setup (props, { root }) {
-    const application = computed(() => root.$route.params.application)
-    const { getApplication } = useApplication(application)
+    name: 'Order',
+    components: {
+        OrderHeader,
+        OrderSection,
+        Alerts
+    },
+    props: {
+        applicationSlug: {
+            required: true,
+            type: String
+        }
+    },
+    setup (props, { root }) {
+        const application = computed(() => root.$route.params.application)
+        const { getApplication } = useApplication(application)
 
-    useSetupTitle('Commander')
+        useSetupTitle('Commander')
 
-    getApplication()
+        getApplication()
 
-    return {
-      getApplication
+        return {
+            getApplication
+        }
+    },
+    watch: {
+        $route (to, from) {
+            this.getApplication()
+        }
     }
-  },
-  watch: {
-    $route (to, from) {
-      this.getApplication()
-    }
-  }
 }
 </script>

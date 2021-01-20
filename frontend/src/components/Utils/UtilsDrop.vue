@@ -8,18 +8,18 @@
 
 <script>
 export default {
-  name: 'UtilsDrop',
-  props: {
-    mode: {
-      required: false,
-      type: String,
-      default: 'hover'
-    },
-    pos: {
-      required: false,
-      type: String,
-      default: 'right-center'
+    name: 'UtilsDrop',
+    props: {
+        mode: {
+            required: false,
+            type: String,
+            default: 'hover'
+        },
+        pos: {
+            required: false,
+            type: String,
+            default: 'right-center'
+        }
     }
-  }
 }
 </script>

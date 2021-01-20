@@ -218,136 +218,136 @@ import AddOptionDrop from '@/components/Application/Order/Section/Product/Option
 import AddWeightDrop from '@/components/Application/Order/Section/Product/Weight/AddWeightDrop'
 
 export default {
-  name: 'ProductFormModal',
-  components: {
-    UtilsModal,
-    FormInput,
-    AddOptionDrop,
-    AddWeightDrop,
-    ckeditor: CKEditor.component,
-    UtilsButton,
-    FormInputNumber,
-    Alerts
-  },
-  props: {
-    productUpdate: {
-      required: false,
-      type: Object,
-      default: () => ({})
+    name: 'ProductFormModal',
+    components: {
+        UtilsModal,
+        FormInput,
+        AddOptionDrop,
+        AddWeightDrop,
+        ckeditor: CKEditor.component,
+        UtilsButton,
+        FormInputNumber,
+        Alerts
     },
-    update: {
-      required: false,
-      default: false,
-      type: Boolean
-    }
-  },
-  setup (props, { root }) {
+    props: {
+        productUpdate: {
+            required: false,
+            type: Object,
+            default: () => ({})
+        },
+        update: {
+            required: false,
+            default: false,
+            type: Boolean
+        }
+    },
+    setup (props, { root }) {
     // Computed
     // ==========
-    const { application } = useApplication(root.$route.params.application)
+        const { application } = useApplication(root.$route.params.application)
 
-    const updated = computed(() => props.update && Object.keys(props.productUpdate).length !== 0)
-    const productOptions = computed(() => {
-      if (updated.value) {
-        return props.productUpdate.options.edges.map(
-          (option) => option.node.id
-        )
-      }
-      return []
-    })
-    const productWeights = computed(() => {
-      if (updated.value) {
-        return props.productUpdate.weights.edges.map(
-          (weight) => weight.node.id)
-      }
-      return []
-    })
-    const product = computed(() => {
-      if (updated.value) {
-        return { ...props.productUpdate, options: productOptions.value, weights: productWeights.value }
-      }
-      return {
-        name: '',
-        description: '',
-        weights: [],
-        options: [],
-        maximum: 100,
-        maximumAll: 1000,
-        display: true
-      }
-    })
+        const updated = computed(() => props.update && Object.keys(props.productUpdate).length !== 0)
+        const productOptions = computed(() => {
+            if (updated.value) {
+                return props.productUpdate.options.edges.map(
+                    (option) => option.node.id
+                )
+            }
+            return []
+        })
+        const productWeights = computed(() => {
+            if (updated.value) {
+                return props.productUpdate.weights.edges.map(
+                    (weight) => weight.node.id)
+            }
+            return []
+        })
+        const product = computed(() => {
+            if (updated.value) {
+                return { ...props.productUpdate, options: productOptions.value, weights: productWeights.value }
+            }
+            return {
+                name: '',
+                description: '',
+                weights: [],
+                options: [],
+                maximum: 100,
+                maximumAll: 1000,
+                display: true
+            }
+        })
 
-    const {
-      options,
-      newOption,
-      loading: optionLoading,
-      getOptionsByApplicationSlug,
-      optionAdd
-    } = useOption()
+        const {
+            options,
+            newOption,
+            loading: optionLoading,
+            getOptionsByApplicationSlug,
+            optionAdd
+        } = useOption()
 
-    const {
-      weights,
-      getWeightByApplicationSlug,
-      weightAdd,
-      loading: weightLoading
-    } = useWeight()
+        const {
+            weights,
+            getWeightByApplicationSlug,
+            weightAdd,
+            loading: weightLoading
+        } = useWeight()
 
-    // Methods
-    // =========
+        // Methods
+        // =========
 
-    getWeightByApplicationSlug(() => ({
-      applicationSlug: root.$route.params.application
-    }))
+        getWeightByApplicationSlug(() => ({
+            applicationSlug: root.$route.params.application
+        }))
 
-    getOptionsByApplicationSlug(() => ({
-      applicationSlug: root.$route.params.application
-    }))
+        getOptionsByApplicationSlug(() => ({
+            applicationSlug: root.$route.params.application
+        }))
 
-    const addOption = (data) => {
-      const input = {
-        name: data.newOption,
-        application: application.id
-      }
-      useUtilsMutation(optionAdd, input)
+        const addOption = (data) => {
+            const input = {
+                name: data.newOption,
+                application: application.id
+            }
+            useUtilsMutation(optionAdd, input)
+        }
+
+        const addWeight = (data) => {
+            const input = {
+                ...data.newWeight,
+                application: application.value.id
+            }
+            useUtilsMutation(weightAdd, input)
+        }
+
+        const saveProduct = () => {
+            // eslint-disable-next-line no-undef
+            UIkit.modal('#product-form-modal').hide()
+            const input = {
+                ...product.value,
+                application: application.value.id
+            }
+
+            store.dispatch('application/saveProduct', { product: input, update: props.update })
+        }
+
+        const upload = (ev) => {
+            product.value.image = ev.target.files[0]
+        }
+
+        const loading = computed(() => !!(weightLoading.value || optionLoading.value))
+
+        return {
+            editor: ClassicEditor,
+            options,
+            weights,
+            loading,
+            product,
+            newOption,
+            addOption,
+            addWeight,
+            upload,
+            saveProduct
+        }
     }
-
-    const addWeight = (data) => {
-      const input = {
-        ...data.newWeight,
-        application: application.value.id
-      }
-      useUtilsMutation(weightAdd, input)
-    }
-
-    const saveProduct = () => {
-      // eslint-disable-next-line no-undef
-      UIkit.modal('#product-form-modal').hide()
-      const input = {
-        ...product.value,
-        application: application.value.id
-      }
-
-      store.dispatch('application/saveProduct', { product: input, update: props.update })
-    }
-
-    const upload = (ev) => {
-      product.value.image = ev.target.files[0]
-    }
-
-    const loading = computed(() => !!(weightLoading.value || optionLoading.value))
-
-    return {
-      editor: ClassicEditor,
-      options,
-      weights,
-      loading,
-      product,
-      newOption,
-      addOption,
-      addWeight,
-      upload,
-      saveProduct
-    }
-  }
 }
 </script>

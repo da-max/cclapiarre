@@ -15,17 +15,17 @@
 
 <script>
 export default {
-  name: 'UtilsButton',
-  props: {
-    type: {
-      type: String,
-      default: 'primary',
-      required: false
-    },
-    width: {
-      type: String,
-      default: ''
+    name: 'UtilsButton',
+    props: {
+        type: {
+            type: String,
+            default: 'primary',
+            required: false
+        },
+        width: {
+            type: String,
+            default: ''
+        }
     }
-  }
 }
 </script>

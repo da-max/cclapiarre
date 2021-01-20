@@ -28,17 +28,17 @@
 
 <script>
 export default {
-  name: 'ProductItemInformation',
-  props: {
-    weights: {
-      required: true,
-      type: Object
-    },
-    options: {
-      required: false,
-      type: Object,
-      default: () => ({})
+    name: 'ProductItemInformation',
+    props: {
+        weights: {
+            required: true,
+            type: Object
+        },
+        options: {
+            required: false,
+            type: Object,
+            default: () => ({})
+        }
     }
-  }
 }
 </script>

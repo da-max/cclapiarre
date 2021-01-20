@@ -15,8 +15,8 @@
 <script>
 import MemberTable from '@/components/Registration/Member/MemberTable'
 export default {
-  components: {
-    MemberTable
-  }
+    components: {
+        MemberTable
+    }
 }
 </script>

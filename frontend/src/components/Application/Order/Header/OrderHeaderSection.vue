@@ -56,59 +56,59 @@ import useApplication from '@/composition/application/useApplication'
 import UtilsButton from '@/components/Utils/UtilsButton'
 
 export default {
-  name: 'OrderHeaderSection',
-  components: {
-    UtilsButton,
-    ckeditor: CKEditor.component
-  },
-  setup (props, { root }) {
-    const { isAdmin, updateApplication } = useApplication(
-      root.$route.params.application
-    )
+    name: 'OrderHeaderSection',
+    components: {
+        UtilsButton,
+        ckeditor: CKEditor.component
+    },
+    setup (props, { root }) {
+        const { isAdmin, updateApplication } = useApplication(
+            root.$route.params.application
+        )
 
-    const description = computed({
-      get: () => store.state.application.currentApplication.description,
-      set (newValue) {
-        store.commit('application/CHANGE_DESCRIPTION', newValue)
-      }
-    })
+        const description = computed({
+            get: () => store.state.application.currentApplication.description,
+            set (newValue) {
+                store.commit('application/CHANGE_DESCRIPTION', newValue)
+            }
+        })
 
-    const newDescription = computed(() =>
-      store.state.application.currentApplication.newDescription
-        ? store.state.application.currentApplication.newDescription
-        : store.state.application.currentApplication.description
-    )
-    const state = reactive({
-      editor: ClassicEditor,
-      update: false,
-      config: {
-        toolbar: [
-          'heading',
-          '|',
-          'bold',
-          'italic',
-          'link',
-          'bulletedList',
-          'numberedList',
-          '|',
-          'blockQuote',
-          'insertTable',
-          'undo',
-          'redo',
-          '|',
-          'fontColor',
-          'fontSize',
-          'fontBackgroundColor'
-        ]
-      }
-    })
+        const newDescription = computed(() =>
+            store.state.application.currentApplication.newDescription
+                ? store.state.application.currentApplication.newDescription
+                : store.state.application.currentApplication.description
+        )
+        const state = reactive({
+            editor: ClassicEditor,
+            update: false,
+            config: {
+                toolbar: [
+                    'heading',
+                    '|',
+                    'bold',
+                    'italic',
+                    'link',
+                    'bulletedList',
+                    'numberedList',
+                    '|',
+                    'blockQuote',
+                    'insertTable',
+                    'undo',
+                    'redo',
+                    '|',
+                    'fontColor',
+                    'fontSize',
+                    'fontBackgroundColor'
+                ]
+            }
+        })
 
-    const saveDescription = async () => {
-      await updateApplication()
-      state.update = false
+        const saveDescription = async () => {
+            await updateApplication()
+            state.update = false
+        }
+
+        return { ...toRefs(state), isAdmin, description, saveDescription, newDescription }
     }
-
-    return { ...toRefs(state), isAdmin, description, saveDescription, newDescription }
-  }
 }
 </script>

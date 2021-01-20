@@ -111,41 +111,41 @@ import FormInputNumber from '@/components/Utils/Form/FormInputNumber.vue'
 import { computed } from '@vue/composition-api'
 
 export default {
-  name: 'CoffeeOrderedItem',
-  components: {
-    UtilsCard,
-    UtilsButton,
-    FormInputNumber
-  },
-  props: {
-    coffee: {
-      required: true,
-      type: Object
+    name: 'CoffeeOrderedItem',
+    components: {
+        UtilsCard,
+        UtilsButton,
+        FormInputNumber
+    },
+    props: {
+        coffee: {
+            required: true,
+            type: Object
+        }
+    },
+    setup (props) {
+        const { coffees, setAmount, removeCoffeeOrder, setCoffee, setType, setWeight } = useCoffee()
+
+        const coffeeType = computed({
+            get: () => props.coffee.type,
+            set: (newType) => setType(props.coffee.id, newType)
+        })
+
+        const coffeeWeight = computed({
+            get: () => props.coffee.weight,
+            set: (newWeight) => setWeight(props.coffee.id, newWeight)
+        })
+
+        const coffeeCoffee = computed({
+            get: () => props.coffee.coffee.id,
+            set: (newCoffee) => setCoffee(props.coffee.id, newCoffee)
+        })
+
+        const changeAmount = (amount) => {
+            setAmount(props.coffee.id, amount)
+        }
+
+        return { changeAmount, coffees, removeCoffeeOrder, coffeeType, coffeeWeight, coffeeCoffee }
     }
-  },
-  setup (props) {
-    const { coffees, setAmount, removeCoffeeOrder, setCoffee, setType, setWeight } = useCoffee()
-
-    const coffeeType = computed({
-      get: () => props.coffee.type,
-      set: (newType) => setType(props.coffee.id, newType)
-    })
-
-    const coffeeWeight = computed({
-      get: () => props.coffee.weight,
-      set: (newWeight) => setWeight(props.coffee.id, newWeight)
-    })
-
-    const coffeeCoffee = computed({
-      get: () => props.coffee.coffee.id,
-      set: (newCoffee) => setCoffee(props.coffee.id, newCoffee)
-    })
-
-    const changeAmount = (amount) => {
-      setAmount(props.coffee.id, amount)
-    }
-
-    return { changeAmount, coffees, removeCoffeeOrder, coffeeType, coffeeWeight, coffeeCoffee }
-  }
 }
 </script>

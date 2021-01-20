@@ -33,30 +33,30 @@
 
 <script>
 export default {
-  name: 'FormInput',
-  props: {
-    name: {
-      type: String,
-      default: 'text',
-      required: true
-    },
-    type: {
-      type: String,
-      default: 'text'
-    },
-    label: {
-      type: String,
-      required: true
-    },
-    value: {
-      type: [String, Number],
-      required: true
-    },
-    required: {
-      type: Boolean,
-      default: true,
-      required: false
+    name: 'FormInput',
+    props: {
+        name: {
+            type: String,
+            default: 'text',
+            required: true
+        },
+        type: {
+            type: String,
+            default: 'text'
+        },
+        label: {
+            type: String,
+            required: true
+        },
+        value: {
+            type: [String, Number],
+            required: true
+        },
+        required: {
+            type: Boolean,
+            default: true,
+            required: false
+        }
     }
-  }
 }
 </script>

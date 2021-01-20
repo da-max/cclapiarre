@@ -52,17 +52,17 @@ import UtilsTable from '@/components/Utils/UtilsTable'
 import MEMBER_ALL from '@/graphql/Member/MemberAll.gql'
 
 export default {
-  components: {
-    UtilsTable
-  },
-  setup (props) {
-    const { result, loading } = useUtilsQuery(MEMBER_ALL)
-    return { result, loading }
-  },
-  data () {
-    return {
-      headerItems: ['Nom', 'Prénom', 'Email', 'Numéro de téléphone']
+    components: {
+        UtilsTable
+    },
+    setup (props) {
+        const { result, loading } = useUtilsQuery(MEMBER_ALL)
+        return { result, loading }
+    },
+    data () {
+        return {
+            headerItems: ['Nom', 'Prénom', 'Email', 'Numéro de téléphone']
+        }
     }
-  }
 }
 </script>

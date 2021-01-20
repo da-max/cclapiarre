@@ -19,15 +19,15 @@ import CitrusProductListSection from '@/components/Citrus/ProductList/CitrusProd
 import Alerts from '@/components/Utils/Alert/Alerts'
 
 export default {
-  components: {
-    CitrusProductListHeader,
-    CitrusProductListSection,
-    Alerts
-  },
-  setup () {
-    const { getCitrus } = useCitrus()
-    getCitrus()
-    useSetupTitle('Liste des produits')
-  }
+    components: {
+        CitrusProductListHeader,
+        CitrusProductListSection,
+        Alerts
+    },
+    setup () {
+        const { getCitrus } = useCitrus()
+        getCitrus()
+        useSetupTitle('Liste des produits')
+    }
 }
 </script>

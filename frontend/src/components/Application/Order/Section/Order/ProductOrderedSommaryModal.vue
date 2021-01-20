@@ -86,28 +86,28 @@ import UtilsTable from '@/components/Utils/UtilsTable'
 import UtilsButton from '@/components/Utils/UtilsButton'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 export default {
-  name: 'ProductOrderedSommaryModal',
-  components: {
-    UtilsModal,
-    UtilsTable,
-    UtilsButton
-  },
-  computed: {
-    ...mapState({ productsOrdered: (state) => state.order.order }),
-    ...mapGetters({ total: 'order/uniqPrice', idApplicationBySlug: 'application/idApplicationBySlug', valide: 'order/valide' }),
-    applicationId () {
-      return this.idApplicationBySlug(this.$route.params.application)
+    name: 'ProductOrderedSommaryModal',
+    components: {
+        UtilsModal,
+        UtilsTable,
+        UtilsButton
+    },
+    computed: {
+        ...mapState({ productsOrdered: (state) => state.order.order }),
+        ...mapGetters({ total: 'order/uniqPrice', idApplicationBySlug: 'application/idApplicationBySlug', valide: 'order/valide' }),
+        applicationId () {
+            return this.idApplicationBySlug(this.$route.params.application)
+        }
+    },
+    methods: {
+        ...mapMutations({ removeProduct: 'order/REMOVE_PRODUCT_ORDER', setAmount: 'order/SET_AMOUNT' }),
+        ...mapActions({ saveOrder: 'order/saveOrder' }),
+        async addOrder () {
+            // eslint-disable-next-line no-undef
+            UIkit.modal('#sommaryModal').hide()
+            await this.saveOrder(this.applicationId)
+        }
     }
-  },
-  methods: {
-    ...mapMutations({ removeProduct: 'order/REMOVE_PRODUCT_ORDER', setAmount: 'order/SET_AMOUNT' }),
-    ...mapActions({ saveOrder: 'order/saveOrder' }),
-    async addOrder () {
-      // eslint-disable-next-line no-undef
-      UIkit.modal('#sommaryModal').hide()
-      await this.saveOrder(this.applicationId)
-    }
-  }
 }
 </script>
 

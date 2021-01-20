@@ -7,41 +7,41 @@ import OptionByApplicationSlug from '@/graphql/Application/Product/Option/Option
 import OptionAdd from '@/graphql/Application/Product/Option/OptionAdd.gql'
 
 export default function useOption () {
-  // Data
-  // ============
-  const state = reactive({
-    options: {},
-    error: null,
-    loading: false,
-    newOption: ''
-  })
+    // Data
+    // ============
+    const state = reactive({
+        options: {},
+        error: null,
+        loading: false,
+        newOption: ''
+    })
 
-  // Methods
-  // ===========
-  const getOptionsByApplicationSlug = (filter) => {
-    const { result, loading } = useUtilsQuery(OptionByApplicationSlug, filter)
-    state.options = useResult(result)
-    state.loading = loading
-  }
+    // Methods
+    // ===========
+    const getOptionsByApplicationSlug = (filter) => {
+        const { result, loading } = useUtilsQuery(OptionByApplicationSlug, filter)
+        state.options = useResult(result)
+        state.loading = loading
+    }
 
-  const { mutate: optionAdd, onDone } = useMutation(OptionAdd)
+    const { mutate: optionAdd, onDone } = useMutation(OptionAdd)
 
-  onDone((result) => {
+    onDone((result) => {
     // eslint-disable-next-line no-undef
-    UIkit.notification({
-      message: 'Option ajoutée',
-      status: 'success',
-      pos: 'top-center',
-      timout: 5000
+        UIkit.notification({
+            message: 'Option ajoutée',
+            status: 'success',
+            pos: 'top-center',
+            timout: 5000
+        })
+        state.options = ref({
+            edges: [
+                ...state.options.edges, {
+                    node: result.data.addOption.option
+                }
+            ]
+        })
     })
-    state.options = ref({
-      edges: [
-        ...state.options.edges, {
-          node: result.data.addOption.option
-        }
-      ]
-    })
-  })
 
-  return { ...toRefs(state), getOptionsByApplicationSlug, optionAdd }
+    return { ...toRefs(state), getOptionsByApplicationSlug, optionAdd }
 }

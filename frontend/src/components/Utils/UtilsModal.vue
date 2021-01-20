@@ -32,33 +32,33 @@
 
 <script>
 export default {
-  name: 'UtilsModal',
-  props: {
-    close: {
-      default: true,
-      required: false,
-      type: Boolean
-    },
-    center: {
-      default: false,
-      required: false,
-      type: Boolean
-    },
-    container: {
-      default: false,
-      required: false,
-      type: Boolean
-    },
-    escClose: {
-      default: true,
-      required: false,
-      type: Boolean
-    },
-    bgClose: {
-      default: false,
-      required: false,
-      type: Boolean
+    name: 'UtilsModal',
+    props: {
+        close: {
+            default: true,
+            required: false,
+            type: Boolean
+        },
+        center: {
+            default: false,
+            required: false,
+            type: Boolean
+        },
+        container: {
+            default: false,
+            required: false,
+            type: Boolean
+        },
+        escClose: {
+            default: true,
+            required: false,
+            type: Boolean
+        },
+        bgClose: {
+            default: false,
+            required: false,
+            type: Boolean
+        }
     }
-  }
 }
 </script>

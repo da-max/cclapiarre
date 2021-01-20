@@ -69,25 +69,25 @@ import CoffeeItemFull from '@/components/Coffee/Order/Section/Coffee/CoffeeItemF
 import CoffeeDetails from '@/components/Coffee/Order/Section/Coffee/CoffeeDetails'
 
 export default {
-  name: 'CoffeeList',
-  components: {
-    CoffeeItemSmall,
-    CoffeeItemFull,
-    CoffeeDetails
-  },
-  setup () {
-    const { coffees, getCoffees, displayDetails, coffeeSelect } = useCoffee()
-    const state = reactive({
-      displaying: 'small',
-      DISPLAYING_MODE: {
-        'Affichage réduit': 'small',
-        'Affichage détaillé': 'full'
-      }
-    })
+    name: 'CoffeeList',
+    components: {
+        CoffeeItemSmall,
+        CoffeeItemFull,
+        CoffeeDetails
+    },
+    setup () {
+        const { coffees, getCoffees, displayDetails, coffeeSelect } = useCoffee()
+        const state = reactive({
+            displaying: 'small',
+            DISPLAYING_MODE: {
+                'Affichage réduit': 'small',
+                'Affichage détaillé': 'full'
+            }
+        })
 
-    onBeforeMount(() => getCoffees())
+        onBeforeMount(() => getCoffees())
 
-    return { coffees, displayDetails, ...toRefs(state), coffeeSelect }
-  }
+        return { coffees, displayDetails, ...toRefs(state), coffeeSelect }
+    }
 }
 </script>

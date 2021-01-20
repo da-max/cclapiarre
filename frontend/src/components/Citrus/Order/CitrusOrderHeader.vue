@@ -34,17 +34,17 @@
 import { reactive, toRefs } from '@vue/composition-api'
 
 export default {
-  name: 'CitrusOrderHeader',
-  setup () {
-    const state = reactive({
-      images: [
-        {
-          image: 'citrus.jpg',
-          alt: 'Image de présentation de l’application agrumes.'
-        }
-      ]
-    })
-    return { ...toRefs(state) }
-  }
+    name: 'CitrusOrderHeader',
+    setup () {
+        const state = reactive({
+            images: [
+                {
+                    image: 'citrus.jpg',
+                    alt: 'Image de présentation de l’application agrumes.'
+                }
+            ]
+        })
+        return { ...toRefs(state) }
+    }
 }
 </script>

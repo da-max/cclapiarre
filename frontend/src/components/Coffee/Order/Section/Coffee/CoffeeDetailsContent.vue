@@ -54,12 +54,12 @@
 
 <script>
 export default {
-  name: 'CoffeeDetailsContent',
-  props: {
-    coffee: {
-      required: true,
-      type: Object
+    name: 'CoffeeDetailsContent',
+    props: {
+        coffee: {
+            required: true,
+            type: Object
+        }
     }
-  }
 }
 </script>

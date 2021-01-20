@@ -42,50 +42,50 @@
 
 <script>
 export default {
-  name: 'FormInputNumber',
-  props: {
-    name: {
-      type: String,
-      required: true
-    },
-    label: {
-      type: String,
-      required: true
-    },
-    value: {
-      type: [Number, String],
-      required: true
-    },
-    required: {
-      type: Boolean,
-      default: true,
-      required: false
-    },
-    min: {
-      type: Number,
-      default: 0,
-      required: false
-    },
-    max: {
-      type: Number,
-      default: 100,
-      required: false
-    },
-    step: {
-      type: Number,
-      default: 1,
-      required: false
-    },
-    displayLabel: {
-      type: Boolean,
-      default: true,
-      required: false
-    },
-    displayInfo: {
-      type: Boolean,
-      default: true,
-      required: false
+    name: 'FormInputNumber',
+    props: {
+        name: {
+            type: String,
+            required: true
+        },
+        label: {
+            type: String,
+            required: true
+        },
+        value: {
+            type: [Number, String],
+            required: true
+        },
+        required: {
+            type: Boolean,
+            default: true,
+            required: false
+        },
+        min: {
+            type: Number,
+            default: 0,
+            required: false
+        },
+        max: {
+            type: Number,
+            default: 100,
+            required: false
+        },
+        step: {
+            type: Number,
+            default: 1,
+            required: false
+        },
+        displayLabel: {
+            type: Boolean,
+            default: true,
+            required: false
+        },
+        displayInfo: {
+            type: Boolean,
+            default: true,
+            required: false
+        }
     }
-  }
 }
 </script>

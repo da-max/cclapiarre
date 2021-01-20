@@ -17,6 +17,6 @@ import CoffeeOrderHeaderImage from '@/components/Coffee/Order/Header/CoffeeOrder
 import CoffeeOrderHeaderSection from '@/components/Coffee/Order/Header/CoffeeOrderHeaderSection'
 
 export default {
-  components: { CoffeeOrderHeaderImage, CoffeeOrderHeaderSection }
+    components: { CoffeeOrderHeaderImage, CoffeeOrderHeaderSection }
 }
 </script>

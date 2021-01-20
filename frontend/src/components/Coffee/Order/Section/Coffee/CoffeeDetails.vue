@@ -38,17 +38,17 @@ import UtilsModal from '@/components/Utils/UtilsModal'
 import UtilsButton from '@/components/Utils/UtilsButton'
 
 export default {
-  name: 'CoffeeDetails',
-  components: {
-    UtilsModal,
-    UtilsButton,
-    CoffeeDetailsContent
-  },
-  props: {
-    coffee: {
-      required: true,
-      type: Object
+    name: 'CoffeeDetails',
+    components: {
+        UtilsModal,
+        UtilsButton,
+        CoffeeDetailsContent
+    },
+    props: {
+        coffee: {
+            required: true,
+            type: Object
+        }
     }
-  }
 }
 </script>

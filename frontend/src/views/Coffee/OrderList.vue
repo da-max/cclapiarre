@@ -18,14 +18,14 @@ import CoffeeOrderListHeader from '@/components/Coffee/OrderList/CoffeeOrderList
 import CoffeeOrderListSection from '@/components/Coffee/OrderList/CoffeeOrderListSection.vue'
 
 export default {
-  name: 'CoffeeOrderList',
-  components: {
-    Alerts,
-    CoffeeOrderListHeader,
-    CoffeeOrderListSection
-  },
-  setup () {
-    useSetupTitle('Liste des commandes')
-  }
+    name: 'CoffeeOrderList',
+    components: {
+        Alerts,
+        CoffeeOrderListHeader,
+        CoffeeOrderListSection
+    },
+    setup () {
+        useSetupTitle('Liste des commandes')
+    }
 }
 </script>

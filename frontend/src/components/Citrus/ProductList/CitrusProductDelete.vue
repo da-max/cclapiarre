@@ -41,20 +41,20 @@ import UtilsModal from '@/components/Utils/UtilsModal'
 import UtilsButton from '@/components/Utils/UtilsButton'
 
 export default {
-  name: 'CitrusProductDelete',
-  components: {
-    UtilsButton,
-    UtilsModal
-  },
-  setup () {
-    const { citrusSelect, deleteCitrus } = useCitrus()
+    name: 'CitrusProductDelete',
+    components: {
+        UtilsButton,
+        UtilsModal
+    },
+    setup () {
+        const { citrusSelect, deleteCitrus } = useCitrus()
 
-    const removeCitrus = () => {
-      useHideModal('#citrus-product-delete')
-      deleteCitrus(citrusSelect.value.id)
+        const removeCitrus = () => {
+            useHideModal('#citrus-product-delete')
+            deleteCitrus(citrusSelect.value.id)
+        }
+
+        return { product: citrusSelect, removeCitrus }
     }
-
-    return { product: citrusSelect, removeCitrus }
-  }
 }
 </script>

@@ -32,22 +32,22 @@ import UtilsButton from '@/components/Utils/UtilsButton'
 import UtilsCard from '@/components/Utils/UtilsCard'
 
 export default {
-  name: 'CoffeeItemFull',
-  components: {
-    CoffeeDetailsContent,
-    UtilsCard,
-    UtilsButton
-  },
-  props: {
-    coffee: {
-      type: Object,
-      required: true
-    }
-  },
-  setup () {
-    const { addCoffeeOrder, valide } = useCoffee()
+    name: 'CoffeeItemFull',
+    components: {
+        CoffeeDetailsContent,
+        UtilsCard,
+        UtilsButton
+    },
+    props: {
+        coffee: {
+            type: Object,
+            required: true
+        }
+    },
+    setup () {
+        const { addCoffeeOrder, valide } = useCoffee()
 
-    return { addCoffeeOrder, valide }
-  }
+        return { addCoffeeOrder, valide }
+    }
 }
 </script>

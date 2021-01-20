@@ -62,49 +62,49 @@ import ProductFormModal from '@/components/Application/Order/Section/Product/Pro
 import { computed, reactive, toRefs } from '@vue/composition-api'
 
 export default {
-  name: 'ProductList',
-  components: {
-    ProductItem,
-    ProductFormModal
-  },
-  setup (props, { root }) {
-    const { isAdmin, products } = useApplication(root.$route.params.application)
-    const state = reactive({
-      filter: 'display',
-      value: true,
-      FILTERS: {
-        'Afficher les produits disponibles à la commande': {
-          filter: 'display',
-          value: true
-        },
-        'Afficher les produits cachés': {
-          filter: 'display',
-          value: false
-        },
-        'Afficher tout les produits': {
-          filter: 'display',
-          value: 'all'
+    name: 'ProductList',
+    components: {
+        ProductItem,
+        ProductFormModal
+    },
+    setup (props, { root }) {
+        const { isAdmin, products } = useApplication(root.$route.params.application)
+        const state = reactive({
+            filter: 'display',
+            value: true,
+            FILTERS: {
+                'Afficher les produits disponibles à la commande': {
+                    filter: 'display',
+                    value: true
+                },
+                'Afficher les produits cachés': {
+                    filter: 'display',
+                    value: false
+                },
+                'Afficher tout les produits': {
+                    filter: 'display',
+                    value: 'all'
+                }
+            },
+            productUpdate: {}
+        })
+
+        const filterProduct = computed(() => {
+            if (state.value === 'all') {
+                return products.value
+            }
+            return products.value.filter(
+                (product) => product.node[state.filter] === state.value
+            )
+        })
+
+        const updateProduct = (product) => {
+            state.productUpdate = product.node
+            // eslint-disable-next-line no-undef
+            UIkit.modal('#update-product').show()
         }
-      },
-      productUpdate: {}
-    })
 
-    const filterProduct = computed(() => {
-      if (state.value === 'all') {
-        return products.value
-      }
-      return products.value.filter(
-        (product) => product.node[state.filter] === state.value
-      )
-    })
-
-    const updateProduct = (product) => {
-      state.productUpdate = product.node
-      // eslint-disable-next-line no-undef
-      UIkit.modal('#update-product').show()
+        return { ...toRefs(state), isAdmin, filterProduct, updateProduct }
     }
-
-    return { ...toRefs(state), isAdmin, filterProduct, updateProduct }
-  }
 }
 </script>

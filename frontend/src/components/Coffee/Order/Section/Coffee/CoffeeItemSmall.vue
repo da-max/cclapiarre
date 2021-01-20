@@ -51,21 +51,21 @@ import UtilsCard from '@/components/Utils/UtilsCard'
 import UtilsButton from '@/components/Utils/UtilsButton.vue'
 
 export default {
-  name: 'CoffeeItemSmall',
-  components: {
-    UtilsCard,
-    UtilsButton
-  },
-  props: {
-    coffee: {
-      required: true,
-      type: Object
-    }
-  },
-  setup () {
-    const { addCoffeeOrder, valide } = useCoffee()
+    name: 'CoffeeItemSmall',
+    components: {
+        UtilsCard,
+        UtilsButton
+    },
+    props: {
+        coffee: {
+            required: true,
+            type: Object
+        }
+    },
+    setup () {
+        const { addCoffeeOrder, valide } = useCoffee()
 
-    return { addCoffeeOrder, valide }
-  }
+        return { addCoffeeOrder, valide }
+    }
 }
 </script>

@@ -44,42 +44,42 @@ import CitrusDetails from '@/components/Citrus/CitrusDetails'
 import UtilsButton from '@/components/Utils/UtilsButton'
 
 export default {
-  name: 'ProductListItem',
-  components: {
-    CitrusDetails,
-    UtilsButton
-  },
-  props: {
-    productId: {
-      required: true,
-      type: String
-    }
-  },
-  setup (props) {
-    const { citrusById, setCheckCitrus, setCitrusSelect } = useCitrus()
-    const product = computed(() => citrusById(props.productId))
+    name: 'ProductListItem',
+    components: {
+        CitrusDetails,
+        UtilsButton
+    },
+    props: {
+        productId: {
+            required: true,
+            type: String
+        }
+    },
+    setup (props) {
+        const { citrusById, setCheckCitrus, setCitrusSelect } = useCitrus()
+        const product = computed(() => citrusById(props.productId))
 
-    const checkProduct = computed({
-      get: () => product.value.check,
-      set: (value) => { setCheckCitrus(product.value, value) }
-    })
+        const checkProduct = computed({
+            get: () => product.value.check,
+            set: (value) => { setCheckCitrus(product.value, value) }
+        })
 
-    const showUpdateModal = () => {
-      setCitrusSelect(product.value.node)
-      useShowModal('#citrus-product-modal')
-    }
+        const showUpdateModal = () => {
+            setCitrusSelect(product.value.node)
+            useShowModal('#citrus-product-modal')
+        }
 
-    const showDeleteModal = () => {
-      setCitrusSelect(product.value.node)
-      useShowModal('#citrus-product-delete')
-    }
+        const showDeleteModal = () => {
+            setCitrusSelect(product.value.node)
+            useShowModal('#citrus-product-delete')
+        }
 
-    return {
-      product,
-      checkProduct,
-      showUpdateModal,
-      showDeleteModal
+        return {
+            product,
+            checkProduct,
+            showUpdateModal,
+            showDeleteModal
+        }
     }
-  }
 }
 </script>

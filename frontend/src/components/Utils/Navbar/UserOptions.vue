@@ -68,40 +68,40 @@
 import { mapState } from 'vuex'
 
 export default {
-  props: {
-    li: {
-      type: Boolean,
-      default: false,
-      required: false
-    }
-  },
-  data () {
-    return {
-      userOptionsItems: [
-        {
-          title: 'Changer d’utilisateur',
-          link: { name: 'Login' }
+    props: {
+        li: {
+            type: Boolean,
+            default: false,
+            required: false
         }
-      ]
-    }
-  },
+    },
+    data () {
+        return {
+            userOptionsItems: [
+                {
+                    title: 'Changer d’utilisateur',
+                    link: { name: 'Login' }
+                }
+            ]
+        }
+    },
 
-  computed: {
-    ...mapState({ currentUser: state => state.auth.currentUser })
-  },
+    computed: {
+        ...mapState({ currentUser: state => state.auth.currentUser })
+    },
 
-  methods: {
-    logout () {
-      this.$store.commit('alert/ADD_ALERT', {
-        header: true,
-        headerContent: `Au revoir ${this.$store.state.auth.currentUser.username}`,
-        body: 'Vous êtes maintenant déconnecté. Merci d’être passé.',
-        status: 'success',
-        close: true
-      })
-      this.$store.dispatch('auth/logoutUser')
-      this.$router.push('/')
+    methods: {
+        logout () {
+            this.$store.commit('alert/ADD_ALERT', {
+                header: true,
+                headerContent: `Au revoir ${this.$store.state.auth.currentUser.username}`,
+                body: 'Vous êtes maintenant déconnecté. Merci d’être passé.',
+                status: 'success',
+                close: true
+            })
+            this.$store.dispatch('auth/logoutUser')
+            this.$router.push('/')
+        }
     }
-  }
 }
 </script>

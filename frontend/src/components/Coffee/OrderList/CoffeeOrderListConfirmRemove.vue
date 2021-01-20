@@ -42,73 +42,73 @@ import UtilsModal from '@/components/Utils/UtilsModal'
 import UtilsButton from '@/components/Utils/UtilsButton'
 
 export default {
-  name: 'CoffeeOrderListConfirmRemove',
-  components: {
-    UtilsModal,
-    UtilsButton
-  },
-  props: {
-    all: {
-      required: false,
-      default: true,
-      type: Boolean
+    name: 'CoffeeOrderListConfirmRemove',
+    components: {
+        UtilsModal,
+        UtilsButton
     },
-    order: {
-      required: true,
-      default: () => ({}),
-      type: [Object, Array]
-    }
-  },
-  setup (props, { emit }) {
-    const state = reactive({
-      allHeader: 'Supprimer toutes les commandes ?',
-      uniqHeader: 'Supprimer la commande de ',
-      allBody:
+    props: {
+        all: {
+            required: false,
+            default: true,
+            type: Boolean
+        },
+        order: {
+            required: true,
+            default: () => ({}),
+            type: [Object, Array]
+        }
+    },
+    setup (props, { emit }) {
+        const state = reactive({
+            allHeader: 'Supprimer toutes les commandes ?',
+            uniqHeader: 'Supprimer la commande de ',
+            allBody:
         'Vous êtes sur le point de supprimer toutes les commandes de café',
-      uniqBody: 'Vous êtes sur le point de supprimer la commande de '
-    })
+            uniqBody: 'Vous êtes sur le point de supprimer la commande de '
+        })
 
-    const { orderRemove, onDoneRemoveOrder } = useCoffee()
+        const { orderRemove, onDoneRemoveOrder } = useCoffee()
 
-    const removeOrder = () => {
-      useHideModal('#confirm-remove-order')
-      if (Array.isArray(props.order)) {
-        const ordersId = props.order.map((order) => order.node.id)
-        useUtilsMutation(orderRemove, { ordersId })
-      } else {
-        useUtilsMutation(orderRemove, { ordersId: props.order.node.id })
-      }
+        const removeOrder = () => {
+            useHideModal('#confirm-remove-order')
+            if (Array.isArray(props.order)) {
+                const ordersId = props.order.map((order) => order.node.id)
+                useUtilsMutation(orderRemove, { ordersId })
+            } else {
+                useUtilsMutation(orderRemove, { ordersId: props.order.node.id })
+            }
+        }
+
+        onDoneRemoveOrder((result) => {
+            if (result.data.batchRemoveCoffeeOrder.deletionCount !== 0) {
+                emit('refetch-order')
+                store.commit('alert/ADD_ALERT', {
+                    header: true,
+                    headerContent: props.all
+                        ? 'Commandes supprimées'
+                        : 'Commande supprimée.',
+                    body: props.all
+                        ? 'Toutes les commandes ont été supprimées.'
+                        : 'La commande a bien été supprimée.',
+                    status: 'success',
+                    close: true
+                })
+            } else {
+                store.commit('alert/ADD_ALERT', {
+                    header: true,
+                    headerContent: props.all
+                        ? 'Commandes non trouvées'
+                        : 'Commande non trouvée',
+                    body: props.all
+                        ? 'Les commandes n’ont pas pu être supprimées.'
+                        : 'La commande n’a pas pu être supprimée.',
+                    status: 'warning',
+                    close: true
+                })
+            }
+        })
+        return { ...toRefs(state), removeOrder }
     }
-
-    onDoneRemoveOrder((result) => {
-      if (result.data.batchRemoveCoffeeOrder.deletionCount !== 0) {
-        emit('refetch-order')
-        store.commit('alert/ADD_ALERT', {
-          header: true,
-          headerContent: props.all
-            ? 'Commandes supprimées'
-            : 'Commande supprimée.',
-          body: props.all
-            ? 'Toutes les commandes ont été supprimées.'
-            : 'La commande a bien été supprimée.',
-          status: 'success',
-          close: true
-        })
-      } else {
-        store.commit('alert/ADD_ALERT', {
-          header: true,
-          headerContent: props.all
-            ? 'Commandes non trouvées'
-            : 'Commande non trouvée',
-          body: props.all
-            ? 'Les commandes n’ont pas pu être supprimées.'
-            : 'La commande n’a pas pu être supprimée.',
-          status: 'warning',
-          close: true
-        })
-      }
-    })
-    return { ...toRefs(state), removeOrder }
-  }
 }
 </script>

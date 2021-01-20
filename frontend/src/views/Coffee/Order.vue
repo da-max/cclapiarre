@@ -19,17 +19,17 @@ import CoffeeOrderHeader from '@/components/Coffee/Order/CoffeeOrderHeader.vue'
 import CoffeeOrderSection from '@/components/Coffee/Order/CoffeeOrderSection'
 
 export default {
-  name: 'CoffeeOrder',
-  components: {
-    CoffeeOrderHeader,
-    CoffeeOrderSection,
-    Alerts
-  },
-  setup () {
-    useSetupTitle('Commander du café')
-    const { hasOrdered } = useCoffee()
+    name: 'CoffeeOrder',
+    components: {
+        CoffeeOrderHeader,
+        CoffeeOrderSection,
+        Alerts
+    },
+    setup () {
+        useSetupTitle('Commander du café')
+        const { hasOrdered } = useCoffee()
 
-    hasOrdered()
-  }
+        hasOrdered()
+    }
 }
 </script>

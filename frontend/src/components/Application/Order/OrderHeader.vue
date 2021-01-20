@@ -20,15 +20,15 @@ import OrderHeaderSection from '@/components/Application/Order/Header/OrderHeade
 import { computed } from '@vue/composition-api'
 
 export default {
-  name: 'OrderHeader',
-  components: {
-    OrderHeaderImage,
-    OrderHeaderSection
-  },
-  setup () {
-    const application = computed(() => store.state.application.currentApplication)
+    name: 'OrderHeader',
+    components: {
+        OrderHeaderImage,
+        OrderHeaderSection
+    },
+    setup () {
+        const application = computed(() => store.state.application.currentApplication)
 
-    return { application }
-  }
+        return { application }
+    }
 }
 </script>

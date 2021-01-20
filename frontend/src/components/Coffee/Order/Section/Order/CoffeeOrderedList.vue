@@ -48,12 +48,12 @@ import UtilsButton from '@/components/Utils/UtilsButton.vue'
 import CoffeeOrderedSommary from './CoffeeOrderedSommary.vue'
 
 export default {
-  name: 'CoffeeOrderedList',
-  components: { CoffeeOrderedItem, UtilsButton, CoffeeOrderedSommary },
-  setup () {
-    const { coffeesOrder, price, saveOrder, valide } = useCoffee()
+    name: 'CoffeeOrderedList',
+    components: { CoffeeOrderedItem, UtilsButton, CoffeeOrderedSommary },
+    setup () {
+        const { coffeesOrder, price, saveOrder, valide } = useCoffee()
 
-    return { coffeesOrder, price, showModal: useShowModal, saveOrder, valide }
-  }
+        return { coffeesOrder, price, showModal: useShowModal, saveOrder, valide }
+    }
 }
 </script>

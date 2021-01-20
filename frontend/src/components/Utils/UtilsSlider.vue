@@ -40,26 +40,26 @@
 
 <script>
 export default {
-  name: 'UtilsSlider',
-  props: {
-    baseUrl: {
-      required: true,
-      type: String
-    },
-    images: {
-      required: true,
-      type: Array
-    },
-    autoplay: {
-      required: false,
-      type: Boolean,
-      default: true
-    },
-    center: {
-      required: false,
-      type: Boolean,
-      default: true
+    name: 'UtilsSlider',
+    props: {
+        baseUrl: {
+            required: true,
+            type: String
+        },
+        images: {
+            required: true,
+            type: Array
+        },
+        autoplay: {
+            required: false,
+            type: Boolean,
+            default: true
+        },
+        center: {
+            required: false,
+            type: Boolean,
+            default: true
+        }
     }
-  }
 }
 </script>

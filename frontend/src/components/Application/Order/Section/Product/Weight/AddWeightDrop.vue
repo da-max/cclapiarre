@@ -49,22 +49,22 @@ import FormInput from '@/components/Utils/Form/FormInput'
 import FormInputNumber from '@/components/Utils/Form/FormInputNumber'
 
 export default {
-  name: 'AddWeightDrop',
-  components: {
-    UtilsButton,
-    UtilsDrop,
-    FormInput,
-    FormInputNumber
-  },
-  setup () {
-    const newWeight = ref({
-      price: 0,
-      unit: '',
-      weight: 0
-    })
+    name: 'AddWeightDrop',
+    components: {
+        UtilsButton,
+        UtilsDrop,
+        FormInput,
+        FormInputNumber
+    },
+    setup () {
+        const newWeight = ref({
+            price: 0,
+            unit: '',
+            weight: 0
+        })
 
-    return { newWeight }
-  }
+        return { newWeight }
+    }
 
 }
 </script>

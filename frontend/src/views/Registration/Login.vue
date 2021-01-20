@@ -16,16 +16,16 @@ import LoginSection from '@/components/Registration/Login/LoginSection'
 import { useSetupTitle } from '@/composition/useUtils'
 
 export default {
-  components: {
-    LoginSection,
-    Alerts
-  },
-  setup (props) {
-    const title = 'Se connecter'
-    useSetupTitle(title)
-    return {
-      title
+    components: {
+        LoginSection,
+        Alerts
+    },
+    setup (props) {
+        const title = 'Se connecter'
+        useSetupTitle(title)
+        return {
+            title
+        }
     }
-  }
 }
 </script>

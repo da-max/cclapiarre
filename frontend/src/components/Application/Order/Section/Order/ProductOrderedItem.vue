@@ -88,47 +88,47 @@ import FormInputNumber from '@/components/Utils/Form/FormInputNumber'
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
-  name: 'ProductOrderedItem',
-  components: {
-    UtilsCard,
-    UtilsButton,
-    FormInputNumber
-  },
-  props: {
-    productOrdered: {
-      required: true,
-      type: Object
-    }
-  },
-  computed: {
-    ...mapGetters({ productById: 'order/productById' })
-  },
-  methods: {
-    ...mapMutations({
-      removeProductOrdered: 'order/REMOVE_PRODUCT_ORDER',
-      setWeight: 'order/SET_WEIGHT',
-      setOption: 'order/SET_OPTION',
-      setAmount: 'order/SET_AMOUNT'
-    }),
-    selectWeight (event) {
-      const weight = this.productById(
-        this.productOrdered.id
-      ).product.weights.edges.find(
-        (weight) => weight.node.id === event.target.value
-      )
-      this.setWeight({ id: this.productOrdered.id, weight })
+    name: 'ProductOrderedItem',
+    components: {
+        UtilsCard,
+        UtilsButton,
+        FormInputNumber
     },
-    selectOption (event) {
-      const option = this.productById(
-        this.productOrdered.id
-      ).product.options.edges.find(
-        (option) => option.node.id === event.target.value
-      )
-      this.setOption({ id: this.productOrdered.id, option })
+    props: {
+        productOrdered: {
+            required: true,
+            type: Object
+        }
     },
-    changeAmount (amount) {
-      this.setAmount({ id: this.productOrdered.id, amount })
+    computed: {
+        ...mapGetters({ productById: 'order/productById' })
+    },
+    methods: {
+        ...mapMutations({
+            removeProductOrdered: 'order/REMOVE_PRODUCT_ORDER',
+            setWeight: 'order/SET_WEIGHT',
+            setOption: 'order/SET_OPTION',
+            setAmount: 'order/SET_AMOUNT'
+        }),
+        selectWeight (event) {
+            const weight = this.productById(
+                this.productOrdered.id
+            ).product.weights.edges.find(
+                (weight) => weight.node.id === event.target.value
+            )
+            this.setWeight({ id: this.productOrdered.id, weight })
+        },
+        selectOption (event) {
+            const option = this.productById(
+                this.productOrdered.id
+            ).product.options.edges.find(
+                (option) => option.node.id === event.target.value
+            )
+            this.setOption({ id: this.productOrdered.id, option })
+        },
+        changeAmount (amount) {
+            this.setAmount({ id: this.productOrdered.id, amount })
+        }
     }
-  }
 }
 </script>

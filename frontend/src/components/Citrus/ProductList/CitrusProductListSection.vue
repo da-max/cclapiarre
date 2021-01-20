@@ -31,27 +31,27 @@ import CitrusProductModal from '@/components/Citrus/ProductList/CitrusProductMod
 import CitrusProductDelete from '@/components/Citrus/ProductList/CitrusProductDelete'
 
 export default {
-  components: {
-    CitrusProductDelete,
-    CitrusProductListActions,
-    CitrusProductModal,
-    FormSearch,
-    ProductListTable
-  },
-  setup () {
-    const state = reactive({
-      searchKeys: ['node.name', 'node.description']
+    components: {
+        CitrusProductDelete,
+        CitrusProductListActions,
+        CitrusProductModal,
+        FormSearch,
+        ProductListTable
+    },
+    setup () {
+        const state = reactive({
+            searchKeys: ['node.name', 'node.description']
 
-    })
+        })
 
-    const { citrus, searchCitrus, setSearchCitrus } = useCitrus()
+        const { citrus, searchCitrus, setSearchCitrus } = useCitrus()
 
-    return {
-      ...toRefs(state),
-      citrus,
-      setSearchCitrus,
-      searchCitrus
+        return {
+            ...toRefs(state),
+            citrus,
+            setSearchCitrus,
+            searchCitrus
+        }
     }
-  }
 }
 </script>

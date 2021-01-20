@@ -29,11 +29,11 @@ Vue.prototype.$filesRoot = filesRoot
 // }
 
 const httpUploadLink = createUploadLink({
-  uri: httpEndpoint,
-  tokenName: AUTH_TOKEN,
-  persisting: false,
-  websocketsOnly: false,
-  ssr: false
+    uri: httpEndpoint,
+    tokenName: AUTH_TOKEN,
+    persisting: false,
+    websocketsOnly: false,
+    ssr: false
 })
 
 // const httpLink = createHttpLink({
@@ -52,14 +52,14 @@ const httpUploadLink = createUploadLink({
 const cache = new InMemoryCache()
 
 export function createClient (options = {}) {
-  // Create apollo client
-  const apolloClient = new ApolloClient({
-    link: httpUploadLink,
-    cache,
-    ...options
-  })
+    // Create apollo client
+    const apolloClient = new ApolloClient({
+        link: httpUploadLink,
+        cache,
+        ...options
+    })
 
-  return apolloClient
+    return apolloClient
 }
 
 // // Call this in the Vue app file

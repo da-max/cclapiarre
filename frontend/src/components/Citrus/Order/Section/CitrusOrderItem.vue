@@ -33,26 +33,26 @@ import UtilsButton from '@/components/Utils/UtilsButton'
 import FormInputNumber from '@/components/Utils/Form/FormInputNumber'
 
 export default {
-  name: 'CitrusOrderItem',
-  components: {
-    FormInputNumber,
-    CitrusDetails,
-    UtilsButton
-  },
-  props: {
-    citrus: {
-      required: true,
-      type: Object
-    }
-  },
-  setup (props) {
-    const { setCitrusAmount } = useCitrus()
+    name: 'CitrusOrderItem',
+    components: {
+        FormInputNumber,
+        CitrusDetails,
+        UtilsButton
+    },
+    props: {
+        citrus: {
+            required: true,
+            type: Object
+        }
+    },
+    setup (props) {
+        const { setCitrusAmount } = useCitrus()
 
-    const changeCitrusAmount = (amount) => {
-      setCitrusAmount(props.citrus.node.id, amount)
-    }
+        const changeCitrusAmount = (amount) => {
+            setCitrusAmount(props.citrus.node.id, amount)
+        }
 
-    return { changeCitrusAmount }
-  }
+        return { changeCitrusAmount }
+    }
 }
 </script>

@@ -24,14 +24,14 @@
 <script>
 import { mapState } from 'vuex'
 export default {
-  name: 'OrderInformation',
-  computed: {
-    ...mapState({
-      username: (state) => state.auth.currentUser.username,
-      email: (state) => state.auth.currentUser.email,
-      firstName: (state) => state.auth.currentUser.firstName ? state.auth.currentUser.firstName : 'Non défini',
-      lastName: (state) => state.auth.currentUser.lastName ? state.auth.currentUser.lastName : 'Non défini'
-    })
-  }
+    name: 'OrderInformation',
+    computed: {
+        ...mapState({
+            username: (state) => state.auth.currentUser.username,
+            email: (state) => state.auth.currentUser.email,
+            firstName: (state) => state.auth.currentUser.firstName ? state.auth.currentUser.firstName : 'Non défini',
+            lastName: (state) => state.auth.currentUser.lastName ? state.auth.currentUser.lastName : 'Non défini'
+        })
+    }
 }
 </script>

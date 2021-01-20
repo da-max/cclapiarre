@@ -33,7 +33,7 @@
 
 <script>
 export default {
-  name: 'CoffeeOrderHeaderSection'
+    name: 'CoffeeOrderHeaderSection'
 }
 </script>
 

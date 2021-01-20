@@ -25,10 +25,10 @@
 <script>
 import Alert from '@/components/Utils/Alert/Alert'
 export default {
-  name: 'Alerts',
+    name: 'Alerts',
 
-  components: {
-    Alert
-  }
+    components: {
+        Alert
+    }
 }
 </script>

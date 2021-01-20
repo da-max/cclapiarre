@@ -15,14 +15,14 @@ import Alerts from '@/components/Utils/Alert/Alerts'
 import MemberSection from '@/components/Registration/Member/MemberSection'
 
 export default {
-  components: {
-    MemberSection,
-    Alerts
-  },
-  setup () {
-    const title = 'Liste des adhérents'
-    useSetupTitle(title)
-    return { title }
-  }
+    components: {
+        MemberSection,
+        Alerts
+    },
+    setup () {
+        const title = 'Liste des adhérents'
+        useSetupTitle(title)
+        return { title }
+    }
 }
 </script>

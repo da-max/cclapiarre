@@ -36,22 +36,22 @@ import ProductFormModal from '@/components/Application/Order/Section/Product/Pro
 import UtilsButton from '../../Utils/UtilsButton.vue'
 
 export default {
-  name: 'OrderSection',
-  components: {
-    ProductList,
-    ProductOrderedList,
-    OrderInformation,
-    UtilsButton,
-    ProductFormModal
-  },
-  setup (props, { root }) {
-    const { isAdmin } = useApplication(root.$route.params.application)
-    // eslint-disable-next-line no-undef
-    const showProductFormModal = () => UIkit.modal('#product-form-modal').show()
-    return {
-      isAdmin,
-      showProductFormModal
+    name: 'OrderSection',
+    components: {
+        ProductList,
+        ProductOrderedList,
+        OrderInformation,
+        UtilsButton,
+        ProductFormModal
+    },
+    setup (props, { root }) {
+        const { isAdmin } = useApplication(root.$route.params.application)
+        // eslint-disable-next-line no-undef
+        const showProductFormModal = () => UIkit.modal('#product-form-modal').show()
+        return {
+            isAdmin,
+            showProductFormModal
+        }
     }
-  }
 }
 </script>

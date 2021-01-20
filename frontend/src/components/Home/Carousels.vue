@@ -47,12 +47,12 @@
 
 <script>
 export default {
-  name: 'Carousels',
-  props: {
-    carousels: {
-      required: true,
-      type: Array
+    name: 'Carousels',
+    props: {
+        carousels: {
+            required: true,
+            type: Array
+        }
     }
-  }
 }
 </script>

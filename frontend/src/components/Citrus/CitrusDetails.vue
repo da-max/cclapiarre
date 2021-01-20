@@ -21,20 +21,20 @@
 import UtilsDrop from '@/components/Utils/UtilsDrop'
 
 export default {
-  name: 'CitrusDetails',
-  components: {
-    UtilsDrop
-  },
-  props: {
-    product: {
-      required: true,
-      type: Object
+    name: 'CitrusDetails',
+    components: {
+        UtilsDrop
     },
-    mode: {
-      required: false,
-      type: String,
-      default: 'click'
+    props: {
+        product: {
+            required: true,
+            type: Object
+        },
+        mode: {
+            required: false,
+            type: String,
+            default: 'click'
+        }
     }
-  }
 }
 </script>

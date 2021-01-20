@@ -35,38 +35,38 @@
 
 <script>
 export default {
-  name: 'UtilsCard',
-  props: {
-    type: {
-      required: false,
-      default: 'default',
-      type: String
-    },
-    hover: {
-      required: false,
-      default: false,
-      type: Boolean
-    },
-    mediaPos: {
-      required: false,
-      default: null,
-      type: String
-    },
-    width: {
-      required: false,
-      default: 'medium',
-      type: String
-    },
-    header: {
-      required: false,
-      default: true,
-      type: Boolean
-    },
-    footer: {
-      required: false,
-      default: true,
-      type: Boolean
+    name: 'UtilsCard',
+    props: {
+        type: {
+            required: false,
+            default: 'default',
+            type: String
+        },
+        hover: {
+            required: false,
+            default: false,
+            type: Boolean
+        },
+        mediaPos: {
+            required: false,
+            default: null,
+            type: String
+        },
+        width: {
+            required: false,
+            default: 'medium',
+            type: String
+        },
+        header: {
+            required: false,
+            default: true,
+            type: Boolean
+        },
+        footer: {
+            required: false,
+            default: true,
+            type: Boolean
+        }
     }
-  }
 }
 </script>

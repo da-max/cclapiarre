@@ -31,33 +31,33 @@
 
 <script>
 export default {
-  name: 'UtilsTable',
-  props: {
-    caption: {
-      default: null,
-      required: false,
-      type: String
-    },
-    divider: {
-      default: true,
-      required: false,
-      type: Boolean
-    },
-    striped: {
-      default: true,
-      required: false,
-      type: Boolean
-    },
-    hover: {
-      default: true,
-      required: false,
-      type: Boolean
-    },
-    middle: {
-      default: false,
-      required: false,
-      type: Boolean
+    name: 'UtilsTable',
+    props: {
+        caption: {
+            default: null,
+            required: false,
+            type: String
+        },
+        divider: {
+            default: true,
+            required: false,
+            type: Boolean
+        },
+        striped: {
+            default: true,
+            required: false,
+            type: Boolean
+        },
+        hover: {
+            default: true,
+            required: false,
+            type: Boolean
+        },
+        middle: {
+            default: false,
+            required: false,
+            type: Boolean
+        }
     }
-  }
 }
 </script>

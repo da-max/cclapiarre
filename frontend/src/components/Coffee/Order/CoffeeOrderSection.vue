@@ -12,11 +12,11 @@ import CoffeeList from '@/components/Coffee/Order/Section/Coffee/CoffeeList'
 import CoffeeOrderedList from '@/components/Coffee/Order/Section/Order/CoffeeOrderedList'
 
 export default {
-  name: 'CoffeeOrderSection',
-  components: {
-    OrderInformation,
-    CoffeeList,
-    CoffeeOrderedList
-  }
+    name: 'CoffeeOrderSection',
+    components: {
+        OrderInformation,
+        CoffeeList,
+        CoffeeOrderedList
+    }
 }
 </script>

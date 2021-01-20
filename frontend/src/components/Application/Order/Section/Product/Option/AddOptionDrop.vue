@@ -33,18 +33,18 @@ import FormInput from '@/components/Utils/Form/FormInput'
 import { ref } from '@vue/composition-api'
 
 export default {
-  name: 'AddOptionDrop',
-  components: {
-    UtilsDrop,
-    UtilsButton,
-    FormInput
-  },
-  setup () {
-    const newOption = ref('')
+    name: 'AddOptionDrop',
+    components: {
+        UtilsDrop,
+        UtilsButton,
+        FormInput
+    },
+    setup () {
+        const newOption = ref('')
 
-    return {
-      newOption
+        return {
+            newOption
+        }
     }
-  }
 }
 </script>

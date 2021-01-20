@@ -46,22 +46,22 @@ import ProductListItem from '@/components/Citrus/ProductList/Table/ProductListIt
 import UtilsTable from '@/components/Utils/UtilsTable'
 
 export default {
-  name: 'ProductListTable',
-  components: {
-    ProductListItem,
-    UtilsTable
-  },
-  setup () {
-    const state = reactive({
-      tooltip: {
-        weight: 'Si le poids du produit est de 1, cela veut dire que le produit ne se vend pas au poids, mais à l’unité.',
-        display: 'Défini si ce produit est affiché, ou pas, sur le tableau des commandes.',
-        maybeNotAvailable: 'Permet d’afficher un message d’alerte sur le tableau de commande, afin de prévenir les adhérents que le produit ne sera, peut-être, pas disponible.'
-      }
-    })
-    const { checkAll, searchCitrus } = useCitrus()
+    name: 'ProductListTable',
+    components: {
+        ProductListItem,
+        UtilsTable
+    },
+    setup () {
+        const state = reactive({
+            tooltip: {
+                weight: 'Si le poids du produit est de 1, cela veut dire que le produit ne se vend pas au poids, mais à l’unité.',
+                display: 'Défini si ce produit est affiché, ou pas, sur le tableau des commandes.',
+                maybeNotAvailable: 'Permet d’afficher un message d’alerte sur le tableau de commande, afin de prévenir les adhérents que le produit ne sera, peut-être, pas disponible.'
+            }
+        })
+        const { checkAll, searchCitrus } = useCitrus()
 
-    return { ...toRefs(state), checkAll, citrus: searchCitrus }
-  }
+        return { ...toRefs(state), checkAll, citrus: searchCitrus }
+    }
 }
 </script>

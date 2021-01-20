@@ -154,51 +154,51 @@ import FormInputNumber from '@/components/Utils/Form/FormInputNumber'
 import UtilsButton from '@/components/Utils/UtilsButton'
 
 export default {
-  name: 'CitrusProductModal',
-  components: {
-    UtilsButton,
-    FormInputNumber,
-    FormInput,
-    Alerts,
-    UtilsModal,
-    ckeditor: CKEditor.component
-  },
-  setup () {
-    const { citrusSelect, citrusUpdate } = useCitrus()
+    name: 'CitrusProductModal',
+    components: {
+        UtilsButton,
+        FormInputNumber,
+        FormInput,
+        Alerts,
+        UtilsModal,
+        ckeditor: CKEditor.component
+    },
+    setup () {
+        const { citrusSelect, citrusUpdate } = useCitrus()
 
-    const product = computed(() => {
-      if (citrusSelect.value.name) {
-        return { ...citrusSelect.value }
-      } else {
-        return {
-          name: '',
-          description: '',
-          weight: 0,
-          price: 0,
-          display: true,
-          maybeNotAvailable: false,
-          step: 1,
-          maximum: 100
+        const product = computed(() => {
+            if (citrusSelect.value.name) {
+                return { ...citrusSelect.value }
+            } else {
+                return {
+                    name: '',
+                    description: '',
+                    weight: 0,
+                    price: 0,
+                    display: true,
+                    maybeNotAvailable: false,
+                    step: 1,
+                    maximum: 100
+                }
+            }
+        })
+
+        const updateCitrus = () => {
+            const id = product.value.id
+
+            delete product.value.id
+            delete product.value.__typename
+            useUtilsMutation(citrusUpdate, { id, input: product.value })
+            useHideModal('#citrus-product-modal')
         }
-      }
-    })
 
-    const updateCitrus = () => {
-      const id = product.value.id
-
-      delete product.value.id
-      delete product.value.__typename
-      useUtilsMutation(citrusUpdate, { id, input: product.value })
-      useHideModal('#citrus-product-modal')
+        return {
+            editor: ClassicEditor,
+            citrusSelect,
+            product,
+            updateCitrus
+        }
     }
-
-    return {
-      editor: ClassicEditor,
-      citrusSelect,
-      product,
-      updateCitrus
-    }
-  }
 }
 
 </script>

@@ -16,7 +16,12 @@
           Supprimer toutes les commandes
         </UtilsButton>
       </div>
-      <OrderInformation class="uk-margin-large-top uk-width-1-2@m uk-margin-auto" />
+      <aside class="uk-margin-large-top uk-width-1-2@m uk-margin-auto">
+        <OrderInformation />
+        <div class="uk-text-center uk-margin-large-top uk-text-bold">
+          <span class="uk-label">Prix actuel de la commande</span> {{ orderPrice }}
+        </div>
+      </aside>
     </header>
     <section>
       <CitrusOrderTable class="uk-margin-xlarge-top" />
@@ -32,15 +37,18 @@ import OrderInformation from '@/components/Application/Order/Section/OrderInform
 import UtilsButton from '@/components/Utils/UtilsButton'
 
 export default {
-  name: 'CitrusOrderSection',
-  components: {
-    CitrusOrderTable,
-    OrderInformation,
-    UtilsButton
-  },
-  setup () {
-    const { getCitrus } = useCitrus()
-    getCitrus()
-  }
+    name: 'CitrusOrderSection',
+    components: {
+        CitrusOrderTable,
+        OrderInformation,
+        UtilsButton
+    },
+    setup () {
+        const { getCitrus, orderPrice, getOrders } = useCitrus()
+        getCitrus()
+        getOrders()
+
+        return { orderPrice }
+    }
 }
 </script>

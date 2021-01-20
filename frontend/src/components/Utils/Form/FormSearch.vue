@@ -19,29 +19,29 @@
 import VueFuse from 'vue-fuse'
 
 export default {
-  name: 'FormSearch',
-  components: {
-    VueFuse
-  },
-  props: {
-    placehloder: {
-      default: 'Rechercher',
-      required: false,
-      type: String
+    name: 'FormSearch',
+    components: {
+        VueFuse
     },
-    defaultAll: {
-      default: true,
-      required: false,
-      type: Boolean
-    },
-    elements: {
-      required: true,
-      type: Array
-    },
-    keys: {
-      required: true,
-      type: Array
+    props: {
+        placehloder: {
+            default: 'Rechercher',
+            required: false,
+            type: String
+        },
+        defaultAll: {
+            default: true,
+            required: false,
+            type: Boolean
+        },
+        elements: {
+            required: true,
+            type: Array
+        },
+        keys: {
+            required: true,
+            type: Array
+        }
     }
-  }
 }
 </script>

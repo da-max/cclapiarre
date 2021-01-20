@@ -35,9 +35,9 @@ const routes = [
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '../views/Registration/Login.vue')
   },
+  ...citrusRoutes,
   ...coffeeRoutes,
-  ...applicationRoutes,
-  ...citrusRoutes
+  ...applicationRoutes
 ]
 
 const router = new VueRouter({

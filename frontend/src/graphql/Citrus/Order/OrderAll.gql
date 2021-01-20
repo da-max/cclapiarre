@@ -1,0 +1,26 @@
+#import "../../User/Fragment/UserFullFragment.gql"
+
+query OrderAll {
+    citrusOrder {
+        edges {
+            node {
+                id
+                user {
+                    ...UserFullFragment
+                }
+                amounts {
+                    edges {
+                        node {
+                            id
+                            amount
+                            product {
+                                id
+                                name
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

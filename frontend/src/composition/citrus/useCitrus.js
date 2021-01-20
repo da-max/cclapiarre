@@ -6,12 +6,19 @@ import store from '@/store/index'
 import CITRUS_UPDATE from '@/graphql/Citrus/CitrusUpdate.gql'
 
 export default function () {
-  const citrus = computed(() => store.state.citrus.citrus)
-  const searchCitrus = computed(() => store.state.citrus.searchCitrus)
-  const citrusSelect = computed(() => store.state.citrus.citrusSelect)
+  // Store state
+  // ===========
 
-  // Actions
-  // ========
+  const citrus = computed(() => store.state.citrus.citrus)
+  const citrusSelect = computed(() => store.state.citrus.citrusSelect)
+  const searchCitrus = computed(() => store.state.citrus.searchCitrus)
+
+  // Store actions
+  // =============
+
+  const deleteCitrus = (citrusId) => {
+    store.dispatch('citrus/deleteCitrus', citrusId)
+  }
 
   const getCitrus = () => {
     store.dispatch('citrus/getCitrus')
@@ -21,16 +28,8 @@ export default function () {
     store.dispatch('citrus/patchCitrus', { key, value })
   }
 
-  const deleteCitrus = (citrusId) => {
-    store.dispatch('citrus/deleteCitrus', citrusId)
-  }
-
-  // Mutations
-  // =========
-
-  const setSearchCitrus = (result) => {
-    store.commit('citrus/SET_SEARCH_CITRUS', result)
-  }
+  // Store mutations
+  // ===============
 
   const checkAll = computed({
     get: () => false,
@@ -43,19 +42,29 @@ export default function () {
     store.commit('citrus/SET_CHECK_CITRUS', { citrus, value })
   }
 
+  const setCitrusAmount = (citrusId, amount) => {
+    store.commit('citrus/SET_CITRUS_AMOUNT', { citrusId, amount: Number(amount) })
+  }
+
   const setCitrusSelect = (citrus) => {
     store.commit('citrus/SET_CITRUS_SELECT', citrus)
   }
 
-  // Getters
-  // ========
+  const setSearchCitrus = (result) => {
+    store.commit('citrus/SET_SEARCH_CITRUS', result)
+  }
 
-  const citrusById = (citrusId) =>
-    store.getters['citrus/citrusById'](citrusId)
+  // Store getters
+  // =============
+
+  const citrusById = (citrusId) => store.getters['citrus/citrusById'](citrusId)
 
   const citrusChecked = computed(() => store.getters['citrus/citrusChecked'])
 
-  // Mutations
+  const citrusDisplay = computed(() => store.getters['citrus/citrusDisplay'])
+
+  // GraphQl Mutations
+  // =================
 
   const { mutate: citrusUpdate, onDone: onDoneCitrusUpdate } = useMutation(CITRUS_UPDATE)
 
@@ -72,25 +81,27 @@ export default function () {
   return {
     // Store state
     citrus,
-    searchCitrus,
     citrusSelect,
+    searchCitrus,
 
     // Store mutations
-    setSearchCitrus,
-    setCheckCitrus,
-    setCitrusSelect,
     checkAll,
+    setCheckCitrus,
+    setCitrusAmount,
+    setCitrusSelect,
+    setSearchCitrus,
 
     // Store actions
-    patchCitrus,
-    getCitrus,
     deleteCitrus,
+    getCitrus,
+    patchCitrus,
 
     // Store getters
     citrusById,
     citrusChecked,
+    citrusDisplay,
 
-    // Mutations
+    // GraphQl mutations
     citrusUpdate
   }
 }

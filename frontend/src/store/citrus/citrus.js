@@ -14,6 +14,7 @@ export default {
   }),
 
   mutations: {
+    // Citrus mutations
     SET_CITRUS (state, citrus) {
       const products = []
       citrus.forEach(c => {
@@ -35,6 +36,7 @@ export default {
     SET_CITRUS_SELECT (state, value) {
       state.citrusSelect = value
     },
+
     CHECK_ALL (state, value) {
       state.searchCitrus.forEach((citrus) => {
         Vue.set(
@@ -54,11 +56,25 @@ export default {
     },
     DELETE_CITRUS (state, citrusId) {
       state.citrus = state.citrus.filter(citrus => citrus.node.id !== citrusId)
+    },
+
+    // Order mutations
+    SET_CITRUS_AMOUNT (state, { citrusId, amount }) {
+      const citrusIndex = state.citrus.findIndex(c => c.node.id === citrusId)
+      Vue.set(
+        state.citrus[citrusIndex],
+        'amount',
+        amount
+      )
     }
+
   },
 
   actions: {
-    async getCitrus ({ commit }) {
+    async getCitrus ({ state, commit }, force = false) {
+      if (state.citrus.length !== 0 && !force) {
+        return
+      }
       commit('START_LOADING', null, { root: true })
       try {
         const response = await apolloClient.query({ query: CITRUS_ALL })
@@ -139,7 +155,7 @@ export default {
     citrusById (state) {
       return (citrusId) => state.citrus.find((citrus) => citrus.node.id === citrusId)
     },
-    citrusChecked: (state) => state.citrus.filter(c => c.check)
-
+    citrusChecked: (state) => state.citrus.filter(c => c.check),
+    citrusDisplay: (state) => state.citrus.filter(c => c.node.display)
   }
 }

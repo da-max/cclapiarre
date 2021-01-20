@@ -1,4 +1,4 @@
-from graphene import ObjectType
+from graphene import ObjectType, Field
 from graphene.relay import Node
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
@@ -6,6 +6,8 @@ from graphql_jwt.decorators import login_required, permission_required
 from graphene_django_cud.mutations import DjangoBatchPatchMutation, DjangoUpdateMutation, DjangoDeleteMutation
 
 from backend.citrus.models import CitrusAmount, CitrusOrder, CitrusProduct
+from backend.registration.schema import UserLargeType
+
 
 # Types
 # =====
@@ -13,6 +15,7 @@ from backend.citrus.models import CitrusAmount, CitrusOrder, CitrusProduct
 
 class CitrusProductType(DjangoObjectType):
     """ GraphQl type for citrus.CitrusProduct model. """
+
     class Meta:
         model = CitrusProduct
         interfaces = (Node,)
@@ -22,11 +25,12 @@ class CitrusProductType(DjangoObjectType):
 
 class CitrusAmountType(DjangoObjectType):
     """
-    GraphQl type fro citrus.CitrusAmount model.
+    GraphQl type for citrus.CitrusAmount model.
     """
+
     class Meta:
         model = CitrusAmount
-        interfaces = (Node, )
+        interfaces = (Node,)
         fields = '__all__'
         filter_fields = ['id']
 
@@ -35,11 +39,14 @@ class CitrusOrderType(DjangoObjectType):
     """
     GraphQL type for citrus.CitrusOrder model.
     """
+    user = Field(UserLargeType)
+
     class Meta:
         model = CitrusOrder
-        interfaces = (Node, )
+        interfaces = (Node,)
         fields = '__all__'
         filter_fields = ['id']
+
 
 # Queries
 # =======
@@ -68,30 +75,33 @@ class BatchPatchCitrusProductMutation(DjangoBatchPatchMutation):
     """
     GraphQl mutation for Patch CitrusProducts.
     """
+
     class Meta:
         model = CitrusProduct
         login_required = True
-        permission_required = ('citrus.change_citrusproduct', )
+        permission_required = ('citrus.change_citrusproduct',)
 
 
 class UpdateCitrusProductMutation(DjangoUpdateMutation):
     """
     GraphQl mutation for Update CitrusProduct.
     """
+
     class Meta:
         model = CitrusProduct
         login_required = True
-        permission_required = ('citrus.change_citrusproduct', )
+        permission_required = ('citrus.change_citrusproduct',)
 
 
 class DeleteCitrusProductMutation(DjangoDeleteMutation):
     """
     GraphQl mutation for Delete CitrusProduct.
     """
+
     class Meta:
         model = CitrusProduct
         login_required = True
-        permission_required = ('citrus.remove_citrusproduct', )
+        permission_required = ('citrus.remove_citrusproduct',)
 
 
 class Mutation(ObjectType):

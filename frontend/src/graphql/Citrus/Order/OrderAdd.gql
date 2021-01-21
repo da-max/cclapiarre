@@ -1,0 +1,7 @@
+mutation orderAdd($amounts: [CreateCitrusAmountInput]!) {
+    addCitrusOrder(input: { amountsAdd: $amounts }) {
+        citrusOrder {
+            id
+        }
+    }
+}

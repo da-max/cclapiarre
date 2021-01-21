@@ -37,10 +37,10 @@ class CitrusOrderAdmin(ModelAdmin):
 
 class CitrusAmountAdmin(ModelAdmin):
 
-    list_display = ("command", "product", "amount")
-    list_filter = ["command", "product"]
-    ordering = ('command', )
-    search_fields = ['command', "product"]
+    list_display = ("order", "product", "amount")
+    list_filter = ["order", "product"]
+    ordering = ('order', )
+    search_fields = ['order', "product"]
 
 admin.site.register(CitrusOrder, CitrusOrderAdmin)
 admin.site.register(CitrusProduct, CitrusProductAdmin)

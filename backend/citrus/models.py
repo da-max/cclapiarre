@@ -14,13 +14,13 @@ class CitrusProduct(Model):
                         help_text="Mettre 1 si ce produit n'est pas vendu au poids.")
     price = FloatField(default=1, verbose_name="Prix du produit")
     display = BooleanField(verbose_name="Afficher le produit")
-    maybe_not_available = BooleanField(verbose_name="Produit peut être non disponible", default=False, help_text="Cocher cette case si le produit peut ne pas être disponible.")
+    maybe_not_available = BooleanField(verbose_name="Produit peut être non disponible", default=False,
+                                       help_text="Cocher cette case si le produit peut ne pas être disponible.")
     step = FloatField(default=1, verbose_name="Pas d'augmentation du produit")
     maximum = IntegerField(
         default=100, verbose_name="Quantité maximal commandable par commande")
 
     class Meta:
-
         verbose_name = "Produit"
 
     def __str__(self):
@@ -41,11 +41,10 @@ class CitrusOrder(Model):
     product = ManyToManyField(
         CitrusProduct, through='CitrusAmount', related_name='commands')
     send_mail = BooleanField(verbose_name='Envoyer un mail', default=True,
-                             help_text='Décocher cette case afin qu\'aucun mail ne soit envoyé à l\'utilisateur '
-                             'lors de sa commande (ou de la modification de sa commande.')
+                             help_text="Décocher cette case afin qu'aucun mail ne soit envoyé à l'utilisateur \
+                             lors de sa commande (ou de la modification de sa commande.")
 
     class Meta:
-
         verbose_name = "Commande"
 
     def __str__(self):
@@ -62,14 +61,14 @@ class CitrusOrder(Model):
 
 class CitrusAmount(Model):
     product = ForeignKey(CitrusProduct, on_delete=CASCADE, related_name="amounts")
-    command = ForeignKey(CitrusOrder, on_delete=CASCADE, related_name="amounts")
-    amount = FloatField(verbose_name="Quatité commandé")
+    order = ForeignKey(CitrusOrder, on_delete=CASCADE, related_name="amounts")
+    amount = FloatField(verbose_name="Quantité commandé")
 
     class Meta:
         verbose_name = "Quantité"
 
     def __str__(self):
-        return "{} faites par {} commander {}".format(self.product.name, self.command.user.username, self.amount)
+        return "{} faites par {} commander {}".format(self.product.name, self.order.user.username, self.amount)
 
     def get_total_product(self, product):
         total = int()
@@ -78,9 +77,9 @@ class CitrusAmount(Model):
             total += product.amount
         return total
 
-    def get_total_user(self, command_id):
+    def get_total_user(self, order_id):
         total = float()
-        command = self.objects.filter(command_id=command_id)
-        for c in command:
+        order = self.objects.filter(order_id=order_id)
+        for c in order:
             total += c.product.price * c.amount
         return total

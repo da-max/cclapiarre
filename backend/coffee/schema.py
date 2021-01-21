@@ -130,7 +130,7 @@ class CreateCoffeeAmountMutation(DjangoCreateMutation):
     class Meta:
         model = CoffeeAmount
         login_required = True
-        exclude_fields = ('order',)
+        exclude_fields = ('order')
 
 
 class CreateCoffeeOrderMutation(DjangoCreateMutation):

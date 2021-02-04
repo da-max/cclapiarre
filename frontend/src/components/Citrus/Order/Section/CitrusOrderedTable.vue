@@ -26,13 +26,19 @@
         :citrus="citrus"
       />
     </template>
+    <template #foot>
+      <td>Total</td>
+      <td>{{ currentOrderPrice }} €</td>
+      <td>{{ totalPrice }} €</td>
+    </template>
   </UtilsTable>
 </template>
 
 <script>
 import useCitrus from '@/composition/citrus/useCitrus'
+import useOrder from '@/composition/citrus/useOrder'
 
-import CitrusOrderItem from '@/components/Citrus/Order/Section/CitrusOrderItem'
+import CitrusOrderItem from '@/components/Citrus/Order/Section/CitrusOrderedItem'
 import UtilsTable from '@/components/Utils/UtilsTable'
 
 export default {
@@ -43,8 +49,9 @@ export default {
     },
     setup () {
         const { citrusDisplay, setOrderAmount } = useCitrus()
+        const { currentOrderPrice, totalPrice } = useOrder()
 
-        return { citrusDisplay, setOrderAmount }
+        return { citrusDisplay, currentOrderPrice, setOrderAmount, totalPrice }
     }
 }
 </script>

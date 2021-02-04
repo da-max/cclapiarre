@@ -16,6 +16,7 @@ query OrderAll {
                             product {
                                 id
                                 name
+                                price
                             }
                         }
                     }

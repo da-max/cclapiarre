@@ -16,12 +16,20 @@ export default {
         },
 
         SET_CURRENT_ORDER_AMOUNT (state, { citrusId, amount }) {
-            const citrusIndex = state.currentOrder.findIndex(c => c.node.id === citrusId)
-            Vue.set(
-                state.currentOrder[citrusIndex],
-                'amount',
-                amount
-            )
+            const amountIndex = state.currentOrder.findIndex(order => order.citrusId === citrusId)
+
+            if (amountIndex > -1) {
+                Vue.set(
+                    state.currentOrder[amountIndex],
+                    'amount',
+                    amount
+                )
+            } else {
+                state.currentOrder.push({
+                    citrusId,
+                    amount
+                })
+            }
         },
 
         SET_ORDER_AMOUNT (state, { orderId, citrusId, amount }) {
@@ -44,8 +52,8 @@ export default {
         async getOrders ({ commit }) {
             commit('START_LOADING', null, { root: true })
             try {
-                const response = apolloClient.query({ query: ORDER_ALL })
-                commit('SER_ORDERS', response.data.citrusOrders.edges)
+                const response = await apolloClient.query({ query: ORDER_ALL })
+                commit('SET_ORDERS', response.data.citrusOrder.edges)
             } catch (e) {
                 commit('alert/ADD_ALERT', {
                     header: false,
@@ -56,6 +64,69 @@ export default {
             } finally {
                 commit('END_LOADING', null, { root: true })
             }
+        }
+    },
+
+    getters: {
+        amountsByCitrusId: (state) => {
+            return (citrusId) => {
+                const amounts = []
+
+                state.orders.forEach(
+                    order => {
+                        const amount = order.node.amounts.edges.find(
+                            amount => amount.node.product.id === citrusId)
+                        if (amount) {
+                            amounts.push(amount.node.amount)
+                        }
+                    })
+                return amounts
+            }
+        },
+
+        currentOrderPrice: (state, _getters, _rootState, rootGetters) => {
+            let price = 0
+            state.currentOrder.forEach(order => {
+                const citrus = rootGetters['citrus/citrusById'](order.citrusId)
+                price += order.amount * citrus.node.price / citrus.node.weight
+            })
+            return Math.round(price * 100) / 100
+        },
+
+        currentOrderValide: (state) => {
+            let valide = false
+            state.currentOrder.forEach(order => {
+                if (order.amount > 0) {
+                    valide = true
+                }
+            })
+            return valide
+        },
+
+        totalCitrusById: (state, getters) => {
+            return (citrusId) => {
+                let total = 0
+
+                const amounts = getters.amountsByCitrusId(citrusId)
+                amounts.forEach(amount => {
+                    total += amount
+                })
+                const currentAmount = state.currentOrder.find(order => order.citrusId === citrusId)
+                if (currentAmount) {
+                    total += currentAmount.amount
+                }
+                return Math.round(total * 100) / 100
+            }
+        },
+        totalPrice: (state, getters) => {
+            let total = 0
+            state.orders.forEach(order => {
+                order.node.amounts.edges.forEach(amount => {
+                    total += amount.node.amount * amount.node.product.price
+                })
+            })
+            total += getters.currentOrderPrice
+            return Math.round(total * 100) / 100
         }
     }
 }

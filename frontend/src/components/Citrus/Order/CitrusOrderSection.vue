@@ -24,7 +24,21 @@
       </aside>
     </header>
     <section>
-      <CitrusOrderedTable class="uk-margin-xlarge-top" />
+      <div class="uk-margin-left">
+        <select
+          id="display-orders"
+          class="uk-select uk-form-width-large"
+          @input="(e) => setDisplayOrders(Boolean(Number(e.target.value)))"
+        >
+          <option value="0">
+            Cacher les commandes
+          </option>
+          <option value="1">
+            Afficher les commandes
+          </option>
+        </select>
+      </div>
+      <CitrusOrderedTable class="uk-margin-large-top" />
       <footer class="uk-text-center">
         <UtilsButton
           type="secondary"
@@ -63,12 +77,22 @@ export default {
     },
     setup () {
         const { getCitrus } = useCitrus()
-        const { getOrders, currentOrderPrice, currentOrderValide } = useOrder()
+        const {
+            currentOrderPrice,
+            currentOrderValide,
+            getOrders,
+            setDisplayOrders
+        } = useOrder()
 
         getCitrus()
         getOrders()
 
-        return { currentOrderPrice, currentOrderValide, useShowModal }
+        return {
+            currentOrderPrice,
+            currentOrderValide,
+            setDisplayOrders,
+            useShowModal
+        }
     }
 }
 </script>

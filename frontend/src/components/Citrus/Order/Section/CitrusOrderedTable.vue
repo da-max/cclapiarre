@@ -9,6 +9,7 @@
         Nom du produit
       </th>
       <th
+        v-show="!displayOrders"
         class="uk-background-secondary"
       >
         Ma commande
@@ -17,6 +18,14 @@
         class="uk-background-secondary"
       >
         Total
+      </th>
+      <th
+        v-for="order in orders"
+        v-show="displayOrders"
+        :key="order.node.id"
+        class="uk-background-secondary"
+      >
+        {{ order.node.user.username }}
       </th>
     </template>
     <template #body>
@@ -49,9 +58,16 @@ export default {
     },
     setup () {
         const { citrusDisplay, setOrderAmount } = useCitrus()
-        const { currentOrderPrice, totalPrice } = useOrder()
+        const { currentOrderPrice, displayOrders, orders, totalPrice } = useOrder()
 
-        return { citrusDisplay, currentOrderPrice, setOrderAmount, totalPrice }
+        return {
+            citrusDisplay,
+            currentOrderPrice,
+            displayOrders,
+            orders,
+            setOrderAmount,
+            totalPrice
+        }
     }
 }
 </script>

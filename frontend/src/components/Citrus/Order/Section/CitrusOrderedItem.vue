@@ -10,14 +10,21 @@
         <CitrusDetails :product="citrus" />
       </div>
     </td>
-    <td>
+    <td v-if="!displayOrders">
       <CitrusInputAmount :product="citrus.node" />
     </td>
-    <td class="uk-width-1-2">
+    <td :class="{'uk-width-1-2': !displayOrders}">
       {{ totalCitrus(citrus) }}
       <span v-if="citrus.node.weight !== 1">
         caisse⋅s (Soit {{ totalCitrus(citrus) * citrus.node.weight }}kg)
       </span>
+    </td>
+    <td
+      v-for="order in orders"
+      v-show="displayOrders"
+      :key="order.node.id"
+    >
+      {{ orderAmountByCitrusId(order.node, citrus.node.id) }}
     </td>
   </tr>
 </template>
@@ -43,11 +50,20 @@ export default {
         }
     },
     setup () {
-        const { totalCitrusById } = useOrder()
+        const {
+            displayOrders,
+            orders,
+            orderAmountByCitrusId, totalCitrusById
+        } = useOrder()
 
         const totalCitrus = (citrus) => totalCitrusById(citrus.node.id)
 
-        return { totalCitrus }
+        return {
+            displayOrders,
+            orders,
+            orderAmountByCitrusId,
+            totalCitrus
+        }
     }
 }
 </script>

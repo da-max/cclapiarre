@@ -7,7 +7,8 @@ export default {
     namespaced: true,
     state: () => ({
         orders: [],
-        currentOrder: []
+        currentOrder: [],
+        displayOrders: false
     }),
 
     mutations: {
@@ -45,6 +46,10 @@ export default {
                 'amount',
                 amount
             )
+        },
+
+        SET_DISPLAY_ORDERS (state, value) {
+            state.displayOrders = value
         }
     },
 

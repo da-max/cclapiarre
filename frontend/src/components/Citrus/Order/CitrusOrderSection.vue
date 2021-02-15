@@ -19,12 +19,25 @@
       <aside class="uk-margin-large-top uk-width-1-2@m uk-margin-auto">
         <OrderInformation />
         <div class="uk-text-center uk-margin-large-top uk-text-bold">
+          <div class="uk-margin-bottom">
+            <label
+              for="send-mail"
+              class="uk-label uk-margin-medium-right"
+            >Envoyer un mail récapitulatif</label>
+            <input
+              id="send-mail"
+              v-model="computeSendMail"
+              type="checkbox"
+              name="send-mail"
+              class="uk-checkbox"
+            >
+          </div>
           <span class="uk-label">Prix actuel de la commande</span> {{ currentOrderPrice }} €
         </div>
       </aside>
     </header>
     <section>
-      <div class="uk-margin-left">
+      <div class="uk-margin-medium-top uk-margin-left">
         <select
           id="display-orders"
           class="uk-select uk-form-width-large"
@@ -39,7 +52,10 @@
         </select>
       </div>
       <CitrusOrderedTable class="uk-margin-large-top" />
-      <footer class="uk-text-center">
+      <footer
+        v-show="!displayOrders"
+        class="uk-text-center"
+      >
         <UtilsButton
           type="secondary"
           :disabled="!currentOrderValide"
@@ -48,7 +64,10 @@
         >
           Récapitulatif de la commande
         </UtilsButton>
-        <UtilsButton :disabled="!currentOrderValide">
+        <UtilsButton
+          :disabled="!currentOrderValide"
+          @click="saveOrder"
+        >
           Valider ma commande
         </UtilsButton>
       </footer>
@@ -58,6 +77,7 @@
 </template>
 
 <script>
+import { computed } from '@vue/composition-api'
 import useCitrus from '@/composition/citrus/useCitrus'
 import useOrder from '@/composition/citrus/useOrder'
 import { useShowModal } from '@/composition/useUtils'
@@ -80,16 +100,28 @@ export default {
         const {
             currentOrderPrice,
             currentOrderValide,
+            displayOrders,
             getOrders,
-            setDisplayOrders
+            saveOrder,
+            sendMail,
+            setDisplayOrders,
+            setSendMail
         } = useOrder()
+
+        const computeSendMail = computed({
+            get: () => sendMail,
+            set: (newValue) => setSendMail(newValue)
+        })
 
         getCitrus()
         getOrders()
 
         return {
+            computeSendMail,
             currentOrderPrice,
             currentOrderValide,
+            displayOrders,
+            saveOrder,
             setDisplayOrders,
             useShowModal
         }

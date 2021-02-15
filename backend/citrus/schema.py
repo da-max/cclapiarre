@@ -132,7 +132,7 @@ class CreateCitrusOrderMutation(DjangoCreateMutation):
         model = CitrusOrder
         login_required = True
         permission_required = ('citrus.add_citrusorder',)
-        exclude_fields = ('product', 'amounts', 'order')
+        exclude_fields = ('product', 'amounts', 'order', 'user')
         many_to_many_extras = {
             'amounts': {
                 'add': {'type': 'CreateCitrusAmountInput'}

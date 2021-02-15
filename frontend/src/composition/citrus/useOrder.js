@@ -8,6 +8,7 @@ export default function () {
     const orders = computed(() => store.state.citrusOrder.orders)
     const currentOrder = computed(() => store.state.citrusOrder.currentOrder)
     const displayOrders = computed(() => store.state.citrusOrder.displayOrders)
+    const sendMail = computed(() => store.state.sendMail)
 
     // Store mutations
     // ===============
@@ -17,16 +18,21 @@ export default function () {
     }
 
     const setDisplayOrders = (value) => {
-        console.log(value)
         store.commit('citrusOrder/SET_DISPLAY_ORDERS', value)
+    }
+
+    const setSendMail = (value) => {
+        store.commit('citrusOrder/SET_SEND_MAIL', value)
     }
 
     // Store actions
     // =============
     const getOrders = () => store.dispatch('citrusOrder/getOrders')
+    const saveOrder = () => store.dispatch('citrusOrder/saveOrder')
 
     // Store getters
     // =============
+    const currentAmountByCitrusId = (citrusId) => store.getters['citrusOrder/currentAmountByCitrusId'](citrusId)
     const currentOrderPrice = computed(() => store.getters['citrusOrder/currentOrderPrice'])
     const currentOrderValide = computed(() => store.getters['citrusOrder/currentOrderValide'])
     const totalPrice = computed(() => store.getters['citrusOrder/totalPrice'])
@@ -50,19 +56,26 @@ export default function () {
         orders,
         currentOrder,
         displayOrders,
+        sendMail,
 
         // Store mutations
         setCurrentOrderAmount,
         setDisplayOrders,
+        setSendMail,
 
         // Store actions
         getOrders,
+        saveOrder,
 
         // Store getters
+        currentAmountByCitrusId,
         currentOrderPrice,
         currentOrderValide,
-        orderAmountByCitrusId,
         totalCitrusById,
-        totalPrice
+        totalPrice,
+
+        // Methods
+        orderAmountByCitrusId
+
     }
 }

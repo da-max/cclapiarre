@@ -1,5 +1,6 @@
 <template>
   <FormInputNumber
+    v-model="changeOrderAmount"
     :name="product.name"
     :value="amount"
     label="Quantité commandé"
@@ -7,11 +8,11 @@
     :display-label="false"
     :step="product.step"
     :max="product.maximum"
-    @input="changeOrderAmount"
   />
 </template>
 
 <script>
+import { computed } from '@vue/composition-api'
 import useOrder from '@/composition/citrus/useOrder'
 
 import FormInputNumber from '@/components/Utils/Form/FormInputNumber'
@@ -33,11 +34,12 @@ export default {
         }
     },
     setup (props) {
-        const { setCurrentOrderAmount } = useOrder()
+        const { currentAmountByCitrusId, setCurrentOrderAmount } = useOrder()
 
-        const changeOrderAmount = (newAmount) => {
-            setCurrentOrderAmount(props.product.id, newAmount)
-        }
+        const changeOrderAmount = computed({
+            get: () => currentAmountByCitrusId(props.product.id),
+            set: (newAmount) => setCurrentOrderAmount(props.product.id, newAmount)
+        })
 
         return {
             changeOrderAmount

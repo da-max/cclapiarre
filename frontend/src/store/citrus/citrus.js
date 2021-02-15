@@ -127,7 +127,7 @@ export default {
             }
         },
 
-        async deleteCitrus ({ commit, getters }, citrusId) {
+        async deleteCitrus ({ commit }, citrusId) {
             commit('START_LOADING', null, { root: true })
             try {
                 const response = await apolloClient.mutate({ mutation: CITRUS_DELETE, variables: { id: citrusId } })

@@ -1,5 +1,5 @@
-mutation orderAdd($amounts: [CreateCitrusAmountInput]!) {
-    addCitrusOrder(input: { amountsAdd: $amounts }) {
+mutation orderAdd($sendMail: Boolean!, $amounts: [CreateCitrusAmountInput]!) {
+    addCitrusOrder(input: { sendMail: $sendMail, amountsAdd: $amounts }) {
         citrusOrder {
             id
         }

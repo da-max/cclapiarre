@@ -50,9 +50,9 @@ class CitrusOrder(Model):
     def __str__(self):
         return self.user.username
 
-    def get_total(self):
+    def get_price(self):
         total = float()
-        amounts = CitrusOrder.objects.filter(command=self)
+        amounts = CitrusAmount.objects.filter(order=self)
         for amount in amounts:
             total += amount.product.price * amount.amount
 
@@ -60,7 +60,8 @@ class CitrusOrder(Model):
 
 
 class CitrusAmount(Model):
-    product = ForeignKey(CitrusProduct, on_delete=CASCADE, related_name="amounts")
+    product = ForeignKey(CitrusProduct, on_delete=CASCADE,
+                         related_name="amounts")
     order = ForeignKey(CitrusOrder, on_delete=CASCADE, related_name="amounts")
     amount = FloatField(verbose_name="Quantité commandé")
 
@@ -83,3 +84,6 @@ class CitrusAmount(Model):
         for c in order:
             total += c.product.price * c.amount
         return total
+
+    def get_price(self):
+        return self.amount * self.product.price

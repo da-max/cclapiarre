@@ -10,13 +10,18 @@ export default {
         orders: [],
         currentOrder: [],
         sendMail: true,
-        displayOrders: false,
+        displayOrders: 0,
         hasOrder: false
     }),
 
     mutations: {
         ADD_ORDERS (state, orders) {
-            state.orders = { ...state.orders, orders }
+            console.log({ ...state.orders, orders })
+            state.orders = [...state.orders, orders]
+        },
+
+        CLEAR_CURRENT_ORDER (state) {
+            state.currentOrder = []
         },
 
         SET_CURRENT_ORDER_AMOUNT (state, { citrusId, amount }) {
@@ -100,6 +105,7 @@ export default {
             let hasOrder = false
             if (state.orders.find(order => order.node.user.id === rootState.auth.currentUser.id)) {
                 hasOrder = true
+                commit('SET_DISPLAY_ORDERS', true)
             }
             commit('SET_HAS_ORDER', hasOrder)
         },
@@ -120,8 +126,6 @@ export default {
                     }
                 })
 
-                console.log(newOrder)
-
                 commit('alert/ADD_ALERT', {
                     header: true,
                     headerContent: 'Commande enregistrée',
@@ -132,7 +136,9 @@ export default {
                 { root: true })
 
                 commit('SET_HAS_ORDER', true)
-                commit('ADD_ORDERS', newOrder)
+                commit('ADD_ORDERS', { node: { ...newOrder.data.addCitrusOrder.citrusOrder } })
+                commit('CLEAR_CURRENT_ORDER')
+                commit('SET_DISPLAY_ORDERS', 1)
             } catch (e) {
                 commit('alert/ADD_ALERT', {
                     header: false,

@@ -8,8 +8,8 @@ from graphene_django_cud.mutations import DjangoBatchPatchMutation, DjangoUpdate
 from graphql_relay import from_global_id
 
 from backend.citrus.models import CitrusAmount, CitrusOrder, CitrusProduct
+from backend.citrus.views import citrus_order_add
 from backend.registration.schema import UserLargeType
-
 
 # Types
 # =====
@@ -159,6 +159,7 @@ class CreateCitrusOrderMutation(DjangoCreateMutation):
         citrus = CitrusProduct.objects.filter(display=True)
 
         order = CitrusOrder.objects.get_or_create(user=info.context.user)
+        order[0].send_mail = input['input']['send_mail']
         amounts = input['input'].pop('amounts_add')
 
         for amount in amounts:
@@ -168,6 +169,9 @@ class CreateCitrusOrderMutation(DjangoCreateMutation):
                 'amount': amount['amount']
             })
 
+        if order[0].send_mail:
+            citrus_order_add.send(
+                cls.__class__, order=order[0], create=order[1])
         return {'citrus_order': order[0]}
 
 

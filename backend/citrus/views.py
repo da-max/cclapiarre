@@ -1,22 +1,11 @@
-import os
-from random import random
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse_lazy
-from django.conf import settings
-from django.core.mail import send_mail
-from django.http import HttpResponse, JsonResponse
-from django.template import Context
-from django.http.response import HttpResponseRedirect
+from django.dispatch import Signal, receiver
+from django.shortcuts import render
 from django.template.loader import get_template
-from django.conf import settings
 
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django_xhtml2pdf.utils import pdf_decorator
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 
-
+from backend.mail import async_send_mail
 from backend.citrus.models import CitrusProduct, CitrusOrder, CitrusAmount
 
 
@@ -62,3 +51,33 @@ def sommary_command(request):
         }
 
     return render(request, "citrus/pdf/sommary_command.html", {'products_list': products_list, 'users': users, 'total': total})
+
+
+# Signals
+# =======
+
+citrus_order_add = Signal()
+
+
+@receiver(citrus_order_add)
+def send_confirm_citrus_order_mail(sender, order: CitrusOrder, create: bool = True, **kwargs) -> None:
+    """
+    Signal for send mail to user when he adds an citrus order.
+
+    Parameters
+    ----------
+    sender: class
+        Class that calls this signal.
+    order : CitrusOrder
+        Order saves.
+    create : bool, optional
+        If he is true, the order has been created.
+    """
+    if order.send_mail:
+        html_content = get_template('citrus/mail/confirm_order.html').render({
+            'order': order,
+            'amounts': order.product.through.objects.filter(order=order),
+            'create': create
+        })
+    
+        async_send_mail('Commande confirmée', html_content, [order.user.email])

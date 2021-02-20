@@ -47,6 +47,11 @@
                       Café
                     </router-link>
                   </li>
+                  <li>
+                    <router-link :to="{name: 'CitrusOrder'}">
+                      Agrumes
+                    </router-link>
+                  </li>
                   <li
                     v-for="orderItem in orderItems"
                     :key="orderItem.id"

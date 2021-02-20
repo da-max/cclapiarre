@@ -43,10 +43,16 @@
           class="uk-select uk-form-width-large"
           @input="(e) => setDisplayOrders(Boolean(Number(e.target.value)))"
         >
-          <option value="0">
+          <option
+            value="0"
+            :selected="displayOrders === false"
+          >
             Cacher les commandes
           </option>
-          <option value="1">
+          <option
+            value="1"
+            :selected="displayOrders === true"
+          >
             Afficher les commandes
           </option>
         </select>

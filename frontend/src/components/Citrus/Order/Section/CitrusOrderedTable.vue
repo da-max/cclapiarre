@@ -37,8 +37,17 @@
     </template>
     <template #foot>
       <td>Total</td>
-      <td>{{ currentOrderPrice }} €</td>
+      <td v-show="!displayOrders">
+        {{ currentOrderPrice }} €
+      </td>
       <td>{{ totalPrice }} €</td>
+      <td
+        v-for="order in orders"
+        v-show="displayOrders"
+        :key="order.node.id"
+      >
+        {{ totalPriceByOrderId(order.node.id) }} €
+      </td>
     </template>
   </UtilsTable>
 </template>
@@ -58,7 +67,13 @@ export default {
     },
     setup () {
         const { citrusDisplay, setOrderAmount } = useCitrus()
-        const { currentOrderPrice, displayOrders, orders, totalPrice } = useOrder()
+        const {
+            currentOrderPrice,
+            displayOrders,
+            orders,
+            totalPrice,
+            totalPriceByOrderId
+        } = useOrder()
 
         return {
             citrusDisplay,
@@ -66,7 +81,8 @@ export default {
             displayOrders,
             orders,
             setOrderAmount,
-            totalPrice
+            totalPrice,
+            totalPriceByOrderId
         }
     }
 }

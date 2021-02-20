@@ -30,6 +30,19 @@
         </template>
       </UtilsTable>
     </template>
+    <template #footer>
+      <div class="uk-text-center">
+        <UtilsButton
+          type="secondary"
+          class="uk-margin-medium-right uk-modal-close"
+        >
+          Annuler
+        </UtilsButton>
+        <UtilsButton @click="addOrder">
+          Commander
+        </UtilsButton>
+      </div>
+    </template>
   </UtilsModal>
 </template>
 
@@ -37,24 +50,33 @@
 import useCitrus from '@/composition/citrus/useCitrus'
 import useOrder from '@/composition/citrus/useOrder'
 
+import CitrusOrderSommaryItem from '@/components/Citrus/Order/Sommary/CitrusOrderSommaryItem'
 import OrderInformation from '@/components/Application/Order/Section/OrderInformation'
 import UtilsModal from '@/components/Utils/UtilsModal'
 import UtilsTable from '@/components/Utils/UtilsTable'
-import CitrusOrderSommaryItem from '@/components/Citrus/Order/Sommary/CitrusOrderSommaryItem'
+import UtilsButton from '@/components/Utils/UtilsButton'
 
 export default {
     name: 'CitrusOrderSommaryModal',
     components: {
         CitrusOrderSommaryItem,
-        UtilsTable,
         OrderInformation,
-        UtilsModal
+        UtilsButton,
+        UtilsModal,
+        UtilsTable
+
     },
     setup () {
-        const { currentOrderPrice, currentOrder } = useOrder()
+        const { currentOrderPrice, currentOrder, saveOrder } = useOrder()
         const { citrusById } = useCitrus()
 
-        return { price: currentOrderPrice, currentOrder, citrusById }
+        const addOrder = () => {
+            // eslint-disable-next-line no-undef
+            UIkit.modal('#citrus-ordered-sommary').hide()
+            saveOrder()
+        }
+
+        return { addOrder, price: currentOrderPrice, currentOrder, citrusById }
     }
 }
 </script>

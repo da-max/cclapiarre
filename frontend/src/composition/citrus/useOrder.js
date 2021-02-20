@@ -5,9 +5,10 @@ import store from '@/store/index'
 export default function () {
     // Store state
     // ===========
-    const orders = computed(() => store.state.citrusOrder.orders)
     const currentOrder = computed(() => store.state.citrusOrder.currentOrder)
     const displayOrders = computed(() => store.state.citrusOrder.displayOrders)
+    const hasOrder = computed(() => store.state.citrusOrder.hasOrder)
+    const orders = computed(() => store.state.citrusOrder.orders)
     const sendMail = computed(() => store.state.sendMail)
 
     // Store mutations
@@ -35,8 +36,9 @@ export default function () {
     const currentAmountByCitrusId = (citrusId) => store.getters['citrusOrder/currentAmountByCitrusId'](citrusId)
     const currentOrderPrice = computed(() => store.getters['citrusOrder/currentOrderPrice'])
     const currentOrderValide = computed(() => store.getters['citrusOrder/currentOrderValide'])
-    const totalPrice = computed(() => store.getters['citrusOrder/totalPrice'])
     const totalCitrusById = (citrusId) => store.getters['citrusOrder/totalCitrusById'](citrusId)
+    const totalPrice = computed(() => store.getters['citrusOrder/totalPrice'])
+    const totalPriceByOrderId = (orderId) => store.getters['citrusOrder/totalPriceByOrderId'](orderId)
 
     // Methods
     // =======
@@ -53,9 +55,10 @@ export default function () {
 
     return {
         // Store state
-        orders,
         currentOrder,
         displayOrders,
+        hasOrder,
+        orders,
         sendMail,
 
         // Store mutations
@@ -73,6 +76,7 @@ export default function () {
         currentOrderValide,
         totalCitrusById,
         totalPrice,
+        totalPriceByOrderId,
 
         // Methods
         orderAmountByCitrusId

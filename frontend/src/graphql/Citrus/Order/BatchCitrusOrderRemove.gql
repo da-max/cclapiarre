@@ -1,0 +1,6 @@
+mutation OrderDelete($ordersId: [ID]!) {
+  batchRemoveCitrusOrder(ids: $ordersId) {
+    deletionCount
+    deletedIds
+  }
+}

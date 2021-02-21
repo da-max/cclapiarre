@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import apolloClient from '@/vue-apollo'
 
+import BATCH_CITRUS_ORDER_REMOVE from '@/graphql/Citrus/Order/BatchCitrusOrderRemove.gql'
 import ORDER_ALL from '@/graphql/Citrus/Order/OrderAll.gql'
 import ORDER_ADD from '@/graphql/Citrus/Order/OrderAdd.gql'
 
@@ -15,13 +16,18 @@ export default {
     }),
 
     mutations: {
-        ADD_ORDERS (state, orders) {
-            console.log({ ...state.orders, orders })
-            state.orders = [...state.orders, orders]
+        ADD_ORDER (state, order) {
+            state.orders = [...state.orders, order]
         },
 
         CLEAR_CURRENT_ORDER (state) {
             state.currentOrder = []
+        },
+
+        REMOVE_ORDERS (state, ordersId) {
+            state.orders = state.orders.filter(
+                order => ordersId.findIndex(
+                    id => id === order.node.id) === -1)
         },
 
         SET_CURRENT_ORDER_AMOUNT (state, { citrusId, amount }) {
@@ -83,7 +89,64 @@ export default {
     },
 
     actions: {
-        async getOrders ({ state, commit, dispatch }, force = false) {
+        async deleteAllOrders ({ state, commit }) {
+            commit('START_LOADING', null, { root: true })
+            try {
+                const ordersId = state.orders.map(order => order.node.id)
+                const response = await apolloClient.mutate({
+                    mutation: BATCH_CITRUS_ORDER_REMOVE,
+                    variables: { ordersId }
+                })
+                commit('REMOVE_ORDERS', response.data.batchRemoveCitrusOrder.deletedIds)
+                commit('alert/ADD_ALERT', {
+                    header: true,
+                    body: 'Toutes les commandes ont bien été supprimées.',
+                    status: 'success',
+                    close: true
+                }, { root: true })
+                commit('SET_HAS_ORDER', false)
+            } catch (e) {
+                commit('alert/ADD_ALERT', {
+                    header: false,
+                    body: `Une erreur est survenue, merci de réssayer : ${e}`,
+                    status: 'danger',
+                    close: true
+                },
+                { root: true })
+            } finally {
+                commit('END_LOADING', null, { root: true })
+            }
+        },
+
+        async deleteOrders ({ commit, dispatch }, ordersId) {
+            commit('START_LOADING', null, { root: true })
+            try {
+                const response = await apolloClient.mutate({
+                    mutation: BATCH_CITRUS_ORDER_REMOVE,
+                    variables: { ordersId }
+                })
+                commit('REMOVE_ORDERS', response.data.batchRemoveCitrusOrder.deletedIds)
+                commit('alert/ADD_ALERT', {
+                    header: true,
+                    body: 'Les commandes ont bien été supprimées.',
+                    status: 'success',
+                    close: true
+                }, { root: true })
+                dispatch('searchHasOrder')
+            } catch (e) {
+                commit('alert/ADD_ALERT', {
+                    header: false,
+                    body: `Une erreur est survenue, merci de réssayer : ${e}`,
+                    status: 'danger',
+                    close: true
+                },
+                { root: true })
+            } finally {
+                commit('END_LOADING', null, { root: true })
+            }
+        },
+
+        async getOrders ({ state, commit, dispatch }) {
             commit('START_LOADING', null, { root: true })
             try {
                 const response = await apolloClient.query({ query: ORDER_ALL })
@@ -136,7 +199,7 @@ export default {
                 { root: true })
 
                 commit('SET_HAS_ORDER', true)
-                commit('ADD_ORDERS', { node: { ...newOrder.data.addCitrusOrder.citrusOrder } })
+                commit('ADD_ORDER', { node: { ...newOrder.data.addCitrusOrder.citrusOrder } })
                 commit('CLEAR_CURRENT_ORDER')
                 commit('SET_DISPLAY_ORDERS', 1)
             } catch (e) {
@@ -183,15 +246,27 @@ export default {
             }
         },
 
-        currentOrderPrice: (state, _getters, _rootState, rootGetters) => {
+        currentOrderPrice: (state, _getters, rootState, rootGetters) => {
             let price = 0
-            state.currentOrder.forEach(order => {
-                const citrus = rootGetters['citrus/citrusById'](
-                    order.citrusId)
-                price += order.amount * citrus
-                    .node
-                    .price / citrus.node.weight
-            })
+            if (state.hasOrder) {
+                const currentOrder = state.orders.find(order => order.node.user.id === rootState.auth.currentUser.id)
+                currentOrder.node.amounts.edges.forEach(amount => {
+                    const citrus = rootGetters['citrus/citrusById'](
+                        amount.node.product.id)
+                    console.log(amount)
+                    price += amount.node.amount * citrus
+                        .node
+                        .price
+                })
+            } else {
+                state.currentOrder.forEach(order => {
+                    const citrus = rootGetters['citrus/citrusById'](
+                        order.citrusId)
+                    price += order.amount * citrus
+                        .node
+                        .price
+                })
+            }
             return Math.round(price * 100) / 100
         },
 
@@ -240,10 +315,15 @@ export default {
             let total = 0
             state.orders.forEach(order => {
                 order.node.amounts.edges.forEach(amount => {
-                    total += amount.node.amount * amount.node.product.price
+                    total += amount.node.amount * amount
+                        .node
+                        .product
+                        .price
                 })
             })
-            total += getters.currentOrderPrice
+            if (!state.hasOrder) {
+                total += getters.currentOrderPrice
+            }
             return Math.round(total * 100) / 100
         }
     }

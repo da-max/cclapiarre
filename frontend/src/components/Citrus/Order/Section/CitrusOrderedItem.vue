@@ -53,7 +53,8 @@ export default {
         const {
             displayOrders,
             orders,
-            orderAmountByCitrusId, totalCitrusById
+            orderAmountByCitrusId,
+            totalCitrusById
         } = useOrder()
 
         const totalCitrus = (citrus) => totalCitrusById(citrus.node.id)

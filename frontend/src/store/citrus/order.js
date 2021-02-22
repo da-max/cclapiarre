@@ -253,7 +253,6 @@ export default {
                 currentOrder.node.amounts.edges.forEach(amount => {
                     const citrus = rootGetters['citrus/citrusById'](
                         amount.node.product.id)
-                    console.log(amount)
                     price += amount.node.amount * citrus
                         .node
                         .price
@@ -278,6 +277,10 @@ export default {
                 }
             })
             return valide
+        },
+
+        ordersLength: (state) => {
+            return state.orders.length
         },
 
         totalCitrusById: (state, getters) => {

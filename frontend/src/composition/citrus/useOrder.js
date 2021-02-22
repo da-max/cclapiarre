@@ -37,6 +37,7 @@ export default function () {
     const currentAmountByCitrusId = (citrusId) => store.getters['citrusOrder/currentAmountByCitrusId'](citrusId)
     const currentOrderPrice = computed(() => store.getters['citrusOrder/currentOrderPrice'])
     const currentOrderValide = computed(() => store.getters['citrusOrder/currentOrderValide'])
+    const ordersLength = computed(() => store.getters['citrusOrder/ordersLength'])
     const totalCitrusById = (citrusId) => store.getters['citrusOrder/totalCitrusById'](citrusId)
     const totalPrice = computed(() => store.getters['citrusOrder/totalPrice'])
     const totalPriceByOrderId = (orderId) => store.getters['citrusOrder/totalPriceByOrderId'](orderId)
@@ -76,6 +77,7 @@ export default function () {
         currentAmountByCitrusId,
         currentOrderPrice,
         currentOrderValide,
+        ordersLength,
         totalCitrusById,
         totalPrice,
         totalPriceByOrderId,

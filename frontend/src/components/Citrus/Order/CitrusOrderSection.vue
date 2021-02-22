@@ -10,8 +10,10 @@
         </UtilsButton>
         <UtilsButton
           class="uk-margin-large-left"
+          :disabled="ordersLength <= 0"
           type="danger"
           width="large"
+          @click="useShowModal('#citrus-orders-delete-all-modal')"
         >
           Supprimer toutes les commandes
         </UtilsButton>
@@ -44,13 +46,13 @@
           @input="(e) => setDisplayOrders(Boolean(Number(e.target.value)))"
         >
           <option
-            value="0"
+            :value="0"
             :selected="displayOrders === false"
           >
             Cacher les commandes
           </option>
           <option
-            value="1"
+            :value="1"
             :selected="displayOrders === true"
           >
             Afficher les commandes
@@ -78,6 +80,7 @@
         </UtilsButton>
       </footer>
     </section>
+    <CitrusOrdersDeleteAllModal />
     <CitrusOrderedSommary />
   </section>
 </template>
@@ -89,15 +92,17 @@ import useOrder from '@/composition/citrus/useOrder'
 import { useShowModal } from '@/composition/useUtils'
 
 import CitrusOrderedTable from '@/components/Citrus/Order/Section/CitrusOrderedTable'
+import CitrusOrderedSommary from '@/components/Citrus/Order/Sommary/CitrusOrderSommary'
+import CitrusOrdersDeleteAllModal from '@/components/Citrus/Order/Section/CitrusOrdersDeleteAllModal'
 import OrderInformation from '@/components/Application/Order/Section/OrderInformation'
 import UtilsButton from '@/components/Utils/UtilsButton'
-import CitrusOrderedSommary from '@/components/Citrus/Order/Sommary/CitrusOrderSommary'
 
 export default {
     name: 'CitrusOrderSection',
     components: {
         CitrusOrderedSommary,
         CitrusOrderedTable,
+        CitrusOrdersDeleteAllModal,
         OrderInformation,
         UtilsButton
     },
@@ -106,8 +111,10 @@ export default {
         const {
             currentOrderPrice,
             currentOrderValide,
+            deleteAllOrders,
             displayOrders,
             getOrders,
+            ordersLength,
             saveOrder,
             sendMail,
             setDisplayOrders,
@@ -126,7 +133,9 @@ export default {
             computeSendMail,
             currentOrderPrice,
             currentOrderValide,
+            deleteAllOrders,
             displayOrders,
+            ordersLength,
             saveOrder,
             setDisplayOrders,
             useShowModal

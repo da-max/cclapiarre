@@ -30,6 +30,7 @@ export default function () {
     // =============
     const getOrders = () => store.dispatch('citrusOrder/getOrders')
     const saveOrder = () => store.dispatch('citrusOrder/saveOrder')
+    const deleteAllOrders = () => store.dispatch('citrusOrder/deleteAllOrders')
 
     // Store getters
     // =============
@@ -67,6 +68,7 @@ export default function () {
         setSendMail,
 
         // Store actions
+        deleteAllOrders,
         getOrders,
         saveOrder,
 

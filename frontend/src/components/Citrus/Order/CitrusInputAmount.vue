@@ -4,6 +4,7 @@
     :name="product.name"
     :value="amount"
     label="Quantité commandé"
+    :class="{'uk-disabled': hasOrder}"
     :display-info="false"
     :display-label="false"
     :step="product.step"
@@ -34,7 +35,7 @@ export default {
         }
     },
     setup (props) {
-        const { currentAmountByCitrusId, setCurrentOrderAmount } = useOrder()
+        const { currentAmountByCitrusId, hasOrder, setCurrentOrderAmount } = useOrder()
 
         const changeOrderAmount = computed({
             get: () => currentAmountByCitrusId(props.product.id),
@@ -42,7 +43,8 @@ export default {
         })
 
         return {
-            changeOrderAmount
+            changeOrderAmount,
+            hasOrder
         }
     }
 }

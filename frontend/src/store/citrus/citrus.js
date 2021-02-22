@@ -157,7 +157,9 @@ export default {
         citrusById (state) {
             return (citrusId) => state.citrus.find((citrus) => citrus.node.id === citrusId)
         },
+
         citrusChecked: (state) => state.citrus.filter(c => c.check),
+
         citrusDisplay: (state) => state.citrus.filter(c => c.node.display),
 
         orderPrice: (state) => {

@@ -13,7 +13,7 @@
           :disabled="ordersLength <= 0"
           type="danger"
           width="large"
-          @click="useShowModal('#citrus-orders-delete-all-modal')"
+          @click="displayCitrusOrderDeleteModal('all')"
         >
           Supprimer toutes les commandes
         </UtilsButton>
@@ -34,7 +34,8 @@
               class="uk-checkbox"
             >
           </div>
-          <span class="uk-label">Prix actuel de la commande</span> {{ currentOrderPrice }} €
+          <span class="uk-label">Prix actuel de la commande</span>
+          {{ currentOrderPrice }} €
         </div>
       </aside>
     </header>
@@ -80,7 +81,7 @@
         </UtilsButton>
       </footer>
     </section>
-    <CitrusOrdersDeleteAllModal />
+    <CitrusOrderDeleteModal />
     <CitrusOrderedSommary />
   </section>
 </template>
@@ -93,7 +94,7 @@ import { useShowModal } from '@/composition/useUtils'
 
 import CitrusOrderedTable from '@/components/Citrus/Order/Section/CitrusOrderedTable'
 import CitrusOrderedSommary from '@/components/Citrus/Order/Sommary/CitrusOrderSommary'
-import CitrusOrdersDeleteAllModal from '@/components/Citrus/Order/Section/CitrusOrdersDeleteAllModal'
+import CitrusOrderDeleteModal from '@/components/Citrus/Order/Section/CitrusOrderDeleteModal'
 import OrderInformation from '@/components/Application/Order/Section/OrderInformation'
 import UtilsButton from '@/components/Utils/UtilsButton'
 
@@ -102,7 +103,7 @@ export default {
     components: {
         CitrusOrderedSommary,
         CitrusOrderedTable,
-        CitrusOrdersDeleteAllModal,
+        CitrusOrderDeleteModal,
         OrderInformation,
         UtilsButton
     },
@@ -112,12 +113,14 @@ export default {
             currentOrderPrice,
             currentOrderValide,
             deleteAllOrders,
+            displayCitrusOrderDeleteModal,
             displayOrders,
             getOrders,
             ordersLength,
             saveOrder,
             sendMail,
             setDisplayOrders,
+            setSelectOrder,
             setSendMail
         } = useOrder()
 
@@ -134,10 +137,12 @@ export default {
             currentOrderPrice,
             currentOrderValide,
             deleteAllOrders,
+            displayCitrusOrderDeleteModal,
             displayOrders,
             ordersLength,
             saveOrder,
             setDisplayOrders,
+            setSelectOrder,
             useShowModal
         }
     }

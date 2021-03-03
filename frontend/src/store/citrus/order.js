@@ -8,11 +8,12 @@ import ORDER_ADD from '@/graphql/Citrus/Order/OrderAdd.gql'
 export default {
     namespaced: true,
     state: () => ({
-        orders: [],
         currentOrder: [],
-        sendMail: true,
         displayOrders: 0,
-        hasOrder: false
+        hasOrder: false,
+        orders: [],
+        selectOrder: 'all',
+        sendMail: true
     }),
 
     mutations: {
@@ -55,6 +56,10 @@ export default {
             state.displayOrders = value
         },
 
+        SET_HAS_ORDER (state, value) {
+            state.hasOrder = value
+        },
+
         SET_ORDERS (state, orders) {
             state.orders = orders
         },
@@ -79,8 +84,8 @@ export default {
             )
         },
 
-        SET_HAS_ORDER (state, value) {
-            state.hasOrder = value
+        SET_SELECT_ORDER (state, value) {
+            state.selectOrder = value
         },
 
         SET_SEND_MAIL (state, value) {
@@ -118,17 +123,17 @@ export default {
             }
         },
 
-        async deleteOrders ({ commit, dispatch }, ordersId) {
+        async deleteOrder ({ commit, dispatch }, orderId) {
             commit('START_LOADING', null, { root: true })
             try {
                 const response = await apolloClient.mutate({
                     mutation: BATCH_CITRUS_ORDER_REMOVE,
-                    variables: { ordersId }
+                    variables: { orderId }
                 })
                 commit('REMOVE_ORDERS', response.data.batchRemoveCitrusOrder.deletedIds)
                 commit('alert/ADD_ALERT', {
                     header: true,
-                    body: 'Les commandes ont bien été supprimées.',
+                    body: 'L commandes ont bien été supprimées.',
                     status: 'success',
                     close: true
                 }, { root: true })
@@ -162,15 +167,6 @@ export default {
             } finally {
                 commit('END_LOADING', null, { root: true })
             }
-        },
-
-        searchHasOrder ({ state, commit, rootState }) {
-            let hasOrder = false
-            if (state.orders.find(order => order.node.user.id === rootState.auth.currentUser.id)) {
-                hasOrder = true
-                commit('SET_DISPLAY_ORDERS', true)
-            }
-            commit('SET_HAS_ORDER', hasOrder)
         },
 
         async saveOrder ({ commit, state }) {
@@ -212,6 +208,15 @@ export default {
             } finally {
                 commit('END_LOADING', null, { root: true })
             }
+        },
+
+        searchHasOrder ({ state, commit, rootState }) {
+            let hasOrder = false
+            if (state.orders.find(order => order.node.user.id === rootState.auth.currentUser.id)) {
+                hasOrder = true
+                commit('SET_DISPLAY_ORDERS', true)
+            }
+            commit('SET_HAS_ORDER', hasOrder)
         }
     },
 
@@ -301,19 +306,6 @@ export default {
             }
         },
 
-        totalPriceByOrderId: (state) => {
-            return (orderId) => {
-                let total = 0
-                const order = state.orders.find(order => order.node.id === orderId)
-                if (order) {
-                    order.node.amounts.edges.forEach(amount => {
-                        total += amount.node.amount * amount.node.product.price
-                    })
-                }
-                return Math.round(total * 100) / 100
-            }
-        },
-
         totalPrice: (state, getters) => {
             let total = 0
             state.orders.forEach(order => {
@@ -328,6 +320,19 @@ export default {
                 total += getters.currentOrderPrice
             }
             return Math.round(total * 100) / 100
+        },
+
+        totalPriceByOrderId: (state) => {
+            return (orderId) => {
+                let total = 0
+                const order = state.orders.find(order => order.node.id === orderId)
+                if (order) {
+                    order.node.amounts.edges.forEach(amount => {
+                        total += amount.node.amount * amount.node.product.price
+                    })
+                }
+                return Math.round(total * 100) / 100
+            }
         }
     }
 }

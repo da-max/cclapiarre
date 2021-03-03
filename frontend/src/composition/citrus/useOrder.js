@@ -1,14 +1,17 @@
 import { computed } from '@vue/composition-api'
+import { useShowModal } from '@/composition/useUtils'
 
 import store from '@/store/index'
 
 export default function () {
     // Store state
     // ===========
+
     const currentOrder = computed(() => store.state.citrusOrder.currentOrder)
     const displayOrders = computed(() => store.state.citrusOrder.displayOrders)
     const hasOrder = computed(() => store.state.citrusOrder.hasOrder)
     const orders = computed(() => store.state.citrusOrder.orders)
+    const selectOrder = computed(() => store.state.citrusOrder.selectOrder)
     const sendMail = computed(() => store.state.sendMail)
 
     // Store mutations
@@ -20,6 +23,10 @@ export default function () {
 
     const setDisplayOrders = (value) => {
         store.commit('citrusOrder/SET_DISPLAY_ORDERS', value)
+    }
+
+    const setSelectOrder = (value) => {
+        store.commit('citrusOrder/SET_SELECT_ORDER', value)
     }
 
     const setSendMail = (value) => {
@@ -42,8 +49,18 @@ export default function () {
     const totalPrice = computed(() => store.getters['citrusOrder/totalPrice'])
     const totalPriceByOrderId = (orderId) => store.getters['citrusOrder/totalPriceByOrderId'](orderId)
 
+    // Getters
+    // =======
+    const canChangeOrder = () => store.getters['auth/findPermission']('change_citrusorder')
+    const canDeleteOrder = () => store.getters['auth/findPermission']('delete_citrusorder')
+
     // Methods
     // =======
+
+    const displayCitrusOrderDeleteModal = (order) => {
+        setSelectOrder(order)
+        useShowModal('#citrus-order-delete-modal')
+    }
 
     const orderAmountByCitrusId = (order, citrusId) => {
         let amount = order.amounts.edges.find(a => a.node.product.id === citrusId)
@@ -61,11 +78,13 @@ export default function () {
         displayOrders,
         hasOrder,
         orders,
+        selectOrder,
         sendMail,
 
         // Store mutations
         setCurrentOrderAmount,
         setDisplayOrders,
+        setSelectOrder,
         setSendMail,
 
         // Store actions
@@ -83,7 +102,12 @@ export default function () {
         totalPriceByOrderId,
 
         // Methods
-        orderAmountByCitrusId
+        displayCitrusOrderDeleteModal,
+        orderAmountByCitrusId,
+
+        // Getters
+        canChangeOrder,
+        canDeleteOrder
 
     }
 }

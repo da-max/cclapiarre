@@ -72,5 +72,14 @@ export default {
                 commit('END_LOADING', null, { root: true })
             }
         }
+    },
+
+    getters: {
+        isSuperuser: (state) => state.currentUser.isSuperuser,
+        findPermission: (state, getters) => {
+            return (codename) => {
+                getters.isSuperuser || state.currentUser.userPermissions.find(permission => permission.codename === codename)
+            }
+        }
     }
 }

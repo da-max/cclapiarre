@@ -26,6 +26,21 @@
         class="uk-background-secondary"
       >
         {{ order.node.user.username }}
+        <div>
+          <a
+            v-show="canDeleteOrder"
+
+            uk-icon="trash"
+            class="uk-icon-link"
+            @click="displayCitrusOrderDeleteModal(order.node)"
+          />
+          <a
+            v-show="canChangeOrder"
+            href=""
+            class="uk-icon-link uk-margin-left"
+            uk-icon="refresh"
+          />
+        </div>
       </th>
     </template>
     <template #body>
@@ -68,7 +83,10 @@ export default {
     setup () {
         const { citrusDisplay, setOrderAmount } = useCitrus()
         const {
+            canChangeOrder,
+            canDeleteOrder,
             currentOrderPrice,
+            displayCitrusOrderDeleteModal,
             displayOrders,
             orders,
             totalPrice,
@@ -76,8 +94,11 @@ export default {
         } = useOrder()
 
         return {
+            canChangeOrder,
+            canDeleteOrder,
             citrusDisplay,
             currentOrderPrice,
+            displayCitrusOrderDeleteModal,
             displayOrders,
             orders,
             setOrderAmount,

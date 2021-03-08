@@ -13,7 +13,7 @@
           :disabled="ordersLength <= 0"
           type="danger"
           width="large"
-          @click="displayCitrusOrderDeleteModal('all')"
+          @click="displayCitrusOrderDeleteModal(null)"
         >
           Supprimer toutes les commandes
         </UtilsButton>
@@ -82,6 +82,7 @@
       </footer>
     </section>
     <CitrusOrderDeleteModal />
+    <CitrusOrderUpdateModal />
     <CitrusOrderedSommary />
   </section>
 </template>
@@ -95,6 +96,7 @@ import { useShowModal } from '@/composition/useUtils'
 import CitrusOrderedTable from '@/components/Citrus/Order/Section/CitrusOrderedTable'
 import CitrusOrderedSommary from '@/components/Citrus/Order/Sommary/CitrusOrderSommary'
 import CitrusOrderDeleteModal from '@/components/Citrus/Order/Section/CitrusOrderDeleteModal'
+import CitrusOrderUpdateModal from '@/components/Citrus/Order/Section/CitrusOrderUpdateModal'
 import OrderInformation from '@/components/Application/Order/Section/OrderInformation'
 import UtilsButton from '@/components/Utils/UtilsButton'
 
@@ -104,6 +106,7 @@ export default {
         CitrusOrderedSommary,
         CitrusOrderedTable,
         CitrusOrderDeleteModal,
+        CitrusOrderUpdateModal,
         OrderInformation,
         UtilsButton
     },

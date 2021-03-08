@@ -17,6 +17,18 @@ export default function () {
     // Store mutations
     // ===============
 
+    const clearCurrentOrder = () => {
+        store.commit('citrusOrder/CLEAR_CURRENT_ORDER')
+    }
+
+    const clearSelectOrder = () => {
+        store.commit('citrusOrder/CLEAR_SELECT_ORDER')
+    }
+
+    const setCurrentOrder = (order) => {
+        store.commit('citrusOrder/SET_CURRENT_ORDER', order)
+    }
+
     const setCurrentOrderAmount = (citrusId, amount = 0) => {
         store.commit('citrusOrder/SET_CURRENT_ORDER_AMOUNT', { citrusId, amount: Number(amount) })
     }
@@ -36,14 +48,19 @@ export default function () {
     // Store actions
     // =============
     const getOrders = () => store.dispatch('citrusOrder/getOrders')
-    const saveOrder = () => store.dispatch('citrusOrder/saveOrder')
     const deleteAllOrders = () => store.dispatch('citrusOrder/deleteAllOrders')
+    const deleteOrder = (orderId) => store.dispatch('citrusOrder/deleteOrder', orderId)
+    const saveOrder = () => store.dispatch('citrusOrder/saveOrder')
+    const updateOrder = () => store.dispatch('citrusOrder/updateOrder')
 
     // Store getters
     // =============
+    const amountByOrderIdCitrusId = (orderId, citrusId) => store.getters['citrusOrder/amountByOrderIdCitrusId'](orderId, citrusId)
     const currentAmountByCitrusId = (citrusId) => store.getters['citrusOrder/currentAmountByCitrusId'](citrusId)
     const currentOrderPrice = computed(() => store.getters['citrusOrder/currentOrderPrice'])
     const currentOrderValide = computed(() => store.getters['citrusOrder/currentOrderValide'])
+    const getOrderById = (orderId) => store.getters['citrusOrder/getOrderById'](orderId)
+    const getSelectOrder = computed(() => store.getters['citrusOrder/getSelectOrder'])
     const ordersLength = computed(() => store.getters['citrusOrder/ordersLength'])
     const totalCitrusById = (citrusId) => store.getters['citrusOrder/totalCitrusById'](citrusId)
     const totalPrice = computed(() => store.getters['citrusOrder/totalPrice'])
@@ -53,13 +70,41 @@ export default function () {
     // =======
     const canChangeOrder = () => store.getters['auth/findPermission']('change_citrusorder')
     const canDeleteOrder = () => store.getters['auth/findPermission']('delete_citrusorder')
+    const totalCitrus = (citrus) => totalCitrusById(citrus.node.id)
 
     // Methods
     // =======
 
-    const displayCitrusOrderDeleteModal = (order) => {
-        setSelectOrder(order)
+    const displayCitrusOrderDeleteModal = (orderId = null) => {
+        setSelectOrder(orderId)
         useShowModal('#citrus-order-delete-modal')
+
+        // eslint-disable-next-line no-undef
+        UIkit.util.on(
+            '#citrus-order-delete-modal',
+            'hidden',
+            () => {
+                clearSelectOrder()
+            })
+    }
+
+    const displayCitrusOrderUpdateModal = async (orderId = null) => {
+        await setSelectOrder(orderId)
+        const order = await getSelectOrder.value.amounts.edges.map(o => ({
+            amount: o.node.amount,
+            citrusId: o.node.product.id
+        }))
+        setCurrentOrder(order)
+        useShowModal('#citrus-order-update-modal')
+
+        // eslint-disable-next-line no-undef
+        UIkit.util.on(
+            '#citrus-order-update-modal',
+            'hidden',
+            () => {
+                clearCurrentOrder()
+                clearSelectOrder()
+            })
     }
 
     const orderAmountByCitrusId = (order, citrusId) => {
@@ -88,14 +133,21 @@ export default function () {
         setSendMail,
 
         // Store actions
+        clearCurrentOrder,
+        clearSelectOrder,
         deleteAllOrders,
+        deleteOrder,
         getOrders,
         saveOrder,
+        updateOrder,
 
         // Store getters
+        amountByOrderIdCitrusId,
         currentAmountByCitrusId,
         currentOrderPrice,
         currentOrderValide,
+        getOrderById,
+        getSelectOrder,
         ordersLength,
         totalCitrusById,
         totalPrice,
@@ -103,11 +155,13 @@ export default function () {
 
         // Methods
         displayCitrusOrderDeleteModal,
+        displayCitrusOrderUpdateModal,
         orderAmountByCitrusId,
 
         // Getters
         canChangeOrder,
-        canDeleteOrder
+        canDeleteOrder,
+        totalCitrus
 
     }
 }

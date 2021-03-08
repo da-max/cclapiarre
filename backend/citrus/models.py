@@ -31,7 +31,7 @@ class CitrusProduct(Model):
         amounts = CitrusOrder.objects.filter(product=self)
         for amount in amounts:
             total += amount.amount
-        return total
+        return round(total, 2)
 
 
 class CitrusOrder(Model):
@@ -56,7 +56,7 @@ class CitrusOrder(Model):
         for amount in amounts:
             total += amount.product.price * amount.amount
 
-        return total
+        return round(total, 2)
 
 
 class CitrusAmount(Model):
@@ -76,14 +76,14 @@ class CitrusAmount(Model):
         products = self.objects.filter(product=product)
         for product in products:
             total += product.amount
-        return total
+        return round(total, 2)
 
     def get_total_user(self, order_id):
         total = float()
         order = self.objects.filter(order_id=order_id)
         for c in order:
             total += c.product.price * c.amount
-        return total
+        return round(total, 2)
 
     def get_price(self):
-        return self.amount * self.product.price
+        return round(self.amount * self.product.price, 2)

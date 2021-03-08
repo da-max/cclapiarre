@@ -4,6 +4,7 @@ import apolloClient from '@/vue-apollo'
 import BATCH_CITRUS_ORDER_REMOVE from '@/graphql/Citrus/Order/BatchCitrusOrderRemove.gql'
 import ORDER_ALL from '@/graphql/Citrus/Order/OrderAll.gql'
 import ORDER_ADD from '@/graphql/Citrus/Order/OrderAdd.gql'
+import ORDER_UPDATE from '@/graphql/Citrus/Order/OrderUpdate.gql'
 
 export default {
     namespaced: true,
@@ -25,10 +26,18 @@ export default {
             state.currentOrder = []
         },
 
+        CLEAR_SELECT_ORDER (state) {
+            state.selectOrder = 'all'
+        },
+
         REMOVE_ORDERS (state, ordersId) {
             state.orders = state.orders.filter(
                 order => ordersId.findIndex(
                     id => id === order.node.id) === -1)
+        },
+
+        SET_CURRENT_ORDER (state, order) {
+            state.currentOrder = order
         },
 
         SET_CURRENT_ORDER_AMOUNT (state, { citrusId, amount }) {
@@ -62,26 +71,6 @@ export default {
 
         SET_ORDERS (state, orders) {
             state.orders = orders
-        },
-
-        SET_ORDER_AMOUNT (state, { orderId, citrusId, amount }) {
-            const orderIndex = state.orders.findIndex(
-                o => o.node.id === orderId
-            )
-            const citrusIndex = state.orders[orderIndex]
-                .amounts
-                .edges
-                .findIndex(
-                    amount => amount.node.product.id === citrusId
-                )
-            Vue.set(
-                state.orders[orderIndex]
-                    .amounts
-                    .edges[citrusIndex]
-                    .node,
-                'amount',
-                amount
-            )
         },
 
         SET_SELECT_ORDER (state, value) {
@@ -123,17 +112,17 @@ export default {
             }
         },
 
-        async deleteOrder ({ commit, dispatch }, orderId) {
+        async deleteOrder ({ commit, dispatch }, ordersId) {
             commit('START_LOADING', null, { root: true })
             try {
                 const response = await apolloClient.mutate({
                     mutation: BATCH_CITRUS_ORDER_REMOVE,
-                    variables: { orderId }
+                    variables: { ordersId }
                 })
                 commit('REMOVE_ORDERS', response.data.batchRemoveCitrusOrder.deletedIds)
                 commit('alert/ADD_ALERT', {
                     header: true,
-                    body: 'L commandes ont bien été supprimées.',
+                    body: 'Les commandes ont bien été supprimées.',
                     status: 'success',
                     close: true
                 }, { root: true })
@@ -151,7 +140,7 @@ export default {
             }
         },
 
-        async getOrders ({ state, commit, dispatch }) {
+        async getOrders ({ commit, dispatch }) {
             commit('START_LOADING', null, { root: true })
             try {
                 const response = await apolloClient.query({ query: ORDER_ALL })
@@ -217,6 +206,48 @@ export default {
                 commit('SET_DISPLAY_ORDERS', true)
             }
             commit('SET_HAS_ORDER', hasOrder)
+        },
+
+        async updateOrder ({ state, commit }) {
+            commit('START_LOADING', null, { root: true })
+            try {
+                const order = state.currentOrder.map(o => ({
+                    amount: o.amount,
+                    product: o.citrusId
+                }))
+                const updateOrder = await apolloClient.mutate({
+                    mutation: ORDER_UPDATE,
+                    variables: {
+                        id: state.selectOrder,
+                        amounts: order
+                    }
+                })
+
+                commit('alert/ADD_ALERT', {
+                    header: true,
+                    headerContent: 'Commande modifiée',
+                    body: `
+                            La commande de 
+                            ${updateOrder.data.updateCitrusOrder.citrusOrder.user.username} 
+                            a bien été modifiée.
+                        `,
+                    status: 'success',
+                    close: true
+                },
+                { root: true })
+                commit('REMOVE_ORDERS', [updateOrder.data.updateCitrusOrder.citrusOrder.id])
+                commit('ADD_ORDER', { node: { ...updateOrder.data.updateCitrusOrder.citrusOrder } })
+                commit('CLEAR_CURRENT_ORDER')
+            } catch (e) {
+                commit('alert/ADD_ALERT', {
+                    header: false,
+                    body: `Une erreur est survenue, merci de réessayer : ${e}`,
+                    close: true,
+                    status: 'danger'
+                }, { root: true })
+            } finally {
+                commit('END_LOADING', null, { root: true })
+            }
         }
     },
 
@@ -225,14 +256,16 @@ export default {
             return (citrusId) => {
                 const amounts = []
 
-                state.orders.forEach(
-                    order => {
-                        const amount = order.node.amounts.edges.find(
-                            amount => amount.node.product.id === citrusId)
-                        if (amount) {
-                            amounts.push(amount.node.amount)
-                        }
-                    })
+                state.orders.filter(
+                    order => order.node.id !== state.selectOrder)
+                    .forEach(
+                        order => {
+                            const amount = order.node.amounts.edges.find(
+                                amount => amount.node.product.id === citrusId)
+                            if (amount) {
+                                amounts.push(amount.node.amount)
+                            }
+                        })
                 return amounts
             }
         },
@@ -284,18 +317,49 @@ export default {
             return valide
         },
 
-        ordersLength: (state) => {
-            return state.orders.length
+        getOrderById: (state) => {
+            return (orderId) => {
+                let order
+                try {
+                    order = state.orders.find(order => order.node.id === orderId).node
+                } catch (e) {
+                    order = null
+                }
+                return order
+            }
         },
+
+        getSelectOrder: (state, getters) =>
+            getters.getOrderById(state.selectOrder),
+
+        amountByOrderIdCitrusId: (state) => {
+            return (orderId, citrusId) => {
+                const order = state.orders.find(order => order.node.id === orderId)
+                let amount
+                try {
+                    amount = order.node.amounts.edges.find(
+                        a => a.node.product.id === citrusId
+                    )
+                    amount = amount.node.amount
+                } catch (e) {
+                    amount = 0
+                }
+                return amount
+            }
+        },
+
+        ordersLength: (state) => state.orders.length,
 
         totalCitrusById: (state, getters) => {
             return (citrusId) => {
                 let total = 0
 
-                const amounts = getters.amountsByCitrusId(citrusId)
-                amounts.forEach(amount => {
-                    total += amount
-                })
+                getters
+                    .amountsByCitrusId(citrusId)
+                    .forEach(
+                        amount => {
+                            total += amount
+                        })
                 const currentAmount = state.currentOrder.find(
                     order => order.citrusId === citrusId
                 )

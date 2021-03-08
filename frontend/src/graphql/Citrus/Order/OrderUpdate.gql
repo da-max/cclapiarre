@@ -1,0 +1,9 @@
+#import "./CitrusOrderFragment.gql"
+
+mutation orderUpdate($id: ID!, $amounts: [UpdateCitrusAmountInput]!) {
+  updateCitrusOrder(id: $id, input: { amountsUpdate: $amounts }) {
+    citrusOrder {
+      ...CitrusOrderFragment
+    }
+  }
+}

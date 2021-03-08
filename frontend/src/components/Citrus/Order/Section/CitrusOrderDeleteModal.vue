@@ -5,7 +5,7 @@
   >
     <template #header>
       <h2
-        v-if="selectOrder === 'all'"
+        v-if="!selectOrder"
         class="uk-modal-title"
       >
         Supprimer toutes les commandes ?
@@ -20,7 +20,7 @@
     <template #body>
       <p>
         Vous êtes sur le point de supprimer
-        <span v-if="selectOrder === 'all'">
+        <span v-if="!selectOrder">
           toutes les commandes.
         </span>
         <span v-else>
@@ -40,7 +40,7 @@
           Annuler
         </UtilsButton>
         <UtilsButton
-          v-if="selectOrder === 'all'"
+          v-if="!selectOrder"
           type="danger"
           @click="removeOrder"
         >
@@ -65,7 +65,7 @@ import UtilsModal from '@/components/Utils/UtilsModal'
 import UtilsButton from '@/components/Utils/UtilsButton.vue'
 
 export default {
-    name: 'CitrusOrdersDeleteAllModal',
+    name: 'CitrusOrderDeleteModal',
     components: {
         UtilsModal,
         UtilsButton
@@ -74,16 +74,16 @@ export default {
         const {
             deleteAllOrders,
             deleteOrder,
-            selectOrder
+            getSelectOrder: selectOrder
         } = useOrder()
 
         const removeOrder = () => {
             // eslint-disable-next-line no-undef
             UIkit.modal('#citrus-order-delete-modal').hide()
-            if (selectOrder === 'all') {
+            if (!selectOrder.value) {
                 deleteAllOrders()
             } else {
-                deleteOrder(selectOrder.id)
+                deleteOrder([selectOrder.value.id])
             }
         }
 

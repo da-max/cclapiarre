@@ -2,12 +2,13 @@
   <section>
     <header>
       <div class="uk-text-center">
-        <UtilsButton
-          type="secondary"
+        <a
+          class="uk-button uk-button-secondary uk-button-large"
           width="large"
+          href="/agrumes/recapitulatif-de-la-commande"
         >
           Générer le récapitulatif PDF de la commande
-        </UtilsButton>
+        </a>
         <UtilsButton
           class="uk-margin-large-left"
           :disabled="ordersLength <= 0"

@@ -28,7 +28,7 @@
 				<th>Nom du produit</th>
 				<th>Total</th>
 				{% for user in orders.keys %}
-					<th>{{ user }}</th>
+					<th>{{ user|truncatechars:13 }}</th>
 				{% endfor %}
 			</tr>
 		</thead>

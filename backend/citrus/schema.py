@@ -118,6 +118,17 @@ class CreateCitrusAmountMutation(DjangoCreateMutation):
         exclude_fields = ('order',)
 
 
+class UpdateCitrusAmountMutation(DjangoUpdateMutation):
+    """
+    GraphQl mutation for update CitrusAmount.
+    """
+    class Meta:
+        model = CitrusAmount
+        login_required = True
+        permission_required = ('citrus.change_citrusamount',)
+        exclude_fields = ('order', 'user')
+
+
 class CreateCitrusOrderMutation(DjangoCreateMutation):
     """
     GraphQl mutation for create CitrusOrder
@@ -175,6 +186,57 @@ class CreateCitrusOrderMutation(DjangoCreateMutation):
         return {'citrus_order': order[0]}
 
 
+class UpdateCitrusOrderMutation(DjangoUpdateMutation):
+    """
+    GraphQl mutation for update a CitrusOrder.
+
+    Methods
+    -------
+    mutate() -> dict:
+        Method for customize mutate of CitrusOrder
+    """
+    class Meta:
+        model = CitrusOrder
+        permission_required = ('citrus.change_citrusorder', )
+        login_required = True
+        exclude_fields = ('product', 'amounts', 'order', 'sendMail', 'user')
+        many_to_many_extras = {
+            'amounts': {
+                'update': {
+                    'type': 'UpdateCitrusAmountInput'}
+            }
+        }
+
+    @classmethod
+    def mutate(cls, root, info: dict, **input: dict) -> dict:
+        """
+
+        Parameters
+        __________
+        root
+        info: dict
+            Information about the request.
+        input: list
+            Data send.
+        """
+        citrus = CitrusProduct.objects.filter(display=True)
+
+        order = CitrusOrder.objects.get(id=from_global_id(input['id'])[1])
+        CitrusAmount.objects.filter(order=order).delete()
+        amounts = input['input'].pop('amounts_update')
+
+        for amount in amounts:
+            product = citrus.get(id=from_global_id(amount['product'])[1])
+
+            CitrusAmount.objects.create(
+                product=product, order=order, amount=amount['amount'])
+
+        if order.send_mail:
+            citrus_order_add.send(
+                cls.__class__, order=order, create=False)
+        return {'citrus_order': order}
+
+
 class BatchDeleteCitrusOrderMutation(DjangoBatchDeleteMutation):
     class Meta:
         model = CitrusOrder
@@ -188,4 +250,5 @@ class Mutation(ObjectType):
     batch_patch_citrus_product = BatchPatchCitrusProductMutation.Field()
     batch_remove_citrus_order = BatchDeleteCitrusOrderMutation.Field()
     delete_citrus_product = DeleteCitrusProductMutation.Field()
+    update_citrus_order = UpdateCitrusOrderMutation.Field()
     update_citrus_product = UpdateCitrusProductMutation.Field()

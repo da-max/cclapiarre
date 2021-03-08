@@ -1,4 +1,4 @@
-{% load static command_extras %}
+{% load citrus_extras %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -27,22 +27,22 @@
 			<tr>
 				<th>Nom du produit</th>
 				<th>Total</th>
-				{% for user in users %}
-					<th>{{ user.0 }}</th>
+				{% for user in orders.keys %}
+					<th>{{ user }}</th>
 				{% endfor %}
 			</tr>
 		</thead>
 		<tbody>
-			{% for product in products_list.values %}
+			{% for product in products %}
 				<tr>
 					<td>{{ product.name }}</td>
 					{% if product.weight == 1 %}
-						<td>{{ product.total }}</td>
+						<td>{{ product.get_total }}</td>
 					{% else %}
-						<td>{{ product.total }} caisses</td>
+						<td>{{ product.get_total }} caisses</td>
 					{% endif %}
-					{% for user in users %}
-						<td>{% quantity user.0 product.amouts %}</td>
+					{% for order in orders.values %}
+						<td>{% amount order.0 product.id %}</td>
 					{% endfor %}
 				</tr>
 			{% endfor %}
@@ -51,8 +51,8 @@
 			<tr>
 				<td>Total</td>
 				<td>{{ total }} €</td>
-				{% for total_user in users %}
-					<td>{{ total_user.1 }} €</td>
+				{% for order in orders.values %}
+					<td>{{ order.1 }} €</td>
 				{% endfor %}
 			</tr>
 		</tfoot>

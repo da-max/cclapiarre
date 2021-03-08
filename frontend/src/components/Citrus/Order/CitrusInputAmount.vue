@@ -2,7 +2,7 @@
   <FormInputNumber
     v-model="changeOrderAmount"
     :name="product.name"
-    :value="amount"
+    :value="changeOrderAmount"
     label="Quantité commandé"
     :class="{'uk-disabled': hasOrder}"
     :display-info="false"
@@ -28,28 +28,33 @@ export default {
             required: true,
             type: Object
         },
-        amount: {
+        orderId: {
             required: false,
-            type: Number,
-            default: 0
+            type: String,
+            default: null
         }
     },
     setup (props) {
-        const { currentAmountByCitrusId, hasOrder, setCurrentOrderAmount } = useOrder()
+        const product = computed(() => props.product)
+        const orderId = computed(() => props.orderId)
+        const {
+            currentAmountByCitrusId,
+            hasOrder,
+            setCurrentOrderAmount
+        } = useOrder()
 
         const changeOrderAmount = computed({
-            get: () => currentAmountByCitrusId(props.product.id),
-            set: (newAmount) => setCurrentOrderAmount(props.product.id, newAmount)
+            get: () =>
+                currentAmountByCitrusId(product.value.id),
+            set: (newAmount) => {
+                setCurrentOrderAmount(product.value.id, newAmount)
+            }
         })
 
         return {
             changeOrderAmount,
-            hasOrder
+            hasOrder: orderId.value ? false : hasOrder
         }
     }
 }
 </script>
-
-<style scoped>
-
-</style>

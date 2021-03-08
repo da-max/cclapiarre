@@ -29,16 +29,15 @@
         <div>
           <a
             v-show="canDeleteOrder"
-
             uk-icon="trash"
             class="uk-icon-link"
-            @click="displayCitrusOrderDeleteModal(order.node)"
+            @click.prevent="displayCitrusOrderDeleteModal(order.node.id)"
           />
           <a
             v-show="canChangeOrder"
-            href=""
             class="uk-icon-link uk-margin-left"
             uk-icon="refresh"
+            @click.prevent="displayCitrusOrderUpdateModal(order.node.id)"
           />
         </div>
       </th>
@@ -87,6 +86,7 @@ export default {
             canDeleteOrder,
             currentOrderPrice,
             displayCitrusOrderDeleteModal,
+            displayCitrusOrderUpdateModal,
             displayOrders,
             orders,
             totalPrice,
@@ -99,6 +99,7 @@ export default {
             citrusDisplay,
             currentOrderPrice,
             displayCitrusOrderDeleteModal,
+            displayCitrusOrderUpdateModal,
             displayOrders,
             orders,
             setOrderAmount,

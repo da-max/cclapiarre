@@ -14,7 +14,8 @@ module.exports = {
         sourceType: 'module'
     },
     plugins: [
-        'vue'
+        'vue',
+        'eslint-plugin-graphql'
     ],
     rules: {
         indent: ['error', 4]

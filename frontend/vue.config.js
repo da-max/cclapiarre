@@ -1,7 +1,8 @@
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const BundleTracker = require('webpack-bundle-tracker')
 
 module.exports = {
-    publicPath: 'http://0.0.0.0:8080',
+    publicPath: 'http://localhost:8000/static/',
     outputDir: 'dist/',
 
     runtimeCompiler: true,
@@ -27,5 +28,15 @@ module.exports = {
             .use('graphql-tag/loader')
             .loader('graphql-tag/loader')
             .end()
+    },
+
+    pluginOptions: {
+        apollo: {
+            lintGQL: true
+        }
+    },
+
+    configureWebpack: {
+        plugins: [new BundleAnalyzerPlugin()]
     }
 }

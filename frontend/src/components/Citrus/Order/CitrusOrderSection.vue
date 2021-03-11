@@ -36,7 +36,12 @@
             >
           </div>
           <span class="uk-label">Prix actuel de la commande</span>
-          {{ currentOrderPrice }} €
+          <span v-if="!hasOrder">
+            {{ currentOrderPrice }} €
+          </span>
+          <span v-else>
+            {{ currentUserOrderPrice }} €
+          </span>
         </div>
       </aside>
     </header>
@@ -116,16 +121,19 @@ export default {
         const {
             currentOrderPrice,
             currentOrderValide,
+            currentUserOrderPrice,
             deleteAllOrders,
             displayCitrusOrderDeleteModal,
             displayOrders,
             getOrders,
+            hasOrder,
             ordersLength,
             saveOrder,
             sendMail,
             setDisplayOrders,
             setSelectOrder,
-            setSendMail
+            setSendMail,
+            totalPriceByOrderId
         } = useOrder()
 
         const computeSendMail = computed({
@@ -140,13 +148,16 @@ export default {
             computeSendMail,
             currentOrderPrice,
             currentOrderValide,
+            currentUserOrderPrice,
             deleteAllOrders,
             displayCitrusOrderDeleteModal,
             displayOrders,
             ordersLength,
+            hasOrder,
             saveOrder,
             setDisplayOrders,
             setSelectOrder,
+            totalPriceByOrderId,
             useShowModal
         }
     }

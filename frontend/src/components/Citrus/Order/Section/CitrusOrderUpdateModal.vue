@@ -11,7 +11,29 @@
       </h2>
     </template>
     <template #body>
-      <UtilsTable>
+      <aside class="uk-margin-large-top uk-width-2-3@m uk-margin-auto">
+        <OrderInformation :information="selectOrder.user" />
+        <div class="uk-text-center uk-margin-medium-top uk-text-bold">
+          <div class="uk-margin-bottom">
+            <label
+              for="send-mail"
+              class="uk-label uk-margin-medium-right"
+            >Envoyer un mail récapitulatif</label>
+            <input
+              id="send-mail"
+              :checked="selectOrder.sendMail"
+              type="checkbox"
+              name="send-mail"
+              class="uk-checkbox uk-disabled"
+            >
+          </div>
+          <span class="uk-label">Prix actuel de la commande</span>
+          <span>
+            {{ currentOrderPrice }} €
+          </span>
+        </div>
+      </aside>
+      <UtilsTable class="uk-margin-medium-top">
         <template #head>
           <th>Nom des produits</th>
           <th>Commande de {{ selectOrder.user.username }}</th>
@@ -76,12 +98,14 @@ import CitrusInputAmount from '@/components/Citrus/Order/CitrusInputAmount'
 import UtilsButton from '@/components/Utils/UtilsButton'
 import UtilsModal from '@/components/Utils/UtilsModal'
 import UtilsTable from '@/components/Utils/UtilsTable'
+import OrderInformation from '@/components/Application/Order/Section/OrderInformation.vue'
 
 export default {
     name: 'CitrusOrderUpdateModal',
     components: {
         CitrusDetails,
         CitrusInputAmount,
+        OrderInformation,
         UtilsButton,
         UtilsModal,
         UtilsTable
@@ -90,6 +114,7 @@ export default {
         const { citrusDisplay } = useCitrus()
         const {
             currentOrder,
+            currentOrderPrice,
             getSelectOrder,
             totalCitrus,
             updateOrder
@@ -104,6 +129,7 @@ export default {
         return {
             citrusDisplay,
             currentOrder,
+            currentOrderPrice,
             selectOrder: getSelectOrder,
             totalCitrus,
             saveOrder

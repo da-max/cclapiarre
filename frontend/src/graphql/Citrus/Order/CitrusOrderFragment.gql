@@ -5,6 +5,7 @@ fragment CitrusOrderFragment on CitrusOrderType {
     user {
         ...UserFullFragment
     }
+    sendMail
     amounts {
         edges {
             node {

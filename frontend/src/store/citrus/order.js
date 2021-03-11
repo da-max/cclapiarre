@@ -284,26 +284,16 @@ export default {
             }
         },
 
-        currentOrderPrice: (state, _getters, rootState, rootGetters) => {
+        currentOrderPrice: (state, _getters, _rootState, rootGetters) => {
             let price = 0
-            if (state.hasOrder) {
-                const currentOrder = state.orders.find(order => order.node.user.id === rootState.auth.currentUser.id)
-                currentOrder.node.amounts.edges.forEach(amount => {
-                    const citrus = rootGetters['citrus/citrusById'](
-                        amount.node.product.id)
-                    price += amount.node.amount * citrus
-                        .node
-                        .price
-                })
-            } else {
-                state.currentOrder.forEach(order => {
-                    const citrus = rootGetters['citrus/citrusById'](
-                        order.citrusId)
-                    price += order.amount * citrus
-                        .node
-                        .price
-                })
-            }
+            state.currentOrder.forEach(order => {
+                const citrus = rootGetters['citrus/citrusById'](
+                    order.citrusId)
+                price += order.amount * citrus
+                    .node
+                    .price
+            })
+
             return Math.round(price * 100) / 100
         },
 
@@ -315,6 +305,17 @@ export default {
                 }
             })
             return valide
+        },
+
+        currentUserOrderPrice: (state, _getters, rootState, _rootGetters) => {
+            let price = 0
+            const order = state.orders.find(order => order.node.user.id === rootState.auth.currentUser.id)
+            if (order.node) {
+                order.node.amounts.edges.forEach(amount => {
+                    price += amount.node.amount * amount.node.product.price
+                })
+            }
+            return Math.round(price * 100) / 100
         },
 
         getOrderById: (state) => {

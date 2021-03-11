@@ -59,6 +59,7 @@ export default function () {
     const currentAmountByCitrusId = (citrusId) => store.getters['citrusOrder/currentAmountByCitrusId'](citrusId)
     const currentOrderPrice = computed(() => store.getters['citrusOrder/currentOrderPrice'])
     const currentOrderValide = computed(() => store.getters['citrusOrder/currentOrderValide'])
+    const currentUserOrderPrice = computed(() => store.getters['citrusOrder/currentUserOrderPrice'])
     const getOrderById = (orderId) => store.getters['citrusOrder/getOrderById'](orderId)
     const getSelectOrder = computed(() => store.getters['citrusOrder/getSelectOrder'])
     const ordersLength = computed(() => store.getters['citrusOrder/ordersLength'])
@@ -101,9 +102,12 @@ export default function () {
         UIkit.util.on(
             '#citrus-order-update-modal',
             'hidden',
-            () => {
-                clearCurrentOrder()
-                clearSelectOrder()
+            (e) => {
+                if (e.target.className.search('uk-drop') < 0) {
+                    console.log('modal')
+                    clearCurrentOrder()
+                    clearSelectOrder()
+                }
             })
     }
 
@@ -146,6 +150,7 @@ export default function () {
         currentAmountByCitrusId,
         currentOrderPrice,
         currentOrderValide,
+        currentUserOrderPrice,
         getOrderById,
         getSelectOrder,
         ordersLength,

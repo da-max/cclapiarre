@@ -73,6 +73,17 @@ class Query(ObjectType):
 # Mutations
 # ==========
 
+class CreateCitrusProductMutation(DjangoCreateMutation):
+    """
+    GraphQl mutation for Update CitrusProduct
+    """
+
+    class Meta:
+        model = CitrusProduct
+        login_required = True
+        permission_required = ('citrus.add_citrusproduct', )
+
+
 class BatchPatchCitrusProductMutation(DjangoBatchPatchMutation):
     """
     GraphQl mutation for Patch CitrusProducts.
@@ -246,6 +257,7 @@ class BatchDeleteCitrusOrderMutation(DjangoBatchDeleteMutation):
 
 class Mutation(ObjectType):
     """ Define mutations for citrus app. """
+    add_citrus_product = CreateCitrusProductMutation.Field()
     add_citrus_order = CreateCitrusOrderMutation.Field()
     batch_patch_citrus_product = BatchPatchCitrusProductMutation.Field()
     batch_remove_citrus_order = BatchDeleteCitrusOrderMutation.Field()

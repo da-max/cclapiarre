@@ -131,6 +131,7 @@
         <UtilsButton
           v-else
           type="primary"
+          @click="addCitrus"
         >
           Ajouter le produit
         </UtilsButton>
@@ -164,7 +165,11 @@ export default {
         ckeditor: CKEditor.component
     },
     setup () {
-        const { citrusSelect, citrusUpdate } = useCitrus()
+        const {
+            citrusAdd,
+            citrusSelect,
+            citrusUpdate
+        } = useCitrus()
 
         const product = computed(() => {
             if (citrusSelect.value.name) {
@@ -192,9 +197,15 @@ export default {
             useHideModal('#citrus-product-modal')
         }
 
+        const addCitrus = () => {
+            useUtilsMutation(citrusAdd, { input: product.value })
+            useHideModal('#citrus-product-modal')
+        }
+
         return {
-            editor: ClassicEditor,
+            addCitrus,
             citrusSelect,
+            editor: ClassicEditor,
             product,
             updateCitrus
         }

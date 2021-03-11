@@ -11,7 +11,7 @@
       </h2>
     </template>
     <template #body>
-      <aside class="uk-margin-large-top uk-width-2-3@m uk-margin-auto">
+      <aside class="uk-margin-small-top uk-width-2-3@m uk-margin-auto">
         <OrderInformation :information="selectOrder.user" />
         <div class="uk-text-center uk-margin-medium-top uk-text-bold">
           <div class="uk-margin-bottom">

@@ -1,10 +1,9 @@
-import { computed, reactive, toRefs } from '@vue/composition-api'
-import { useMutation, useResult } from '@vue/apollo-composable'
+import { computed } from '@vue/composition-api'
+import { useMutation } from '@vue/apollo-composable'
 
 import store from '@/store/index'
-import { useUtilsQuery } from '@/composition/useUtils'
 
-import ORDER_ALL from '@/graphql/Citrus/Order/OrderAll.gql'
+import CITRUS_ADD from '@/graphql/Citrus/CitrusAdd.gql'
 import CITRUS_UPDATE from '@/graphql/Citrus/CitrusUpdate.gql'
 
 export default function () {
@@ -32,6 +31,10 @@ export default function () {
 
     // Store mutations
     // ===============
+
+    const clearSelectCitrus = () => {
+        store.commit('citrus/CLEAR_SELECT_CITRUS')
+    }
 
     const checkAll = computed({
         get: () => false,
@@ -65,27 +68,6 @@ export default function () {
 
     const citrusDisplay = computed(() => store.getters['citrus/citrusDisplay'])
 
-    const orderPrice = computed(() => store.getters['citrus/orderPrice'])
-
-    // State
-    // =====
-
-    const state = reactive({
-        orders: []
-    })
-
-    // GraphQl queries
-    // ===============
-
-    const getOrders = () => {
-        const { result, loading, refetch: refetchOrderAll } = useUtilsQuery(ORDER_ALL)
-        state.orders = useResult(result)
-        return {
-            loading,
-            refetchOrderAll
-        }
-    }
-
     // GraphQl Mutations
     // =================
 
@@ -96,6 +78,18 @@ export default function () {
         store.commit('alert/ADD_ALERT', {
             header: false,
             body: `Le produit « ${result.data.updateCitrusProduct.citrusProduct.name} » a bien été mis à jour.`,
+            status: 'success',
+            close: true
+        })
+    })
+
+    const { mutate: citrusAdd, onDone: onDoneCitrusAdd } = useMutation(CITRUS_ADD)
+
+    onDoneCitrusAdd(result => {
+        store.commit('citrus/ADD_CITRUS', result.data.addCitrusProduct.citrusProduct)
+        store.commit('alert/ADD_ALERT', {
+            header: false,
+            body: `Le produit « ${result.data.addCitrusProduct.citrusProduct.name} » a bien été créé.`,
             status: 'success',
             close: true
         })
@@ -115,6 +109,7 @@ export default function () {
         setSearchCitrus,
 
         // Store actions
+        clearSelectCitrus,
         deleteCitrus,
         getCitrus,
         patchCitrus,
@@ -123,15 +118,9 @@ export default function () {
         citrusById,
         citrusChecked,
         citrusDisplay,
-        orderPrice,
-
-        // State
-        ...toRefs(state),
-
-        // GraphQl queries
-        getOrders,
 
         // GraphQl mutations
+        citrusAdd,
         citrusUpdate
     }
 }

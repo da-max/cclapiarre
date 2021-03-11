@@ -14,27 +14,8 @@ export default {
     }),
 
     mutations: {
-    // Citrus mutations
-        SET_CITRUS (state, citrus) {
-            const products = []
-            citrus.forEach(c => {
-                products.push({ ...c })
-            })
-            state.citrus = products
-        },
-        SET_SEARCH_CITRUS (state, searchCitrus) {
-            state.searchCitrus = searchCitrus
-        },
-        SET_CHECK_CITRUS (state, { citrus, value }) {
-            const product = state.citrus.find((c) => c.node.id === citrus.node.id)
-            Vue.set(
-                product,
-                'check',
-                value
-            )
-        },
-        SET_CITRUS_SELECT (state, value) {
-            state.citrusSelect = value
+        ADD_CITRUS (state, value) {
+            state.citrus = [...state.citrus, { node: { ...value } }]
         },
 
         CHECK_ALL (state, value) {
@@ -46,6 +27,40 @@ export default {
                 )
             })
         },
+
+        CLEAR_SELECT_CITRUS (state) {
+            state.citrusSelect = {}
+        },
+
+        DELETE_CITRUS (state, citrusId) {
+            state.citrus = state.citrus.filter(citrus => citrus.node.id !== citrusId)
+        },
+
+        SET_CHECK_CITRUS (state, { citrus, value }) {
+            const product = state.citrus.find((c) => c.node.id === citrus.node.id)
+            Vue.set(
+                product,
+                'check',
+                value
+            )
+        },
+
+        SET_CITRUS_SELECT (state, value) {
+            state.citrusSelect = value
+        },
+
+        SET_CITRUS (state, citrus) {
+            const products = []
+            citrus.forEach(c => {
+                products.push({ ...c })
+            })
+            state.citrus = products
+        },
+
+        SET_SEARCH_CITRUS (state, searchCitrus) {
+            state.searchCitrus = searchCitrus
+        },
+
         UPDATE_CITRUS (state, citrusUpdate) {
             const citrusIndex = state.citrus.findIndex(c => c.node.id === citrusUpdate.id)
             Vue.set(
@@ -53,21 +68,7 @@ export default {
                 'node',
                 citrusUpdate
             )
-        },
-        DELETE_CITRUS (state, citrusId) {
-            state.citrus = state.citrus.filter(citrus => citrus.node.id !== citrusId)
-        },
-
-        // Order mutations
-        SET_CITRUS_AMOUNT (state, { citrusId, amount }) {
-            const citrusIndex = state.citrus.findIndex(c => c.node.id === citrusId)
-            Vue.set(
-                state.citrus[citrusIndex],
-                'amount',
-                amount
-            )
         }
-
     },
 
     actions: {
@@ -160,15 +161,7 @@ export default {
 
         citrusChecked: (state) => state.citrus.filter(c => c.check),
 
-        citrusDisplay: (state) => state.citrus.filter(c => c.node.display),
+        citrusDisplay: (state) => state.citrus.filter(c => c.node.display)
 
-        orderPrice: (state) => {
-            let price = 0
-            state.citrus.forEach(citrus => {
-                const amount = citrus.amount ? citrus.amount : 0
-                price += citrus.node.price * amount / citrus.node.weight
-            })
-            return Math.round(price * 100) / 100
-        }
     }
 }

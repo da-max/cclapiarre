@@ -104,7 +104,6 @@ export default function () {
             'hidden',
             (e) => {
                 if (e.target.className.search('uk-drop') < 0) {
-                    console.log('modal')
                     clearCurrentOrder()
                     clearSelectOrder()
                 }

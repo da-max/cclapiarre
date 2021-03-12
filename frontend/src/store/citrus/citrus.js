@@ -92,18 +92,32 @@ export default {
             }
         },
 
-        async patchCitrus ({ commit, getters }, { key, value }) {
+        async patchCitrus ({ commit, getters }, { key, value, type }) {
             commit('START_LOADING', null, { root: true })
             try {
-                const variables = getters.citrusChecked.map(citrus => {
-                    const c = { id: citrus.node.id }
-                    c[key.key] = key.value
-                    return c
+                let variables
+                if (type === 'percent') {
+                    variables = getters.citrusChecked.map(citrus => {
+                        const c = { id: citrus.node.id }
+                        c[key] = citrus.node[key] + (citrus.node[key] * value) / 100
+                        return c
+                    })
+                } else {
+                    variables = getters.citrusChecked.map(citrus => {
+                        const c = { id: citrus.node.id }
+                        c[key] = value
+                        return c
+                    })
+                }
+                const response = await apolloClient.mutate({
+                    mutation: BATCH_CITRUS_PATCH,
+                    variables: { citrus: variables }
                 })
-                const response = await apolloClient.mutate({ mutation: BATCH_CITRUS_PATCH, variables: { citrus: variables } })
-                response.data.batchPatchCitrusProduct.citrusProducts.forEach(citrus => {
-                    commit('UPDATE_CITRUS', citrus)
-                })
+                response.data.batchPatchCitrusProduct
+                    .citrusProducts
+                    .forEach(citrus => {
+                        commit('UPDATE_CITRUS', citrus)
+                    })
                 commit(
                     'alert/ADD_ALERT',
                     {

@@ -25,8 +25,8 @@ export default function () {
         store.dispatch('citrus/getCitrus')
     }
 
-    const patchCitrus = (key, value) => {
-        store.dispatch('citrus/patchCitrus', { key, value })
+    const patchCitrus = (actions) => {
+        store.dispatch('citrus/patchCitrus', { type: null, ...actions })
     }
 
     // Store mutations

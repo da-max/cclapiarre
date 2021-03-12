@@ -17,7 +17,7 @@
         :placeholder="label"
         :value="value"
         :class="['uk-input', { 'uk-form-danger': value < min }]"
-        @input="$emit('input', $event.target.value)"
+        @input="$emit('input', parseFloat($event.target.value))"
       >
     </div>
     <div v-show="displayInfo">

@@ -3,7 +3,7 @@
     <select
       v-model="action"
       name="actions"
-      class="uk-select uk-form-width-medium"
+      class="uk-select"
     >
       <option :value="null">
         ------ ------
@@ -16,13 +16,27 @@
         {{ ACTION.content }}
       </option>
     </select>
-    <UtilsButton
-      v-show="action && citrusChecked && citrusChecked.length !== 0"
-      class="uk-margin-medium-left"
-      @click="patchCitrus(action)"
-    >
-      Appliquer
-    </UtilsButton>
+    <FormInputNumber
+      v-if="action && typeof(action.value) === 'number'"
+      v-model="action.value"
+      class="uk-margin-small-top"
+      label="Pourcentage à ajouter"
+      :display-info="false"
+      :max="100"
+      :min="-100"
+      :step="0.01"
+      :value="action.value"
+      name="pourcentage"
+    />
+    <div class="uk-text-center uk-margin-small-top">
+      <UtilsButton
+        v-show="action && action.value !== 0 && citrusChecked && citrusChecked.length !== 0"
+        class="uk-margin-medium-left"
+        @click="patchCitrus({...action})"
+      >
+        Appliquer
+      </UtilsButton>
+    </div>
   </form>
 </template>
 
@@ -30,11 +44,13 @@
 import { reactive, toRefs } from '@vue/composition-api'
 import useCitrus from '@/composition/citrus/useCitrus'
 
+import FormInputNumber from '@/components/Utils/Form/FormInputNumber'
 import UtilsButton from '@/components/Utils/UtilsButton'
 
 export default {
     name: 'CitrusProductListActions',
     components: {
+        FormInputNumber,
         UtilsButton
     },
     setup () {
@@ -57,6 +73,10 @@ export default {
                 {
                     value: { key: 'maybeNotAvailable', value: false },
                     content: 'Produits disponible'
+                },
+                {
+                    value: { key: 'price', value: 10, type: 'percent' },
+                    content: 'Ajouter un pourcentage du prix'
                 }
             ],
             action: null

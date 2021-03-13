@@ -20,10 +20,4 @@ urlpatterns = [
             ResetPassword.as_view(), name='reset_password'),
     url(r"^nouveau-mot-de-passe?uidb64=(?P<uidb64>[0-9A-Za-z_\-]+)&token=(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$", ResetPasswordConfirm.as_view(
     ), name='password_reset_confirm'),
-    url(r"^liste-des-utilisateurs", ListAllUser.as_view(), name="list_all_user"),
-    url(r"^modifier-un-utilisateur/(?P<pk>[\d]+)",
-        UpdateUser.as_view(), name="update_user"),
-    url(r'^supprimer-un-utilisateur/(?P<id_user>[\d]+)',
-        delete_user, name="delete_user"),
-    url(r'^creer-un-utilisateur', CreateUser.as_view(), name="create_user")
 ]

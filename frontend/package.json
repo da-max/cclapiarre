@@ -26,11 +26,6 @@
     "webpack-bundle-tracker": "^1.0.0-alpha.1"
   },
   "devDependencies": {
-<<<<<<< HEAD
-    "@vue/cli-plugin-e2e-cypress": "^4.5.9",
-    "@vue/cli-service": "^4.4.1",
-    "vue-resource": "^1.5.1",
-=======
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "^4.5.8",
@@ -46,7 +41,6 @@
     "eslint-plugin-vue": "^7.1.0",
     "graphql-tag": "^2.11.0",
     "vue-cli-plugin-apollo": "^0.22.2",
->>>>>>> applications
     "vue-template-compiler": "^2.6.11",
     "webpack-bundle-analyzer": "^3.9.0"
   },

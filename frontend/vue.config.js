@@ -1,8 +1,8 @@
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const BundleTracker = require('webpack-bundle-tracker')
 
 module.exports = {
-    publicPath: 'http://localhost:8000/static/',
+    publicPath: 'http://0.0.0.0:8080/',
     outputDir: 'dist/',
 
     runtimeCompiler: true,
@@ -34,9 +34,9 @@ module.exports = {
         apollo: {
             lintGQL: true
         }
-    },
-
-    configureWebpack: {
-        plugins: [new BundleAnalyzerPlugin()]
     }
+
+    // configureWebpack: {
+    //     plugins: [new BundleAnalyzerPlugin()]
+    // }
 }

@@ -1,6 +1,7 @@
 from random import random
 from django.db.models import Model, ForeignKey, ManyToManyField, CASCADE
 from django.db.models.fields import CharField, FloatField, IntegerField, BooleanField
+from django.core.exceptions import ValidationError
 
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
@@ -61,14 +62,28 @@ class CitrusOrder(Model):
 class CitrusAmount(Model):
     product = ForeignKey(CitrusProduct, on_delete=CASCADE,
                          related_name="amounts")
-    order = ForeignKey(CitrusOrder, on_delete=CASCADE, related_name="amounts")
+    order = ForeignKey(CitrusOrder, on_delete=CASCADE,
+                       related_name="amounts")
     amount = FloatField(verbose_name="Quantité commandé")
 
     class Meta:
         verbose_name = "Quantité"
 
     def __str__(self):
-        return "{} faites par {} commander {}".format(self.product.name, self.order.user.username, self.amount)
+        return f"{self.product.name} faites par \
+            {self.order.user.username} commander {self.amount}"
+
+    def clean(self):
+        amounts = CitrusAmount.objects.filter(order=self.order)
+        nb_case = 0
+        if self.product.weight != 1:
+            nb_case += self.amount
+        for amount in amounts:
+            if amount.product.weight != 1:
+                nb_case += amount.amount
+        if nb_case > 6:
+            raise ValidationError(
+                f'Vous avez commandé {nb_case}, or la limite est fixée à 6.')
 
     def get_total_product(self, product):
         total = int()

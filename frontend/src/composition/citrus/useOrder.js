@@ -10,6 +10,7 @@ export default function () {
     const currentOrder = computed(() => store.state.citrusOrder.currentOrder)
     const displayOrders = computed(() => store.state.citrusOrder.displayOrders)
     const hasOrder = computed(() => store.state.citrusOrder.hasOrder)
+    const MAX_CASE_ORDERED = computed(() => store.state.citrusOrder.MAX_CASE_ORDERED)
     const orders = computed(() => store.state.citrusOrder.orders)
     const selectOrder = computed(() => store.state.citrusOrder.selectOrder)
     const sendMail = computed(() => store.state.sendMail)
@@ -57,6 +58,7 @@ export default function () {
     // =============
     const amountByOrderIdCitrusId = (orderId, citrusId) => store.getters['citrusOrder/amountByOrderIdCitrusId'](orderId, citrusId)
     const currentAmountByCitrusId = (citrusId) => store.getters['citrusOrder/currentAmountByCitrusId'](citrusId)
+    const currentOrderNumberCase = computed(() => store.getters['citrusOrder/currentOrderNumberCase'])
     const currentOrderPrice = computed(() => store.getters['citrusOrder/currentOrderPrice'])
     const currentOrderValide = computed(() => store.getters['citrusOrder/currentOrderValide'])
     const currentUserOrderPrice = computed(() => store.getters['citrusOrder/currentUserOrderPrice'])
@@ -125,6 +127,7 @@ export default function () {
         currentOrder,
         displayOrders,
         hasOrder,
+        MAX_CASE_ORDERED,
         orders,
         selectOrder,
         sendMail,
@@ -147,6 +150,7 @@ export default function () {
         // Store getters
         amountByOrderIdCitrusId,
         currentAmountByCitrusId,
+        currentOrderNumberCase,
         currentOrderPrice,
         currentOrderValide,
         currentUserOrderPrice,

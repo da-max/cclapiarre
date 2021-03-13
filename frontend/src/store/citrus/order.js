@@ -12,6 +12,7 @@ export default {
         currentOrder: [],
         displayOrders: 0,
         hasOrder: false,
+        MAX_CASE_ORDERED: 6,
         orders: [],
         selectOrder: 'all',
         sendMail: true
@@ -284,6 +285,16 @@ export default {
             }
         },
 
+        currentOrderNumberCase: (state, _getters, _rootState, rootGetters) => {
+            let nbCase = 0
+            state.currentOrder.forEach(amount => {
+                if (rootGetters['citrus/citrusById'](amount.citrusId).node.weight !== 1) {
+                    nbCase += amount.amount
+                }
+            })
+            return nbCase
+        },
+
         currentOrderPrice: (state, _getters, _rootState, rootGetters) => {
             let price = 0
             state.currentOrder.forEach(order => {
@@ -297,14 +308,14 @@ export default {
             return Math.round(price * 100) / 100
         },
 
-        currentOrderValide: (state) => {
+        currentOrderValide: (state, getters) => {
             let valide = false
             state.currentOrder.forEach(order => {
                 if (order.amount > 0) {
                     valide = true
                 }
             })
-            return valide
+            return valide && getters.currentOrderNumberCase <= state.MAX_CASE_ORDERED
         },
 
         currentUserOrderPrice: (state, _getters, rootState, _rootGetters) => {

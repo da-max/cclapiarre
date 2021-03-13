@@ -1,0 +1,61 @@
+{% load citrus_extras %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau récapitulatif de la commande</title>
+    <style>
+    @page{
+    	size: a4 landscape;
+    	margin: 1cm;
+    }
+    table
+	{/* Les bordures du tableau seront collées (plus joli) */
+	    text-align : center;
+	    font-size: 11px;
+	}
+	td, th
+	{
+		height 50px;
+	    border: 1px solid black;
+	}
+    </style>
+</head>
+<body>
+	<table class='table'>
+		<thead>
+			<tr>
+				<th>Nom du produit</th>
+				<th>Total</th>
+				{% for user in orders.keys %}
+					<th>{{ user|truncatechars:13 }}</th>
+				{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+			{% for product in products %}
+				<tr>
+					<td>{{ product.name }}</td>
+					{% if product.weight == 1 %}
+						<td>{{ product.get_total }}</td>
+					{% else %}
+						<td>{{ product.get_total }} caisses</td>
+					{% endif %}
+					{% for order in orders.values %}
+						<td>{% amount order.0 product.id %}</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td>Total</td>
+				<td>{{ total }} €</td>
+				{% for order in orders.values %}
+					<td>{{ order.1 }} €</td>
+				{% endfor %}
+			</tr>
+		</tfoot>
+	</table>
+	</body>
+</html>

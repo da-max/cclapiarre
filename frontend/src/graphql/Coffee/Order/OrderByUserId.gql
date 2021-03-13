@@ -1,0 +1,9 @@
+query Order($userId: ID!) {
+  coffeeOrder(user_Id: $userId) {
+    edges {
+      node {
+        id
+      }
+    }
+  }
+}

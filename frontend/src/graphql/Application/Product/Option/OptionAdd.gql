@@ -1,0 +1,9 @@
+#import "./OptionFragment.gql"
+
+mutation OptionAdd($name: String!, $application: ID!) {
+  addOption(input: { name: $name, application: $application }) {
+    option {
+      ...OptionFragment
+    }
+  }
+}

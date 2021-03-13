@@ -1,0 +1,22 @@
+#import "../../User/Fragment/UserFullFragment.gql"
+
+fragment CitrusOrderFragment on CitrusOrderType {
+    id
+    user {
+        ...UserFullFragment
+    }
+    sendMail
+    amounts {
+        edges {
+            node {
+                id
+                amount
+                product {
+                    id
+                    name
+                    price
+                }
+            }
+        }
+    }
+}

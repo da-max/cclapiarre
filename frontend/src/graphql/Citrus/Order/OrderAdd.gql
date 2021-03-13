@@ -1,0 +1,9 @@
+#import "./CitrusOrderFragment.gql"
+
+mutation orderAdd($sendMail: Boolean!, $amounts: [CreateCitrusAmountInput]!) {
+    addCitrusOrder(input: { sendMail: $sendMail, amountsAdd: $amounts }) {
+        citrusOrder {
+            ...CitrusOrderFragment            
+        }
+    }
+}

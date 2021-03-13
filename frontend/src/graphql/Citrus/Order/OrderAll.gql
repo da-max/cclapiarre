@@ -1,0 +1,11 @@
+#import "./CitrusOrderFragment.gql"
+
+query OrderAll {
+    citrusOrder {
+        edges {
+            node {
+                ...CitrusOrderFragment
+            }
+        }
+    }
+}

@@ -1,0 +1,4 @@
+fragment CoffeeOriginFragment on CoffeeOriginType {
+  id
+  name
+}

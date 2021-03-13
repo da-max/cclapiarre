@@ -1,0 +1,9 @@
+#import "./CitrusFragment.gql"
+
+mutation citrusAdd($input: CreateCitrusProductInput!) {
+  addCitrusProduct(input: $input) {
+    citrusProduct{
+      ...CitrusFragment
+    }
+  }
+}

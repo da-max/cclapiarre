@@ -1,0 +1,14 @@
+mutation UserLogin($username: String!, $password: String!) {
+  login(username: $username, password: $password) {
+    user {
+      id
+      username
+      email
+      isSuperuser
+      groups {
+        id
+        name
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+fragment OptionFragment on OptionType {
+  id
+  name
+}

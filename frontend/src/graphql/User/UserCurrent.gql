@@ -1,0 +1,18 @@
+#import "./Fragment/UserFullFragment.gql"
+
+query UserCurrent {
+  user {
+    ...UserFullFragment
+    isSuperuser
+    userPermissions {
+      codename
+      contentType {
+        model
+      }
+    }
+    groups {
+      id
+      name
+    }
+  }
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Commande confirmée</title>
+  </head>
+  <body>
+    <p>
+      Une commande d’agrumes à votre nom vient d’être 
+      {% if create %}ajoutée{% else %}modifiée{% endif %}
+      depuis le site cclapiarre.deblan.fr.
+      Voici le récapitulatif de cette commande.
+    </p>
+    <ul>
+      <li>
+        Email : {{ order.user.email }}
+      </li>
+      <li>
+        Prénom : {{ order.user.first_name|default:'Non défini' }}
+      </li> 
+      <li>
+        Nom : {{ order.user.last_name|default:'Non défini' }}
+      </li>
+      <li>
+        Numéro de téléphone : {{ order.user.information.phone_number|default:'Non défini' }}
+      </li>
+      <li>
+        Prix total : {{ order.get_price }} €
+      </li>
+    </ul>
+    <table cellspacing="0" cellpadding="0" border="1" width="100%">
+      <thead>
+        <tr>
+          <th align="right">Nom du produit</th>
+          <th align="right">Quantité</th>
+          <th align="right">Prix</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for amount in amounts %}
+          <tr>
+            <td align="right">{{ amount.product.name }}</td>
+            <td align="right">{{ amount.amount }}</td>
+            <td align="right">{{ amount.product.price }} € × {{ amount.amount }} = {{ amount.get_price }} €</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+#import "./ApplicationSmallFragment.gql"
+#import "./ApplicationImageFragment.gql"
+#import "../../User/Fragment/UserFullFragment.gql"
+#import "../Product/ProductFragment.gql"
+
+fragment ApplicationFullFragment on ApplicationType {
+  ...ApplicationSmallFragment
+  description
+  images {
+    ...ApplicationImageFragment
+  }
+  admins {
+    ...UserFullFragment
+  }
+  members {
+    ...UserFullFragment
+  }
+  products {
+    edges {
+      node {
+        ...ProductFragment
+      }
+    }
+  }
+}

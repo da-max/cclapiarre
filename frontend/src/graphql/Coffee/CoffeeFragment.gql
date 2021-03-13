@@ -1,0 +1,26 @@
+#import "./Origin/CoffeeOriginFragment.gql"
+#import "./Type/CoffeeTypeFragment.gql"
+
+fragment CoffeeFragment on CoffeeType {
+  id
+  origin {
+    ...CoffeeOriginFragment
+  }
+  availableType {
+    edges {
+      node {
+        ...CoffeeTypeFragment
+      }
+    }
+  }
+  farmCoop
+  region
+  description
+  process
+  variety
+  twoHundredGramPrice
+  kilogramPrice
+  display
+  maximum
+  image
+}

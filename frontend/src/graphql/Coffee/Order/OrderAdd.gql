@@ -1,0 +1,7 @@
+mutation orderAdd($amounts: [CreateCoffeeAmountInput]!) {
+  addCoffeeOrder(input: { amountsAdd: $amounts }) {
+    coffeeOrder {
+      id
+    }
+  }
+}

@@ -1,0 +1,30 @@
+#import "../CoffeeFragment.gql"
+#import "../../User/Fragment/UserFullFragment.gql"
+
+query OrderAll {
+  coffeeOrder {
+    edges {
+      node {
+        id
+        user {
+          ...UserFullFragment
+        }
+        amounts {
+          edges {
+            node {
+              id
+              amount
+              sort {
+                name
+              }
+              weight
+              coffee {
+                ...CoffeeFragment
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

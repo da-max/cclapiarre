@@ -31,10 +31,10 @@ export function useUtilsQuery (query, variables = {}) {
     }
 }
 
-export function useUtilsMutation (mutation, variables) {
+export async function useUtilsMutation (mutation, variables) {
     store.commit('START_LOADING')
     try {
-        mutation(variables)
+        await mutation(variables)
     } catch (error) {
         store.commit('alert/ADD_UNKNOWN')
     } finally {

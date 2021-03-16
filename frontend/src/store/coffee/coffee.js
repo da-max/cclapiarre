@@ -107,17 +107,6 @@ export default {
                 })
                 if (response.data.coffeeOrder.edges.length !== 0) {
                     commit('HAS_ORDERED')
-                    commit(
-                        'alert/ADD_ALERT',
-                        {
-                            header: true,
-                            headerContent: 'Vous avez déjà commandé !',
-                            body: 'Une commande à votre nom a été trouvé.',
-                            status: 'primary',
-                            close: true
-                        },
-                        { root: true }
-                    )
                 }
             } catch (e) {
                 commit(

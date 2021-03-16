@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "graphql": "^15.4.0",
     "sass": "^1.27.0",
     "sass-loader": "^10.0.3",
+    "uikit": "^3.6.18",
     "vue": "^2.6.11",
     "vue-fuse": "^2.2.1",
     "vue-router": "^3.2.0",
@@ -26,11 +28,12 @@
     "webpack-bundle-tracker": "^1.0.0-alpha.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "^4.5.8",
-    "@vue/cli-plugin-vuex": "^4.5.8",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-plugin-babel": "^4.5.11",
+    "@vue/cli-plugin-e2e-cypress": "^4.5.11",
+    "@vue/cli-plugin-eslint": "^4.5.11",
+    "@vue/cli-plugin-router": "^4.5.11",
+    "@vue/cli-plugin-vuex": "^4.5.11",
+    "@vue/cli-service": "^4.5.11",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.11.0",
     "eslint-config-standard": "^14.1.1",
@@ -41,6 +44,7 @@
     "eslint-plugin-vue": "^7.1.0",
     "graphql-tag": "^2.11.0",
     "vue-cli-plugin-apollo": "^0.22.2",
+    "vue-cli-plugin-uikit": "^1.0.15",
     "vue-template-compiler": "^2.6.11",
     "webpack-bundle-analyzer": "^3.9.0"
   },
@@ -56,7 +60,10 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {},
+    "globals": {
+      "UIkit": true
+    }
   },
   "browserslist": [
     "> 1%",

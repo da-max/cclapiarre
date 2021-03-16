@@ -5,6 +5,12 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import apolloClient from './vue-apollo'
+import UIkit from 'uikit'
+import '@/assets/styles/styles.scss'
+import Icons from 'uikit/dist/js/uikit-icons'
+
+UIkit.use(Icons)
+window.UIkit = UIkit
 
 Vue.config.productionTip = false
 

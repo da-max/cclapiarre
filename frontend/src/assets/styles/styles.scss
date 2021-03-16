@@ -8,6 +8,8 @@
 @import "~uikit/src/scss/variables.scss";
 @import "~uikit/src/scss/mixins.scss";
 
+$table-striped-row-background: darken($table-striped-row-background, 2%);
+
 // 3. Your custom mixin overwrites.
 //@import "theme/accordion-mixins.scss";
 

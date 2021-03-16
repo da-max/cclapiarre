@@ -6,7 +6,7 @@
       class="uk-hidden@m uk-hidden-touch"
     />
     <LargeNavbar
-      class="uk-hidden-touch"
+      class="uk-hidden-touch uk-visible@m"
       :admin-panel-items="adminPanelItems"
       :order-items="allApplications"
     />

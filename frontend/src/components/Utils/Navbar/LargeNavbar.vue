@@ -2,11 +2,10 @@
   <div class="uk-visible@m uk-hidden-touch">
     <div
       class="uk-box-shadow-large"
-      uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; bottom: #transparent-sticky-navbar"
+      uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; cls-inactive: uk-navbar-primary uk-primary;"
     >
       <nav
         class="uk-navbar-container"
-        uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; cls-inactive: uk-navbar-primary uk-primary; top: 200"
         uk-navbar
       >
         <div class="uk-navbar-center">
@@ -91,7 +90,6 @@
           <li class="uk-active uk-text-center uk-text-bold">
             <a href="">Espace administration</a>
           </li>
-          <br>
           <li
             v-for="adminPanelItem in adminPanelItems"
             :key="adminPanelItem.title"

@@ -2,11 +2,10 @@
   <div>
     <div
       class="uk-box-shadow-large"
-      uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky"
+      uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; cls-inactive: uk-navbar-primary uk-primary"
     >
       <nav
         class="uk-navbar-container uk-navbar"
-        uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; cls-inactive: uk-navbar-primary uk-primary; top: 200"
         uk-navbar
       >
         <div class="uk-navbar-left">

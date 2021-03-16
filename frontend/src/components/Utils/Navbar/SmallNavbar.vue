@@ -2,11 +2,10 @@
   <div>
     <div
       class="uk-box-shadow-large"
-      uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; bottom: #transparent-sticky-navbar"
+      uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; cls-inactive: uk-navbar-primary uk-primary"
     >
       <nav
-        class="uk-navbar-container uk-navbar"
-        uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; cls-inactive: uk-navbar-primary uk-primary; top: 200"
+        class="uk-navbar-container"
         uk-navbar
       >
         <div class="uk-navbar-left">
@@ -18,7 +17,7 @@
             <span uk-navbar-toggle-icon />
             <span class="uk-margin-small-left">Menu</span>
           </a>
-        </div>*
+        </div>
         <div class="uk-navbar-center">
           <router-link
             :to="{name: 'Home'}"

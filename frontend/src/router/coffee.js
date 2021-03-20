@@ -5,7 +5,7 @@ export default [
         component: () => import(/* webpackChunkName: "coffee-order" */ '../views/Coffee/Order.vue'),
         meta: {
             loginRequired: true,
-            permissionRequired: 'coffee.add_coffeeorder'
+            permissionsRequired: ['coffee.view_coffee', 'coffee.add_coffeeorder']
         }
     },
     {

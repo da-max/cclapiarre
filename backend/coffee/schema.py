@@ -95,12 +95,12 @@ class Query(graphene.ObjectType):
         return Coffee.objects.all()
 
     @login_required
-    @permission_required('coffee.view_order')
+    @permission_required('coffee.view_coffeeorder')
     def resolve_coffee_order(self, info, *args, **kwargs) -> CoffeeOrder:
         return CoffeeOrder.objects.all()
 
     @login_required
-    @permission_required('coffee.view_amount')
+    @permission_required('coffee.view_coffeeamount')
     def resolve_coffee_amount(self, info, *args, **kwargs) -> CoffeeOrder:
         return CoffeeAmount.objects.all()
 
@@ -156,7 +156,7 @@ class CreateCoffeeOrderMutation(DjangoCreateMutation):
     class Meta:
         model = CoffeeOrder
         login_required = True
-        permission_required = ('coffee.add_order',)
+        permission_required = ('coffee.add_coffeeorder',)
         exclude_fields = ('coffee', 'amounts', 'user')
         many_to_many_extras = {
             "amounts": {

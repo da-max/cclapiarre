@@ -34,6 +34,11 @@ export async function groupRequired (to, from, groupRequired) {
     if (loginRequired(to, from)) {
         group = store.getters['auth/findGroup'](groupRequired)
     }
+
+    if (!group) {
+        store.commit('alert/ADD_PERMISSION_DENIED')
+    }
+
     return !!group
 }
 
@@ -43,6 +48,11 @@ export async function permissionRequired (to, from, permission) {
     if (login) {
         hasPermission = store.getters['auth/findPermission'](permission)
     }
+
+    if (!hasPermission) {
+        store.commit('alert/ADD_PERMISSION_DENIED')
+    }
+
     return !!hasPermission
 }
 

@@ -77,8 +77,23 @@ export default {
     getters: {
         isSuperuser: (state) => state.currentUser.isSuperuser,
         findPermission: (state, getters) => {
-            return (codename) =>
-                getters.isSuperuser || state.currentUser.userPermissions.find(permission => permission.codename === codename)
+            return (permissionName) => {
+                let permission
+                const splitPermission = permissionName.split('.')
+                if (splitPermission.length === 2) {
+                    permission = state.currentUser.userPermissions
+                        .find(
+                            permission =>
+                                permission.codename === splitPermission[2] &&
+                                permission.contentType.appLabel === splitPermission[1]
+                        )
+                } else {
+                    permission = state.currentUser.userPermissions
+                        .find(
+                            permission => permission.codename === splitPermission[1])
+                }
+                return getters.isSuperuser || permission
+            }
         },
         findGroup: (state, getters) => {
             return (groupName) =>

@@ -26,7 +26,9 @@
           Produit peut être indisponible
         </span>
       </th>
-      <th>Actions</th>
+      <th v-show="canChangeProduct || canDeleteProduct">
+        Actions
+      </th>
     </template>
     <template #body>
       <ProductListItem
@@ -59,9 +61,20 @@ export default {
                 maybeNotAvailable: 'Permet d’afficher un message d’alerte sur le tableau de commande, afin de prévenir les adhérents que le produit ne sera, peut-être, pas disponible.'
             }
         })
-        const { checkAll, searchCitrus } = useCitrus()
+        const {
+            canChangeProduct,
+            canDeleteProduct,
+            checkAll,
+            searchCitrus
+        } = useCitrus()
 
-        return { ...toRefs(state), checkAll, citrus: searchCitrus }
+        return {
+            canChangeProduct,
+            canDeleteProduct,
+            checkAll,
+            citrus: searchCitrus,
+            ...toRefs(state)
+        }
     }
 }
 </script>

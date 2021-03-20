@@ -95,8 +95,14 @@ export default function () {
         })
     })
 
+    // Getters
+    // =======
+
+    const canChangeProduct = computed(() => store.getters['auth/findPermission']('change_citrusproduct'))
+    const canDeleteProduct = computed(() => store.getters['auth/findPermission']('delete_citrusproduct'))
+
     return {
-    // Store state
+        // Store state
         citrus,
         citrusSelect,
         searchCitrus,
@@ -121,6 +127,10 @@ export default function () {
 
         // GraphQl mutations
         citrusAdd,
-        citrusUpdate
+        citrusUpdate,
+
+        // Getters
+        canChangeProduct,
+        canDeleteProduct
     }
 }

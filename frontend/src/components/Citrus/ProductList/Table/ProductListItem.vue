@@ -22,10 +22,12 @@
     <td><span :uk-icon="product.node.maybeNotAvailable ? 'check' : 'close'" /></td>
     <td>
       <button
-        class="uk-icon-link"
+        v-show="canChangeProduct"
+        class="uk-icon-link'"
         uk-icon="refresh"
         @click.prevent="showUpdateModal"
       /><button
+        v-show="canDeleteProduct"
         class="uk-icon-link"
         uk-icon="trash"
         @click.prevent="showDeleteModal"
@@ -56,7 +58,14 @@ export default {
         }
     },
     setup (props) {
-        const { citrusById, setCheckCitrus, setCitrusSelect } = useCitrus()
+        const {
+            canChangeProduct,
+            canDeleteProduct,
+            citrusById,
+            setCheckCitrus,
+            setCitrusSelect
+        } = useCitrus()
+
         const product = computed(() => citrusById(props.productId))
 
         const checkProduct = computed({
@@ -75,6 +84,8 @@ export default {
         }
 
         return {
+            canChangeProduct,
+            canDeleteProduct,
             product,
             checkProduct,
             showUpdateModal,

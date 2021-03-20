@@ -56,6 +56,20 @@ export async function permissionRequired (to, from, permission) {
     return !!hasPermission
 }
 
+export async function permissionsRequired (to, from, permissions) {
+    let hasPermissions
+    const login = await loginRequired(to, from)
+    if (login) {
+        hasPermissions = store.getters['auth/findPermissions'](permissions)
+    }
+
+    if (!hasPermissions) {
+        store.commit('alert/ADD_PERMISSION_DENIED')
+    }
+
+    return hasPermissions
+}
+
 export function utilsBeforeEach () {
     store.commit('START_LOADING')
 }

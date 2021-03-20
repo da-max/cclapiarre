@@ -75,7 +75,23 @@ export default {
     },
 
     getters: {
-        isSuperuser: (state) => state.currentUser.isSuperuser,
+        checkPermissions: (_state, getters) => {
+            return (permissionsName) => {
+                let permissions = true
+                if (!getters.isSuperuser) {
+                    permissionsName.forEach(permission => {
+                        permissions = permissions && !!getters.findPermission(permission)
+                    })
+                }
+                return permissions
+            }
+        },
+
+        findGroup: (state, getters) => {
+            return (groupName) =>
+                getters.isSuperuser || state.currentUser.groups.find((group) => group === groupName)
+        },
+
         findPermission: (state, getters) => {
             return (permissionName) => {
                 let permission
@@ -95,9 +111,8 @@ export default {
                 return getters.isSuperuser || permission
             }
         },
-        findGroup: (state, getters) => {
-            return (groupName) =>
-                getters.isSuperuser || state.currentUser.groups.find((group) => group === groupName)
-        }
+
+        isSuperuser: (state) => state.currentUser.isSuperuser
+
     }
 }

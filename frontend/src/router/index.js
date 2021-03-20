@@ -5,12 +5,13 @@ import {
     applicationPermissionRequired,
     loginRequired,
     permissionRequired,
+    permissionsRequired,
     utilsBeforeEach,
     utilsAfterEach
 } from '@/router/utils'
-import applicationRoutes from './application'
-import coffeeRoutes from './coffee'
-import citrusRoutes from './citrus'
+import applicationRoutes from '@/router/application'
+import coffeeRoutes from '@/router/coffee'
+import citrusRoutes from '@/router/citrus'
 
 const CONNECTION_URL = '/compte/connexion'
 
@@ -66,6 +67,14 @@ router.beforeEach(async (to, from, next) => {
             to,
             from,
             to.meta.permissionRequired)
+    }
+
+    if (to.matched.some(record => record.meta.permissionsRequired) && go) {
+        go = await permissionsRequired(
+            to,
+            from,
+            to.meta.permissionsRequired
+        )
     }
 
     go ? next() : next(`${CONNECTION_URL}?next=${to.path}`)

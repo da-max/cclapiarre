@@ -60,7 +60,7 @@ export async function permissionsRequired (to, from, permissions) {
     let hasPermissions
     const login = await loginRequired(to, from)
     if (login) {
-        hasPermissions = store.getters['auth/findPermissions'](permissions)
+        hasPermissions = store.getters['auth/checkPermissions'](permissions)
     }
 
     if (!hasPermissions) {

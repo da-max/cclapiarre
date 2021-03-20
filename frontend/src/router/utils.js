@@ -4,61 +4,45 @@ export async function loginRequired (to, _from) {
     if (store.state.auth.currentUser === null) {
         await store.dispatch('auth/loadUser')
     }
-
-    const currentUser = store.state.auth.currentUser
-
-    return !!(currentUser && currentUser.username)
+    return !!(store.state.auth.currentUser && store.state.auth.currentUser.username)
 }
 
 export async function applicationPermissionRequired (
     to,
-    _from,
+    from,
     permission = 'admins'
 ) {
-    if (store.state.auth.currentUser === null) {
-        await store.dispatch('auth/loadUser')
-    }
-    if (store.state.application.applications.length === 0) {
-        await store.dispatch('application/getApplications')
-    }
-
-    const application = store.getters['application/applicationBySlug'](
-        to.params.application
-    )
-    try {
-        if (store.state.auth.currentUser.isSuperuser) {
-            return true
-        }
-        if (
-            application[permission].find(
+    let hasPermission
+    if (loginRequired(to, from)) {
+        if (store.state.application.applications.length === 0) {
+            await store.dispatch('application/getApplications')
+            const application = store
+                .getters['application/applicationBySlug'](to.params.application)
+            hasPermission = application[permission].find(
                 (user) => user.id === store.state.auth.currentUser.id
             )
-        ) {
-            return true
-        } else {
-            store.commit('alert/ADD_PERMISSION_DENIED')
-            return false
         }
-    } catch {
-        return false
+        if (!hasPermission) {
+            store.commit('alert/ADD_PERMISSION_DENIED')
+        }
     }
+    return !!hasPermission
 }
 
-export async function groupRequired (to, _from, groupRequired) {
-    if (store.state.auth.currentUser === null) {
-        await store.dispatch('auth/loadUser')
+export async function groupRequired (to, from, groupRequired) {
+    let group
+    if (loginRequired(to, from)) {
+        group = store.getters['auth/findGroup'](groupRequired)
     }
+    return !!group
+}
 
-    const currentUser = store.state.auth.currentUser
-
-    if (currentUser && currentUser.username) {
-        return !(
-            !currentUser.isSuperuser &&
-      currentUser.groups.filter((group) => group.name === groupRequired)
-        )
-    } else {
-        return false
+export function permissionRequired (to, from, permission) {
+    let hasPermission
+    if (loginRequired(to, from)) {
+        hasPermission = store.getters['auth/findPermission'](permission)
     }
+    return !!hasPermission
 }
 
 export function utilsBeforeEach () {

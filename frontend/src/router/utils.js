@@ -37,9 +37,10 @@ export async function groupRequired (to, from, groupRequired) {
     return !!group
 }
 
-export function permissionRequired (to, from, permission) {
+export async function permissionRequired (to, from, permission) {
     let hasPermission
-    if (loginRequired(to, from)) {
+    const login = await loginRequired(to, from)
+    if (login) {
         hasPermission = store.getters['auth/findPermission'](permission)
     }
     return !!hasPermission

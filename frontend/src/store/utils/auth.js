@@ -77,14 +77,12 @@ export default {
     getters: {
         isSuperuser: (state) => state.currentUser.isSuperuser,
         findPermission: (state, getters) => {
-            return (codename) => {
+            return (codename) =>
                 getters.isSuperuser || state.currentUser.userPermissions.find(permission => permission.codename === codename)
-            }
         },
         findGroup: (state, getters) => {
-            return (groupName) => {
+            return (groupName) =>
                 getters.isSuperuser || state.currentUser.groups.find((group) => group === groupName)
-            }
         }
     }
 }

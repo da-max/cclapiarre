@@ -1,7 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import { loginRequired, utilsBeforeEach, utilsAfterEach, applicationPermissionRequired } from '@/router/utils'
+import {
+    applicationPermissionRequired,
+    loginRequired,
+    permissionRequired,
+    utilsBeforeEach,
+    utilsAfterEach
+} from '@/router/utils'
 import applicationRoutes from './application'
 import coffeeRoutes from './coffee'
 import citrusRoutes from './citrus'
@@ -54,7 +60,17 @@ router.beforeEach(async (to, from, next) => {
     }
 
     if (to.matched.some(record => record.meta.applicationPermission) && go) {
-        go = await applicationPermissionRequired(to, from, to.meta.applicationPermission)
+        go = await applicationPermissionRequired(
+            to,
+            from,
+            to.meta.applicationPermission)
+    }
+
+    if (to.matched.some(record => record.meta.permissionRequired) && go) {
+        go = await permissionRequired(
+            to,
+            from,
+            to.meta.permissionRequired)
     }
 
     go ? next() : next(`${CONNECTION_URL}?next=${to.path}`)

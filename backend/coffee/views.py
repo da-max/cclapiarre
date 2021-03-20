@@ -304,7 +304,7 @@ def delete_coffee(request, id_coffee):
 
 
 @login_required
-@permission_required('coffee.view_commandcoffee', raise_exception=True)
+@permission_required('coffee.view_coffeeorder', raise_exception=True)
 def global_command(request):
 
     quantitys = CoffeeAmount.objects.all()
@@ -325,7 +325,7 @@ def global_command(request):
 
 
 @login_required
-@permission_required('coffee.view_commandcoffee', raise_exception=True)
+@permission_required('coffee.view_coffeeorder', raise_exception=True)
 @pdf_decorator(pdfname="commande_global.pdf")
 def pdf_global_command(request):
 
@@ -344,7 +344,7 @@ def pdf_global_command(request):
 
 
 @login_required
-@permission_required('coffee.view_commandcoffee', raise_exception=True)
+@permission_required('coffee.view_coffeeorder', raise_exception=True)
 @pdf_decorator(pdfname="liste_des_commandes.pdf")
 def pdf_list_command(request):
 

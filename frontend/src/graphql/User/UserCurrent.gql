@@ -7,7 +7,7 @@ query UserCurrent {
     userPermissions {
       codename
       contentType {
-        model
+        appLabel
       }
     }
     groups {

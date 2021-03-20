@@ -53,6 +53,7 @@
     <template #footer>
       <div class="uk-flex uk-flex-center">
         <UtilsButton
+          v-show="canDeleteOrder"
           type="danger"
           @click="$emit('confirm-remove', order)"
         >
@@ -65,6 +66,7 @@
 
 <script>
 import { computed } from '@vue/composition-api'
+import useCoffee from '@/composition/coffee/useCoffee'
 
 import UtilsCard from '@/components/Utils/UtilsCard.vue'
 import UtilsButton from '@/components/Utils/UtilsButton.vue'
@@ -82,6 +84,8 @@ export default {
         }
     },
     setup (props) {
+        const { canDeleteOrder } = useCoffee()
+
         const totalPrice = computed(() => {
             let price = 0
             props.order.node.amounts.edges.forEach((amount) => {
@@ -95,6 +99,7 @@ export default {
         })
 
         return {
+            canDeleteOrder,
             totalPrice
         }
     }

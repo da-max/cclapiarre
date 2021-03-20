@@ -40,7 +40,7 @@ export default function () {
     }
 
     const addCoffeeOrder = (coffee) => {
-    // eslint-disable-next-line no-undef
+        // eslint-disable-next-line no-undef
         UIkit.scroll('#add-coffee-button', { offset: 100 }).scrollTo('#order-list')
 
         store.commit('coffee/ADD_COFFEE_ORDER', coffee)
@@ -82,8 +82,11 @@ export default function () {
 
     const { mutate: orderRemove, onDone: onDoneRemoveOrder } = useMutation(BACTH_ORDER_REMOVE)
 
+    // Getters
+    const canDeleteOrder = computed(() => store.getters['auth/findPermission']('delete_coffeeorder'))
+
     return {
-    // State
+        // State
         ...toRefs(state),
 
         // Store state or getter
@@ -111,6 +114,9 @@ export default function () {
         allOrder,
         displayDetails,
         orderRemove,
-        onDoneRemoveOrder
+        onDoneRemoveOrder,
+
+        // Getters
+        canDeleteOrder
     }
 }

@@ -16,6 +16,7 @@
         Générer le récapitulatif PDF de la commande
       </a>
       <UtilsButton
+        v-show="canDeleteOrder"
         type="danger"
         class="uk-margin-large-left"
         @click="confirmRemoveAllOrder"
@@ -27,7 +28,7 @@
       v-if="loading"
       class="uk-text-center"
     >
-      Chargement en cours.
+      Chargement en cours...
     </div>
     <div
       v-else-if="orders.edges.length === 0"
@@ -77,7 +78,12 @@ export default {
             orderToDelete: []
         })
 
-        const { coffeeSelect, displayDetails, allOrder } = useCoffee()
+        const {
+            canDeleteOrder,
+            coffeeSelect,
+            displayDetails,
+            allOrder
+        } = useCoffee()
 
         const { orders, loading, refetchOrderAll } = allOrder()
 
@@ -94,13 +100,14 @@ export default {
         }
 
         return {
-            orders,
-            loading,
+            canDeleteOrder,
             coffeeSelect,
-            displayDetails,
-            refetchOrderAll,
             confirmRemoveAllOrder,
             confirmRemoveOrder,
+            displayDetails,
+            loading,
+            orders,
+            refetchOrderAll,
             ...toRefs(state)
         }
     }

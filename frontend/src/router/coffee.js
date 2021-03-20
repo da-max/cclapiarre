@@ -5,7 +5,7 @@ export default [
         component: () => import(/* webpackChunkName: "coffee-order" */ '../views/Coffee/Order.vue'),
         meta: {
             loginRequired: true,
-            permissionRequired: 'add_coffeeorder'
+            permissionRequired: 'coffee.add_coffeeorder'
         }
     },
     {
@@ -14,7 +14,7 @@ export default [
         component: () => import(/* webpackChunkName: "coffee-order-list" */ '../views/Coffee/OrderList.vue'),
         meta: {
             loginRequired: true,
-            permissionRequired: 'view_coffeeorder'
+            permissionRequired: 'coffee.view_coffeeorder'
         }
     }
 ]

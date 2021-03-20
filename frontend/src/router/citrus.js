@@ -5,7 +5,7 @@ export default [
         component: () => import(/* webpackChunkName "citrus-list" */'../views/Citrus/ProductList.vue'),
         meta: {
             loginRequired: true,
-            permissionRequired: 'view_citrusproduct'
+            permissionRequired: 'citrus.view_citrusproduct'
         }
     },
     {
@@ -14,7 +14,7 @@ export default [
         component: () => import(/* webpackChunkName "citrus-order" */'../views/Citrus/Order'),
         meta: {
             loginRequired: true,
-            permissionRequired: 'add_citrusorder'
+            permissionRequired: 'citrus.add_citrusorder'
         }
     }
 ]

@@ -28,7 +28,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "member-list" */ '../views/Registration/MemberList.vue'),
         meta: {
             loginRequired: true,
-            permissionRequired: 'view_information'
+            permissionRequired: 'registration.view_information'
         }
     },
     {

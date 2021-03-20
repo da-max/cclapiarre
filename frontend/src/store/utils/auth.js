@@ -84,13 +84,13 @@ export default {
                     permission = state.currentUser.userPermissions
                         .find(
                             permission =>
-                                permission.codename === splitPermission[2] &&
-                                permission.contentType.appLabel === splitPermission[1]
+                                permission.codename === splitPermission[1] &&
+                                permission.contentType.appLabel === splitPermission[0]
                         )
                 } else {
                     permission = state.currentUser.userPermissions
                         .find(
-                            permission => permission.codename === splitPermission[1])
+                            permission => permission.codename === splitPermission[0])
                 }
                 return getters.isSuperuser || permission
             }

@@ -88,7 +88,7 @@ export default {
                     {
                         header: false,
                         body: `Une erreur est survenue, merci de réessayer : ${e}`,
-                        status: 'error',
+                        status: 'danger',
                         close: true
                     },
                     { root: true }

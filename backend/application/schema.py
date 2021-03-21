@@ -204,12 +204,14 @@ class CreateWeightMutation(DjangoCreateMutation):
         permissions = ('application.add_weight', )
 
 
-class UpdateApplication(DjangoModelFormMutation):
+class UpdateApplicationMutation(DjangoUpdateMutation):
     """GraphQl mutation for update Application."""
-    application = graphene.Field(ApplicationType)
 
     class Meta:
-        form_class = ApplicationForm
+        model = Application
+        login_required = True
+        exclude_fields = ('slug',)
+        optional_fields = ('images', 'description', 'table', 'admins', 'members')
 
 
 class UpdateProductMutation(DjangoUpdateMutation):
@@ -225,7 +227,7 @@ class Mutation(graphene.ObjectType):
     add_option = CreateOptionMutation.Field()
     add_weight = CreateWeightMutation.Field()
 
-    update_application = UpdateApplication.Field()
+    update_application = UpdateApplicationMutation.Field()
     update_product = UpdateProductMutation.Field()
 
 

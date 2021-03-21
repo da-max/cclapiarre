@@ -5,8 +5,9 @@ from graphene_django import DjangoObjectType
 from graphene_django.forms.mutation import DjangoModelFormMutation
 from graphene_django.fields import Field
 
-from backend.article.models import Article, Category
 from backend.article.forms import ArticleForm
+from backend.article.models import Article, Category
+from backend.registration.schema import UserLargeType
 
 
 class CategoryType(DjangoObjectType):
@@ -16,6 +17,8 @@ class CategoryType(DjangoObjectType):
 
 
 class ArticleType(DjangoObjectType):
+    author = graphene.Field(UserLargeType)
+
     class Meta:
         model = Article
         fields = ('id', 'title', 'content',

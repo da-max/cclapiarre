@@ -1,0 +1,7 @@
+#import "./ArticleFragment.gql"
+
+query AllArticle {
+  allArticle {
+    ...ArticleFragment
+  }
+}

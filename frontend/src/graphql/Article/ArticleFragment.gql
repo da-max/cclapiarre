@@ -1,0 +1,15 @@
+#import "../User/Fragment/UserFullFragment.gql"
+
+fragment ArticleFragment on ArticleType {
+  id
+  title
+  content
+  dateCreation
+  category {
+    id
+    name
+  }
+  author {
+    ...UserFullFragment
+  }
+}

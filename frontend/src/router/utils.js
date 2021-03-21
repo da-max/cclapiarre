@@ -13,15 +13,16 @@ export async function applicationPermissionRequired (
     permission = 'admins'
 ) {
     let hasPermission
-    if (loginRequired(to, from)) {
+    const login = await loginRequired(to, from)
+    if (login) {
         if (store.state.application.applications.length === 0) {
             await store.dispatch('application/getApplications')
-            const application = store
-                .getters['application/applicationBySlug'](to.params.application)
-            hasPermission = application[permission].find(
-                (user) => user.id === store.state.auth.currentUser.id
-            )
         }
+        const application = store
+            .getters['application/applicationBySlug'](to.params.application)
+        hasPermission = application[permission].find(
+            (user) => user === store.state.auth.currentUser.id
+        )
         if (!hasPermission) {
             store.commit('alert/ADD_PERMISSION_DENIED')
         }

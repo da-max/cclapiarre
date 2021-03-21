@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 
 import graphene
 from graphene.relay import Node
-from graphql_relay import from_global_id
+from graphql_relay import from_global_id, to_global_id
 from graphene_django import DjangoObjectType, DjangoListField
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.forms.mutation import DjangoModelFormMutation
@@ -39,28 +39,27 @@ class ApplicationType(DjangoObjectType):
     resolve_admins() -> User:
         Method for customise resolve of admins and check if user is authenticated.
     """
-    members = graphene.List(UserLargeType)
-    admins = graphene.List(UserLargeType)
+    members = graphene.List(graphene.ID)
+    admins = graphene.List(graphene.ID)
 
     class Meta:
         model = Application
         fields = '__all__'
         interfaces = (Node, )
 
-    def resolve_members(self, info) -> User:
+    def resolve_members(self, info) -> list:
         """ Method for customise resolve of members and check if user is authenticated. """
-        members = User.objects.filter(member_application=self)
-        if info.context.user.is_authenticated:
-            return members
-        else:
-            return members.only('id')
+        return [
+            to_global_id('UserLargeType', member.id)
+            for member in User.objects.filter(member_application=self)
+        ]
 
-    def resolve_admins(self, info) -> User:
+    def resolve_admins(self, info) -> graphene.ID:
         """ Method for customise resolve of admins and check if user is authenticated. """
-        if info.context.user.is_authenticated:
-            return User.objects.filter(admin_application=self)
-        else:
-            return User.objects.filter(admin_application=self).only('id')
+        return [
+            to_global_id('UserLargeType', admin.id)
+            for admin in User.objects.filter(admin_application=self)
+        ]
 
 
 class OptionType(DjangoObjectType):

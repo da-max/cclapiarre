@@ -4,11 +4,7 @@ query ApplicationAllSmall {
   allApplications {
     ...ApplicationSmallFragment
     slug
-    members {
-      id
-    }
-    admins {
-      id
-    }
+    members
+    admins
   }
 }

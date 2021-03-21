@@ -12,6 +12,7 @@ import {
 import applicationRoutes from '@/router/application'
 import coffeeRoutes from '@/router/coffee'
 import citrusRoutes from '@/router/citrus'
+import articleRoutes from '@/router/article'
 
 const CONNECTION_URL = '/compte/connexion'
 
@@ -39,7 +40,8 @@ const routes = [
     },
     ...citrusRoutes,
     ...coffeeRoutes,
-    ...applicationRoutes
+    ...applicationRoutes,
+    ...articleRoutes
 ]
 
 const router = new VueRouter({

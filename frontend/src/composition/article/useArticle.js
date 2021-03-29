@@ -1,28 +1,60 @@
 import { computed } from '@vue/composition-api'
-import { useResult } from '@vue/apollo-composable'
 
-import { useUtilsQuery } from '@/composition/useUtils'
+import { useShowModal, useHideModal } from '@/composition/useUtils'
 import store from '@/store/index'
 
-import ARTICLE_ALL from '@/graphql/Article/ArticleAll.gql'
-
 export default function () {
-    const allArticle = () => {
-        const { result, loading } = useUtilsQuery(ARTICLE_ALL)
-        const articles = useResult(result)
+    // Store state
+    const articles = computed(() => store.state.article.articles)
 
-        return {
-            articles,
-            loading
-        }
+    // Store getters
+    const getArticleSelect = computed(() => store.getters['article/getArticleSelect'])
+
+    // Store mutations
+    const setArticleSelect = (articleId) => { store.commit('article/SET_ARTICLE_SELECT', articleId) }
+
+    // Store actions
+    const getArticles = () => { store.dispatch('article/getArticles') }
+
+    // Methods
+    const closeArticleModal = async () => {
+        setArticleSelect(undefined)
+        useHideModal('#article-modal')
     }
+
+    const showArticleModal = async (articleId = undefined) => {
+        setArticleSelect(articleId)
+        useShowModal('#article-modal')
+    }
+
+    // State
+    const article = computed(() => getArticleSelect.value !== undefined
+        ? { ...getArticleSelect.value } : {
+            title: '',
+            content: '',
+            categoryId: 0
+        })
 
     const canChangeArticle = computed(() => store.getters['auth/findPermission']('article.change_article'))
     const canDeleteArticle = computed(() => store.getters['auth/findPermission']('article.delete_article'))
 
     return {
-        allArticle,
+        // Store state
+        articles,
+
+        // Store getters
+        getArticleSelect,
+
+        // Store actions
+        getArticles,
+
+        // State
+        article,
+
+        // Methods
         canChangeArticle,
-        canDeleteArticle
+        canDeleteArticle,
+        closeArticleModal,
+        showArticleModal
     }
 }

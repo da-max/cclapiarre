@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import AuthModule from '@/store/utils/auth'
 import AlertModule from '@/store/utils/alert'
-import OrderModule from '@/store/application/order'
 import ApplicationModule from '@/store/application/application'
-import CoffeeModule from '@/store/coffee/coffee'
+import AuthModule from '@/store/utils/auth'
+import ArticleModule from '@/store/article/article'
 import CitrusModule from '@/store/citrus/citrus'
 import CitrusOrderModule from '@/store/citrus/order'
+import CoffeeModule from '@/store/coffee/coffee'
+import OrderModule from '@/store/application/order'
 
 Vue.use(Vuex)
 
@@ -28,12 +29,13 @@ export default new Vuex.Store({
 
     },
     modules: {
-        auth: AuthModule,
         alert: AlertModule,
-        order: OrderModule,
         application: ApplicationModule,
-        coffee: CoffeeModule,
+        auth: AuthModule,
+        article: ArticleModule,
         citrus: CitrusModule,
-        citrusOrder: CitrusOrderModule
+        citrusOrder: CitrusOrderModule,
+        coffee: CoffeeModule,
+        order: OrderModule
     }
 })

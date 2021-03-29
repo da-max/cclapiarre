@@ -2,8 +2,8 @@ from django.utils import timezone
 
 import graphene
 from graphene_django import DjangoObjectType
-from graphene_django.forms.mutation import DjangoModelFormMutation
 from graphene_django.fields import Field
+from graphene_django_cud.mutations import DjangoCreateMutation, DjangoUpdateMutation
 
 from backend.article.forms import ArticleForm
 from backend.article.models import Article, Category
@@ -25,38 +25,27 @@ class ArticleType(DjangoObjectType):
                   'date_creation', 'category', 'author')
 
 
-class AddArticle(DjangoModelFormMutation):
-    """ Mutation for add article, this use form class,
-    and modify perform_mutate method for get and save data
-    in database.
+class CreateArticleMutations(DjangoCreateMutation):
     """
-    article = Field(ArticleType)
-
+    Class for define CreateArticle mutation.
+    """
     class Meta:
-        form_class = ArticleForm
-
-    def perform_mutate(form, info):
-        """ This method save article in database and
-        set many data (author, date_creation). """
-        title = form.cleaned_data['title']
-        content = form.cleaned_data['content']
-        category = form.cleaned_data['category']
-
-        article = Article.objects.create(
-            title=title, content=content, category=category, date_creation=timezone.now(), author=info.context.user)
-
-        return article
-
-    def resolve_article(self, info, **kwargs):
-        return self
+        model = Article
+        permission_required = ('article.add_article',)
+        login_required = True
+        exclude_fields = ('date_creation', 'author')
+        auto_context_fields = {
+            'author': 'user'
+        }
 
 
-class ChangeArticle(DjangoModelFormMutation):
+class UpdateArticleMutation(DjangoUpdateMutation):
     """ Mutation for change an article."""
-    article = Field(ArticleType)
 
     class Meta:
-        form_class = ArticleForm
+        model = Article
+        permission_required = ('article.change_article',)
+        login_required = True
 
 
 class Query(graphene.ObjectType):
@@ -71,5 +60,5 @@ class Query(graphene.ObjectType):
 
 
 class Mutation(graphene.ObjectType):
-    add_article = AddArticle.Field()
-    change_article = ChangeArticle.Field()
+    add_article = CreateArticleMutations.Field()
+    change_article = UpdateArticleMutation.Field()

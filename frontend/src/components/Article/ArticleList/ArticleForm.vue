@@ -7,7 +7,10 @@
       :value="article.title"
     />
     <div>
-      <label for="categories">Catégories</label>
+      <label
+        for="categories"
+        class="uk-form-label"
+      >Catégories</label>
       <div class="uk-form-controls">
         <select
           id="categories"
@@ -15,7 +18,7 @@
           class="uk-select"
           name="categories"
         >
-          <option :value="null">
+          <option :value="{id: null}">
             ---
           </option>
           <option

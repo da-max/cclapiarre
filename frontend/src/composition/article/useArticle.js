@@ -39,6 +39,7 @@ export default function () {
             }
         })
 
+    const canAddArticle = computed(() => store.getters['auth/findPermission']('article.add_article'))
     const canChangeArticle = computed(() => store.getters['auth/findPermission']('article.change_article'))
     const canDeleteArticle = computed(() => store.getters['auth/findPermission']('article.delete_article'))
 
@@ -58,8 +59,10 @@ export default function () {
         article,
 
         // Methods
+        canAddArticle,
         canChangeArticle,
         canDeleteArticle,
+
         closeArticleModal,
         showArticleModal
     }

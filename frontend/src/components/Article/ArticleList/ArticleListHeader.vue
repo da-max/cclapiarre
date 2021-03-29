@@ -3,7 +3,10 @@
     <h1 class="uk-text-center">
       Liste des articles
     </h1>
-    <div class="uk-text-center uk-margin-large-top">
+    <div
+      v-show="canAddArticle"
+      class="uk-text-center uk-margin-large-top"
+    >
       <UtilsButton
         @click="showArticleModal"
       >
@@ -23,9 +26,10 @@ export default {
         UtilsButton
     },
     setup () {
-        const { showArticleModal } = useArticle()
+        const { canAddArticle, showArticleModal } = useArticle()
 
         return {
+            canAddArticle,
             showArticleModal
         }
     }

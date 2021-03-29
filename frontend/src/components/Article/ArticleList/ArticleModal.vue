@@ -24,6 +24,7 @@
         <UtilsButton
           class="uk-margin-medium-left"
           type="primary"
+          @click="addArticle()"
         >
           Ajouter
         </UtilsButton>
@@ -33,9 +34,11 @@
 </template>
 
 <script>
+import useArticle from '@/composition/article/useArticle'
+
 import UtilsModal from '@/components/Utils/UtilsModal'
 import UtilsButton from '@/components/Utils/UtilsButton'
-import ArticleForm from './ArticleForm.vue'
+import ArticleForm from '@/components/Article/ArticleList/ArticleForm.vue'
 
 export default {
     name: 'ArticleAddModal',
@@ -43,6 +46,15 @@ export default {
         ArticleForm,
         UtilsButton,
         UtilsModal
+    },
+    setup () {
+        const { closeArticleModal, saveArticle } = useArticle()
+
+        const addArticle = async () => {
+            await saveArticle()
+            closeArticleModal()
+        }
+        return { addArticle }
     }
 }
 </script>

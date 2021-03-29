@@ -5,6 +5,7 @@ import store from '@/store/index'
 
 export default function () {
     // Store state
+    const article = computed(() => store.state.article.articleSelect)
     const articles = computed(() => store.state.article.articles)
     const categories = computed(() => store.state.article.categories)
 
@@ -12,32 +13,26 @@ export default function () {
     const getArticleSelect = computed(() => store.getters['article/getArticleSelect'])
 
     // Store mutations
-    const setArticleSelect = (articleId) => { store.commit('article/SET_ARTICLE_SELECT', articleId) }
+    const setArticleSelect = (article) => { store.commit('article/SET_ARTICLE_SELECT', article) }
+    const setArticleSelectDefault = () => { store.commit('article/SET_ARTICLE_SELECT_DEFAULT') }
 
     // Store actions
     const getArticles = () => { store.dispatch('article/getArticles') }
     const getCategories = () => { store.dispatch('article/getCategories') }
+    const saveArticle = async () => { await store.dispatch('article/saveArticle') }
 
     // Methods
     const closeArticleModal = async () => {
-        setArticleSelect(undefined)
+        setArticleSelectDefault()
         useHideModal('#article-modal')
     }
 
-    const showArticleModal = async (articleId = undefined) => {
-        setArticleSelect(articleId)
+    const showArticleModal = async (article) => {
+        article ? setArticleSelect(article) : setArticleSelectDefault()
         useShowModal('#article-modal')
     }
 
     // State
-    const article = computed(() => getArticleSelect.value !== undefined
-        ? { ...getArticleSelect.value } : {
-            title: '',
-            content: '',
-            category: {
-                id: null
-            }
-        })
 
     const canAddArticle = computed(() => store.getters['auth/findPermission']('article.add_article'))
     const canChangeArticle = computed(() => store.getters['auth/findPermission']('article.change_article'))
@@ -54,6 +49,7 @@ export default function () {
         // Store actions
         getArticles,
         getCategories,
+        saveArticle,
 
         // State
         article,

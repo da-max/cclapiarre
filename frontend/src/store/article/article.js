@@ -2,18 +2,36 @@ import apolloClient from '@/vue-apollo'
 
 import ARTICLE_ALL from '@/graphql/Article/ArticleAll.gql'
 import CATEGORY_ALL from '@/graphql/Article/Category/CategoryAll.gql'
+import ARTICLE_ADD from '@/graphql/Article/ArticleAdd.gql'
 
 export default {
     namespaced: true,
     state: () => ({
         articles: [],
-        articleSelect: null,
+        articleSelect: {
+            title: '',
+            content: '',
+            category: null
+        },
         categories: []
     }),
     mutations: {
-        SET_ARTICLE_SELECT (state, articleId) {
-            state.articleSelect = articleId
+        ADD_ARTICLE (state, article) {
+            state.articles = [article, ...state.articles]
         },
+
+        SET_ARTICLE_SELECT (state, article) {
+            state.articleSelect = article
+        },
+
+        SET_ARTICLE_SELECT_DEFAULT (state) {
+            state.articleSelect = {
+                title: '',
+                content: '',
+                category: null
+            }
+        },
+
         SET_ARTICLES (state, articles) {
             state.articles = articles
         },
@@ -49,6 +67,33 @@ export default {
             } finally {
                 commit('END_LOADING', null, { root: true })
             }
+        },
+
+        async saveArticle ({ state, commit }) {
+            commit('START_LOADING', null, { root: true })
+            try {
+                const response = await apolloClient.mutate({
+                    mutation: ARTICLE_ADD,
+                    variables: {
+                        input: state.articleSelect
+                    }
+                })
+
+                commit('ADD_ARTICLE', { ...response.data.addArticle.article })
+                commit('alert/ADD_ALERT', {
+                    header: false,
+                    body: 'L’article a bien été ajouté.',
+                    status: 'success',
+                    close: true
+                }, { root: true })
+            } catch (e) {
+                commit('alert/ADD_ERROR', e, { root: true })
+            } finally {
+                commit('END_LOADING', null, { root: true })
+            }
+        },
+
+        async updateArticle ({ state, commit }) {
         }
     },
     getters: {

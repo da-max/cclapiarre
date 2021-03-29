@@ -1,12 +1,14 @@
 import apolloClient from '@/vue-apollo'
 
 import ARTICLE_ALL from '@/graphql/Article/ArticleAll.gql'
+import CATEGORY_ALL from '@/graphql/Article/Category/CategoryAll.gql'
 
 export default {
     namespaced: true,
     state: () => ({
         articles: [],
-        articleSelect: '1'
+        articleSelect: null,
+        categories: []
     }),
     mutations: {
         SET_ARTICLE_SELECT (state, articleId) {
@@ -14,6 +16,10 @@ export default {
         },
         SET_ARTICLES (state, articles) {
             state.articles = articles
+        },
+
+        SET_CATEGORIES (state, categories) {
+            state.categories = categories
         }
     },
     actions: {
@@ -25,12 +31,21 @@ export default {
                 })
                 commit('SET_ARTICLES', response.data.allArticles)
             } catch (e) {
-                commit('alert/ADD_ALERT', {
-                    header: false,
-                    body: `Une erreur est survenue, merci de réessayer : ${e}`,
-                    status: 'danger',
-                    close: true
-                }, { root: true })
+                commit('alert/ADD_ERROR', e, { root: true })
+            } finally {
+                commit('END_LOADING', null, { root: true })
+            }
+        },
+
+        async getCategories ({ commit }) {
+            commit('START_LOADING', null, { root: true })
+            try {
+                const response = await apolloClient.query({
+                    query: CATEGORY_ALL
+                })
+                commit('SET_CATEGORIES', response.data.allCategories)
+            } catch (e) {
+                commit('alert/ADD_ERROR', e, { root: true })
             } finally {
                 commit('END_LOADING', null, { root: true })
             }

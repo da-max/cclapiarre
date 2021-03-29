@@ -6,6 +6,7 @@ import store from '@/store/index'
 export default function () {
     // Store state
     const articles = computed(() => store.state.article.articles)
+    const categories = computed(() => store.state.article.categories)
 
     // Store getters
     const getArticleSelect = computed(() => store.getters['article/getArticleSelect'])
@@ -15,6 +16,7 @@ export default function () {
 
     // Store actions
     const getArticles = () => { store.dispatch('article/getArticles') }
+    const getCategories = () => { store.dispatch('article/getCategories') }
 
     // Methods
     const closeArticleModal = async () => {
@@ -32,7 +34,9 @@ export default function () {
         ? { ...getArticleSelect.value } : {
             title: '',
             content: '',
-            categoryId: 0
+            category: {
+                id: null
+            }
         })
 
     const canChangeArticle = computed(() => store.getters['auth/findPermission']('article.change_article'))
@@ -41,12 +45,14 @@ export default function () {
     return {
         // Store state
         articles,
+        categories,
 
         // Store getters
         getArticleSelect,
 
         // Store actions
         getArticles,
+        getCategories,
 
         // State
         article,

@@ -1,12 +1,6 @@
 <template>
   <p
-    v-if="loading"
-    class="uk-text-center"
-  >
-    Chargement en cours...
-  </p>
-  <p
-    v-else-if="articles.length === 0"
+    v-if="articles.length === 0"
     class="uk-text-center"
   >
     Aucun article.
@@ -22,6 +16,7 @@
       :actions="true"
       class="uk-padding uk-background-default"
     />
+    <ArticleModal />
   </section>
 </template>
 
@@ -29,20 +24,20 @@
 import useArticle from '@/composition/article/useArticle'
 
 import Article from '@/components/Article/Article'
+import ArticleModal from '@/components/Article/ArticleList/ArticleModal'
 
 export default {
     name: 'ArticleListSection',
     components: {
-        Article
+        Article,
+        ArticleModal
+
     },
     setup () {
-        const { allArticle } = useArticle()
-
-        const { articles, loading } = allArticle()
+        const { articles } = useArticle()
 
         return {
-            articles,
-            loading
+            articles
         }
     }
 }

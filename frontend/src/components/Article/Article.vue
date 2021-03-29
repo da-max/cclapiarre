@@ -17,7 +17,7 @@
       <div>
         <UtilsButton
           v-show="canChangeArticle"
-          @click="$emit('update-article', article.id)"
+          @click="showArticleModal(article.id)"
         >
           Modifier
         </UtilsButton>
@@ -58,12 +58,16 @@ export default {
     setup () {
         const {
             canChangeArticle,
-            canDeleteArticle
+            canDeleteArticle,
+
+            showArticleModal
         } = useArticle()
 
         return {
             canChangeArticle,
-            canDeleteArticle
+            canDeleteArticle,
+
+            showArticleModal
         }
     }
 }

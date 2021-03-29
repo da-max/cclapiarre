@@ -79,6 +79,16 @@ export default {
                 close: true
             })
         },
+
+        ADD_ERROR (_state, e) {
+            this.commit('alert/ADD_ALERT', {
+                header: false,
+                body: `Une erreur est survenue, merci de réessayer : ${e}`,
+                status: 'danger',
+                close: true
+            })
+        },
+
         ADD_UNKNOWN (state) {
             this.commit('alert/ADD_ALERT', {
                 id: state.alertId,

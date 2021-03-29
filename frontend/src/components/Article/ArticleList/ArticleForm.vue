@@ -1,11 +1,33 @@
 <template>
-  <form class="uk-for-horizontal">
+  <form class="uk-form-horizontal">
     <FormInput
       v-model="article.title"
       name="title"
       label="Titre de l’article"
       :value="article.title"
     />
+    <div>
+      <label for="categories">Catégories</label>
+      <div class="uk-form-controls">
+        <select
+          id="categories"
+          v-model="article.category"
+          class="uk-select"
+          name="categories"
+        >
+          <option :value="null">
+            ---
+          </option>
+          <option
+            v-for="category in categories"
+            :key="category.id"
+            :value="category"
+          >
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
+    </div>
     <div class="uk-margin-medium-top">
       <label
         for="description"
@@ -36,10 +58,13 @@ export default {
         ckeditor: CKEditor.component
     },
     setup () {
-        const { article } = useArticle()
+        const { article, categories, getCategories } = useArticle()
+
+        getCategories()
 
         return {
             article,
+            categories,
             editor: ClassicEditor
         }
     }

@@ -35,16 +35,11 @@ export default {
             adminPanelItems: [
                 {
                     title: 'Articles',
-                    subItems: [
-                        {
-                            name: 'Liste des articles',
-                            link: '/article/liste-des-articles'
-                        },
-                        {
-                            name: 'Créer un article',
-                            link: '/article/creer-un-article'
-                        }
-                    ]
+                    routerLink: { name: 'ArticleList' }
+                },
+                {
+                    title: 'Agrumes',
+                    routerLink: { name: 'CitrusList' }
                 },
                 {
                     title: 'Évènements',
@@ -119,15 +114,6 @@ export default {
                         {
                             name: 'Ajouter une règles d’accès à une page',
                             link: '/parametre/creer-une-regle-d-acces'
-                        }
-                    ]
-                },
-                {
-                    title: 'Agrumes',
-                    subItems: [
-                        {
-                            name: 'Liste des produits',
-                            routerLink: { name: 'CitrusList' }
                         }
                     ]
                 }

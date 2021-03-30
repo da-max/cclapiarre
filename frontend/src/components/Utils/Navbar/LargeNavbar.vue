@@ -93,10 +93,26 @@
           <li
             v-for="adminPanelItem in adminPanelItems"
             :key="adminPanelItem.title"
-            class="uk-parent"
+            :class="{'uk-parent': adminPanelItem.subItems}"
           >
-            <a class="uk-nav-header">{{ adminPanelItem.title }}</a>
-            <ul class="uk-nav-sub">
+            <a
+              v-if="adminPanelItem.subItems"
+              class="uk-nav-header"
+            >{{ adminPanelItem.title }}</a>
+            <a
+              v-else-if="adminPanelItem.link"
+              :href="adminPanelItem.link"
+            >{{ adminPanelItems.link }}</a>
+            <router-link
+              v-else-if="adminPanelItem.routerLink"
+              :to="adminPanelItem.routerLink"
+            >
+              {{ adminPanelItem.title }}
+            </router-link>
+            <ul
+              v-if="adminPanelItem.subItems"
+              class="uk-nav-sub"
+            >
               <li
                 v-for="subItem in adminPanelItem.subItems"
                 :key="subItem.name"

@@ -1,5 +1,8 @@
 <template>
-  <UtilsModal id="article-delete-modal">
+  <UtilsModal
+    id="article-delete-modal"
+    :bg-close="true"
+  >
     <template #header>
       Supprimer l’article ?
     </template>

@@ -46,6 +46,10 @@ class UpdateArticleMutation(DjangoUpdateMutation):
         model = Article
         permission_required = ('article.change_article',)
         login_required = True
+        exclude_fields = ('date_creation', 'author')
+        auto_context_fields = {
+            'author': 'user'
+        }
 
 
 class Query(graphene.ObjectType):
@@ -61,4 +65,4 @@ class Query(graphene.ObjectType):
 
 class Mutation(graphene.ObjectType):
     add_article = CreateArticleMutations.Field()
-    change_article = UpdateArticleMutation.Field()
+    update_article = UpdateArticleMutation.Field()

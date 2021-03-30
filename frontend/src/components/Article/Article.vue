@@ -25,7 +25,7 @@
           v-show="canDeleteArticle"
           class="uk-margin-medium-left"
           type="danger"
-          @click="$emit('delete-article', article.id)"
+          @click="showDeleteArticleModal(article.id)"
         >
           Supprimer
         </UtilsButton>
@@ -60,6 +60,7 @@ export default {
             canChangeArticle,
             canDeleteArticle,
 
+            showDeleteArticleModal,
             showArticleModal
         } = useArticle()
 
@@ -67,6 +68,7 @@ export default {
             canChangeArticle,
             canDeleteArticle,
 
+            showDeleteArticleModal,
             showArticleModal
         }
     }

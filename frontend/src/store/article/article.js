@@ -2,6 +2,7 @@ import apolloClient from '@/vue-apollo'
 
 import ARTICLE_ADD from '@/graphql/Article/ArticleAdd.gql'
 import ARTICLE_ALL from '@/graphql/Article/ArticleAll.gql'
+import ARTICLE_DELETE from '@/graphql/Article/ArticleDelete.gql'
 import ARTICLE_UPDATE from '@/graphql/Article/ArticleUpdate.gql'
 import CATEGORY_ALL from '@/graphql/Article/Category/CategoryAll.gql'
 
@@ -19,6 +20,10 @@ export default {
     mutations: {
         ADD_ARTICLE (state, article) {
             state.articles = [article, ...state.articles]
+        },
+
+        DELETE_ARTICLE (state, articleId) {
+            state.articles = state.articles.filter(a => a.id !== articleId)
         },
 
         SET_ARTICLE_SELECT (state, article) {
@@ -49,6 +54,30 @@ export default {
         }
     },
     actions: {
+        async deleteArticle ({ state, commit }) {
+            commit('START_LOADING', null, { root: true })
+            try {
+                const response = await apolloClient.mutate({
+                    mutation: ARTICLE_DELETE,
+                    variables: {
+                        id: state.articleSelect.id
+                    }
+                })
+
+                commit('DELETE_ARTICLE', response.data.deleteArticle.deletedId)
+                commit('alert/ADD_ALERT', {
+                    header: false,
+                    body: 'L’article a bien été supprimé.',
+                    status: 'success',
+                    close: true
+                }, { root: true })
+            } catch (e) {
+                commit('alert/ADD_ERROR', e, { root: true })
+            } finally {
+                commit('END_LOADING', null, { root: true })
+            }
+        },
+
         async getArticles ({ commit }) {
             commit('START_LOADING', null, { root: true })
             try {

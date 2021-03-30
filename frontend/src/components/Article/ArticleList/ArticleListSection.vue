@@ -10,7 +10,7 @@
       v-else
       class="uk-width-1-2@m uk-margin-auto"
     >
-      <ArticleDefault
+      <Article
         v-for="(article, index) in articles"
         :key="index"
         :article="article"
@@ -20,6 +20,7 @@
     </section>
 
     <ArticleModal />
+    <ArticleDeleteModal />
   </section>
 </template>
 
@@ -27,12 +28,14 @@
 import useArticle from '@/composition/article/useArticle'
 
 import Article from '@/components/Article/Article'
+import ArticleDeleteModal from '@/components/Article/ArticleList/ArticleDeleteModal'
 import ArticleModal from '@/components/Article/ArticleList/ArticleModal'
 
 export default {
     name: 'ArticleListSection',
     components: {
-        ArticleDefault: Article,
+        Article,
+        ArticleDeleteModal,
         ArticleModal
 
     },

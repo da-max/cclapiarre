@@ -1,0 +1,6 @@
+mutation ArticleDelete($id: ID!) {
+  deleteArticle(id: $id) {
+    found,
+    deletedId
+  }
+}

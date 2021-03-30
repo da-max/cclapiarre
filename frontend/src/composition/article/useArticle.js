@@ -17,18 +17,24 @@ export default function () {
     const setArticleSelectDefault = () => { store.commit('article/SET_ARTICLE_SELECT_DEFAULT') }
 
     // Store actions
+    const deleteArticle = () => { store.dispatch('article/deleteArticle') }
     const getArticles = () => { store.dispatch('article/getArticles') }
     const getCategories = () => { store.dispatch('article/getCategories') }
     const saveArticle = async () => { await store.dispatch('article/saveArticle') }
     const updateArticle = async () => { await store.dispatch('article/updateArticle') }
 
     // Methods
-    const closeArticleModal = async () => {
+    const closeArticleModal = () => {
         setArticleSelectDefault()
         useHideModal('#article-modal')
     }
 
-    const showArticleModal = (articleId = undefined) => {
+    const closeDeleteArticleModal = () => {
+        setArticleSelectDefault()
+        useHideModal('#article-delete-modal')
+    }
+
+    const setArticle = (articleId) => {
         if (articleId) {
             const article = getArticleById(articleId)
             setArticleSelect({
@@ -38,17 +44,26 @@ export default function () {
         } else {
             setArticleSelectDefault()
         }
+    }
+
+    const showArticleModal = (articleId = undefined) => {
+        setArticle(articleId)
         useShowModal('#article-modal')
     }
 
-    // State
+    const showDeleteArticleModal = (articleId) => {
+        setArticle(articleId)
+        useShowModal('#article-delete-modal')
+    }
 
+    // State
     const canAddArticle = computed(() => store.getters['auth/findPermission']('article.add_article'))
     const canChangeArticle = computed(() => store.getters['auth/findPermission']('article.change_article'))
     const canDeleteArticle = computed(() => store.getters['auth/findPermission']('article.delete_article'))
 
     return {
         // Store state
+        article,
         articles,
         categories,
 
@@ -56,13 +71,11 @@ export default function () {
         getArticleById,
 
         // Store actions
+        deleteArticle,
         getArticles,
         getCategories,
         saveArticle,
         updateArticle,
-
-        // State
-        article,
 
         // Methods
         canAddArticle,
@@ -70,6 +83,8 @@ export default function () {
         canDeleteArticle,
 
         closeArticleModal,
-        showArticleModal
+        closeDeleteArticleModal,
+        showArticleModal,
+        showDeleteArticleModal
     }
 }

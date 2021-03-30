@@ -3,7 +3,7 @@ from django.utils import timezone
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.fields import Field
-from graphene_django_cud.mutations import DjangoCreateMutation, DjangoUpdateMutation
+from graphene_django_cud.mutations import DjangoCreateMutation, DjangoDeleteMutation, DjangoUpdateMutation
 
 from backend.article.forms import ArticleForm
 from backend.article.models import Article, Category
@@ -25,7 +25,7 @@ class ArticleType(DjangoObjectType):
                   'date_creation', 'category', 'author')
 
 
-class CreateArticleMutations(DjangoCreateMutation):
+class CreateArticleMutation(DjangoCreateMutation):
     """
     Class for define CreateArticle mutation.
     """
@@ -37,6 +37,14 @@ class CreateArticleMutations(DjangoCreateMutation):
         auto_context_fields = {
             'author': 'user'
         }
+
+
+class DeleteArticleMutation(DjangoDeleteMutation):
+    """ Mutation for delete an article. """
+    class Meta:
+        model = Article
+        permission_required = ('article.delete_article',)
+        login_required = True
 
 
 class UpdateArticleMutation(DjangoUpdateMutation):
@@ -64,5 +72,6 @@ class Query(graphene.ObjectType):
 
 
 class Mutation(graphene.ObjectType):
-    add_article = CreateArticleMutations.Field()
+    add_article = CreateArticleMutation.Field()
+    delete_article = DeleteArticleMutation.Field()
     update_article = UpdateArticleMutation.Field()

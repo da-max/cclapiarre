@@ -10,7 +10,7 @@ export default function () {
     const categories = computed(() => store.state.article.categories)
 
     // Store getters
-    const getArticleSelect = computed(() => store.getters['article/getArticleSelect'])
+    const getArticleById = (articleId) => store.getters['article/getArticleById'](articleId)
 
     // Store mutations
     const setArticleSelect = (article) => { store.commit('article/SET_ARTICLE_SELECT', article) }
@@ -20,6 +20,7 @@ export default function () {
     const getArticles = () => { store.dispatch('article/getArticles') }
     const getCategories = () => { store.dispatch('article/getCategories') }
     const saveArticle = async () => { await store.dispatch('article/saveArticle') }
+    const updateArticle = async () => { await store.dispatch('article/updateArticle') }
 
     // Methods
     const closeArticleModal = async () => {
@@ -27,8 +28,16 @@ export default function () {
         useHideModal('#article-modal')
     }
 
-    const showArticleModal = async (article) => {
-        article ? setArticleSelect(article) : setArticleSelectDefault()
+    const showArticleModal = (articleId = undefined) => {
+        if (articleId) {
+            const article = getArticleById(articleId)
+            setArticleSelect({
+                ...article,
+                category: article.category.id
+            })
+        } else {
+            setArticleSelectDefault()
+        }
         useShowModal('#article-modal')
     }
 
@@ -44,12 +53,13 @@ export default function () {
         categories,
 
         // Store getters
-        getArticleSelect,
+        getArticleById,
 
         // Store actions
         getArticles,
         getCategories,
         saveArticle,
+        updateArticle,
 
         // State
         article,

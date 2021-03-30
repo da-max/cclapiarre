@@ -18,7 +18,7 @@
           class="uk-select"
           name="categories"
         >
-          <option :value="{id: null}">
+          <option :value="null">
             ---
           </option>
           <option

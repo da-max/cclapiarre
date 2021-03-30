@@ -48,10 +48,14 @@ export default {
         UtilsModal
     },
     setup () {
-        const { closeArticleModal, saveArticle } = useArticle()
+        const { article, closeArticleModal, saveArticle, updateArticle } = useArticle()
 
-        const addArticle = async () => {
-            await saveArticle()
+        const addArticle = () => {
+            if (article.value.id) {
+                updateArticle()
+            } else {
+                saveArticle()
+            }
             closeArticleModal()
         }
         return { addArticle }

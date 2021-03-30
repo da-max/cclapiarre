@@ -1,0 +1,9 @@
+#import "./ArticleFragment.gql"
+
+mutation ArticleUpdate ($id: ID!, $input: UpdateArticleInput!) {
+  updateArticle(id: $id, input: $input) {
+    article {
+      ...ArticleFragment
+    }
+  }
+}

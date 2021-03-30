@@ -1,8 +1,9 @@
 import apolloClient from '@/vue-apollo'
 
-import ARTICLE_ALL from '@/graphql/Article/ArticleAll.gql'
-import CATEGORY_ALL from '@/graphql/Article/Category/CategoryAll.gql'
 import ARTICLE_ADD from '@/graphql/Article/ArticleAdd.gql'
+import ARTICLE_ALL from '@/graphql/Article/ArticleAll.gql'
+import ARTICLE_UPDATE from '@/graphql/Article/ArticleUpdate.gql'
+import CATEGORY_ALL from '@/graphql/Article/Category/CategoryAll.gql'
 
 export default {
     namespaced: true,
@@ -38,6 +39,13 @@ export default {
 
         SET_CATEGORIES (state, categories) {
             state.categories = categories
+        },
+
+        UPDATE_ARTICLE (state, article) {
+            state.articles = [
+                article,
+                ...state.articles.filter(a => a.id !== article.id)
+            ]
         }
     },
     actions: {
@@ -94,10 +102,38 @@ export default {
         },
 
         async updateArticle ({ state, commit }) {
+            commit('START_LOADING', null, { root: true })
+            try {
+                const article = {
+                    title: state.articleSelect.title,
+                    content: state.articleSelect.content,
+                    category: state.articleSelect.category
+                }
+                const response = await apolloClient.mutate({
+                    mutation: ARTICLE_UPDATE,
+                    variables: {
+                        id: state.articleSelect.id,
+                        input: article
+                    }
+                })
+
+                commit('UPDATE_ARTICLE', { ...response.data.updateArticle.article })
+                commit('alert/ADD_ALERT', {
+                    header: false,
+                    body: 'L’article a bien été modifié.',
+                    status: 'success',
+                    close: true
+                }, { root: true })
+            } catch (e) {
+                commit('alert/ADD_ERROR', e, { root: true })
+            } finally {
+                commit('END_LOADING', null, { root: true })
+            }
         }
     },
     getters: {
-        getArticleSelect: (state) =>
-            state.articles.find(article => article.id === state.articleSelect)
+        getArticleById: (state) => {
+            return (articleId) => state.articles.find(article => article.id === articleId)
+        }
     }
 }

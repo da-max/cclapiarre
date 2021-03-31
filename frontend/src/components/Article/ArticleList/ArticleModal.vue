@@ -26,7 +26,7 @@
           type="primary"
           @click="addArticle()"
         >
-          Ajouter
+          {{ article.id ? 'Modifier': 'Ajouter' }}
         </UtilsButton>
       </div>
     </template>
@@ -58,7 +58,7 @@ export default {
             }
             closeArticleModal()
         }
-        return { addArticle }
+        return { addArticle, article }
     }
 }
 </script>

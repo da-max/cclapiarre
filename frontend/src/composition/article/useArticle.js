@@ -18,7 +18,7 @@ export default function () {
 
     // Store actions
     const deleteArticle = () => { store.dispatch('article/deleteArticle') }
-    const getArticles = () => { store.dispatch('article/getArticles') }
+    const getArticles = (force = false) => { store.dispatch('article/getArticles', force) }
     const getCategories = () => { store.dispatch('article/getCategories') }
     const saveArticle = async () => { await store.dispatch('article/saveArticle') }
     const updateArticle = async () => { await store.dispatch('article/updateArticle') }

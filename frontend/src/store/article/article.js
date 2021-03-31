@@ -78,17 +78,19 @@ export default {
             }
         },
 
-        async getArticles ({ commit }) {
-            commit('START_LOADING', null, { root: true })
-            try {
-                const response = await apolloClient.query({
-                    query: ARTICLE_ALL
-                })
-                commit('SET_ARTICLES', response.data.allArticles)
-            } catch (e) {
-                commit('alert/ADD_ERROR', e, { root: true })
-            } finally {
-                commit('END_LOADING', null, { root: true })
+        async getArticles ({ state, commit }, force = false) {
+            if (state.articles.length === 0 || force) {
+                commit('START_LOADING', null, { root: true })
+                try {
+                    const response = await apolloClient.query({
+                        query: ARTICLE_ALL
+                    })
+                    commit('SET_ARTICLES', response.data.allArticles)
+                } catch (e) {
+                    commit('alert/ADD_ERROR', e, { root: true })
+                } finally {
+                    commit('END_LOADING', null, { root: true })
+                }
             }
         },
 

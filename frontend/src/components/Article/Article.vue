@@ -11,7 +11,7 @@
     </p>
     <p v-html="article.content" />
     <div
-      v-show="actions"
+      v-if="actions"
       class="uk-flex uk-flex-center"
     >
       <div>
@@ -31,6 +31,7 @@
         </UtilsButton>
       </div>
     </div>
+    <hr v-show="separator">
   </article>
 </template>
 
@@ -50,6 +51,11 @@ export default {
             type: Object
         },
         actions: {
+            required: false,
+            default: () => false,
+            type: Boolean
+        },
+        separator: {
             required: false,
             default: () => false,
             type: Boolean

@@ -4,15 +4,20 @@
       v-if="!loading"
       :carousels="result.allCarousels"
     />
+    <div class="uk-width-2-5@l uk-width4-5@s uk-margin-auto uk-margin-large-top">
+      <Alerts />
+    </div>
     <div
       uk-grid
-      class="uk-margin-auto uk-width-4-5@xl uk-width-expands uk-position-relative"
+      class="uk-margin-auto uk-width-4-5@xl uk-width-expands uk-margin-medium-top"
     >
-      <div class="uk-width-2-5@l uk-width4-5@s uk-margin-auto">
-        <Alerts />
-      </div>
       <div class="uk-width-2-3@l uk-width-auto">
-        Article
+        <Article
+          v-for="article in articles"
+          :key="article.id"
+          :article="article"
+          :separator="true"
+        />
       </div>
       <div class="uk-width-1-3@l uk-width-auto uk-text-justify uk-padding">
         <PresentationCard />
@@ -22,23 +27,32 @@
 </template>
 
 <script>
-import PresentationCard from '@/components/Home/PresentationCard'
-import Alerts from '@/components/Utils/Alert/Alerts'
-import Carousels from '@/components/Home/Carousels'
 import { useSetupTitle } from '@/composition/useUtils'
 import { useQuery } from '@vue/apollo-composable'
-import CarouselAll from '@/graphql/Carousel/CarouselAll.gql'
+import useArticle from '@/composition/article/useArticle'
+
+import Article from '@/components/Article/Article'
+import Alerts from '@/components/Utils/Alert/Alerts'
+import Carousels from '@/components/Home/Carousels'
+import PresentationCard from '@/components/Home/PresentationCard'
+
+import CAROUSEL_ALL from '@/graphql/Carousel/CarouselAll.gql'
 
 export default {
     components: {
+        Alerts,
+        Article,
         Carousels,
-        PresentationCard,
-        Alerts
+        PresentationCard
     },
     setup (props) {
         useSetupTitle('Accueil')
-        const { result, loading } = useQuery(CarouselAll)
+        const { result, loading } = useQuery(CAROUSEL_ALL)
+        const { articles, getArticles } = useArticle()
+
+        getArticles()
         return {
+            articles,
             result,
             loading
         }

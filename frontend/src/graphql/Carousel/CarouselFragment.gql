@@ -1,0 +1,7 @@
+fragment CarouselFragment on CarouselType {
+  id
+  title
+  image
+  description
+  position
+}

@@ -1,0 +1,5 @@
+mutation CarouselDelete($id: ID!) {
+  deleteCarousel(id: $id) {
+    deletedId
+  }
+}

@@ -3,8 +3,9 @@ import Vuex from 'vuex'
 
 import AlertModule from '@/store/utils/alert'
 import ApplicationModule from '@/store/application/application'
-import AuthModule from '@/store/utils/auth'
 import ArticleModule from '@/store/article/article'
+import AuthModule from '@/store/utils/auth'
+import CarouselModule from '@/store/carousel/carousel'
 import CitrusModule from '@/store/citrus/citrus'
 import CitrusOrderModule from '@/store/citrus/order'
 import CoffeeModule from '@/store/coffee/coffee'
@@ -13,6 +14,7 @@ import OrderModule from '@/store/application/order'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+    strict: true,
     state: {
         loading: false
     },
@@ -31,8 +33,9 @@ export default new Vuex.Store({
     modules: {
         alert: AlertModule,
         application: ApplicationModule,
-        auth: AuthModule,
         article: ArticleModule,
+        auth: AuthModule,
+        carousel: CarouselModule,
         citrus: CitrusModule,
         citrusOrder: CitrusOrderModule,
         coffee: CoffeeModule,

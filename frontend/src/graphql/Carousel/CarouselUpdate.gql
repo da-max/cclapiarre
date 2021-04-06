@@ -1,0 +1,9 @@
+#import "./CarouselFragment.gql"
+
+mutation CarouselUpdate ($id: ID!, $input: UpdateCarouselInput!) {
+  updateCarousel(id: $id, input: $input) {
+    carousel {
+      ...CarouselFragment
+    }
+  }
+}

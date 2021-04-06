@@ -10,9 +10,10 @@ import {
     utilsAfterEach
 } from '@/router/utils'
 import applicationRoutes from '@/router/application'
+import articleRoutes from '@/router/article'
+import carouselRoutes from '@/router/carousel'
 import coffeeRoutes from '@/router/coffee'
 import citrusRoutes from '@/router/citrus'
-import articleRoutes from '@/router/article'
 
 const CONNECTION_URL = '/compte/connexion'
 
@@ -38,10 +39,11 @@ const routes = [
         name: 'Login',
         component: () => import(/* webpackChunkName: "login" */ '../views/Registration/Login.vue')
     },
+    ...articleRoutes,
+    ...carouselRoutes,
     ...citrusRoutes,
     ...coffeeRoutes,
-    ...applicationRoutes,
-    ...articleRoutes
+    ...applicationRoutes
 ]
 
 const router = new VueRouter({

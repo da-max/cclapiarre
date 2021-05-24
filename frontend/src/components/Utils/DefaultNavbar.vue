@@ -42,6 +42,10 @@ export default {
                     routerLink: { name: 'CitrusList' }
                 },
                 {
+                    title: 'Carousel',
+                    routerLink: { name: 'CarouselList' }
+                },
+                {
                     title: 'Évènements',
                     subItems: [
                         {
@@ -92,19 +96,6 @@ export default {
                     ]
                 },
                 {
-                    title: 'Carousel',
-                    subItems: [
-                        {
-                            name: 'Liste des carousels',
-                            link: '/carousel/liste-des-carousels'
-                        },
-                        {
-                            name: 'Créer un carousel',
-                            link: '/carousel/creer-un-carousel'
-                        }
-                    ]
-                },
-                {
                     title: 'Paramètres',
                     subItems: [
                         {
@@ -121,7 +112,9 @@ export default {
         }
     },
     computed: {
-        ...mapState({ allApplications: (state) => state.application.applications })
+        ...mapState({
+            allApplications: state => state.application.applications
+        })
     }
 }
 </script>

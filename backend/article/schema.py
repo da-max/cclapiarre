@@ -31,7 +31,7 @@ class CreateArticleMutation(DjangoCreateMutation):
     """
     class Meta:
         model = Article
-        permission_required = ('article.add_article',)
+        permissions = ('article.add_article',)
         login_required = True
         exclude_fields = ('date_creation', 'author')
         auto_context_fields = {
@@ -43,7 +43,7 @@ class DeleteArticleMutation(DjangoDeleteMutation):
     """ Mutation for delete an article. """
     class Meta:
         model = Article
-        permission_required = ('article.delete_article',)
+        permissions = ('article.delete_article',)
         login_required = True
 
 
@@ -52,7 +52,7 @@ class UpdateArticleMutation(DjangoUpdateMutation):
 
     class Meta:
         model = Article
-        permission_required = ('article.change_article',)
+        permissions = ('article.change_article',)
         login_required = True
         exclude_fields = ('date_creation', 'author')
         auto_context_fields = {

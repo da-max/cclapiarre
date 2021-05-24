@@ -81,7 +81,7 @@ class CreateCitrusProductMutation(DjangoCreateMutation):
     class Meta:
         model = CitrusProduct
         login_required = True
-        permission_required = ('citrus.add_citrusproduct', )
+        permissions = ('citrus.add_citrusproduct', )
 
 
 class BatchPatchCitrusProductMutation(DjangoBatchPatchMutation):
@@ -92,7 +92,7 @@ class BatchPatchCitrusProductMutation(DjangoBatchPatchMutation):
     class Meta:
         model = CitrusProduct
         login_required = True
-        permission_required = ('citrus.change_citrusproduct',)
+        permissions = ('citrus.change_citrusproduct',)
 
 
 class UpdateCitrusProductMutation(DjangoUpdateMutation):
@@ -103,7 +103,7 @@ class UpdateCitrusProductMutation(DjangoUpdateMutation):
     class Meta:
         model = CitrusProduct
         login_required = True
-        permission_required = ('citrus.change_citrusproduct',)
+        permissions = ('citrus.change_citrusproduct',)
 
 
 class DeleteCitrusProductMutation(DjangoDeleteMutation):
@@ -114,7 +114,7 @@ class DeleteCitrusProductMutation(DjangoDeleteMutation):
     class Meta:
         model = CitrusProduct
         login_required = True
-        permission_required = ('citrus.remove_citrusproduct',)
+        permissions = ('citrus.remove_citrusproduct',)
 
 
 class CreateCitrusAmountMutation(DjangoCreateMutation):
@@ -125,7 +125,7 @@ class CreateCitrusAmountMutation(DjangoCreateMutation):
     class Meta:
         model = CitrusAmount
         login_required = True
-        permission_required = ('citrus.add_citrusamount',)
+        permissions = ('citrus.add_citrusamount',)
         exclude_fields = ('order',)
 
 
@@ -136,7 +136,7 @@ class UpdateCitrusAmountMutation(DjangoUpdateMutation):
     class Meta:
         model = CitrusAmount
         login_required = True
-        permission_required = ('citrus.change_citrusamount',)
+        permissions = ('citrus.change_citrusamount',)
         exclude_fields = ('order', 'user')
 
 
@@ -153,7 +153,7 @@ class CreateCitrusOrderMutation(DjangoCreateMutation):
     class Meta:
         model = CitrusOrder
         login_required = True
-        permission_required = ('citrus.add_citrusorder',)
+        permissions = ('citrus.add_citrusorder',)
         exclude_fields = ('product', 'amounts', 'order', 'user')
         many_to_many_extras = {
             'amounts': {
@@ -208,7 +208,7 @@ class UpdateCitrusOrderMutation(DjangoUpdateMutation):
     """
     class Meta:
         model = CitrusOrder
-        permission_required = ('citrus.change_citrusorder', )
+        permissions = ('citrus.change_citrusorder', )
         login_required = True
         exclude_fields = ('product', 'amounts', 'order', 'sendMail', 'user')
         many_to_many_extras = {
@@ -252,7 +252,7 @@ class BatchDeleteCitrusOrderMutation(DjangoBatchDeleteMutation):
     class Meta:
         model = CitrusOrder
         login_required = True
-        permission_required = ('citrus.delete_citrusorder', )
+        permissions = ('citrus.delete_citrusorder', )
 
 
 class Mutation(ObjectType):

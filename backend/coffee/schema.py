@@ -115,7 +115,7 @@ class CreateOriginMutation(DjangoCreateMutation):
     class Meta:
         model = Origin
         login_required = True
-        permission_required = ('coffee.add_origin',)
+        permissions = ('coffee.add_origin',)
 
 
 class CreateTypeMutation(DjangoCreateMutation):
@@ -124,7 +124,7 @@ class CreateTypeMutation(DjangoCreateMutation):
     class Meta:
         model = Type
         login_required = True
-        permission_required = ('coffee.add_type',)
+        permissions = ('coffee.add_type',)
 
 
 class CreateCoffeeMutation(DjangoCreateMutation):
@@ -133,7 +133,7 @@ class CreateCoffeeMutation(DjangoCreateMutation):
     class Meta:
         model = Coffee
         login_required = True
-        permission_required = ('coffee.add_coffee',)
+        permissions = ('coffee.add_coffee',)
 
 
 class CreateCoffeeAmountMutation(DjangoCreateMutation):
@@ -156,7 +156,7 @@ class CreateCoffeeOrderMutation(DjangoCreateMutation):
     class Meta:
         model = CoffeeOrder
         login_required = True
-        permission_required = ('coffee.add_coffeeorder',)
+        permissions = ('coffee.add_coffeeorder',)
         exclude_fields = ('coffee', 'amounts', 'user')
         many_to_many_extras = {
             "amounts": {
@@ -192,7 +192,7 @@ class BatchDeleteCoffeeOrderMutation(DjangoBatchDeleteMutation):
     class Meta:
         model = CoffeeOrder
         login_required = True
-        permission_required = ('coffee.delete_coffeeorder',)
+        permissions = ('coffee.delete_coffeeorder',)
         filter_fields = ('id',)
 
 

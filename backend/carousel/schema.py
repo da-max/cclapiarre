@@ -17,7 +17,7 @@ class CreateCarouselMutation(DjangoCreateMutation):
     class Meta:
         model = Carousel
         login_required = True,
-        permission_required = ('carousel.add_carousel', )
+        permissions = ('carousel.add_carousel', )
 
 
 class DeleteCarouselMutation(DjangoDeleteMutation):
@@ -25,7 +25,7 @@ class DeleteCarouselMutation(DjangoDeleteMutation):
     class Meta:
         model = Carousel
         login_required = True
-        permission_required = ('carousel.delete_carousel',)
+        permissions = ('carousel.delete_carousel',)
 
 
 class UpdateCarouselMutation(DjangoUpdateMutation):
@@ -33,7 +33,7 @@ class UpdateCarouselMutation(DjangoUpdateMutation):
     class Meta:
         model = Carousel
         login_required = True
-        permission_required = ('carousel.change_carousel',)
+        permissions = ('carousel.change_carousel',)
 
 
 class Query(graphene.ObjectType):

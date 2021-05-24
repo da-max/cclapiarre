@@ -81,7 +81,12 @@ router.beforeEach(async (to, from, next) => {
         )
     }
 
-    go ? next() : next(`${CONNECTION_URL}?next=${to.path}`)
+    if (go) {
+        next()
+    } else {
+        utilsAfterEach()
+        next(`${CONNECTION_URL}?next=${to.path}`)
+    }
 })
 
 router.afterEach((_to, _from) => {

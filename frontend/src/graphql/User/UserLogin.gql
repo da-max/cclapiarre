@@ -1,10 +1,16 @@
+#import "./Fragment/UserFullFragment.gql"
+
 mutation UserLogin($username: String!, $password: String!) {
   login(username: $username, password: $password) {
     user {
-      id
-      username
-      email
+      ...UserFullFragment
       isSuperuser
+      userPermissions {
+        codename
+        contentType {
+          appLabel
+        }
+      }
       groups {
         id
         name

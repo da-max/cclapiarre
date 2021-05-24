@@ -6,7 +6,7 @@
     <div class="uk-card-footer">
       <p class="uk-text-bold">
         Si vous voyez une erreur, merci de me la signaler en envoyant un mail à
-        benhassenm@tutamail.com
+        maxime.benhassen@tutamail.com
       </p>
     </div>
   </div>
@@ -14,6 +14,7 @@
 
 <script>
 import MemberTable from '@/components/Registration/Member/MemberTable'
+
 export default {
     components: {
         MemberTable

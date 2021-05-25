@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 import graphene
 from graphene import relay
 from graphene_django import DjangoObjectType
+from graphene_django_cud.mutations import DjangoCreateMutation, DjangoDeleteMutation, DjangoUpdateMutation
 
 import graphql_jwt
 from graphql_jwt.decorators import login_required, token_auth
@@ -89,10 +90,41 @@ class Logout(graphene.Mutation):
         return cls(ok=ok)
 
 
+class CreateUserMutation(DjangoCreateMutation):
+    """ Class for define create user mutation. """
+    class Meta:
+        model = User
+        login_required = True
+        permissions = ('auth.add_user',)
+        one_to_one_extras = {'information': {'type': 'auto'}}
+
+    user = graphene.Field(UserLargeType)
+
+
+class DeleteUserMutation(DjangoDeleteMutation):
+    class Meta:
+        model = User
+        login_required = True
+        permissions = ('auth.delete_user', )
+
+
+class UpdateUserMutation(DjangoUpdateMutation):
+    class Meta:
+        model = User
+        login_required = True
+        permissions = ('auth.change_user', )
+        exclude_fields = ("password",)
+        one_to_one_extras = {'information': {'type': 'auto'}}
+
+    user = graphene.Field(UserLargeType)
+
+
 class Query(graphene.ObjectType):
     users = graphene.List(
         UserLargeType)
     user = graphene.Field(UserLargeType)
+    permissions = graphene.List(PermissionType)
+    groups = graphene.List(GroupType)
 
     @login_required
     def resolve_user(self, info, **kwargs):
@@ -102,7 +134,18 @@ class Query(graphene.ObjectType):
     def resolve_users(self, info):
         return User.objects.all()
 
+    @login_required
+    def resolve_permissions(self, info):
+        return Permission.objects.all()
+
+    @login_required
+    def resolve_groups(self, info):
+        return Group.objects.all()
+
 
 class Mutation(graphene.ObjectType):
     login = Login.Field()
     logout = Logout.Field()
+    add_user = CreateUserMutation.Field()
+    delete_user = DeleteUserMutation.Field()
+    update_user = UpdateUserMutation.Field()

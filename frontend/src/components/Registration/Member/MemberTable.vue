@@ -1,6 +1,5 @@
 <template>
   <UtilsTable
-    v-if="loading === false"
     :middle="true"
   >
     <template #head>
@@ -10,10 +9,13 @@
       >
         {{ headerItem }}
       </th>
+      <th v-show="canDeleteMember || canChangeMember">
+        Actions
+      </th>
     </template>
     <template #body>
       <tr
-        v-for="member in result.users"
+        v-for="member in members"
         :key="member.id"
       >
         <td v-if="member.lastName">
@@ -40,24 +42,54 @@
         <td v-else>
           Non défini
         </td>
+        <td>
+          <a
+            v-show="canChangeMember"
+            type="button"
+            class="uk-icon-link"
+            uk-icon="refresh"
+            @click="showMemberModal(member)"
+          />
+          <a
+            v-show="canDeleteMember"
+            type="button"
+            class="uk-icon-link"
+            uk-icon="trash"
+            @click="showDeleteMemberModal(member)"
+          />
+        </td>
       </tr>
     </template>
   </UtilsTable>
 </template>
 
 <script>
-import { useUtilsQuery } from '@/composition/useUtils'
 import UtilsTable from '@/components/Utils/UtilsTable'
-
-import MEMBER_ALL from '@/graphql/Member/MemberAll.gql'
+import useMember from '@/composition/registration/useMember'
 
 export default {
     components: {
         UtilsTable
     },
-    setup (props) {
-        const { result, loading } = useUtilsQuery(MEMBER_ALL)
-        return { result, loading }
+    setup () {
+        const {
+            canDeleteMember,
+            canChangeMember,
+            getMembers,
+            members,
+            showDeleteMemberModal,
+            showMemberModal
+        } = useMember()
+
+        getMembers()
+
+        return {
+            canChangeMember,
+            canDeleteMember,
+            members,
+            showDeleteMemberModal,
+            showMemberModal
+        }
     },
     data () {
         return {

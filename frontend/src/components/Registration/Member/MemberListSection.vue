@@ -1,6 +1,8 @@
 <template>
   <div class="uk-card uk-card-default">
     <div class="uk-card-body">
+      <MemberDeleteModal />
+      <MemberModal />
       <MemberTable />
     </div>
     <div class="uk-card-footer">
@@ -14,10 +16,15 @@
 
 <script>
 import MemberTable from '@/components/Registration/Member/MemberTable'
+import MemberModal from '@/components/Registration/Member/MemberModal'
+import MemberDeleteModal from '@/components/Registration/Member/MemberDeleteModal'
 
 export default {
+    name: 'MemberListSection',
     components: {
-        MemberTable
+        MemberModal,
+        MemberTable,
+        MemberDeleteModal
     }
 }
 </script>

@@ -9,7 +9,7 @@
         :required="required"
         :type="type"
         :name="name"
-        class="uk-input"
+        :class="['uk-input', {'uk-form-danger': error}]"
         step="0.01"
         :placeholder="label"
         :value="value"
@@ -55,6 +55,11 @@ export default {
         required: {
             type: Boolean,
             default: true,
+            required: false
+        },
+        error: {
+            type: Boolean,
+            default: false,
             required: false
         }
     }

@@ -1,27 +1,28 @@
 <template>
-  <div class="uk-margin-large-top">
-    <h1 class="uk-text-center">
-      {{ title }}
-    </h1>
-    <Alerts />
-    <MemberSection class="uk-width-3-5@l uk-width-4-5@s uk-margin-auto" />
-  </div>
+  <main>
+    <MemberListHeader class="uk-margin-large-top" />
+    <AlertsStyling />
+    <MemberListSection class="uk-width-3-5@l uk-width-4-5@s uk-margin-auto" />
+  </main>
 </template>
 
 <script>
 import { useSetupTitle } from '@/composition/useUtils'
 
-import Alerts from '@/components/Utils/Alert/Alerts'
-import MemberSection from '@/components/Registration/Member/MemberSection'
+import AlertsStyling from '@/components/Utils/Alert/AlertsStyling'
+import MemberListSection from '@/components/Registration/Member/MemberListSection'
+import MemberListHeader from '@/components/Registration/Member/MemberListHeader'
 
 export default {
     components: {
-        MemberSection,
-        Alerts
+        MemberListHeader,
+        MemberListSection,
+        AlertsStyling
     },
     setup () {
         const title = 'Liste des adhérents'
         useSetupTitle(title)
+
         return { title }
     }
 }

@@ -1,0 +1,7 @@
+#import "./Fragment/PermissionFragment.gql"
+
+query Permissions {
+  permissions {
+   ... PermissionFragment
+  }
+}

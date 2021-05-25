@@ -1,0 +1,20 @@
+#import "../User/Fragment/UserFullFragment.gql"
+#import "../User/Fragment/GroupFragment.gql"
+#import "../User/Fragment/PermissionFragment.gql"
+
+mutation MemberAdd($input: CreateUserInput!) {
+  addUser(input: $input) {
+    user {
+      ...UserFullFragment
+      information {
+        phoneNumber
+      }
+      userPermissions {
+        ...PermissionFragment
+      }
+      groups {
+        ...GroupFragment
+      }
+    }
+  }
+}

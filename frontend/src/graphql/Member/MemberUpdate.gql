@@ -1,0 +1,19 @@
+mutation MemberUpdate (
+    $id: ID!, 
+    $input: UpdateUserInput!
+  ) {
+  updateUser (
+    id: $id, 
+    input: $input
+  ) {
+    user {
+      id
+      username
+      lastName
+      firstName
+      information {
+        phoneNumber
+      }
+    }
+  }
+}

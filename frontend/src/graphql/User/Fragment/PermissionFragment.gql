@@ -1,0 +1,9 @@
+fragment PermissionFragment on PermissionType {
+   name
+    id
+    codename
+    contentType {
+      appLabel
+      model
+    }
+} 

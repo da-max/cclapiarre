@@ -9,6 +9,7 @@ import CarouselModule from '@/store/carousel/carousel'
 import CitrusModule from '@/store/citrus/citrus'
 import CitrusOrderModule from '@/store/citrus/order'
 import CoffeeModule from '@/store/coffee/coffee'
+import MemberModule from '@/store/registration/member'
 import OrderModule from '@/store/application/order'
 
 Vue.use(Vuex)
@@ -39,6 +40,7 @@ export default new Vuex.Store({
         citrus: CitrusModule,
         citrusOrder: CitrusOrderModule,
         coffee: CoffeeModule,
+        member: MemberModule,
         order: OrderModule
     }
 })

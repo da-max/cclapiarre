@@ -1,0 +1,4 @@
+fragment GroupFragment on GroupType {
+  id
+  name
+}

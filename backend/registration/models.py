@@ -1,13 +1,13 @@
-from django.db.models import Model, ForeignKey, CASCADE
-from django.db.models.fields import CharField
-from django.db.models.fields import CharField, BooleanField, URLField
+from django.db.models import Model, OneToOneField, CASCADE
 
 from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 
-class Information(Model) :
 
-    user = ForeignKey(User, verbose_name="Utilisateur", on_delete=CASCADE, related_name='information')
+class Information(Model):
+
+    user = OneToOneField(
+        User, verbose_name="Utilisateur", on_delete=CASCADE, related_name='information')
     phone_number = PhoneNumberField(verbose_name="Numéro de téléphone")
 
     def __str__(self):

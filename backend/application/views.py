@@ -6,7 +6,7 @@ from django.template.response import TemplateResponse
 
 from django_xhtml2pdf.utils import pdf_decorator
 
-from backend.application.models import Order
+from backend.application.models import Application, Order
 from backend.mail import async_send_mail
 
 order_added = Signal()
@@ -51,14 +51,17 @@ def pdf_list_order(request, slug_application: str) -> TemplateResponse:
     -------
     TemplateResponse.
     """
+    try:
+        application_name = Application.objects.get(slug=slug_application).name
+    except Application.DoesNotExist:
+        raise Http404('Application non trouvée')
+
     orders = dict()
     try:
         order = Order.objects.filter(
             application__slug=slug_application)
     except Order.DoesNotExist:
         raise Http404('Application non trouvée.')
-
-    application_name = order[0].application.name
 
     for o in order:
         orders[o] = o.products.through.objects.filter(order=o)

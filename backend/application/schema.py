@@ -163,11 +163,11 @@ class CreateOrderMutation(DjangoCreateMutation):
     def mutate(cls, root, info, **input) -> dict:
         """Methods for customise mutate of Order."""
         application = Application.objects.get(
-            id=input['input']['application'])
+            id=from_global_id(input['input']['application'])[1])
 
         products = Product.objects.filter(display=True)
-        options = Option.objects.filter(application=application.id)
-        weights = Weight.objects.filter(application=application.id)
+        options = Option.objects.filter(application=application)
+        weights = Weight.objects.filter(application=application)
 
         order = Order.objects.get_or_create(
             user=info.context.user, application=application)
@@ -211,7 +211,8 @@ class UpdateApplicationMutation(DjangoUpdateMutation):
         model = Application
         login_required = True
         exclude_fields = ('slug',)
-        optional_fields = ('images', 'description', 'table', 'admins', 'members')
+        optional_fields = ('images', 'description',
+                           'table', 'admins', 'members')
 
 
 class UpdateProductMutation(DjangoUpdateMutation):

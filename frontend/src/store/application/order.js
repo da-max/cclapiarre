@@ -65,7 +65,7 @@ export default {
                 await apolloClient.mutate({
                     mutation: ADD_ORDER,
                     variables: {
-                        application: parseInt(applicationId),
+                        application: applicationId,
                         amounts: orders
                     }
                 })

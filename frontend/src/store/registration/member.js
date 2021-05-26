@@ -1,4 +1,5 @@
 import apolloClient from '@/vue-apollo'
+import Vue from 'vue'
 
 import MEMBER_ADD from '@/graphql/Member/MemberAdd.gql'
 import MEMBER_ALL from '@/graphql/Member/MemberAll.gql'
@@ -54,7 +55,7 @@ export default {
         },
 
         SET_MEMBER_DEFAULT (state) {
-            state.memberSelect = {
+            Vue.set(state, 'memberSelect', {
                 username: '',
                 lastName: '',
                 firstName: '',
@@ -64,7 +65,9 @@ export default {
                 phoneNumber: '',
                 userPermissions: [],
                 groups: []
-            }
+            })
+            Vue.set(state.memberSelect, 'userPermissions', [])
+            Vue.set(state.memberSelect, 'groups', [])
         },
 
         UPDATE_MEMBER (state, member) {
@@ -110,6 +113,7 @@ export default {
                     mutation: MEMBER_ADD,
                     variables: { input: member }
                 })
+                console.log(response.data)
                 commit('ADD_MEMBER', response.data.addUser.user)
                 commit(
                     'alert/ADD_ALERT',
@@ -156,18 +160,18 @@ export default {
         async updateMember ({ state, commit }) {
             commit('START_LOADING', null, { root: true })
             try {
-                const groups = state.memberSelect.groups.forEach(g => {
+                const groups = state.memberSelect.groups.map(g => {
                     if (Number.isInteger(g)) {
                         return g
                     } else {
-                        return g.id
+                        return Number(g.id)
                     }
                 })
-                const permissions = state.memberSelect.userPermissions.forEach(p => {
+                const permissions = state.memberSelect.userPermissions.map(p => {
                     if (Number.isInteger(p)) {
                         return p
                     } else {
-                        return p.id
+                        return Number(p.id)
                     }
                 })
                 const member = {
@@ -178,10 +182,10 @@ export default {
                     information: {
                         phoneNumber: state.memberSelect.phoneNumber
                     },
-                    groups,
+                    groups: groups,
                     userPermissions: permissions
                 }
-                await apolloClient.mutate({
+                const response = await apolloClient.mutate({
                     mutation: MEMBER_UPDATE,
                     variables: {
                         id: state.memberSelect.id,
@@ -199,6 +203,7 @@ export default {
                     { root: true }
                 )
                 commit('SET_MEMBER_DEFAULT')
+                commit('UPDATE_MEMBER', response.data.updateUser.user)
             } catch (e) {
                 commit('alert/ADD_ERROR', e, { root: true })
             } finally {

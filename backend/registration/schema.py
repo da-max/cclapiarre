@@ -108,11 +108,11 @@ class CreateUserMutation(DjangoCreateMutation):
         user.last_name = input['last_name']
         user.first_name = input['first_name']
         for group in input['groups']:
-            user.groups.add(Group.objects.get(group))
+            user.groups.add(Group.objects.get(id=group))
         for permission in input['user_permissions']:
-            user.user_permissions.add(Permission.objects.get(permission))
+            user.user_permissions.add(Permission.objects.get(id=permission))
         user.save()
-        return UserLargeType(user)
+        return CreateUserMutation(user)
 
 
 class DeleteUserMutation(DjangoDeleteMutation):

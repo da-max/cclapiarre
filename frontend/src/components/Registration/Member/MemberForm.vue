@@ -37,7 +37,7 @@
         @input="updatePasswordConfirm"
       />
       <div v-if="!loading">
-        <span class="uk-form-label">Permissions</span>
+        <span class="uk-form-label">Groupes</span>
         <div class="uk-overflow-auto uk-height-medium">
           <div
             v-for="group in groups"

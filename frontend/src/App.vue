@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+    <div class="uk-background-secondary uk-padding-small uk-text-center uk-text-danger uk-text-bold">
+      Attention, vous êtes actuellement sur la version bêta de Cclapiarre. Les données que vous rentrez sur ce site ne seront pas accéssible sur le site <a href="http://cclapiarre.deblan.fr">cclapiarre.deblan.fr</a> !!
+    </div>
     <Loader v-if="loading" />
     <DefaultNavbar />
     <router-view uk-height-viewport="offset-top: true; offset-bottom: true" />

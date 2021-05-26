@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth.models import User, Group, Permission, UserManager
 from django.contrib.auth import authenticate, login, logout
 
 import graphene
@@ -99,6 +99,20 @@ class CreateUserMutation(DjangoCreateMutation):
         one_to_one_extras = {'information': {'type': 'auto'}}
 
     user = graphene.Field(UserLargeType)
+
+    @classmethod
+    def mutate(cls, root, info, input, *args, **kwargs):
+        """ Method call for create an user. """
+        user = User.objects.create_user(
+            input['username'], input['email'], input['password'])
+        user.last_name = input['last_name']
+        user.first_name = input['first_name']
+        for group in input['groups']:
+            user.groups.add(Group.objects.get(group))
+        for permission in input['user_permissions']:
+            user.user_permissions.add(Permission.objects.get(permission))
+        user.save()
+        return UserLargeType(user)
 
 
 class DeleteUserMutation(DjangoDeleteMutation):

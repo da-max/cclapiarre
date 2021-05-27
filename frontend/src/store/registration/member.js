@@ -39,18 +39,18 @@ export default {
 
         SET_MEMBER_SELECT (state, member) {
             if (member.information && member.information.phoneNumber) {
-                state.memberSelect = {
+                Vue.set(state, 'memberSelect', {
                     ...member,
                     phoneNumber: member.information.phoneNumber,
                     information: null
-                }
+                })
             } else if (!member.phoneNumber) {
-                state.memberSelect = {
+                Vue.set(state, 'memberSelect', {
                     ...member,
                     phoneNumber: ''
-                }
+                })
             } else {
-                state.memberSelect = member
+                Vue.set(state, 'memberSelect', member)
             }
         },
 

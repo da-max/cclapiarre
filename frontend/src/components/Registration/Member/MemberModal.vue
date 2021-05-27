@@ -8,7 +8,7 @@
   >
     <template #header>
       <h2 class="uk-modal-title">
-        {{ member.id ? 'Modifier' : 'Ajouter' }} un membre
+        {{ member.id ? 'Modifier l’adhérent : ' + member.username : 'Ajouter un adhérent' }}
       </h2>
     </template>
     <template #body>

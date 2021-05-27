@@ -36,8 +36,8 @@
         <td v-else>
           Non défini
         </td>
-        <td v-if="member.phoneNumber">
-          {{ member.phoneNumber }}
+        <td v-if="member.information && member.information.phoneNumber">
+          {{ member.information.phoneNumber }}
         </td>
         <td v-else>
           Non défini

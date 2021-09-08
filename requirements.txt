@@ -22,7 +22,7 @@ lazy-object-proxy==1.4.3
 markdown2==2.3.9
 mccabe==0.6.1
 phonenumbers==8.10.17
-Pillow==7.1.1
+Pillow==8.3.2
 psycopg2==2.8.3
 pycodestyle==2.5.0
 pylint==2.4.4
